@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from inventory import Inventory
+from device_inventory.inventory import Inventory
 
 @unittest.skipUnless(os.geteuid() == 0, "Only root can run this script")
 class TestInventory(unittest.TestCase):
