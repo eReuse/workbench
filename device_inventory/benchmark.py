@@ -14,14 +14,16 @@ def hard_disk_smart():
     raise NotImplementedError
 
 
-def score_cpu(cpu_data):
+def score_cpu():
     # https://en.wikipedia.org/wiki/BogoMips
     # score = sum(cpu.bogomips for cpu in device.cpus)
-    #for i in `grep bogomips /proc/cpuinfo 2>/dev/null | awk {'print $3'} | cut -d '.' -f1`
-    #do
-    #    SCORE_CPU=`expr ${SCORE_CPU} + ${i}`
-    #done
-    raise NotImplementedError
+    mips = []
+    with open("/proc/cpuinfo") as f:
+        for line in f:
+            if line.startswith("bogomips"):
+                mips.append(float(line.split(':')[1]))
+    
+    return sum(mips)
 
 
 def score_ram(ram_data):
