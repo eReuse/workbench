@@ -27,6 +27,7 @@ class Inventory(object):
     def init_serials(self):
         # getnode attempts to obtain the hardware address, if fails it
         # chooses a random 48-bit number with its eight bit set to 1
+        # Deprecated hw_addr as ID. TODO use device SN as ID
         self.ID = uuid.getnode()
         if (self.ID >> 40) % 2:
             raise OSError("The system does not seem to have a valid MAC.")
@@ -55,6 +56,9 @@ class Inventory(object):
         # https://bugs.launchpad.net/ubuntu/+source/lshw/+bug/1405873
         # lshw_disk = json.loads(subprocess.check_output(["lshw", "-json", "-class", "disk"]))
         self.SERIAL5 = get_subsection_value(self.lshw, "*-disk", "serial")
+        
+        # Deprecated: cksum CRC32 joining 5 serial numbers as secundary ID
+        #ID2=`echo ${SERIAL1} ${SERIAL2} ${SERIAL3} ${SERIAL4} ${SERIAL5} | cksum | awk {'print $1'}`
     
     @property
     def cpu(self):
