@@ -6,12 +6,34 @@ performance of an object, normally by running a number of standard
 tests and trials against it.
 
 """
+import re
+import subprocess
 
-def hard_disk_smart():
+
+def hard_disk_smart(disk="/dev/sda"):
     # smartctl -a /dev/sda | grep "# 1"
     # # 1  Short offline       Completed without error       00%     10016         -
     # XXX extract data of smartest. Decide which info is relevant.
-    raise NotImplementedError
+    try:
+        smart = subprocess.check_output(["smartctl", "-a", disk],
+                                        universal_newlines=True)
+    except subprocess.CalledProcessError as e:
+        # TODO analyze e.returncode
+        smart = e.output
+    
+    # current output
+    # Num  Test_Description  Status  Remaining  LifeTime(hours)  LBA_of_first_error
+    beg = smart.index('# 1')
+    end = smart.index('\n', beg)
+    result = re.split(r'\s\s+', smart[beg:end])
+    
+    return {
+        'device_check': disk,  # DEVICE_CHECK
+        'type_check_hdd': result[1],  # TYPE_CHECK_HDD
+        'check_hdd': result[2],  # CHECK_HDD
+        'lifetime_hdd': result[4],   # LIFETIME_HDD
+        'first_error_hdd': result[5],   # FIRST_ERROR_HDD
+    }
 
 
 def score_cpu():
