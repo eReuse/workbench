@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+import calendar
 import configparser
 import datetime
 import os
 import socket
 import sys
+import time
 
 from .benchmark import hard_disk_smart
 
@@ -52,7 +54,12 @@ if __name__ == "__main__":
     if not os.geteuid() == 0:
         sys.exit("Only root can run this script")
     
+    # FIXME duplicated data initial_donator_time & status.date (dat_state)
+    # initial_donator in seconds since 1970 UTC
+    # dat_state only date on human friendly format
+    beg_donator_time = calendar.timegm(time.gmtime())  # INITIAL_DONATOR_TIME
     config = load_config()
     inventory = Inventory()  # XXX pass device type and other user input?
     device_status = get_device_status()
 ##    hard_disk_smart()
+    end_donator_time = calendar.timegm(time.gmtime())  # END_DONATOR_TIME
