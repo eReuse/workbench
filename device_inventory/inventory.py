@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import subprocess
 import uuid
 
@@ -130,8 +131,46 @@ class Inventory(object):
             "name": logical_name,
             "interface": interface,
         }
-
-    # vga
+    
+    @property
+    def vga(self):
+        product = get_subsection_value(self.lshw, "display", "product")
+        vendor = get_subsection_value(self.lshw, "display", "vendor")
+        if product or vendor:
+            model_vga = "{vendor} {product}".format(vendor=vendor, product=product)
+        else:
+            model_vga = get_subsection_value(self.lshw, "display", "description")
+        
+        # Find VGA memory
+        bus_info = get_subsection_value(self.lshw, "display", "bus info").split("@")[1]
+        mem = run("lspci -v -s {bus} | grep 'prefetchable' | grep -v 'non-prefetchable' | egrep -o '[0-9]{{1,3}}[KMGT]+'".format(bus=bus_info)).splitlines()
+        
+        # Get max memory value
+        max_size = 0
+        for value in mem:
+            unit = re.split('\d+', value)[1]
+            size = int(value.rstrip(unit))
+            
+            # convert all values to KB before compare
+            if unit == 'K':
+                size_kb = size
+            elif unit == 'M':
+                size_kb = size * 1024
+            elif unit == 'G':
+                size_kb = size * 1024 * 1024
+            elif unit == 'T':
+                size_kb = size * 1024 * 1024 * 1024
+            
+            if size_kb > max_size:
+                max_size = size_kb
+        
+        return {
+            "model_vga": model_vga,
+            "size_vga": int(max_size/1024),
+            "unit_size_vga": "MB",
+            "score_vga": "",  # TODO
+        }
+    
     # audio
     # network
     # optical disk drives (CDROM, DVDROM)

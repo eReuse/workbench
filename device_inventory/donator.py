@@ -95,6 +95,7 @@ if __name__ == "__main__":
                 "cpu": device.cpu,
                 "ram": device.ram,
                 "hdd": device.hdd,
+                "vga": device.vga,
                 # TODO
             },
             "END_DONATOR_TIME": end_donator_time,
