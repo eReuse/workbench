@@ -46,8 +46,10 @@ def is_connected():
 def get_device_status():
     # TODO anything else??
     return {
-        'date': datetime.datetime.now(),
-        'online': is_connected(),
+        "dat_estat": datetime.date.today().isoformat(),
+        "version": "1.0",
+        "online": "SI" if is_connected() else "NO",
+        "smartest": None, # TODO
     }
 
 
@@ -84,12 +86,7 @@ if __name__ == "__main__":
                 "serial_ram": "XXX",
                 "serial_hdd": "XXX",
             },
-            "estat": {
-                "dat_estat": "XXX",
-                "version": "1.0",
-                "online": "SI",
-                "smartest": None, # TODO
-            },
+            "estat": device_status,
             "caracteristiques": {
                 # TODO
             },
