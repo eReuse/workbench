@@ -14,8 +14,9 @@ from .serializers import dict_to_xml
 
 def load_config():
     # https://docs.python.org/3.4/library/configparser.html
+    basepath = os.path.dirname(sys.argv[0])
     config = configparser.ConfigParser()
-    config.read('config.ini')  # donator.cfg merged here
+    config.read(os.path.join(basepath, 'config.ini'))  # donator.cfg merged here
     
     #print(config['DEFAULT']['DISC'])
     #print(config['DEFAULT'].getboolean('DISC'))
