@@ -9,6 +9,8 @@ tests and trials against it.
 import re
 import subprocess
 
+from .utils import run
+
 
 def hard_disk_smart(disk="/dev/sda"):
     # smartctl -a /dev/sda | grep "# 1"
@@ -48,11 +50,18 @@ def score_cpu():
     return sum(mips)
 
 
-def score_ram(ram_data):
-    # Score is the relation between memory frequency and memory latency.
-    # - higher frequency is better
-    # - lower latency is better
-    #FREQ_RAM=`dmidecode --type 17 | grep Speed | grep -vi unknown | tail -1 | awk {'print $4'}`
-    #LAT_RAM=`dmidecode --type 17 | grep Speed | grep -vi unknown | tail -1 | cut -d'(' -f2 | cut -d' ' -f1`
-    #SCORE_RAM=`echo ${FREQ_RAM} / ${LAT_RAM} | bc 2>/dev/null`
-    raise NotImplementedError
+def score_ram(speed):
+    """
+    Score is the relation between memory frequency and memory latency.
+    - higher frequency is better
+    - lower latency is better
+    
+    """
+    # http://www.cyberciti.biz/faq/check-ram-speed-linux/
+    # Expected input "800 MHz (1.2 ns)"
+    try:
+        freq = float(speed.split()[0])
+        lat = float(speed[speed.index("("):speed.index("ns)")])
+    except (IndexError, ValueError):
+        return "Unknown"
+    return freq/lat

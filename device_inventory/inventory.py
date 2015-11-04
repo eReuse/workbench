@@ -4,6 +4,7 @@ import subprocess
 import uuid
 
 from . import benchmark
+from .utils import run
 
 
 def get_subsection_value(output, section_name, subsection_name):
@@ -85,15 +86,21 @@ class Inventory(object):
     @property
     def ram(self):
         ram_data = self.lshw_json['children'][0]['children'][0]
+        dmidecode = run("dmidecode -t 17")
+        
+        # TODO optimize to only use a dmidecode call
+        total_slots = int(run("dmidecode -t 17 | grep -o BANK | wc -l"))
+        used_slots = int(run("dmidecode -t 17 | grep Size | grep MB | awk '{print $2}' | wc -l"))
+        speed = get_subsection_value(dmidecode, "Memory Device", "Speed")
+        
         return {
             'size': ram_data['size'],
             'units': ram_data['units'],
-            # TODO based on dmidecode
-            # http://www.cyberciti.biz/faq/check-ram-speed-linux/
-            #'interface': ## FIXME EDO|SDRAM|DDR3|DDR2|DDR|RDRAM
-            #'free_slots':
-            #'used_slots':
-            #'score_ram': benchmark.score_ram(ram_data)
+            # EDO|SDRAM|DDR3|DDR2|DDR|RDRAM
+            'interface': get_subsection_value(dmidecode, "Memory Device", "Type"),
+            'free_slots': total_slots - used_slots,
+            'used_slots': used_slots,
+            'score_ram': benchmark.score_ram(speed),
         }
     
     @property
