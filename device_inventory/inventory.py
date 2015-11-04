@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 import uuid
 
@@ -59,6 +60,9 @@ class Inventory(object):
         
         # Deprecated: cksum CRC32 joining 5 serial numbers as secundary ID
         #ID2=`echo ${SERIAL1} ${SERIAL2} ${SERIAL3} ${SERIAL4} ${SERIAL5} | cksum | awk {'print $1'}`
+        cmd = "echo {0} {1} {2} {3} {4} | cksum | awk {{'print $1'}}".format(
+            self.SERIAL1, self.SERIAL2, self.SERIAL3, self.SERIAL4, self.SERIAL5)
+        self.ID2 = os.popen(cmd).read().strip()
     
     @property
     def cpu(self):

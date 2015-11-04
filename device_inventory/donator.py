@@ -8,6 +8,8 @@ import sys
 import time
 
 from .benchmark import hard_disk_smart
+from .inventory import Inventory
+from .serializers import dict_to_xml
 
 
 def load_config():
@@ -16,8 +18,8 @@ def load_config():
     config.read('config.ini')  # donator.cfg merged here
     
     #print(config['DEFAULT']['DISC'])
-    print(config['DEFAULT'].getboolean('DISC'))
-    print(config['donator']['email'])
+    #print(config['DEFAULT'].getboolean('DISC'))
+    #print(config['donator']['email'])
     
     # TODO set fallback values if config is empty
     # https://docs.python.org/3.4/library/configparser.html#fallback-values
@@ -59,7 +61,41 @@ if __name__ == "__main__":
     # dat_state only date on human friendly format
     beg_donator_time = calendar.timegm(time.gmtime())  # INITIAL_DONATOR_TIME
     config = load_config()
-    inventory = Inventory()  # XXX pass device type and other user input?
+    device = Inventory()  # XXX pass device type and other user input?
     device_status = get_device_status()
 ##    hard_disk_smart()
     end_donator_time = calendar.timegm(time.gmtime())  # END_DONATOR_TIME
+    
+    equip = {
+        "equip": {
+            "id": device.ID,
+            "id2": device.ID2,
+            "ID_donant": "",
+            "ID_2": "",
+            "LABEL": "",
+            "INITIAL_TIME": "0",
+            "INITIAL_DONATOR_TIME": beg_donator_time,
+            "comments": "some comment",
+            "type": "1",
+            "serials": {
+                "serial_fab": "XXX",
+                "serial_mot": "XXX",
+                "serial_cpu": "XXX",
+                "serial_ram": "XXX",
+                "serial_hdd": "XXX",
+            },
+            "estat": {
+                "dat_estat": "XXX",
+                "version": "1.0",
+                "online": "SI",
+                "smartest": None, # TODO
+            },
+            "caracteristiques": {
+                # TODO
+            },
+            "END_DONATOR_TIME": end_donator_time,
+        }
+    }
+    
+    dict_to_xml(equip)
+    print("END OF EXECUTION!!! look at /tmp/equip.xml")
