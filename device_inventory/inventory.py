@@ -182,7 +182,13 @@ class Inventory(object):
             "score_vga": "",  # TODO
         }
     
-    # audio
+    @property
+    def audio(self):
+        # TODO support several cards
+        model = get_subsection_value(self.lshw, "*-multimedia", "product")
+        return {
+            "model_audio": model,
+        }
     # network
     # optical disk drives (CDROM, DVDROM)
     # connectors
