@@ -107,7 +107,29 @@ class Inventory(object):
     def hdd(self):
         # optimization? lshw -json -class disk
         # use dict lookup http://stackoverflow.com/a/27234926/1538221
-        raise NotImplementedError
+        # NOTE only gets info of first HD
+        logical_name = get_subsection_value(self.lshw, "*-disk", "logical name")
+        interface = run("udevadm info --query=all --name={0} | grep ID_BUS | cut -c 11-".format(logical_name))
+        
+        # TODO implement method for USB disk
+        if interface == "usb":
+            model = serial = size = "Unknown"
+        
+        else:
+            # (S)ATA disk
+            model = run("hdparm -I {0} | grep 'Model\ Number' | cut -c 22-".format(logical_name))
+            serial = run("hdparm -I {0} | grep 'Serial\ Number' | cut -c 22-".format(logical_name))
+            size = run("hdparm -I {0} | grep 'device\ size\ with\ M' | head -n1 | awk '{{print $7}}'".format(logical_name))
+
+        
+        return {
+            "model": model,
+            "serial": serial,
+            "size": size,
+            "measure": "MB",
+            "name": logical_name,
+            "interface": interface,
+        }
 
     # vga
     # audio

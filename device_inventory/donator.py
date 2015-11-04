@@ -94,6 +94,7 @@ if __name__ == "__main__":
             "caracteristiques": {
                 "cpu": device.cpu,
                 "ram": device.ram,
+                "hdd": device.hdd,
                 # TODO
             },
             "END_DONATOR_TIME": end_donator_time,
