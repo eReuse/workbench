@@ -29,10 +29,10 @@ def hard_disk_smart(disk="/dev/sda"):
     
     return {
         'device_check': disk,  # DEVICE_CHECK
-        'type_check_hdd': result[1],  # TYPE_CHECK_HDD
-        'check_hdd': result[2],  # CHECK_HDD
-        'lifetime_hdd': result[4],   # LIFETIME_HDD
-        'first_error_hdd': result[5],   # FIRST_ERROR_HDD
+        'type_check': result[1],  # TYPE_CHECK_HDD
+        'info_check': result[2],  # CHECK_HDD
+        'lifetime_check': result[4],   # LIFETIME_HDD
+        'first_error_check': result[5],   # FIRST_ERROR_HDD
     }
 
 

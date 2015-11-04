@@ -44,13 +44,16 @@ def is_connected():
     return False
 
 
-def get_device_status():
+def get_device_status(run_smart):
     # TODO anything else??
+    smart = {"check": "Yes" if run_smart else "No"}
+    smart.update(hard_disk_smart())  # TODO select proper HD!
+    
     return {
         "dat_estat": datetime.date.today().isoformat(),
         "version": "1.0",
         "online": "SI" if is_connected() else "NO",
-        "smartest": None, # TODO
+        "smartest": smart,
     }
 
 
@@ -65,7 +68,7 @@ if __name__ == "__main__":
     beg_donator_time = calendar.timegm(time.gmtime())  # INITIAL_DONATOR_TIME
     config = load_config()
     device = Inventory()  # XXX pass device type and other user input?
-    device_status = get_device_status()
+    device_status = get_device_status(run_smart=config['DEFAULT'].getboolean('DISC'))
 ##    hard_disk_smart()
     end_donator_time = calendar.timegm(time.gmtime())  # END_DONATOR_TIME
     
