@@ -83,13 +83,7 @@ if __name__ == "__main__":
             "INITIAL_DONATOR_TIME": beg_donator_time,
             "comments": "some comment",
             "type": "1",
-            "serials": {
-                "serial_fab": "XXX",
-                "serial_mot": "XXX",
-                "serial_cpu": "XXX",
-                "serial_ram": "XXX",
-                "serial_hdd": "XXX",
-            },
+            "serials": device.serials,
             "estat": device_status,
             "caracteristiques": {
                 "cpu": device.cpu,

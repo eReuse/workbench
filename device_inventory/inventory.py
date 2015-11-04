@@ -47,7 +47,8 @@ class Inventory(object):
         # A) dmidecode -t processor
         # FIXME Serial Number returns "To be filled by OEM"
         # http://forum.giga-byte.co.uk/index.php?topic=14167.0
-        self.SERIAL3 = get_subsection_value(self.dmi, "Processor Information", "ID")
+        # self.SERIAL3 = get_subsection_value(self.dmi, "Processor Information", "ID")
+        self.SERIAL3 = get_subsection_value(self.lshw, "*-cpu", "serial")
         
         # B) Try to call CPUID? https://en.wikipedia.org/wiki/CPUID
         # http://stackoverflow.com/a/4216034/1538221
@@ -67,6 +68,16 @@ class Inventory(object):
         cmd = "echo {0} {1} {2} {3} {4} | cksum | awk {{'print $1'}}".format(
             self.SERIAL1, self.SERIAL2, self.SERIAL3, self.SERIAL4, self.SERIAL5)
         self.ID2 = os.popen(cmd).read().strip()
+    
+    @property
+    def serials(self):
+        return {
+            "serial_fab": self.SERIAL1,
+            "serial_mot": self.SERIAL2,
+            "serial_cpu": self.SERIAL3,
+            "serial_ram": self.SERIAL4,
+            "serial_hdd": self.SERIAL5,
+        }
     
     @property
     def cpu(self):
