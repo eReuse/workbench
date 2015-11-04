@@ -92,6 +92,7 @@ if __name__ == "__main__":
             },
             "estat": device_status,
             "caracteristiques": {
+                "cpu": device.cpu,
                 # TODO
             },
             "END_DONATOR_TIME": end_donator_time,

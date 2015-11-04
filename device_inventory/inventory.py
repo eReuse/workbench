@@ -3,6 +3,8 @@ import os
 import subprocess
 import uuid
 
+from . import benchmark
+
 
 def get_subsection_value(output, section_name, subsection_name):
     """Extract data from tabulated output like lshw and dmidecode."""
@@ -16,8 +18,8 @@ class Inventory(object):
     def __init__(self):
         # http://www.ezix.org/project/wiki/HardwareLiSter
         # JSON
-        #lshw = subprocess.check_output(["lshw", "-json"], universal_newlines=True)
-        #self.lshw = json.loads(lshw)
+        lshw_js = subprocess.check_output(["lshw", "-json"], universal_newlines=True)
+        self.lshw_json = json.loads(lshw_js)
         
         # Plain text (current)
         self.lshw = subprocess.check_output(["lshw"], universal_newlines=True)
@@ -67,17 +69,17 @@ class Inventory(object):
     @property
     def cpu(self):
         number_cpus = os.cpu_count()  # Python < 3.4 multiprocessing.cpu_count()
-        number_cores = None  # TODO lscpu | grep "Core(s) per socket"
+        number_cores = os.popen("lscpu | grep 'Core(s) per socket'").read().split(':')[1].strip()
         cpu_data = self.lshw_json['children'][0]['children'][1]
         
         return {
-            'model_name': cpu_data['product'],
-            'vendor': cpu_data['vendor'],  # was /proc/cpuinfo | grep vendor_id
-            'speed': cpu_data['size'],
-            'units': cpu_data['units'],
-            'number_cpus': number_cpus,
+            'nom_cpu': cpu_data['product'],
+            'fab_cpu': cpu_data['vendor'],  # was /proc/cpuinfo | grep vendor_id
+            'speed_cpu': cpu_data['size'],
+            'unit_speed_cpu': cpu_data['units'],
+            'number_cpu': number_cpus,
             'number_cores': number_cores,
-            # XXX 'score_cpu': benchmark.score_cpu(cpu_data),
+            'score_cpu': benchmark.score_cpu(),
         }
     
     @property
