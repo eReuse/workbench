@@ -237,4 +237,12 @@ class Inventory(object):
                 })
         
         return {"connector": result}
-    # brand & manufacturer (trademark)
+    
+    @property
+    def brand_info(self):
+        manufacturer = get_subsection_value(self.dmi, "System Information", "Manufacturer")
+        product = get_subsection_value(self.dmi, "System Information", "Product Name")
+        return {
+            "fab_marca": manufacturer,
+            "model_marca": product,
+        }

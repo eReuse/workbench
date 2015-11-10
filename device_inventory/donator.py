@@ -94,7 +94,7 @@ if __name__ == "__main__":
                 "net": device.network,
                 "unidad": device.optical_drives,
                 "connectors": device.connectors,
-                # TODO
+                "marca": device.brand_info,
             },
             "END_DONATOR_TIME": end_donator_time,
         }
