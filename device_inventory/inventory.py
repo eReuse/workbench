@@ -5,6 +5,7 @@ import subprocess
 import uuid
 
 from . import benchmark
+from . import utils
 from .utils import run
 
 
@@ -84,16 +85,19 @@ class Inventory(object):
     
     @property
     def cpu(self):
+        FREQ_UNIT = 'GHz'
         number_cpus = os.cpu_count()  # Python < 3.4 multiprocessing.cpu_count()
         number_cores = os.popen("lscpu | grep 'Core(s) per socket'").read().split(':')[1].strip()
         cpu_data = self.lshw_json['children'][0]['children'][1]
         
+        # TODO lshw gets current CPU frequency and not maximum CPU frequency
+        cpu_freq = utils.convert_frequency(cpu_data['size'], cpu_data['units'], FREQ_UNIT)
+        
         return {
             'nom_cpu': cpu_data['product'],
             'fab_cpu': cpu_data['vendor'],  # was /proc/cpuinfo | grep vendor_id
-            # TODO convert speed to GHz
-            'speed_cpu': cpu_data['size'],
-            'unit_speed_cpu': cpu_data['units'],
+            'speed_cpu': cpu_freq,
+            'unit_speed_cpu': FREQ_UNIT,
             'number_cpu': number_cpus,
             'number_cores': number_cores,
             'score_cpu': benchmark.score_cpu(),
@@ -101,6 +105,7 @@ class Inventory(object):
     
     @property
     def ram(self):
+        CAPACITY_UNIT = 'MB'
         ram_data = self.lshw_json['children'][0]['children'][0]
         dmidecode = run("dmidecode -t 17")
         
@@ -109,10 +114,12 @@ class Inventory(object):
         used_slots = int(run("dmidecode -t 17 | grep Size | grep MB | awk '{print $2}' | wc -l"))
         speed = get_subsection_value(dmidecode, "Memory Device", "Speed")
         
-        # TODO convert ram to MiB
+        # FIXME why is not getting all the RAM? (power of 2)
+        size = utils.convert_capacity(ram_data['size'], ram_data['units'], CAPACITY_UNIT)
+        
         return {
-            'size_ram': ram_data['size'],
-            'unit_size': ram_data['units'],
+            'size_ram': size,
+            'unit_size': CAPACITY_UNIT,
             # EDO|SDRAM|DDR3|DDR2|DDR|RDRAM
             'interface_ram': get_subsection_value(dmidecode, "Memory Device", "Type"),
             'free_slots_ram': total_slots - used_slots,
