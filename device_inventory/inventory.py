@@ -202,7 +202,17 @@ class Inventory(object):
             "model_net": model,
             "speed_net": speed,
         }
-    # network
-    # optical disk drives (CDROM, DVDROM)
+    
+    @property
+    def optical_drives(self):
+        # TODO support multiple optical drives
+        model = get_subsection_value(self.lshw, "*-cdrom", "product")
+        description = get_subsection_value(self.lshw, "*-cdrom", "description")
+        return [
+            {
+                "model_uni": model,
+                "tipo_uni": description,  # TODO normalize values?
+            },
+        ]
     # connectors
     # brand & manufacturer (trademark)

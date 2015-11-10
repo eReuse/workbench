@@ -92,6 +92,7 @@ if __name__ == "__main__":
                 "vga": device.vga,
                 "audio": device.audio,
                 "net": device.network,
+                "unidad": device.optical_drives,
                 # TODO
             },
             "END_DONATOR_TIME": end_donator_time,
