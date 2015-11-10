@@ -91,6 +91,7 @@ if __name__ == "__main__":
                 "hdd": device.hdd,
                 "vga": device.vga,
                 "audio": device.audio,
+                "net": device.network,
                 # TODO
             },
             "END_DONATOR_TIME": end_donator_time,

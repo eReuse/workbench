@@ -11,7 +11,10 @@ from .utils import run
 def get_subsection_value(output, section_name, subsection_name):
     """Extract data from tabulated output like lshw and dmidecode."""
     section = output.find(section_name)
-    subsection = output.find(subsection_name, section)
+    ## end_section = output.find("*-", section)
+    ## XXX WIP try to limit context to a section (how to detect end on dmidecode?)
+    ## NOTE will be replaced with dmidecode Python2 library
+    subsection = output.find(subsection_name, section)#, end_section)
     end = output.find("\n", subsection)
     return output[subsection:end].split(':')[1].strip()
 
@@ -188,6 +191,16 @@ class Inventory(object):
         model = get_subsection_value(self.lshw, "*-multimedia", "product")
         return {
             "model_audio": model,
+        }
+    
+    @property
+    def network(self):
+        # TODO get all the network interfaces
+        model = get_subsection_value(self.lshw, "*-network", "product")
+        speed = get_subsection_value(self.lshw, "*-network", "capacity")
+        return {
+            "model_net": model,
+            "speed_net": speed,
         }
     # network
     # optical disk drives (CDROM, DVDROM)
