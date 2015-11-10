@@ -5,7 +5,7 @@ from .xml2dict import ConvertDictToXml
 
 # http://stackoverflow.com/a/4590052/1538221
 def indent(elem, level=0):
-    i = "\n" + level*"  "
+    i = "\n" + level*"\t"
     if len(elem):
         if not elem.text or not elem.text.strip():
             elem.text = i + "  "

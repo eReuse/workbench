@@ -69,7 +69,6 @@ if __name__ == "__main__":
     config = load_config()
     device = Inventory()  # XXX pass device type and other user input?
     device_status = get_device_status(run_smart=config['DEFAULT'].getboolean('DISC'))
-##    hard_disk_smart()
     end_donator_time = calendar.timegm(time.gmtime())  # END_DONATOR_TIME
     
     equip = {

@@ -91,6 +91,7 @@ class Inventory(object):
         return {
             'nom_cpu': cpu_data['product'],
             'fab_cpu': cpu_data['vendor'],  # was /proc/cpuinfo | grep vendor_id
+            # TODO convert speed to GHz
             'speed_cpu': cpu_data['size'],
             'unit_speed_cpu': cpu_data['units'],
             'number_cpu': number_cpus,
@@ -108,13 +109,14 @@ class Inventory(object):
         used_slots = int(run("dmidecode -t 17 | grep Size | grep MB | awk '{print $2}' | wc -l"))
         speed = get_subsection_value(dmidecode, "Memory Device", "Speed")
         
+        # TODO convert ram to MiB
         return {
-            'size': ram_data['size'],
-            'units': ram_data['units'],
+            'size_ram': ram_data['size'],
+            'unit_size': ram_data['units'],
             # EDO|SDRAM|DDR3|DDR2|DDR|RDRAM
-            'interface': get_subsection_value(dmidecode, "Memory Device", "Type"),
-            'free_slots': total_slots - used_slots,
-            'used_slots': used_slots,
+            'interface_ram': get_subsection_value(dmidecode, "Memory Device", "Type"),
+            'free_slots_ram': total_slots - used_slots,
+            'used_slots_ram': used_slots,
             'score_ram': benchmark.score_ram(speed),
         }
     

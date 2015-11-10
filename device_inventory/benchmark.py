@@ -65,3 +65,5 @@ def score_ram(speed):
     except (IndexError, ValueError):
         return "Unknown"
     return freq/lat
+
+# TODO score_vga()
