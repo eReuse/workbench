@@ -6,7 +6,6 @@ import uuid
 
 from . import benchmark
 from . import utils
-from .utils import run
 
 
 def get_subsection_value(output, section_name, subsection_name):
@@ -107,11 +106,11 @@ class Inventory(object):
     def ram(self):
         CAPACITY_UNIT = 'MB'
         ram_data = self.lshw_json['children'][0]['children'][0]
-        dmidecode = run("dmidecode -t 17")
+        dmidecode = utils.run("dmidecode -t 17")
         
         # TODO optimize to only use a dmidecode call
-        total_slots = int(run("dmidecode -t 17 | grep -o BANK | wc -l"))
-        used_slots = int(run("dmidecode -t 17 | grep Size | grep MB | awk '{print $2}' | wc -l"))
+        total_slots = int(utils.run("dmidecode -t 17 | grep -o BANK | wc -l"))
+        used_slots = int(utils.run("dmidecode -t 17 | grep Size | grep MB | awk '{print $2}' | wc -l"))
         speed = get_subsection_value(dmidecode, "Memory Device", "Speed")
         
         # FIXME why is not getting all the RAM? (power of 2)
@@ -133,7 +132,7 @@ class Inventory(object):
         # use dict lookup http://stackoverflow.com/a/27234926/1538221
         # NOTE only gets info of first HD
         logical_name = get_subsection_value(self.lshw, "*-disk", "logical name")
-        interface = run("udevadm info --query=all --name={0} | grep ID_BUS | cut -c 11-".format(logical_name))
+        interface = utils.run("udevadm info --query=all --name={0} | grep ID_BUS | cut -c 11-".format(logical_name))
         
         # TODO implement method for USB disk
         if interface == "usb":
@@ -141,9 +140,9 @@ class Inventory(object):
         
         else:
             # (S)ATA disk
-            model = run("hdparm -I {0} | grep 'Model\ Number' | cut -c 22-".format(logical_name))
-            serial = run("hdparm -I {0} | grep 'Serial\ Number' | cut -c 22-".format(logical_name))
-            size = run("hdparm -I {0} | grep 'device\ size\ with\ M' | head -n1 | awk '{{print $7}}'".format(logical_name))
+            model = utils.run("hdparm -I {0} | grep 'Model\ Number' | cut -c 22-".format(logical_name))
+            serial = utils.run("hdparm -I {0} | grep 'Serial\ Number' | cut -c 22-".format(logical_name))
+            size = utils.run("hdparm -I {0} | grep 'device\ size\ with\ M' | head -n1 | awk '{{print $7}}'".format(logical_name))
 
         
         return {
@@ -166,7 +165,7 @@ class Inventory(object):
         
         # Find VGA memory
         bus_info = get_subsection_value(self.lshw, "display", "bus info").split("@")[1]
-        mem = run("lspci -v -s {bus} | grep 'prefetchable' | grep -v 'non-prefetchable' | egrep -o '[0-9]{{1,3}}[KMGT]+'".format(bus=bus_info)).splitlines()
+        mem = utils.run("lspci -v -s {bus} | grep 'prefetchable' | grep -v 'non-prefetchable' | egrep -o '[0-9]{{1,3}}[KMGT]+'".format(bus=bus_info)).splitlines()
         
         # Get max memory value
         max_size = 0
