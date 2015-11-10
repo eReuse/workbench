@@ -93,6 +93,7 @@ if __name__ == "__main__":
                 "audio": device.audio,
                 "net": device.network,
                 "unidad": device.optical_drives,
+                "connectors": device.connectors,
                 # TODO
             },
             "END_DONATOR_TIME": end_donator_time,

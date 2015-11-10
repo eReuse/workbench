@@ -214,5 +214,27 @@ class Inventory(object):
                 "tipo_uni": description,  # TODO normalize values?
             },
         ]
-    # connectors
+    
+    @property
+    def connectors(self):
+        CONNECTORS = (
+            ("USB", "usb"),
+            ("FireWire", "firewire"),
+            ("Serial Port", "serial"),
+            ("PCMCIA", "pcmcia"),
+        )
+        
+        result = []
+        for verbose, value in CONNECTORS:
+            try:
+                model = get_subsection_value(self.lshw, "*-{0}".format(value), "product")
+            except IndexError:
+                pass
+            else:
+                result.append({
+                    "tipus_connector": verbose,
+                    "nombre_connector": 1,  # TODO count available connectos
+                })
+        
+        return {"connector": result}
     # brand & manufacturer (trademark)
