@@ -14,12 +14,13 @@ def convert_frequency(value, src_unit, dst_unit):
 def convert_capacity(value, src_unit, dst_unit):
     # FIXME International System vs IEC
     # https://en.wikipedia.org/wiki/Units_of_information#Systematic_multiples
-    # byte < KB < MB < GB
-    # TODO make more generic
-    assert src_unit == "bytes"
-    assert dst_unit == "MB"
+    UNITS = ["bytes", "KB", "MB", "GB"]
+    assert src_unit in UNITS, src_unit
+    assert dst_unit in UNITS, dst_unit
     
-    return float(value)/pow(1024, 3)
+    diff = UNITS.index(src_unit) - UNITS.index(dst_unit)
+    
+    return value * pow(1024, diff)
 
 
 def run(cmd):
