@@ -1,4 +1,5 @@
 import json
+import multiprocessing
 import os
 import re
 import subprocess
@@ -85,7 +86,7 @@ class Inventory(object):
     @property
     def cpu(self):
         FREQ_UNIT = 'GHz'
-        number_cpus = os.cpu_count()  # Python < 3.4 multiprocessing.cpu_count()
+        number_cpus = multiprocessing.cpu_count()  # Python > 3.4 os.cpu_count()
         number_cores = os.popen("lscpu | grep 'Core(s) per socket'").read().split(':')[1].strip()
         cpu_data = self.lshw_json['children'][0]['children'][1]
         

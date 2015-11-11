@@ -1,6 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import calendar
-import configparser
+try:
+    import ConfigParser as configparser  # Python2
+except ImportError:
+    import configparser
 import datetime
 import os
 import socket
@@ -68,7 +71,7 @@ if __name__ == "__main__":
     beg_donator_time = calendar.timegm(time.gmtime())  # INITIAL_DONATOR_TIME
     config = load_config()
     device = Inventory()  # XXX pass device type and other user input?
-    device_status = get_device_status(run_smart=config['DEFAULT'].getboolean('DISC'))
+    device_status = get_device_status(run_smart=config.getboolean('DEFAULT', 'DISC'))
     end_donator_time = calendar.timegm(time.gmtime())  # END_DONATOR_TIME
     
     equip = {
