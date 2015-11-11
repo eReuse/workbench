@@ -2,12 +2,13 @@ import os
 
 
 def convert_frequency(value, src_unit, dst_unit):
-    # Hz < KHz < MHz < GHz
-    # TODO make more generic
-    assert src_unit == "Hz"
-    assert dst_unit == "GHz"
+    UNITS = ['Hz', 'KHz', 'MHz', 'GHz']
+    assert src_unit in UNITS, src_unit
+    assert dst_unit in UNITS, dst_unit
     
-    return float(value)/pow(1000, 3)
+    diff = UNITS.index(src_unit) - UNITS.index(dst_unit)
+    
+    return value * pow(1000, diff)
 
 
 def convert_capacity(value, src_unit, dst_unit):

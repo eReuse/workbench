@@ -91,8 +91,8 @@ class Inventory(object):
         number_cores = os.popen("lscpu | grep 'Core(s) per socket'").read().split(':')[1].strip()
         cpu_data = self.lshw_json['children'][0]['children'][1]
         
-        # TODO lshw gets current CPU frequency and not maximum CPU frequency
-        cpu_freq = utils.convert_frequency(cpu_data['size'], cpu_data['units'], FREQ_UNIT)
+        freq = dmidecode.processor()['0x0004']['data']['Current Speed']
+        cpu_freq = utils.convert_frequency(freq, 'MHz', FREQ_UNIT)
         
         return {
             'nom_cpu': cpu_data['product'],
