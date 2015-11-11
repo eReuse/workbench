@@ -1,3 +1,4 @@
+import dmidecode
 import json
 import multiprocessing
 import os
@@ -107,21 +108,25 @@ class Inventory(object):
     def ram(self):
         CAPACITY_UNIT = 'MB'
         ram_data = self.lshw_json['children'][0]['children'][0]
-        dmidecode = utils.run("dmidecode -t 17")
+        dmidecode_out = utils.run("dmidecode -t 17")
+        # dmidecode.QueryTypeId(7)
         
         # TODO optimize to only use a dmidecode call
         total_slots = int(utils.run("dmidecode -t 17 | grep -o BANK | wc -l"))
         used_slots = int(utils.run("dmidecode -t 17 | grep Size | grep MB | awk '{print $2}' | wc -l"))
-        speed = get_subsection_value(dmidecode, "Memory Device", "Speed")
+        speed = get_subsection_value(dmidecode_out, "Memory Device", "Speed")
         
-        # FIXME why is not getting all the RAM? (power of 2)
-        size = utils.convert_capacity(ram_data['size'], ram_data['units'], CAPACITY_UNIT)
+        # FIXME get total size or describe slot per slot
+        size = 0
+        for key, value in dmidecode.memory().iteritems():
+            if value['data'].get('Size', None) is not None:
+                size += int(value['data']['Size'].split()[0])
         
         return {
             'size_ram': size,
             'unit_size': CAPACITY_UNIT,
             # EDO|SDRAM|DDR3|DDR2|DDR|RDRAM
-            'interface_ram': get_subsection_value(dmidecode, "Memory Device", "Type"),
+            'interface_ram': get_subsection_value(dmidecode_out, "Memory Device", "Type"),
             'free_slots_ram': total_slots - used_slots,
             'used_slots_ram': used_slots,
             'score_ram': benchmark.score_ram(speed),
