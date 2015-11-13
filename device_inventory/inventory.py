@@ -206,11 +206,14 @@ class Inventory(object):
     
     @property
     def audio(self):
-        # TODO support several cards
-        model = get_subsection_value(self.lshw, "*-multimedia", "product")
-        return {
-            "model_audio": model,
-        }
+        audio_cards = []
+        for node in self.lshw_xml.xpath('//node[@id="multimedia"]'):
+            product = node.xpath('product/text()')[0]
+            audio_cards.append({
+                "model_audio": product,
+            })
+
+        return audio_cards
     
     @property
     def network(self):
