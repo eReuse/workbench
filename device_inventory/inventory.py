@@ -214,13 +214,25 @@ class Inventory(object):
     
     @property
     def network(self):
-        # TODO get all the network interfaces
-        model = get_subsection_value(self.lshw, "*-network", "product")
-        speed = get_subsection_value(self.lshw, "*-network", "capacity")
-        return {
-            "model_net": model,
-            "speed_net": speed,
-        }
+        net_cards = []
+        for net in self.lshw_xml.xpath('//node[@id="network"]'):
+            #print etree.tostring(net)
+            product = net.xpath('product/text()')[0]
+            try:
+                speed = net.xpath('capacity/text()')[0]
+                units = "bps"  # net.xpath('capacity/@units')[0]
+            except IndexError as e:
+                speed_net = None
+            else:
+                # FIXME convert speed to Mbps?
+                speed = utils.convert_speed(speed, units, "Mbps")
+                speed_net = "{0} {1}".format(speed, "Mbps")
+            
+            net_cards.append({
+                "model_net": product,
+                "speed_net": speed_net,
+            })
+        return net_cards
     
     @property
     def optical_drives(self):

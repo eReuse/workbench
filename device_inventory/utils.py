@@ -23,5 +23,17 @@ def convert_capacity(value, src_unit, dst_unit):
     return value * pow(1024, diff)
 
 
+def convert_speed(value, src_unit, dst_unit):
+    # TODO convert to the bigger unit that returns an integer
+    UNITS = ["bps", "Kbps", "Mbps", "Gbps"]
+    assert src_unit in UNITS, src_unit
+    assert dst_unit in UNITS, dst_unit
+    
+    value = int(value)
+    diff = UNITS.index(src_unit) - UNITS.index(dst_unit)
+    
+    return int(value * pow(1000, diff))
+
+
 def run(cmd):
     return os.popen(cmd).read().strip()
