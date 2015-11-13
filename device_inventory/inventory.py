@@ -257,16 +257,18 @@ class Inventory(object):
             ("PCMCIA", "pcmcia"),
         )
         
+        def number_of_connectors(root, name):
+            for i in range(10):
+                if not root.xpath('//node[@id="{0}:{1}"]'.format(name, i)):
+                    return i
+        
         result = []
         for verbose, value in CONNECTORS:
-            try:
-                model = get_subsection_value(self.lshw, "*-{0}".format(value), "product")
-            except IndexError:
-                pass
-            else:
+            count = number_of_connectors(self.lshw_xml, value)
+            if count > 0:
                 result.append({
                     "tipus_connector": verbose,
-                    "nombre_connector": 1,  # TODO count available connectos
+                    "nombre_connector": count,
                 })
         
         return {"connector": result}
