@@ -95,7 +95,7 @@ class Inventory(object):
         cpu_freq = utils.convert_frequency(freq, 'MHz', FREQ_UNIT)
         
         return {
-            'nom_cpu': cpu_data['product'],
+            'nom_cpu': re.sub(r"\s+ ", " ", cpu_data['product']),
             'fab_cpu': cpu_data['vendor'],  # was /proc/cpuinfo | grep vendor_id
             'speed_cpu': cpu_freq,
             'unit_speed_cpu': FREQ_UNIT,
