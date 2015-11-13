@@ -17,9 +17,12 @@ from .serializers import dict_to_xml
 
 def load_config():
     # https://docs.python.org/3.4/library/configparser.html
-    basepath = os.path.dirname(sys.argv[0])
+    path = os.path.dirname(__file__)
+    config_file = os.path.join(path, 'config.ini')
+    assert os.path.exists(config_file), config_file
+
     config = configparser.ConfigParser()
-    config.read(os.path.join(basepath, 'config.ini'))  # donator.cfg merged here
+    config.read(config_file)  # donator.cfg merged here
     
     #print(config['DEFAULT']['DISC'])
     #print(config['DEFAULT'].getboolean('DISC'))
@@ -61,7 +64,7 @@ def get_device_status(run_smart):
 
 
 
-if __name__ == "__main__":
+def main():
     if not os.geteuid() == 0:
         sys.exit("Only root can run this script")
     
@@ -104,3 +107,7 @@ if __name__ == "__main__":
     
     dict_to_xml(equip)
     print("END OF EXECUTION!!! look at /tmp/equip.xml")
+
+
+if __name__ == "__main__":
+    sys.exit(main())
