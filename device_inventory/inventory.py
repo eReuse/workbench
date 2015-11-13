@@ -6,6 +6,8 @@ import re
 import subprocess
 import uuid
 
+from lxml import etree
+
 from . import benchmark
 from . import utils
 
@@ -27,6 +29,9 @@ class Inventory(object):
         # JSON
         lshw_js = subprocess.check_output(["lshw", "-json"], universal_newlines=True)
         self.lshw_json = json.loads(lshw_js)
+
+        # XML
+        self.lshw_xml = etree.fromstring(subprocess.check_output(["lshw", "-xml"]))
         
         # Plain text (current)
         self.lshw = subprocess.check_output(["lshw"], universal_newlines=True)
