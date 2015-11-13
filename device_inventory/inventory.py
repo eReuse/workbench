@@ -219,7 +219,6 @@ class Inventory(object):
     def network(self):
         net_cards = []
         for net in self.lshw_xml.xpath('//node[@id="network"]'):
-            #print etree.tostring(net)
             product = net.xpath('product/text()')[0]
             try:
                 speed = net.xpath('capacity/text()')[0]
@@ -239,15 +238,15 @@ class Inventory(object):
     
     @property
     def optical_drives(self):
-        # TODO support multiple optical drives
-        model = get_subsection_value(self.lshw, "*-cdrom", "product")
-        description = get_subsection_value(self.lshw, "*-cdrom", "description")
-        return [
-            {
-                "model_uni": model,
+        drives = []
+        for node in self.lshw_xml.xpath('//node[@id="cdrom"]'):
+            product = node.xpath('product/text()')[0]
+            description = node.xpath('description/text()')[0]
+            drives.append({
+                "model_uni": product,
                 "tipo_uni": description,  # TODO normalize values?
-            },
-        ]
+            })
+        return drives
     
     @property
     def connectors(self):
