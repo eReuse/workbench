@@ -63,7 +63,29 @@ class Processor(object):
         
         speed = dmidecode.processor()['0x0004']['data']['Current Speed']
         self.freq = utils.convert_frequency(speed, 'MHz', self.FREQ_UNIT)
+
+
+class MemoryModule(object):
+    CAPACITY_UNIT = 'MB'
     
+    def __init__(self, lshw_json):
+        ram_data = lshw_json['children'][0]['children'][0]
+        dmidecode_out = utils.run("dmidecode -t 17")
+        # dmidecode.QueryTypeId(7)
+        
+        # TODO optimize to only use a dmidecode call
+        self.total_slots = int(utils.run("dmidecode -t 17 | grep -o BANK | wc -l"))
+        self.used_slots = int(utils.run("dmidecode -t 17 | grep Size | grep MB | awk '{print $2}' | wc -l"))
+        self.speed = get_subsection_value(dmidecode_out, "Memory Device", "Speed")
+        self.interface = get_subsection_value(dmidecode_out, "Memory Device", "Type")
+        
+        # FIXME get total size but describe slot per slot
+        size = 0
+        for key, value in dmidecode.memory().iteritems():
+            if value['data'].get('Size', None) is not None:
+                size += int(value['data']['Size'].split()[0])
+        
+        self.size = size
 
 
 class Computer(object):
@@ -148,30 +170,16 @@ class Computer(object):
     
     @property
     def ram(self):
-        CAPACITY_UNIT = 'MB'
-        ram_data = self.lshw_json['children'][0]['children'][0]
-        dmidecode_out = utils.run("dmidecode -t 17")
-        # dmidecode.QueryTypeId(7)
-        
-        # TODO optimize to only use a dmidecode call
-        total_slots = int(utils.run("dmidecode -t 17 | grep -o BANK | wc -l"))
-        used_slots = int(utils.run("dmidecode -t 17 | grep Size | grep MB | awk '{print $2}' | wc -l"))
-        speed = get_subsection_value(dmidecode_out, "Memory Device", "Speed")
-        
-        # FIXME get total size or describe slot per slot
-        size = 0
-        for key, value in dmidecode.memory().iteritems():
-            if value['data'].get('Size', None) is not None:
-                size += int(value['data']['Size'].split()[0])
-        
+        # TODO split computer.total_memory and MemoryModule(s) as components
+        memory = MemoryModule(self.lshw_json)
         return {
-            'size_ram': size,
-            'unit_size': CAPACITY_UNIT,
+            'size_ram': memory.size,
+            'unit_size': memory.CAPACITY_UNIT,
             # EDO|SDRAM|DDR3|DDR2|DDR|RDRAM
-            'interface_ram': get_subsection_value(dmidecode_out, "Memory Device", "Type"),
-            'free_slots_ram': total_slots - used_slots,
-            'used_slots_ram': used_slots,
-            'score_ram': benchmark.score_ram(speed),
+            'interface_ram': memory.interface,
+            'free_slots_ram': memory.total_slots - memory.used_slots,
+            'used_slots_ram': memory.used_slots,
+            'score_ram': benchmark.score_ram(memory.speed),
         }
     
     @property
