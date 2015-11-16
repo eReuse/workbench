@@ -58,8 +58,8 @@ class Processor(object):
         self.number_cores = os.popen("lscpu | grep 'Core(s) per socket'").read().split(':')[1].strip()
         
         cpu_data = lshw_json['children'][0]['children'][1]
-        self.product = re.sub(r"\s+ ", " ", cpu_data['product']),
-        self.vendor = cpu_data['vendor'],  # was /proc/cpuinfo | grep vendor_id
+        self.product = re.sub(r"\s+ ", " ", cpu_data['product'])
+        self.vendor = cpu_data['vendor']  # was /proc/cpuinfo | grep vendor_id
         
         speed = dmidecode.processor()['0x0004']['data']['Current Speed']
         self.freq = utils.convert_frequency(speed, 'MHz', self.FREQ_UNIT)
