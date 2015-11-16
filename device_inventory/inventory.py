@@ -23,6 +23,22 @@ def get_subsection_value(output, section_name, subsection_name):
     return output[subsection:end].split(':')[1].strip()
 
 
+class Processor(object):
+    FREQ_UNIT = 'GHz'
+    
+    def __init__(self, lshw_json):
+        self.number_cpus = multiprocessing.cpu_count()  # Python > 3.4 os.cpu_count()
+        self.number_cores = os.popen("lscpu | grep 'Core(s) per socket'").read().split(':')[1].strip()
+        
+        cpu_data = lshw_json['children'][0]['children'][1]
+        self.product = re.sub(r"\s+ ", " ", cpu_data['product']),
+        self.vendor = cpu_data['vendor'],  # was /proc/cpuinfo | grep vendor_id
+        
+        speed = dmidecode.processor()['0x0004']['data']['Current Speed']
+        self.freq = utils.convert_frequency(speed, 'MHz', self.FREQ_UNIT)
+    
+
+
 class Computer(object):
     def __init__(self):
         # http://www.ezix.org/project/wiki/HardwareLiSter
@@ -91,21 +107,15 @@ class Computer(object):
     
     @property
     def cpu(self):
-        FREQ_UNIT = 'GHz'
-        number_cpus = multiprocessing.cpu_count()  # Python > 3.4 os.cpu_count()
-        number_cores = os.popen("lscpu | grep 'Core(s) per socket'").read().split(':')[1].strip()
-        cpu_data = self.lshw_json['children'][0]['children'][1]
-        
-        freq = dmidecode.processor()['0x0004']['data']['Current Speed']
-        cpu_freq = utils.convert_frequency(freq, 'MHz', FREQ_UNIT)
+        processor = Processor(self.lshw_json)
         
         return {
-            'nom_cpu': re.sub(r"\s+ ", " ", cpu_data['product']),
-            'fab_cpu': cpu_data['vendor'],  # was /proc/cpuinfo | grep vendor_id
-            'speed_cpu': cpu_freq,
-            'unit_speed_cpu': FREQ_UNIT,
-            'number_cpu': number_cpus,
-            'number_cores': number_cores,
+            'nom_cpu': processor.product,
+            'fab_cpu': processor.vendor,
+            'speed_cpu': processor.freq,
+            'unit_speed_cpu': processor.FREQ_UNIT,
+            'number_cpu': processor.number_cpus,
+            'number_cores': processor.number_cores,
             'score_cpu': benchmark.score_cpu(),
         }
     
