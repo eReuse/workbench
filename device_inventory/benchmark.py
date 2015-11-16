@@ -66,4 +66,10 @@ def score_ram(speed):
         return "Unknown"
     return freq/lat
 
-# TODO score_vga()
+
+def score_vga(model_name):
+    score = None
+    for model in re.findall('\w*\d\w*', model_name):
+        # TODO find matching on etc/vga.txt (e.g. ['GT218M', '310M'])
+        pass
+    return score

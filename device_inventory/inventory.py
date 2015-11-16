@@ -201,7 +201,7 @@ class Inventory(object):
             "model_vga": model_vga,
             "size_vga": int(max_size/1024),
             "unit_size_vga": "MB",
-            "score_vga": "",  # TODO
+            "score_vga": benchmark.score_vga(model_vga),
         }
     
     @property
