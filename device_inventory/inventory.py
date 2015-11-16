@@ -23,6 +23,33 @@ def get_subsection_value(output, section_name, subsection_name):
     return output[subsection:end].split(':')[1].strip()
 
 
+class GraphicCard(object):
+    def __init__(self, lshw):
+        product = get_subsection_value(lshw, "display", "product")
+        vendor = get_subsection_value(lshw, "display", "vendor")
+        if product or vendor:
+            self.model = "{vendor} {product}".format(vendor=vendor, product=product)
+        else:
+            self.model = get_subsection_value(lshw, "display", "description")
+        
+        # Find VGA memory
+        bus_info = get_subsection_value(lshw, "display", "bus info").split("@")[1]
+        mem = utils.run("lspci -v -s {bus} | grep 'prefetchable' | grep -v 'non-prefetchable' | egrep -o '[0-9]{{1,3}}[KMGT]+'".format(bus=bus_info)).splitlines()
+        
+        # Get max memory value
+        max_size = 0
+        for value in mem:
+            unit = re.split('\d+', value)[1]
+            size = int(value.rstrip(unit))
+            
+            # convert all values to KB before compare
+            size_kb = utils.convert_base(size, unit, 'K', distance=1024)
+            if size_kb > max_size:
+                max_size = size_kb
+
+        self.size = utils.convert_capacity(max_size, 'KB', 'MB')
+
+
 class Processor(object):
     FREQ_UNIT = 'GHz'
     
@@ -177,41 +204,12 @@ class Computer(object):
     
     @property
     def vga(self):
-        product = get_subsection_value(self.lshw, "display", "product")
-        vendor = get_subsection_value(self.lshw, "display", "vendor")
-        if product or vendor:
-            model_vga = "{vendor} {product}".format(vendor=vendor, product=product)
-        else:
-            model_vga = get_subsection_value(self.lshw, "display", "description")
-        
-        # Find VGA memory
-        bus_info = get_subsection_value(self.lshw, "display", "bus info").split("@")[1]
-        mem = utils.run("lspci -v -s {bus} | grep 'prefetchable' | grep -v 'non-prefetchable' | egrep -o '[0-9]{{1,3}}[KMGT]+'".format(bus=bus_info)).splitlines()
-        
-        # Get max memory value
-        max_size = 0
-        for value in mem:
-            unit = re.split('\d+', value)[1]
-            size = int(value.rstrip(unit))
-            
-            # convert all values to KB before compare
-            if unit == 'K':
-                size_kb = size
-            elif unit == 'M':
-                size_kb = size * 1024
-            elif unit == 'G':
-                size_kb = size * 1024 * 1024
-            elif unit == 'T':
-                size_kb = size * 1024 * 1024 * 1024
-            
-            if size_kb > max_size:
-                max_size = size_kb
-        
+        gcard = GraphicCard(self.lshw)
         return {
-            "model_vga": model_vga,
-            "size_vga": int(max_size/1024),
+            "model_vga": gcard.model,
+            "size_vga": gcard.size,
             "unit_size_vga": "MB",
-            "score_vga": benchmark.score_vga(model_vga),
+            "score_vga": benchmark.score_vga(gcard.model),
         }
     
     @property
