@@ -11,7 +11,7 @@ import sys
 import time
 
 from .benchmark import hard_disk_smart
-from .inventory import Inventory
+from .inventory import Computer
 from .serializers import dict_to_xml
 
 
@@ -73,7 +73,7 @@ def main():
     # dat_state only date on human friendly format
     beg_donator_time = calendar.timegm(time.gmtime())  # INITIAL_DONATOR_TIME
     config = load_config()
-    device = Inventory()  # XXX pass device type and other user input?
+    device = Computer()  # XXX pass device type and other user input?
     device_status = get_device_status(run_smart=config.getboolean('DEFAULT', 'DISC'))
     end_donator_time = calendar.timegm(time.gmtime())  # END_DONATOR_TIME
     

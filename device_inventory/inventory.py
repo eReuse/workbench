@@ -23,7 +23,7 @@ def get_subsection_value(output, section_name, subsection_name):
     return output[subsection:end].split(':')[1].strip()
 
 
-class Inventory(object):
+class Computer(object):
     def __init__(self):
         # http://www.ezix.org/project/wiki/HardwareLiSter
         # JSON
