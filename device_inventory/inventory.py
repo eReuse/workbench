@@ -23,6 +23,28 @@ def get_subsection_value(output, section_name, subsection_name):
     return output[subsection:end].split(':')[1].strip()
 
 
+class HardDisk(object):
+    # TODO USB and (S)ATA subclasses
+    CAPACITY_UNITS = "MB"
+    
+    def __init__(self, lshw):
+        # optimization? lshw -json -class disk
+        # use dict lookup http://stackoverflow.com/a/27234926/1538221
+        # NOTE only gets info of first HD
+        self.logical_name = get_subsection_value(lshw, "*-disk", "logical name")
+        self.interface = utils.run("udevadm info --query=all --name={0} | grep ID_BUS | cut -c 11-".format(self.logical_name))
+        
+        # TODO implement method for USB disk
+        if self.interface == "usb":
+            self.model = self.serial = self.size = "Unknown"
+        
+        else:
+            # (S)ATA disk
+            self.model = utils.run("hdparm -I {0} | grep 'Model\ Number' | cut -c 22-".format(self.logical_name))
+            self.serial = utils.run("hdparm -I {0} | grep 'Serial\ Number' | cut -c 22-".format(self.logical_name))
+            self.size = utils.run("hdparm -I {0} | grep 'device\ size\ with\ M' | head -n1 | awk '{{print $7}}'".format(self.logical_name))
+
+
 class GraphicCard(object):
     def __init__(self, lshw):
         product = get_subsection_value(lshw, "display", "product")
@@ -189,30 +211,15 @@ class Computer(object):
     
     @property
     def hdd(self):
-        # optimization? lshw -json -class disk
-        # use dict lookup http://stackoverflow.com/a/27234926/1538221
-        # NOTE only gets info of first HD
-        logical_name = get_subsection_value(self.lshw, "*-disk", "logical name")
-        interface = utils.run("udevadm info --query=all --name={0} | grep ID_BUS | cut -c 11-".format(logical_name))
-        
-        # TODO implement method for USB disk
-        if interface == "usb":
-            model = serial = size = "Unknown"
-        
-        else:
-            # (S)ATA disk
-            model = utils.run("hdparm -I {0} | grep 'Model\ Number' | cut -c 22-".format(logical_name))
-            serial = utils.run("hdparm -I {0} | grep 'Serial\ Number' | cut -c 22-".format(logical_name))
-            size = utils.run("hdparm -I {0} | grep 'device\ size\ with\ M' | head -n1 | awk '{{print $7}}'".format(logical_name))
-
+        hard_disk = HardDisk(self.lshw)
         
         return {
-            "model": model,
-            "serial": serial,
-            "size": size,
-            "measure": "MB",
-            "name": logical_name,
-            "interface": interface,
+            "model": hard_disk.model,
+            "serial": hard_disk.serial,
+            "size": hard_disk.size,
+            "measure": hard_disk.CAPACITY_UNITS,
+            "name": hard_disk.logical_name,
+            "interface": hard_disk.interface,
         }
     
     @property
