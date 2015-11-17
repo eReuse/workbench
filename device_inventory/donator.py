@@ -10,9 +10,9 @@ import socket
 import sys
 import time
 
+from . import serializers
 from .benchmark import hard_disk_smart
 from .inventory import Computer
-from .serializers import dict_to_xml
 
 
 def load_config():
@@ -74,38 +74,14 @@ def main():
     beg_donator_time = calendar.timegm(time.gmtime())  # INITIAL_DONATOR_TIME
     config = load_config()
     device = Computer()  # XXX pass device type and other user input?
-    device_status = get_device_status(run_smart=config.getboolean('DEFAULT', 'DISC'))
+    status = get_device_status(run_smart=config.getboolean('DEFAULT', 'DISC'))
     end_donator_time = calendar.timegm(time.gmtime())  # END_DONATOR_TIME
     
-    equip = {
-        "equip": {
-            "id": device.ID,
-            "id2": device.ID2,
-            "ID_donant": "",
-            "ID_2": "",
-            "LABEL": "",
-            "INITIAL_TIME": "0",
-            "INITIAL_DONATOR_TIME": beg_donator_time,
-            "comments": "some comment",
-            "type": "1",
-            "serials": device.serials,
-            "estat": device_status,
-            "caracteristiques": {
-                "cpu": device.cpu,
-                "ram": device.ram,
-                "hdd": device.hdd,
-                "vga": device.vga,
-                "audio": device.audio,
-                "net": device.network,
-                "unidad": device.optical_drives,
-                "connectors": device.connectors,
-                "marca": device.brand_info,
-            },
-            "END_DONATOR_TIME": end_donator_time,
-        }
-    }
-    
-    dict_to_xml(equip)
+    # Export to legacy XML
+    legacy = serializers.export_to_legacy_schema(
+        device, status, beg_donator_time, end_donator_time
+    )
+    serializers.dict_to_xml(legacy, "/tmp/equip.xml")
     print("END OF EXECUTION!!! look at /tmp/equip.xml")
 
 

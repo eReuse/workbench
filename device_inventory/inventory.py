@@ -1,3 +1,4 @@
+import collections
 import dmidecode
 import json
 import multiprocessing
@@ -21,6 +22,29 @@ def get_subsection_value(output, section_name, subsection_name):
     subsection = output.find(subsection_name, section)#, end_section)
     end = output.find("\n", subsection)
     return output[subsection:end].split(':')[1].strip()
+
+Connector = collections.namedtuple('Connector', ['name', 'count', 'verbose_name'])
+
+class Motherboard(object):
+    CONNECTORS = (
+        ("USB", "usb"),
+        ("FireWire", "firewire"),
+        ("Serial Port", "serial"),
+        ("PCMCIA", "pcmcia"),
+    )
+    
+    def __init__(self, lshw_xml):
+        self.connectors = []
+        for verbose, value in self.CONNECTORS:
+            count = self.number_of_connectors(lshw_xml, value)
+            self.connectors.append(
+                Connector(name=value, count=count, verbose_name=verbose)
+            )
+    
+    def number_of_connectors(self, root, name):
+        for i in range(10):
+            if not root.xpath('//node[@id="{0}:{1}"]'.format(name, i)):
+                return i
 
 
 class HardDisk(object):
@@ -46,6 +70,8 @@ class HardDisk(object):
 
 
 class GraphicCard(object):
+    CAPACITY_UNITS = "MB"
+    
     def __init__(self, lshw):
         product = get_subsection_value(lshw, "display", "product")
         vendor = get_subsection_value(lshw, "display", "vendor")
@@ -70,6 +96,31 @@ class GraphicCard(object):
                 max_size = size_kb
 
         self.size = utils.convert_capacity(max_size, 'KB', 'MB')
+    
+    @property
+    def score(self):
+        return benchmark.score_vga(self.model)
+
+
+class NetworkInterface(object):
+    def __init__(self, net_xml):
+        self.product = net_xml.xpath('product/text()')[0]
+        try:
+            speed = net_xml.xpath('capacity/text()')[0]
+            units = "bps"  # net.xpath('capacity/@units')[0]
+        except IndexError as e:
+            self.speed_net = None
+        else:
+            # FIXME convert speed to Mbps?
+            speed = utils.convert_speed(speed, units, "Mbps")
+            self.speed_net = "{0} {1}".format(speed, "Mbps")
+
+
+class OpticalDrive(object):
+    def __init__(self, node_xml):
+        self.product = node_xml.xpath('product/text()')[0]
+        # TODO normalize values?
+        self.description = node_xml.xpath('description/text()')[0]
 
 
 class Processor(object):
@@ -85,9 +136,14 @@ class Processor(object):
         
         speed = dmidecode.processor()['0x0004']['data']['Current Speed']
         self.freq = utils.convert_frequency(speed, 'MHz', self.FREQ_UNIT)
+    
+    @property
+    def score(self):
+        return benchmark.score_cpu()
 
 
 class MemoryModule(object):
+    # TODO split computer.total_memory and MemoryModule(s) as components
     CAPACITY_UNIT = 'MB'
     
     def __init__(self, lshw_json):
@@ -100,6 +156,7 @@ class MemoryModule(object):
         self.used_slots = int(utils.run("dmidecode -t 17 | grep Size | grep MB | awk '{print $2}' | wc -l"))
         self.speed = get_subsection_value(dmidecode_out, "Memory Device", "Speed")
         self.interface = get_subsection_value(dmidecode_out, "Memory Device", "Type")
+        # EDO|SDRAM|DDR3|DDR2|DDR|RDRAM
         
         # FIXME get total size but describe slot per slot
         size = 0
@@ -108,6 +165,14 @@ class MemoryModule(object):
                 size += int(value['data']['Size'].split()[0])
         
         self.size = size
+    
+    @property
+    def free_slots(self):
+        return self.total_slots - self.used_slots
+    
+    @property
+    def score(self):
+        return benchmark.score_ram(self.speed)
 
 
 class SoundCard(object):
@@ -130,6 +195,17 @@ class Computer(object):
         self.dmi = subprocess.check_output(["dmidecode"], universal_newlines=True)
         
         self.init_serials()
+        
+        # Retrieve computer info
+        self.manufacturer = get_subsection_value(self.dmi, "System Information", "Manufacturer")
+        self.product = get_subsection_value(self.dmi, "System Information", "Product Name")
+        
+        # Initialize components
+        self.processor = Processor(self.lshw_json)
+        self.memory = MemoryModule(self.lshw_json)
+        self.hard_disk = HardDisk(self.lshw)
+        self.graphic_card = GraphicCard(self.lshw)
+        self.motherboard = Motherboard(self.lshw_xml)
     
     def init_serials(self):
         # getnode attempts to obtain the hardware address, if fails it
@@ -182,128 +258,23 @@ class Computer(object):
         }
     
     @property
-    def cpu(self):
-        processor = Processor(self.lshw_json)
-        
-        return {
-            'nom_cpu': processor.product,
-            'fab_cpu': processor.vendor,
-            'speed_cpu': processor.freq,
-            'unit_speed_cpu': processor.FREQ_UNIT,
-            'number_cpu': processor.number_cpus,
-            'number_cores': processor.number_cores,
-            'score_cpu': benchmark.score_cpu(),
-        }
-    
-    @property
-    def ram(self):
-        # TODO split computer.total_memory and MemoryModule(s) as components
-        memory = MemoryModule(self.lshw_json)
-        return {
-            'size_ram': memory.size,
-            'unit_size': memory.CAPACITY_UNIT,
-            # EDO|SDRAM|DDR3|DDR2|DDR|RDRAM
-            'interface_ram': memory.interface,
-            'free_slots_ram': memory.total_slots - memory.used_slots,
-            'used_slots_ram': memory.used_slots,
-            'score_ram': benchmark.score_ram(memory.speed),
-        }
-    
-    @property
-    def hdd(self):
-        hard_disk = HardDisk(self.lshw)
-        
-        return {
-            "model": hard_disk.model,
-            "serial": hard_disk.serial,
-            "size": hard_disk.size,
-            "measure": hard_disk.CAPACITY_UNITS,
-            "name": hard_disk.logical_name,
-            "interface": hard_disk.interface,
-        }
-    
-    @property
-    def vga(self):
-        gcard = GraphicCard(self.lshw)
-        return {
-            "model_vga": gcard.model,
-            "size_vga": gcard.size,
-            "unit_size_vga": "MB",
-            "score_vga": benchmark.score_vga(gcard.model),
-        }
-    
-    @property
-    def audio(self):
-        audio_cards = []
+    def sound_cards(self):
+        cards = []
         for node in self.lshw_xml.xpath('//node[@id="multimedia"]'):
             product = node.xpath('product/text()')[0]
-            audio_cards.append(SoundCard(product))
-        
-        return [{"model_audio": card.product} for card in audio_cards]
+            cards.append(SoundCard(product))
+        return cards
     
     @property
-    def network(self):
+    def network_interfaces(self):
         net_cards = []
-        for net in self.lshw_xml.xpath('//node[@id="network"]'):
-            product = net.xpath('product/text()')[0]
-            try:
-                speed = net.xpath('capacity/text()')[0]
-                units = "bps"  # net.xpath('capacity/@units')[0]
-            except IndexError as e:
-                speed_net = None
-            else:
-                # FIXME convert speed to Mbps?
-                speed = utils.convert_speed(speed, units, "Mbps")
-                speed_net = "{0} {1}".format(speed, "Mbps")
-            
-            net_cards.append({
-                "model_net": product,
-                "speed_net": speed_net,
-            })
+        for net_xml in self.lshw_xml.xpath('//node[@id="network"]'):
+            net_cards.append(NetworkInterface(net_xml))
         return net_cards
     
     @property
     def optical_drives(self):
         drives = []
         for node in self.lshw_xml.xpath('//node[@id="cdrom"]'):
-            product = node.xpath('product/text()')[0]
-            description = node.xpath('description/text()')[0]
-            drives.append({
-                "model_uni": product,
-                "tipo_uni": description,  # TODO normalize values?
-            })
+            drives.append(OpticalDrive(node))
         return drives
-    
-    @property
-    def connectors(self):
-        CONNECTORS = (
-            ("USB", "usb"),
-            ("FireWire", "firewire"),
-            ("Serial Port", "serial"),
-            ("PCMCIA", "pcmcia"),
-        )
-        
-        def number_of_connectors(root, name):
-            for i in range(10):
-                if not root.xpath('//node[@id="{0}:{1}"]'.format(name, i)):
-                    return i
-        
-        result = []
-        for verbose, value in CONNECTORS:
-            count = number_of_connectors(self.lshw_xml, value)
-            if count > 0:
-                result.append({
-                    "tipus_connector": verbose,
-                    "nombre_connector": count,
-                })
-        
-        return {"connector": result}
-    
-    @property
-    def brand_info(self):
-        manufacturer = get_subsection_value(self.dmi, "System Information", "Manufacturer")
-        product = get_subsection_value(self.dmi, "System Information", "Product Name")
-        return {
-            "fab_marca": manufacturer,
-            "model_marca": product,
-        }
