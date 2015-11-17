@@ -88,6 +88,11 @@ class MemoryModule(object):
         self.size = size
 
 
+class SoundCard(object):
+    def __init__(self, product):
+        self.product = product
+
+
 class Computer(object):
     def __init__(self):
         # http://www.ezix.org/project/wiki/HardwareLiSter
@@ -225,11 +230,9 @@ class Computer(object):
         audio_cards = []
         for node in self.lshw_xml.xpath('//node[@id="multimedia"]'):
             product = node.xpath('product/text()')[0]
-            audio_cards.append({
-                "model_audio": product,
-            })
-
-        return audio_cards
+            audio_cards.append(SoundCard(product))
+        
+        return [{"model_audio": card.product} for card in audio_cards]
     
     @property
     def network(self):
