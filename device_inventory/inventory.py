@@ -181,6 +181,11 @@ class SoundCard(object):
 
 
 class Computer(object):
+    DESKTOP = "Desktop"
+    TYPES = (
+        (DESKTOP, "desktop")
+    )
+    
     def __init__(self):
         # http://www.ezix.org/project/wiki/HardwareLiSter
         # JSON
@@ -197,6 +202,7 @@ class Computer(object):
         self.init_serials()
         
         # Retrieve computer info
+        self.type = self.DESKTOP  # TODO ask user or asume any value if not provided
         self.manufacturer = get_subsection_value(self.dmi, "System Information", "Manufacturer")
         self.product = get_subsection_value(self.dmi, "System Information", "Product Name")
         
@@ -217,8 +223,10 @@ class Computer(object):
         
         ## Search manufacturer's serial number
         self.SERIAL1 = get_subsection_value(self.dmi, "System Information", "Serial Number")
+        self.serial_number = self.SERIAL1  # TODO XXX rename field
         
         ## Search motherboard's serial number
+        # TODO move this serial to the Motherboard class
         self.SERIAL2 = get_subsection_value(self.dmi, "Base Board Information", "Serial Number")
         
         ## Search CPU's serial number, if there are several we choose the first
@@ -226,12 +234,14 @@ class Computer(object):
         # FIXME Serial Number returns "To be filled by OEM"
         # http://forum.giga-byte.co.uk/index.php?topic=14167.0
         # self.SERIAL3 = get_subsection_value(self.dmi, "Processor Information", "ID")
+        # TODO move this serial to the Processor class
         self.SERIAL3 = get_subsection_value(self.lshw, "*-cpu", "serial")
         
         # B) Try to call CPUID? https://en.wikipedia.org/wiki/CPUID
         # http://stackoverflow.com/a/4216034/1538221
         
         ## Search RAM's serial number, if there are several we choose the first
+        # TODO move this serial to the MemoryModule class
         dmi_memory = subprocess.check_output(["dmidecode", "-t" "memory"], universal_newlines=True)
         self.SERIAL4 = get_subsection_value(dmi_memory, "Memory Device", "Serial Number")
         
