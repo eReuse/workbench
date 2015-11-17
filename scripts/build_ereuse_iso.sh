@@ -24,7 +24,7 @@ sudo mv squashfs-root edit
 ### PACK the ISO ###
 
 # Regenerate manifest
-chmod +w extract-cd/casper/filesystem.manifest
+sudo chmod +w extract-cd/casper/filesystem.manifest
 sudo chroot edit dpkg-query -W --showformat='${Package} ${Version}\n' > extract-cd/casper/filesystem.manifest
 sudo cp extract-cd/casper/filesystem.manifest extract-cd/casper/filesystem.manifest-desktop
 sudo sed -i '/ubiquity/d' extract-cd/casper/filesystem.manifest-desktop
@@ -33,8 +33,11 @@ sudo sed -i '/casper/d' extract-cd/casper/filesystem.manifest-desktop
 # remove previous squashfs
 sudo rm extract-cd/casper/filesystem.squashfs
 
-# highest compression
+# highest compression (~3min)
 sudo mksquashfs edit extract-cd/casper/filesystem.squashfs -comp xz -e edit/boot
+
+# XXX NO COMPRESSION - DEBUG PURPOSES (~1min)
+#sudo mksquashfs edit extract-cd/casper/filesystem.squashfs -e edit/boot
 
 # Update the filesystem.size file, which is needed by the installer:
 printf $(sudo du -sx --block-size=1 edit | cut -f1) > extract-cd/casper/filesystem.size
@@ -53,4 +56,7 @@ find -type f -print0 | sudo xargs -0 md5sum | grep -v isolinux/boot.cat | sudo t
 #sudo mkisofs -D -r -V "$IMAGE_NAME" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS_v6.3.2.iso .
 
 # B) Debian
-sudo genisoimage -D -r -V "$IMAGE_NAME" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS_v6.3.2.iso .
+sudo genisoimage -D -r -V "$IMAGE_NAME" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS_v6.3.3_chk.iso .
+
+cd ..
+
