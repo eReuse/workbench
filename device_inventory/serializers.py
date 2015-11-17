@@ -107,3 +107,40 @@ def export_to_legacy_schema(device, status, beg_donator_time, end_donator_time):
     }
     
     return computer
+
+
+"""
+# Class > dict > JSON
+import json
+from device_inventory import inventory
+
+dev = inventory.Computer()
+processor = inventory.Processor(dev.lshw_json)
+json.dumps(processor.__dict__)
+
+"""
+def export_to_devicehub_schema(device):
+    components = []
+    for cp_name in ["processor", "memory", "hard_disk", "graphic_card", "motherboard"]:
+        cp = getattr(device, cp_name)
+        value = cp.__dict__
+        value.update({"@type": type(cp).__name__})
+        components.append(cp.__dict__)
+    
+    snapshot = {
+        "@type": "Snapshot",
+        "device": {
+            "@type": type(device).__name__,
+            "type": device.type,
+            "label": "",  # TODO ask user
+            # TODO remove workaround until DeviceHub was more flexible
+            #      with manufacturer values
+            "manufacturer": device.manufacturer.replace(" ", "").replace(".", ""),
+            "model": device.product,
+            "serialNumber": device.serial_number,
+            "totalMemory": device.memory.size,
+        },
+        "components": components,
+    }
+    
+    return snapshot
