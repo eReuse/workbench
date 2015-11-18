@@ -5,7 +5,6 @@ import multiprocessing
 import os
 import re
 import subprocess
-import uuid
 
 from lxml import etree
 
@@ -245,11 +244,12 @@ class Computer(object):
         (only for backwards compatibility)
         
         """
-        # getnode attempts to obtain the hardware address, if fails it
-        # chooses a random 48-bit number with its eight bit set to 1
-        self.ID = uuid.getnode()
-        if (self.ID >> 40) % 2:
-            raise OSError("The system does not seem to have a valid MAC.")
+        match = re.search("([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}", self.lshw)
+        if match is not None:
+            self.ID = match.group(0).replace(':', '')
+        else:
+            # The system does not seem to have a valid MAC
+            self.ID = "000000000000"
         
         # Deprecated: cksum CRC32 joining 5 serial numbers as secundary ID
         #ID2=`echo ${SERIAL1} ${SERIAL2} ${SERIAL3} ${SERIAL4} ${SERIAL5} | cksum | awk {'print $1'}`
