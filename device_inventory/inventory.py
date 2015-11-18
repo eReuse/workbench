@@ -33,7 +33,7 @@ class Motherboard(object):
     )
     
     def __init__(self, lshw_xml, dmi):
-        self.serial_number = get_subsection_value(dmi, "Base Board Information", "Serial Number")
+        self.serialNumber = get_subsection_value(dmi, "Base Board Information", "Serial Number")
         
         self.connectors = []
         for verbose, value in self.CONNECTORS:
@@ -62,7 +62,7 @@ class HardDisk(object):
         # FIXME JSON loads fails because of a bug on lshw
         # https://bugs.launchpad.net/ubuntu/+source/lshw/+bug/1405873
         # lshw_disk = json.loads(subprocess.check_output(["lshw", "-json", "-class", "disk"]))
-        self.serial_number = get_subsection_value(lshw, "*-disk", "serial")
+        self.serialNumber = get_subsection_value(lshw, "*-disk", "serial")
 
         self.logical_name = get_subsection_value(lshw, "*-disk", "logical name")
         self.interface = utils.run("udevadm info --query=all --name={0} | grep ID_BUS | cut -c 11-".format(self.logical_name))
@@ -140,8 +140,8 @@ class Processor(object):
         # A) dmidecode -t processor
         # FIXME Serial Number returns "To be filled by OEM"
         # http://forum.giga-byte.co.uk/index.php?topic=14167.0
-        # self.serial_number = get_subsection_value(self.dmi, "Processor Information", "ID")
-        self.serial_number = get_subsection_value(lshw, "*-cpu", "serial")
+        # self.serialNumber = get_subsection_value(self.dmi, "Processor Information", "ID")
+        self.serialNumber = get_subsection_value(lshw, "*-cpu", "serial")
         # B) Try to call CPUID? https://en.wikipedia.org/wiki/CPUID
         # http://stackoverflow.com/a/4216034/1538221
         
@@ -166,7 +166,7 @@ class MemoryModule(object):
     
     def __init__(self, lshw_json):
         dmi_memory = subprocess.check_output(["dmidecode", "-t" "memory"], universal_newlines=True)
-        self.serial_number = get_subsection_value(dmi_memory, "Memory Device", "Serial Number")
+        self.serialNumber = get_subsection_value(dmi_memory, "Memory Device", "Serial Number")
 
         ram_data = lshw_json['children'][0]['children'][0]
         dmidecode_out = utils.run("dmidecode -t 17")
@@ -226,7 +226,7 @@ class Computer(object):
         self.product = get_subsection_value(self.dmi, "System Information", "Product Name")
         
         # Initialize computer fields
-        self.serial_number = get_subsection_value(self.dmi, "System Information", "Serial Number")
+        self.serialNumber = get_subsection_value(self.dmi, "System Information", "Serial Number")
         
         # Initialize components
         self.processor = Processor(self.lshw, self.lshw_json)
@@ -254,11 +254,11 @@ class Computer(object):
         # Deprecated: cksum CRC32 joining 5 serial numbers as secundary ID
         #ID2=`echo ${SERIAL1} ${SERIAL2} ${SERIAL3} ${SERIAL4} ${SERIAL5} | cksum | awk {'print $1'}`
         cmd = "echo {0} {1} {2} {3} {4} | cksum | awk {{'print $1'}}".format(
-            self.serial_number,
-            self.motherboard.serial_number,
-            self.processor.serial_number,
-            self.memory.serial_number,
-            self.hard_disk.serial_number
+            self.serialNumber,
+            self.motherboard.serialNumber,
+            self.processor.serialNumber,
+            self.memory.serialNumber,
+            self.hard_disk.serialNumber
         )
         self.ID2 = os.popen(cmd).read().strip()
     

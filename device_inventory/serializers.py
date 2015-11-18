@@ -90,11 +90,11 @@ def export_to_legacy_schema(device, status, beg_donator_time, end_donator_time):
             "comments": "some comment",
             "type": "1",
             "serials": {
-                "serial_fab": device.serial_number,
-                "serial_mot": device.motherboard.serial_number,
-                "serial_cpu": device.processor.serial_number,
-                "serial_ram": device.memory.serial_number,
-                "serial_hdd": device.hard_disk.serial_number,
+                "serial_fab": device.serialNumber,
+                "serial_mot": device.motherboard.serialNumber,
+                "serial_cpu": device.processor.serialNumber,
+                "serial_ram": device.memory.serialNumber,
+                "serial_hdd": device.hard_disk.serialNumber,
             },
             "estat": status,
             "caracteristiques": {
@@ -139,11 +139,9 @@ def export_to_devicehub_schema(device):
             "@type": type(device).__name__,
             "type": device.type,
             "label": "",  # TODO ask user
-            # TODO remove workaround until DeviceHub was more flexible
-            #      with manufacturer values
-            "manufacturer": device.manufacturer.replace(" ", "").replace(".", ""),
+            "manufacturer": device.manufacturer,
             "model": device.product,
-            "serialNumber": device.serial_number,
+            "serialNumber": device.serialNumber,
             "totalMemory": device.memory.size,
         },
         "components": components,
