@@ -89,7 +89,13 @@ def export_to_legacy_schema(device, status, beg_donator_time, end_donator_time):
             "INITIAL_DONATOR_TIME": beg_donator_time,
             "comments": "some comment",
             "type": "1",
-            "serials": device.serials,
+            "serials": {
+                "serial_fab": device.serial_number,
+                "serial_mot": device.motherboard.serial_number,
+                "serial_cpu": device.processor.serial_number,
+                "serial_ram": device.memory.serial_number,
+                "serial_hdd": device.hard_disk.serial_number,
+            },
             "estat": status,
             "caracteristiques": {
                 "cpu": cpu,

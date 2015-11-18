@@ -236,38 +236,31 @@ class Computer(object):
         self.graphic_card = GraphicCard(self.lshw)
         self.motherboard = Motherboard(self.lshw_xml, self.dmi)
         
-        # FIXME deprecated (only backwards compatibility)
+        # deprecated (only backwards compatibility)
         self.init_serials()
     
     def init_serials(self):
+        """
+        Legacy IDs and serials retrieval.
+        (only for backwards compatibility)
+        
+        """
         # getnode attempts to obtain the hardware address, if fails it
         # chooses a random 48-bit number with its eight bit set to 1
-        # Deprecated hw_addr as ID. TODO use device SN as ID
         self.ID = uuid.getnode()
         if (self.ID >> 40) % 2:
             raise OSError("The system does not seem to have a valid MAC.")
         
-        self.SERIAL1 = self.serial_number
-        self.SERIAL2 = self.motherboard.serial_number
-        self.SERIAL3 = self.processor.serial_number
-        self.SERIAL4 = self.memory.serial_number
-        self.SERIAL5 = self.hard_disk.serial_number
-        
         # Deprecated: cksum CRC32 joining 5 serial numbers as secundary ID
         #ID2=`echo ${SERIAL1} ${SERIAL2} ${SERIAL3} ${SERIAL4} ${SERIAL5} | cksum | awk {'print $1'}`
         cmd = "echo {0} {1} {2} {3} {4} | cksum | awk {{'print $1'}}".format(
-            self.SERIAL1, self.SERIAL2, self.SERIAL3, self.SERIAL4, self.SERIAL5)
+            self.serial_number,
+            self.motherboard.serial_number,
+            self.processor.serial_number,
+            self.memory.serial_number,
+            self.hard_disk.serial_number
+        )
         self.ID2 = os.popen(cmd).read().strip()
-    
-    @property
-    def serials(self):
-        return {
-            "serial_fab": self.SERIAL1,
-            "serial_mot": self.SERIAL2,
-            "serial_cpu": self.SERIAL3,
-            "serial_ram": self.SERIAL4,
-            "serial_hdd": self.SERIAL5,
-        }
     
     @property
     def sound_cards(self):
