@@ -133,7 +133,8 @@ class OpticalDrive(object):
 
 
 class Processor(object):
-    FREQ_UNIT = 'GHz'
+    CLOCK_UNIT = 'MHz'
+    SPEED_UNIT = 'GHz'
     
     def __init__(self, lshw, lshw_json):
         ## Search CPU's serial number, if there are several we choose the first
@@ -145,15 +146,33 @@ class Processor(object):
         # B) Try to call CPUID? https://en.wikipedia.org/wiki/CPUID
         # http://stackoverflow.com/a/4216034/1538221
         
-        self.number_cpus = multiprocessing.cpu_count()  # Python > 3.4 os.cpu_count()
-        self.number_cores = os.popen("lscpu | grep 'Core(s) per socket'").read().split(':')[1].strip()
+        # FIXME support multiple CPUs
+        #self.number_cpus = multiprocessing.cpu_count()  # Python > 3.4 os.cpu_count()
+        self.numberOfCores = os.popen("lscpu | grep 'Core(s) per socket'").read().split(':')[1].strip()
         
         cpu_data = lshw_json['children'][0]['children'][1]
-        self.product = re.sub(r"\s+ ", " ", cpu_data['product'])
-        self.vendor = cpu_data['vendor']  # was /proc/cpuinfo | grep vendor_id
+        self.model = re.sub(r"\s+ ", " ", cpu_data['product'])
+        self.manufacturer = cpu_data['vendor']  # was /proc/cpuinfo | grep vendor_id
         
-        speed = dmidecode.processor()['0x0004']['data']['Current Speed']
-        self.freq = utils.convert_frequency(speed, 'MHz', self.FREQ_UNIT)
+        dmi_processor = dmidecode.processor()['0x0004']['data']
+        self.speed = utils.convert_frequency(
+            dmi_processor['Current Speed'],
+            'MHz',
+            self.SPEED_UNIT
+        )
+        self.busClock = utils.convert_frequency(
+            dmi_processor['External Clock'],
+            'MHz',
+            self.CLOCK_UNIT
+        )
+        # address (32b/64b)
+        #self.address = get_subsection_value(lshw, "*-cpu", "size")
+        self.address = None
+        for charac in dmi_processor['Characteristics']:
+            match = re.search('(32|64)-bit', charac)
+            if match:
+                self.address = match.group().replace('-bit', 'b')
+                break
     
     @property
     def score(self):
