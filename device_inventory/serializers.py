@@ -1,3 +1,5 @@
+import multiprocessing
+
 from xml.etree import ElementTree
 
 from .xml2dict import ConvertDictToXml
@@ -29,12 +31,12 @@ def dict_to_xml(equip, outfile):
 
 def export_to_legacy_schema(device, status, beg_donator_time, end_donator_time):
     cpu = {
-        'nom_cpu': device.processor.product,
-        'fab_cpu': device.processor.vendor,
-        'speed_cpu': device.processor.freq,
-        'unit_speed_cpu': device.processor.FREQ_UNIT,
-        'number_cpu': device.processor.number_cpus,
-        'number_cores': device.processor.number_cores,
+        'nom_cpu': device.processor.model,
+        'fab_cpu': device.processor.manufacturer,
+        'speed_cpu': device.processor.speed,
+        'unit_speed_cpu': device.processor.SPEED_UNIT,
+        'number_cpu': multiprocessing.cpu_count(),  ## device.processor.number_cpus,
+        'number_cores': device.processor.numberOfCores,
         'score_cpu': device.processor.score,
     }
     ram = {
