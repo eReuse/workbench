@@ -33,7 +33,9 @@ class Motherboard(object):
         ("PCMCIA", "pcmcia"),
     )
     
-    def __init__(self, lshw_xml):
+    def __init__(self, lshw_xml, dmi):
+        self.serial_number = get_subsection_value(dmi, "Base Board Information", "Serial Number")
+        
         self.connectors = []
         for verbose, value in self.CONNECTORS:
             count = self.number_of_connectors(lshw_xml, value)
@@ -55,6 +57,14 @@ class HardDisk(object):
         # optimization? lshw -json -class disk
         # use dict lookup http://stackoverflow.com/a/27234926/1538221
         # NOTE only gets info of first HD
+        
+        
+        ## Search hard disk's serial number, if there are several we choose the first
+        # FIXME JSON loads fails because of a bug on lshw
+        # https://bugs.launchpad.net/ubuntu/+source/lshw/+bug/1405873
+        # lshw_disk = json.loads(subprocess.check_output(["lshw", "-json", "-class", "disk"]))
+        self.serial_number = get_subsection_value(lshw, "*-disk", "serial")
+
         self.logical_name = get_subsection_value(lshw, "*-disk", "logical name")
         self.interface = utils.run("udevadm info --query=all --name={0} | grep ID_BUS | cut -c 11-".format(self.logical_name))
         
@@ -126,7 +136,16 @@ class OpticalDrive(object):
 class Processor(object):
     FREQ_UNIT = 'GHz'
     
-    def __init__(self, lshw_json):
+    def __init__(self, lshw, lshw_json):
+        ## Search CPU's serial number, if there are several we choose the first
+        # A) dmidecode -t processor
+        # FIXME Serial Number returns "To be filled by OEM"
+        # http://forum.giga-byte.co.uk/index.php?topic=14167.0
+        # self.serial_number = get_subsection_value(self.dmi, "Processor Information", "ID")
+        self.serial_number = get_subsection_value(lshw, "*-cpu", "serial")
+        # B) Try to call CPUID? https://en.wikipedia.org/wiki/CPUID
+        # http://stackoverflow.com/a/4216034/1538221
+        
         self.number_cpus = multiprocessing.cpu_count()  # Python > 3.4 os.cpu_count()
         self.number_cores = os.popen("lscpu | grep 'Core(s) per socket'").read().split(':')[1].strip()
         
@@ -147,6 +166,9 @@ class MemoryModule(object):
     CAPACITY_UNIT = 'MB'
     
     def __init__(self, lshw_json):
+        dmi_memory = subprocess.check_output(["dmidecode", "-t" "memory"], universal_newlines=True)
+        self.serial_number = get_subsection_value(dmi_memory, "Memory Device", "Serial Number")
+
         ram_data = lshw_json['children'][0]['children'][0]
         dmidecode_out = utils.run("dmidecode -t 17")
         # dmidecode.QueryTypeId(7)
@@ -199,19 +221,23 @@ class Computer(object):
         self.lshw = subprocess.check_output(["lshw"], universal_newlines=True)
         self.dmi = subprocess.check_output(["dmidecode"], universal_newlines=True)
         
-        self.init_serials()
-        
         # Retrieve computer info
         self.type = self.DESKTOP  # TODO ask user or asume any value if not provided
         self.manufacturer = get_subsection_value(self.dmi, "System Information", "Manufacturer")
         self.product = get_subsection_value(self.dmi, "System Information", "Product Name")
         
+        # Initialize computer fields
+        self.serial_number = get_subsection_value(self.dmi, "System Information", "Serial Number")
+        
         # Initialize components
-        self.processor = Processor(self.lshw_json)
+        self.processor = Processor(self.lshw, self.lshw_json)
         self.memory = MemoryModule(self.lshw_json)
         self.hard_disk = HardDisk(self.lshw)
         self.graphic_card = GraphicCard(self.lshw)
-        self.motherboard = Motherboard(self.lshw_xml)
+        self.motherboard = Motherboard(self.lshw_xml, self.dmi)
+        
+        # FIXME deprecated (only backwards compatibility)
+        self.init_serials()
     
     def init_serials(self):
         # getnode attempts to obtain the hardware address, if fails it
@@ -221,35 +247,11 @@ class Computer(object):
         if (self.ID >> 40) % 2:
             raise OSError("The system does not seem to have a valid MAC.")
         
-        ## Search manufacturer's serial number
-        self.SERIAL1 = get_subsection_value(self.dmi, "System Information", "Serial Number")
-        self.serial_number = self.SERIAL1  # TODO XXX rename field
-        
-        ## Search motherboard's serial number
-        # TODO move this serial to the Motherboard class
-        self.SERIAL2 = get_subsection_value(self.dmi, "Base Board Information", "Serial Number")
-        
-        ## Search CPU's serial number, if there are several we choose the first
-        # A) dmidecode -t processor
-        # FIXME Serial Number returns "To be filled by OEM"
-        # http://forum.giga-byte.co.uk/index.php?topic=14167.0
-        # self.SERIAL3 = get_subsection_value(self.dmi, "Processor Information", "ID")
-        # TODO move this serial to the Processor class
-        self.SERIAL3 = get_subsection_value(self.lshw, "*-cpu", "serial")
-        
-        # B) Try to call CPUID? https://en.wikipedia.org/wiki/CPUID
-        # http://stackoverflow.com/a/4216034/1538221
-        
-        ## Search RAM's serial number, if there are several we choose the first
-        # TODO move this serial to the MemoryModule class
-        dmi_memory = subprocess.check_output(["dmidecode", "-t" "memory"], universal_newlines=True)
-        self.SERIAL4 = get_subsection_value(dmi_memory, "Memory Device", "Serial Number")
-        
-        ## Search hard disk's serial number, if there are several we choose the first
-        # FIXME JSON loads fails because of a bug on lshw
-        # https://bugs.launchpad.net/ubuntu/+source/lshw/+bug/1405873
-        # lshw_disk = json.loads(subprocess.check_output(["lshw", "-json", "-class", "disk"]))
-        self.SERIAL5 = get_subsection_value(self.lshw, "*-disk", "serial")
+        self.SERIAL1 = self.serial_number
+        self.SERIAL2 = self.motherboard.serial_number
+        self.SERIAL3 = self.processor.serial_number
+        self.SERIAL4 = self.memory.serial_number
+        self.SERIAL5 = self.hard_disk.serial_number
         
         # Deprecated: cksum CRC32 joining 5 serial numbers as secundary ID
         #ID2=`echo ${SERIAL1} ${SERIAL2} ${SERIAL3} ${SERIAL4} ${SERIAL5} | cksum | awk {'print $1'}`
