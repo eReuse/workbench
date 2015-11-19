@@ -29,12 +29,17 @@ def hard_disk_smart(disk="/dev/sda"):
     end = smart.index('\n', beg)
     result = re.split(r'\s\s+', smart[beg:end])
     
+    try:
+        lba_first_error = int(result[5], 0)  # accepts hex and decimal value
+    except ValueError:
+        lba_first_error = None
+    
     return {
-        'device_check': disk,  # DEVICE_CHECK
-        'type_check': result[1],  # TYPE_CHECK_HDD
-        'info_check': result[2],  # CHECK_HDD
-        'lifetime_check': result[4],   # LIFETIME_HDD
-        'first_error_check': result[5],   # FIRST_ERROR_HDD
+        "device": disk,
+        "type": result[1],
+        "status": result[2],
+        "lifetime": result[4],
+        "firstError": lba_first_error,
     }
 
 

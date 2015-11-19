@@ -76,6 +76,12 @@ class HardDisk(object):
             self.model = utils.run("hdparm -I {0} | grep 'Model\ Number' | cut -c 22-".format(self.logical_name))
             self.serial = utils.run("hdparm -I {0} | grep 'Serial\ Number' | cut -c 22-".format(self.logical_name))
             self.size = utils.run("hdparm -I {0} | grep 'device\ size\ with\ M' | head -n1 | awk '{{print $7}}'".format(self.logical_name))
+        
+        # TODO read config to know if we should run SMART
+        self.smart = self.run_smart()
+    
+    def run_smart(self):  # TODO allow choosing short or extended
+        return benchmark.hard_disk_smart(disk=self.logical_name)
 
 
 class GraphicCard(object):

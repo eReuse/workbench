@@ -51,9 +51,26 @@ def is_connected():
 
 
 def get_device_status(run_smart):
-    # TODO anything else??
-    smart = {"check": "Yes" if run_smart else "No"}
-    smart.update(hard_disk_smart())  # TODO select proper HD!
+    # legacy (only backwards compatibility)
+    if run_smart:
+        result = hard_disk_smart()  # TODO select proper HD!
+        smart = {
+            "check": "Yes",
+            "device_check": result['device'],
+            "type_check": result['type'],
+            "info_check": result['status'],
+            "lifetime_check": result['lifetime'],
+            "first_error_check": result['firstError'],
+        }
+    else:
+        smart = {
+            "check": "No",
+            "device_check": 'null',
+            "type_check": 'null',
+            "info_check": 'null',
+            "lifetime_check": 'null',
+            "first_error_check": '-',
+        }
     
     return {
         "dat_estat": datetime.date.today().isoformat(),
