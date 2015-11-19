@@ -224,18 +224,14 @@ class Computer(object):
         (DESKTOP, "desktop")
     )
     
-    def __init__(self):
-        # http://www.ezix.org/project/wiki/HardwareLiSter
-        # JSON
-        lshw_js = subprocess.check_output(["lshw", "-json"], universal_newlines=True)
-        self.lshw_json = json.loads(lshw_js)
-
-        # XML
-        self.lshw_xml = etree.fromstring(subprocess.check_output(["lshw", "-xml"]))
-        
-        # Plain text (current)
-        self.lshw = subprocess.check_output(["lshw"], universal_newlines=True)
-        self.dmi = subprocess.check_output(["dmidecode"], universal_newlines=True)
+    def __init__(self, load_data=False):
+        if load_data:
+            self.lshw = self.load_output_from_file('lshw.txt')
+            self.lshw_json = self.load_output_from_file('lshw.json', format='json')
+            self.lshw_xml = self.load_output_from_file('lshw.xml', format='xml')
+            self.dmi = self.load_output_from_file('dmidecode.txt')
+        else:
+            self.call_hardware_inspectors()
         
         # Retrieve computer info
         self.type = self.DESKTOP  # TODO ask user or asume any value if not provided
@@ -254,6 +250,29 @@ class Computer(object):
         
         # deprecated (only backwards compatibility)
         self.init_serials()
+    
+    def call_hardware_inspectors(self):
+        # http://www.ezix.org/project/wiki/HardwareLiSter
+        # JSON
+        lshw_js = subprocess.check_output(["lshw", "-json"], universal_newlines=True)
+        self.lshw_json = json.loads(lshw_js)
+        
+        # XML
+        self.lshw_xml = etree.fromstring(subprocess.check_output(["lshw", "-xml"]))
+        
+        # Plain text
+        self.lshw = subprocess.check_output(["lshw"], universal_newlines=True)
+        self.dmi = subprocess.check_output(["dmidecode"], universal_newlines=True)
+        
+    def load_output_from_file(self, filename, format=None):
+        assert format in [None, 'json', 'xml']
+        with  open(filename, 'r') as f:
+            output = f.read()
+        if format == 'json':
+            output = json.loads(output)
+        elif format == 'xml':
+            output = etree.fromstring(output)
+        return output
     
     def init_serials(self):
         """

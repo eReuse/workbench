@@ -5,18 +5,24 @@ import unittest
 from device_inventory import inventory, serializers
 
 class TestDeviceHubSerializer(unittest.TestCase):
-    def test_1(self):
-        device = inventory.Computer()
-        snap = serializers.export_to_devicehub_schema(device)
-        
-        
-        with open("/tmp/computer.json", "w") as outfile:
-            json.dump(snap, outfile, indent=4, sort_keys=True)
+    DEBUG = True
+    
+    def write_output(self, data, filename):
+        with open(filename, "w") as outfile:
+            json.dump(data, outfile, indent=4, sort_keys=True)
 
-#            json.dump(device.processor.__dict__, outfile, indent=4, sort_keys=True)
-#            json.dump(device.hard_disk.__dict__, outfile, indent=4, sort_keys=True)
-#            json.dump(device.motherboard.__dict__, outfile, indent=4, sort_keys=True)
-    
         print(subprocess.check_output(["cat", "/tmp/computer.json"]))
+        
+    def test_retrieve_current_data(self):
+        device = inventory.Computer()
+        data = serializers.export_to_devicehub_schema(device)
+        
+        if self.DEBUG:
+            self.write_output(data, "/tmp/computer_current.json")
     
-    # TODO optimize to load lshw output directly from a file!
+    def test_load_stored_data(self):
+        device = inventory.Computer(load_data=True)
+        data = serializers.export_to_devicehub_schema(device)
+        
+        if self.DEBUG:
+            self.write_output(data, "/tmp/computer_stored.json")
