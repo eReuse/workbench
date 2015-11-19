@@ -11,7 +11,7 @@ class TestDeviceHubSerializer(unittest.TestCase):
         with open(filename, "w") as outfile:
             json.dump(data, outfile, indent=4, sort_keys=True)
 
-        print(subprocess.check_output(["cat", "/tmp/computer.json"]))
+        print(subprocess.check_output(["cat", filename]))
         
     def test_retrieve_current_data(self):
         device = inventory.Computer()
