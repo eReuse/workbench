@@ -82,12 +82,10 @@ class GraphicCard(object):
     CAPACITY_UNITS = "MB"
     
     def __init__(self, lshw):
-        product = get_subsection_value(lshw, "display", "product")
-        vendor = get_subsection_value(lshw, "display", "vendor")
-        if product or vendor:
-            self.model = "{vendor} {product}".format(vendor=vendor, product=product)
-        else:
-            self.model = get_subsection_value(lshw, "display", "description")
+        self.serialNumber = None  # TODO could be retrieved?
+        self.manufacturer = get_subsection_value(lshw, "display", "vendor")
+        self.model = (get_subsection_value(lshw, "display", "product") or
+                      get_subsection_value(lshw, "display", "description"))  # FIXME move to field description?
         
         # Find VGA memory
         bus_info = get_subsection_value(lshw, "display", "bus info").split("@")[1]
@@ -104,7 +102,7 @@ class GraphicCard(object):
             if size_kb > max_size:
                 max_size = size_kb
 
-        self.size = utils.convert_capacity(max_size, 'KB', 'MB')
+        self.memory = utils.convert_capacity(max_size, 'KB', 'MB')
     
     @property
     def score(self):

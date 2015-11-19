@@ -56,8 +56,8 @@ def export_to_legacy_schema(device, status, beg_donator_time, end_donator_time):
         "interface": device.hard_disk.interface,
     }
     vga = {
-        "model_vga": device.graphic_card.model,
-        "size_vga": device.graphic_card.size,
+        "model_vga": "{0} {1}".format(device.graphic_card.manufacturer, device.graphic_card.model),
+        "size_vga": device.graphic_card.memory,
         "unit_size_vga": device.graphic_card.CAPACITY_UNITS,
         "score_vga": device.graphic_card.score,
     }
