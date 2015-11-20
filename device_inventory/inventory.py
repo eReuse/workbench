@@ -1,7 +1,6 @@
 import abc
 import collections
 import dmidecode
-import json
 import logging
 import multiprocessing
 import os
@@ -320,12 +319,10 @@ class Computer(object):
         self.dmi = subprocess.check_output(["dmidecode"], universal_newlines=True)
         
     def load_output_from_file(self, filename, format=None):
-        assert format in [None, 'json', 'xml']
+        assert format in [None, 'xml']
         with  open(filename, 'r') as f:
             output = f.read()
-        if format == 'json':
-            output = json.loads(output)
-        elif format == 'xml':
+        if format == 'xml':
             output = etree.fromstring(output)
         return output
     
