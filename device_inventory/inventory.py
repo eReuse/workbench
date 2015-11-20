@@ -83,8 +83,9 @@ class HardDrive(Device):
     def __init__(self, node):
         self.serialNumber = get_xpath_text(node, 'serial')
         self.manufacturer = get_xpath_text(node, 'vendor')
-        self.logical_name = get_xpath_text(node, 'logicalname')
-        self.interface = utils.run("udevadm info --query=all --name={0} | grep ID_BUS | cut -c 11-".format(self.logical_name))
+        
+        logical_name = get_xpath_text(node, 'logicalname')
+        self.interface = utils.run("udevadm info --query=all --name={0} | grep ID_BUS | cut -c 11-".format(logical_name))
         
         # TODO implement method for USB disk
         if self.interface == "usb":
@@ -92,15 +93,15 @@ class HardDrive(Device):
         
         else:
             # (S)ATA disk
-            self.model = utils.run("hdparm -I {0} | grep 'Model\ Number' | cut -c 22-".format(self.logical_name))
-            self.serial = utils.run("hdparm -I {0} | grep 'Serial\ Number' | cut -c 22-".format(self.logical_name))
-            self.size = utils.run("hdparm -I {0} | grep 'device\ size\ with\ M' | head -n1 | awk '{{print $7}}'".format(self.logical_name))
+            self.model = utils.run("hdparm -I {0} | grep 'Model\ Number' | cut -c 22-".format(logical_name))
+            #self.serial = utils.run("hdparm -I {0} | grep 'Serial\ Number' | cut -c 22-".format(logical_name))
+            self.size = utils.run("hdparm -I {0} | grep 'device\ size\ with\ M' | head -n1 | awk '{{print $7}}'".format(logical_name))
         
         # TODO read config to know if we should run SMART
-        self.smart = self.run_smart()
+        self.smart = self.run_smart(logical_name)
     
-    def run_smart(self):  # TODO allow choosing short or extended
-        return benchmark.hard_disk_smart(disk=self.logical_name)
+    def run_smart(self, logical_name):  # TODO allow choosing short or extended
+        return benchmark.hard_disk_smart(disk=logical_name)
 
 
 class GraphicCard(Device):
