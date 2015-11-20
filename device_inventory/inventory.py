@@ -1,3 +1,4 @@
+import abc
 import collections
 import dmidecode
 import json
@@ -24,6 +25,30 @@ def get_subsection_value(output, section_name, subsection_name):
 
 Connector = collections.namedtuple('Connector', ['name', 'count', 'verbose_name'])
 
+
+def get_xpath_text(node, path, default=None):
+    try:
+        return node.xpath("{0}/text()".format(path))[0]
+    except IndexError:
+        return default
+
+
+class Device(object):
+    __metaclass__ = abc.ABCMeta
+    
+    LSHW_NODE_ID = None
+    
+    @classmethod
+    def retrieve(cls, lshw_xml):
+        assert cls.LSHW_NODE_ID is not None, "LSHW_NODE_ID should be defined on the subclass."
+        
+        objects = []
+        for node in lshw_xml.xpath('//node[@id="{0}"]'.format(cls.LSHW_NODE_ID)):
+            objects.append(cls(node))
+        
+        return objects
+    
+
 class Motherboard(object):
     CONNECTORS = (
         ("USB", "usb"),
@@ -48,23 +73,14 @@ class Motherboard(object):
                 return i
 
 
-class HardDisk(object):
+class HardDisk(Device):
     # TODO USB and (S)ATA subclasses
     CAPACITY_UNITS = "MB"
+    LSHW_NODE_ID = "disk"
     
-    def __init__(self, lshw):
-        # optimization? lshw -json -class disk
-        # use dict lookup http://stackoverflow.com/a/27234926/1538221
-        # NOTE only gets info of first HD
-        
-        
-        ## Search hard disk's serial number, if there are several we choose the first
-        # FIXME JSON loads fails because of a bug on lshw
-        # https://bugs.launchpad.net/ubuntu/+source/lshw/+bug/1405873
-        # lshw_disk = json.loads(subprocess.check_output(["lshw", "-json", "-class", "disk"]))
-        self.serialNumber = get_subsection_value(lshw, "*-disk", "serial")
-
-        self.logical_name = get_subsection_value(lshw, "*-disk", "logical name")
+    def __init__(self, node):
+        self.serialNumber = get_xpath_text(node, 'serial')
+        self.logical_name = get_xpath_text(node, 'logicalname')
         self.interface = utils.run("udevadm info --query=all --name={0} | grep ID_BUS | cut -c 11-".format(self.logical_name))
         
         # TODO implement method for USB disk
@@ -84,17 +100,17 @@ class HardDisk(object):
         return benchmark.hard_disk_smart(disk=self.logical_name)
 
 
-class GraphicCard(object):
+class GraphicCard(Device):
     CAPACITY_UNITS = "MB"
-    
-    def __init__(self, lshw):
+    LSHW_NODE_ID = "display"
+     
+    def __init__(self, node):
         self.serialNumber = None  # TODO could be retrieved?
-        self.manufacturer = get_subsection_value(lshw, "display", "vendor")
-        self.model = (get_subsection_value(lshw, "display", "product") or
-                      get_subsection_value(lshw, "display", "description"))  # FIXME move to field description?
+        self.manufacturer = get_xpath_text(node, 'vendor')
+        self.model = get_xpath_text(node, 'product')
         
         # Find VGA memory
-        bus_info = get_subsection_value(lshw, "display", "bus info").split("@")[1]
+        bus_info = get_xpath_text(node, 'businfo').split("@")[1]
         mem = utils.run("lspci -v -s {bus} | grep 'prefetchable' | grep -v 'non-prefetchable' | egrep -o '[0-9]{{1,3}}[KMGT]+'".format(bus=bus_info)).splitlines()
         
         # Get max memory value
@@ -115,8 +131,11 @@ class GraphicCard(object):
         return benchmark.score_vga(self.model)
 
 
-class NetworkInterface(object):
+class NetworkInterface(Device):
+    LSHW_NODE_ID = "network"
+    
     def __init__(self, net_xml):
+        # TODO retrieve serialNumber (MAC address)
         self.product = net_xml.xpath('product/text()')[0]
         try:
             speed = net_xml.xpath('capacity/text()')[0]
@@ -129,24 +148,27 @@ class NetworkInterface(object):
             self.speed_net = "{0} {1}".format(speed, "Mbps")
 
 
-class OpticalDrive(object):
+class OpticalDrive(Device):
+    LSHW_NODE_ID = "cdrom"
+    
     def __init__(self, node_xml):
         self.product = node_xml.xpath('product/text()')[0]
         # TODO normalize values?
         self.description = node_xml.xpath('description/text()')[0]
 
 
-class Processor(object):
+class Processor(Device):
     CLOCK_UNIT = 'MHz'
     SPEED_UNIT = 'GHz'
+    LSHW_NODE_ID = 'cpu'
     
-    def __init__(self, lshw, lshw_json):
+    def __init__(self, node):
         ## Search CPU's serial number, if there are several we choose the first
         # A) dmidecode -t processor
         # FIXME Serial Number returns "To be filled by OEM"
         # http://forum.giga-byte.co.uk/index.php?topic=14167.0
         # self.serialNumber = get_subsection_value(self.dmi, "Processor Information", "ID")
-        self.serialNumber = get_subsection_value(lshw, "*-cpu", "serial")
+        self.serialNumber = get_xpath_text(node, "serial")
         # B) Try to call CPUID? https://en.wikipedia.org/wiki/CPUID
         # http://stackoverflow.com/a/4216034/1538221
         
@@ -154,9 +176,8 @@ class Processor(object):
         #self.number_cpus = multiprocessing.cpu_count()  # Python > 3.4 os.cpu_count()
         self.numberOfCores = os.popen("lscpu | grep 'Core(s) per socket'").read().split(':')[1].strip()
         
-        cpu_data = lshw_json['children'][0]['children'][1]
-        self.model = re.sub(r"\s+ ", " ", cpu_data['product'])
-        self.manufacturer = cpu_data['vendor']  # was /proc/cpuinfo | grep vendor_id
+        self.model = re.sub(r"\s+ ", " ", get_xpath_text(node, "product"))
+        self.manufacturer = get_xpath_text(node, 'vendor')  # was /proc/cpuinfo | grep vendor_id
         
         dmi_processor = dmidecode.processor()['0x0004']['data']
         self.speed = utils.convert_frequency(
@@ -170,7 +191,7 @@ class Processor(object):
             self.CLOCK_UNIT
         )
         # address (32b/64b)
-        #self.address = get_subsection_value(lshw, "*-cpu", "size")
+        #self.address = get_xpath_text(node, "size")
         self.address = None
         for charac in dmi_processor['Characteristics']:
             match = re.search('(32|64)-bit', charac)
@@ -187,11 +208,10 @@ class MemoryModule(object):
     # TODO split computer.total_memory and MemoryModule(s) as components
     CAPACITY_UNIT = 'MB'
     
-    def __init__(self, lshw_json):
+    def __init__(self):
         dmi_memory = subprocess.check_output(["dmidecode", "-t" "memory"], universal_newlines=True)
         self.serialNumber = get_subsection_value(dmi_memory, "Memory Device", "Serial Number")
 
-        ram_data = lshw_json['children'][0]['children'][0]
         dmidecode_out = utils.run("dmidecode -t 17")
         # dmidecode.QueryTypeId(7)
         
@@ -233,7 +253,6 @@ class Computer(object):
     def __init__(self, load_data=False):
         if load_data:
             self.lshw = self.load_output_from_file('lshw.txt')
-            self.lshw_json = self.load_output_from_file('lshw.json', format='json')
             self.lshw_xml = self.load_output_from_file('lshw.xml', format='xml')
             self.dmi = self.load_output_from_file('dmidecode.txt')
         else:
@@ -248,20 +267,19 @@ class Computer(object):
         self.serialNumber = get_subsection_value(self.dmi, "System Information", "Serial Number")
         
         # Initialize components
-        self.processor = Processor(self.lshw, self.lshw_json)
-        self.memory = MemoryModule(self.lshw_json)
-        self.hard_disk = HardDisk(self.lshw)
-        self.graphic_card = GraphicCard(self.lshw)
+        self.processor = Processor.retrieve(self.lshw_xml)
+        self.memory = MemoryModule()
+        self.hard_disk = HardDisk.retrieve(self.lshw_xml)
+        self.graphic_card = GraphicCard.retrieve(self.lshw_xml)
         self.motherboard = Motherboard(self.lshw_xml, self.dmi)
+        self.network_interfaces = NetworkInterface.retrieve(self.lshw_xml)
+        self.optical_drives = OpticalDrive.retrieve(self.lshw_xml)
         
         # deprecated (only backwards compatibility)
         self.init_serials()
     
     def call_hardware_inspectors(self):
         # http://www.ezix.org/project/wiki/HardwareLiSter
-        # JSON
-        lshw_js = subprocess.check_output(["lshw", "-json"], universal_newlines=True)
-        self.lshw_json = json.loads(lshw_js)
         
         # XML
         self.lshw_xml = etree.fromstring(subprocess.check_output(["lshw", "-xml"]))
@@ -298,9 +316,9 @@ class Computer(object):
         cmd = "echo {0} {1} {2} {3} {4} | cksum | awk {{'print $1'}}".format(
             self.serialNumber,
             self.motherboard.serialNumber,
-            self.processor.serialNumber,
+            self.processor[0].serialNumber,
             self.memory.serialNumber,
-            self.hard_disk.serialNumber
+            self.hard_disk[0].serialNumber
         )
         self.ID2 = os.popen(cmd).read().strip()
     
@@ -311,17 +329,3 @@ class Computer(object):
             product = node.xpath('product/text()')[0]
             cards.append(SoundCard(product))
         return cards
-    
-    @property
-    def network_interfaces(self):
-        net_cards = []
-        for net_xml in self.lshw_xml.xpath('//node[@id="network"]'):
-            net_cards.append(NetworkInterface(net_xml))
-        return net_cards
-    
-    @property
-    def optical_drives(self):
-        drives = []
-        for node in self.lshw_xml.xpath('//node[@id="cdrom"]'):
-            drives.append(OpticalDrive(node))
-        return drives

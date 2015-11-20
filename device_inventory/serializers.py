@@ -129,11 +129,22 @@ json.dumps(processor.__dict__)
 """
 def export_to_devicehub_schema(device):
     components = []
-    for cp_name in ["processor", "memory", "hard_disk", "graphic_card", "motherboard"]:
+    for cp_name in ["processor", "memory", "hard_disk", "graphic_card",
+                    "motherboard", "network_interfaces", "optical_drives"]:
         cp = getattr(device, cp_name)
-        value = cp.__dict__
-        value.update({"@type": type(cp).__name__})
-        components.append(cp.__dict__)
+        
+        # We could receive an array of components (e.g. HDDs)
+        if hasattr(cp, '__iter__'):
+            for item in cp:
+                value = item.__dict__
+                value.update({"@type": type(item).__name__})
+                components.append(item.__dict__)
+        
+        # Or only a component (e.g. motherboard)
+        else:
+            value = cp.__dict__
+            value.update({"@type": type(cp).__name__})
+            components.append(cp.__dict__)
     
     snapshot = {
         "@type": "Snapshot",
