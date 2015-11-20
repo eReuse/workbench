@@ -140,9 +140,9 @@ class NetworkAdapter(Device):
     LSHW_NODE_ID = "network"
     
     def __init__(self, node):
-        self.serialNumber = self.get_serial(node)
         self.model = get_xpath_text(node, 'product')
         self.manufacturer = get_xpath_text(node, 'vendor')
+        self.serialNumber = self.get_serial(node)
         self.speed = get_xpath_text(node, 'capacity')
         
         if self.speed is not None:
@@ -157,7 +157,9 @@ class NetworkAdapter(Device):
         if serial is None:
             logical_name = get_xpath_text(node, 'logicalname')
             if logical_name is None:
-                logging.error("Error retrieving MAC: '{0}'".format(etree.tostring(node)))
+                error = "Error retrieving MAC: '%s'"
+                logging.error(error, self.model)
+                logging.debug(error, etree.tostring(node))
             else:
                 serial = utils.get_hw_addr(logical_name)
         
