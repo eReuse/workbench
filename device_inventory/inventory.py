@@ -211,8 +211,8 @@ class Processor(Device):
         return benchmark.score_cpu()
 
 
-class MemoryModule(object):
-    # TODO split computer.total_memory and MemoryModule(s) as components
+class RamModule(object):
+    # TODO split computer.total_memory and RamModule(s) as components
     CAPACITY_UNIT = 'MB'
     
     def __init__(self):
@@ -285,7 +285,7 @@ class Computer(object):
         
         # Initialize components
         self.processor = Processor.retrieve(self.lshw_xml)
-        self.memory = MemoryModule()
+        self.memory = RamModule()
         self.hard_disk = HardDrive.retrieve(self.lshw_xml)
         self.graphic_card = GraphicCard.retrieve(self.lshw_xml)
         self.motherboard = Motherboard(self.lshw_xml, self.dmi)
