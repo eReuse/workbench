@@ -130,7 +130,8 @@ json.dumps(processor.__dict__)
 def export_to_devicehub_schema(device):
     components = []
     for cp_name in ["processor", "memory", "hard_disk", "graphic_card",
-                    "motherboard", "network_interfaces", "optical_drives"]:
+                    "motherboard", "network_interfaces", "optical_drives",
+                    "sound_cards"]:
         cp = getattr(device, cp_name)
         
         # We could receive an array of components (e.g. HDDs)

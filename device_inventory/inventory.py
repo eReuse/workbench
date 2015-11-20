@@ -252,9 +252,13 @@ class MemoryModule(object):
         return benchmark.score_ram(self.speed)
 
 
-class SoundCard(object):
-    def __init__(self, product):
-        self.model = product
+class SoundCard(Device):
+    LSHW_NODE_ID = "multimedia"
+    
+    def __init__(self, node):
+        self.serialNumber = None  # FIXME could be retrieved?
+        self.manufacturer = get_xpath_text(node, "vendor")
+        self.model = get_xpath_text(node, "product")
 
 
 class Computer(object):
@@ -287,6 +291,7 @@ class Computer(object):
         self.motherboard = Motherboard(self.lshw_xml, self.dmi)
         self.network_interfaces = NetworkAdapter.retrieve(self.lshw_xml)
         self.optical_drives = OpticalDrive.retrieve(self.lshw_xml)
+        self.sound_cards = SoundCard.retrieve(self.lshw_xml)
         
         # deprecated (only backwards compatibility)
         self.init_serials()
@@ -334,11 +339,3 @@ class Computer(object):
             self.hard_disk[0].serialNumber
         )
         self.ID2 = os.popen(cmd).read().strip()
-    
-    @property
-    def sound_cards(self):
-        cards = []
-        for node in self.lshw_xml.xpath('//node[@id="multimedia"]'):
-            product = node.xpath('product/text()')[0]
-            cards.append(SoundCard(product))
-        return cards
