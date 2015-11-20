@@ -61,13 +61,13 @@ def export_to_legacy_schema(device, status, beg_donator_time, end_donator_time):
         "unit_size_vga": device.graphic_card.CAPACITY_UNITS,
         "score_vga": device.graphic_card.score,
     }
-    audio = [{"model_audio": card.product} for card in device.sound_cards]
+    audio = [{"model_audio": card.model} for card in device.sound_cards]
     network = [
-        {"model_net": iface.product, "speed_net": iface.speed_net,}
+        {"model_net": iface.model, "speed_net": iface.speed_net,}
         for iface in device.network_interfaces
     ]
     optical_drives = [
-        {"model_uni": drive.product, "tipo_uni": drive.description,}
+        {"model_uni": drive.model, "tipo_uni": drive.description,}
         for drive in device.optical_drives
     ]
     connectors = [
@@ -78,7 +78,7 @@ def export_to_legacy_schema(device, status, beg_donator_time, end_donator_time):
     ]
     brand_info = {
         "fab_marca": device.manufacturer,
-        "model_marca": device.product,
+        "model_marca": device.model,
     }
     computer = {
         "equip": {
@@ -153,7 +153,7 @@ def export_to_devicehub_schema(device):
             "type": device.type,
             "label": "",  # TODO ask user
             "manufacturer": device.manufacturer,
-            "model": device.product,
+            "model": device.model,
             "serialNumber": device.serialNumber,
             "totalMemory": device.memory.size,
         },

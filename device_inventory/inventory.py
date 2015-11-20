@@ -154,7 +154,7 @@ class OpticalDrive(Device):
     LSHW_NODE_ID = "cdrom"
     
     def __init__(self, node):
-        self.product = get_xpath_text(node, 'product')
+        self.model = get_xpath_text(node, 'product')
         self.manufacturer = get_xpath_text(node, 'vendor')
         # TODO normalize values?
         self.description = get_xpath_text(node, 'description')
@@ -244,7 +244,7 @@ class MemoryModule(object):
 
 class SoundCard(object):
     def __init__(self, product):
-        self.product = product
+        self.model = product
 
 
 class Computer(object):
@@ -264,7 +264,7 @@ class Computer(object):
         # Retrieve computer info
         self.type = self.DESKTOP  # TODO ask user or asume any value if not provided
         self.manufacturer = get_subsection_value(self.dmi, "System Information", "Manufacturer")
-        self.product = get_subsection_value(self.dmi, "System Information", "Product Name")
+        self.model = get_subsection_value(self.dmi, "System Information", "Product Name")
         
         # Initialize computer fields
         self.serialNumber = get_subsection_value(self.dmi, "System Information", "Serial Number")
