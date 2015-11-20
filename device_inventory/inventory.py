@@ -132,20 +132,22 @@ class GraphicCard(Device):
 
 
 class NetworkInterface(Device):
+    SPEED_UNIT = "Mbps"
     LSHW_NODE_ID = "network"
     
-    def __init__(self, net_xml):
-        # TODO retrieve serialNumber (MAC address)
-        self.product = net_xml.xpath('product/text()')[0]
-        try:
-            speed = net_xml.xpath('capacity/text()')[0]
+    def __init__(self, node):
+        self.serialNumber = get_xpath_text(node, 'serial')
+        self.model = get_xpath_text(node, 'product')
+        self.manufacturer = get_xpath_text(node, 'vendor')
+        self.speed = get_xpath_text(node, 'capacity')
+        
+        if self.speed is not None:
             units = "bps"  # net.xpath('capacity/@units')[0]
-        except IndexError as e:
-            self.speed_net = None
-        else:
-            # FIXME convert speed to Mbps?
-            speed = utils.convert_speed(speed, units, "Mbps")
-            self.speed_net = "{0} {1}".format(speed, "Mbps")
+            self.speed = utils.convert_speed(self.speed, units, self.SPEED_UNIT)
+        
+        # TODO get serialNumber of wireless ifaces!!
+        # lshw only provides to ethernet
+        # use alternative method (e.g. ifconfig)
 
 
 class OpticalDrive(Device):
