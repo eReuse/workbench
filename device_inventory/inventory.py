@@ -75,7 +75,7 @@ class Motherboard(object):
                 return i
 
 
-class HardDisk(Device):
+class HardDrive(Device):
     # TODO USB and (S)ATA subclasses
     CAPACITY_UNITS = "MB"
     LSHW_NODE_ID = "disk"
@@ -134,7 +134,7 @@ class GraphicCard(Device):
         return benchmark.score_vga(self.model)
 
 
-class NetworkInterface(Device):
+class NetworkAdapter(Device):
     SPEED_UNIT = "Mbps"
     LSHW_NODE_ID = "network"
     
@@ -282,10 +282,10 @@ class Computer(object):
         # Initialize components
         self.processor = Processor.retrieve(self.lshw_xml)
         self.memory = MemoryModule()
-        self.hard_disk = HardDisk.retrieve(self.lshw_xml)
+        self.hard_disk = HardDrive.retrieve(self.lshw_xml)
         self.graphic_card = GraphicCard.retrieve(self.lshw_xml)
         self.motherboard = Motherboard(self.lshw_xml, self.dmi)
-        self.network_interfaces = NetworkInterface.retrieve(self.lshw_xml)
+        self.network_interfaces = NetworkAdapter.retrieve(self.lshw_xml)
         self.optical_drives = OpticalDrive.retrieve(self.lshw_xml)
         
         # deprecated (only backwards compatibility)
