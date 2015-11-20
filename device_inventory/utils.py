@@ -1,4 +1,7 @@
+import fcntl
 import os
+import socket
+import struct
 
 
 def convert_base(value, src_unit, dst_unit, distance=1000):
@@ -43,6 +46,14 @@ def convert_speed(value, src_unit, dst_unit):
     diff = UNITS.index(src_unit) - UNITS.index(dst_unit)
     
     return int(value * pow(1000, diff))
+
+
+# http://stackoverflow.com/a/4789267/1538221
+def get_hw_addr(ifname):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    info = fcntl.ioctl(s.fileno(), 0x8927,  struct.pack('256s', ifname[:15]))
+    return ':'.join(['%02x' % ord(char) for char in info[18:24]])
+
 
 
 def run(cmd):

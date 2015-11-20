@@ -140,7 +140,7 @@ class NetworkAdapter(Device):
     LSHW_NODE_ID = "network"
     
     def __init__(self, node):
-        self.serialNumber = get_xpath_text(node, 'serial')
+        self.serialNumber = self.get_serial(node)
         self.model = get_xpath_text(node, 'product')
         self.manufacturer = get_xpath_text(node, 'vendor')
         self.speed = get_xpath_text(node, 'capacity')
@@ -149,9 +149,19 @@ class NetworkAdapter(Device):
             units = "bps"  # net.xpath('capacity/@units')[0]
             self.speed = utils.convert_speed(self.speed, units, self.SPEED_UNIT)
         
-        # TODO get serialNumber of wireless ifaces!!
-        # lshw only provides to ethernet
-        # use alternative method (e.g. ifconfig)
+    def get_serial(self, node):
+        serial = get_xpath_text(node, 'serial')
+        
+        # TODO get serialNumber of USB NetworkAdapter!!
+        # lshw has other id="network:1"...
+        if serial is None:
+            logical_name = get_xpath_text(node, 'logicalname')
+            if logical_name is None:
+                logging.error("Error retrieving MAC: '{0}'".format(etree.tostring(node)))
+            else:
+                serial = utils.get_hw_addr(logical_name)
+        
+        return serial
 
 
 class OpticalDrive(Device):

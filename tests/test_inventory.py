@@ -16,6 +16,13 @@ class TestComputer(unittest.TestCase):
         self.assertEqual(device.SERIAL5, "WD-WXM1A50M9524")
 
 
+class TestNetworkAdapter(unittest.TestCase):
+    def test_serial_number(self):
+        device = inventory.Computer(load_data=True)
+        for iface in device.network_interfaces:
+            self.assertIsNotNone(iface.serialNumber, iface.model)
+
+
 if __name__ == '__main__':
     import sys
     print(sys.version)
