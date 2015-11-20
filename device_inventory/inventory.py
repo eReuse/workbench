@@ -291,11 +291,18 @@ class Computer(object):
         (DESKTOP, "desktop")
     )
     
-    def __init__(self, load_data=False):
+    def __init__(self, load_data=False, **kwargs):
         if load_data:
-            self.lshw = self.load_output_from_file('lshw.txt')
-            self.lshw_xml = self.load_output_from_file('lshw.xml', format='xml')
-            self.dmi = self.load_output_from_file('dmidecode.txt')
+            self.lshw = self.load_output_from_file(
+                kwargs.get('lshw', 'lshw.txt')
+            )
+            self.lshw_xml = self.load_output_from_file(
+                kwargs.get('lshw_xml', 'lshw.xml'),
+                format='xml'
+            )
+            self.dmi = self.load_output_from_file(
+                kwargs.get('dmidecode', 'dmidecode.txt')
+            )
         else:
             self.call_hardware_inspectors()
         

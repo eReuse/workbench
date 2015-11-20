@@ -32,3 +32,10 @@ class TestDeviceHubSerializer(unittest.TestCase):
         
         if self.DEBUG:
             self.write_output(data, "/tmp/computer_stored.json")
+    
+    def test_load_stored_data_usb_disk(self):
+        device = inventory.Computer(load_data=True, lshw_xml="lshw_usb_hd.xml")
+        data = serializers.export_to_devicehub_schema(device)
+        
+        if self.DEBUG:
+            self.write_output(data, "/tmp/computer_stored_usb_disk.json")
