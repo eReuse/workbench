@@ -2,6 +2,7 @@ import abc
 import collections
 import dmidecode
 import json
+import logging
 import multiprocessing
 import os
 import re
@@ -215,6 +216,7 @@ class Processor(Device):
 class RamModule(object):
     # TODO split computer.total_memory and RamModule(s) as components
     CAPACITY_UNIT = 'MB'
+    SPEED_UNIT = 'Mhz'
     
     def __init__(self):
         # TODO as we cannot retrieve this information initialize as None
@@ -232,7 +234,9 @@ class RamModule(object):
         # TODO optimize to only use a dmidecode call
         self.total_slots = int(utils.run("dmidecode -t 17 | grep -o BANK | wc -l"))
         self.used_slots = int(utils.run("dmidecode -t 17 | grep Size | grep MB | awk '{print $2}' | wc -l"))
-        self.speed = get_subsection_value(dmidecode_out, "Memory Device", "Speed")
+        self.speed = self.sanitize_speed(
+            get_subsection_value(dmidecode_out, "Memory Device", "Speed")
+        )
         self.interface = get_subsection_value(dmidecode_out, "Memory Device", "Type")
         # EDO|SDRAM|DDR3|DDR2|DDR|RDRAM
         
@@ -251,6 +255,14 @@ class RamModule(object):
     @property
     def score(self):
         return benchmark.score_ram(self.speed)
+    
+    def sanitize_speed(self, value):
+        value = value.rstrip(self.SPEED_UNIT)
+        try:
+            return float(value)
+        except ValueError:
+            logging.error("Error sanitizing RAM speed: '{0}'".format(value))
+            return None
 
 
 class SoundCard(Device):
