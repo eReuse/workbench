@@ -203,7 +203,7 @@ class Processor(Device):
         for charac in dmi_processor['Characteristics']:
             match = re.search('(32|64)-bit', charac)
             if match:
-                self.address = match.group().replace('-bit', 'b')
+                self.address = match.group().rstrip('-bit')
                 break
     
     @property
