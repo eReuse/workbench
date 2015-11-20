@@ -151,10 +151,11 @@ class NetworkInterface(Device):
 class OpticalDrive(Device):
     LSHW_NODE_ID = "cdrom"
     
-    def __init__(self, node_xml):
-        self.product = node_xml.xpath('product/text()')[0]
+    def __init__(self, node):
+        self.product = get_xpath_text(node, 'product')
+        self.manufacturer = get_xpath_text(node, 'vendor')
         # TODO normalize values?
-        self.description = node_xml.xpath('description/text()')[0]
+        self.description = get_xpath_text(node, 'description')
 
 
 class Processor(Device):
