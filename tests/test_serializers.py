@@ -24,5 +24,11 @@ class TestDeviceHubSerializer(unittest.TestCase):
         device = inventory.Computer(load_data=True)
         data = serializers.export_to_devicehub_schema(device)
         
+        # Check if every component has the mandatory fields
+        for comp in data["components"]:
+            for field in ["serialNumber", "manufacturer", "model"]:
+                self.assertIn(field, comp,
+                              "{0} not in {1}".format(field, comp["@type"]))
+        
         if self.DEBUG:
             self.write_output(data, "/tmp/computer_stored.json")

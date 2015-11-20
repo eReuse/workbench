@@ -59,6 +59,8 @@ class Motherboard(object):
     
     def __init__(self, lshw_xml, dmi):
         self.serialNumber = get_subsection_value(dmi, "Base Board Information", "Serial Number")
+        self.manufacturer =  get_subsection_value(dmi, "Base Board Information", "Manufacturer")
+        self.model =  get_subsection_value(dmi, "Base Board Information", "Product Name")
         
         self.connectors = []
         for verbose, value in self.CONNECTORS:
@@ -80,6 +82,7 @@ class HardDisk(Device):
     
     def __init__(self, node):
         self.serialNumber = get_xpath_text(node, 'serial')
+        self.manufacturer = get_xpath_text(node, 'vendor')
         self.logical_name = get_xpath_text(node, 'logicalname')
         self.interface = utils.run("udevadm info --query=all --name={0} | grep ID_BUS | cut -c 11-".format(self.logical_name))
         
@@ -154,6 +157,7 @@ class OpticalDrive(Device):
     LSHW_NODE_ID = "cdrom"
     
     def __init__(self, node):
+        self.serialNumber = None  # TODO could be retrieved?
         self.model = get_xpath_text(node, 'product')
         self.manufacturer = get_xpath_text(node, 'vendor')
         # TODO normalize values?
@@ -212,11 +216,17 @@ class MemoryModule(object):
     CAPACITY_UNIT = 'MB'
     
     def __init__(self):
+        # TODO as we cannot retrieve this information initialize as None
+        self.manufacturer = None
+        self.model = None
+        
         dmi_memory = subprocess.check_output(["dmidecode", "-t" "memory"], universal_newlines=True)
         self.serialNumber = get_subsection_value(dmi_memory, "Memory Device", "Serial Number")
-
+        
+        # dm = dmidecode.QueryTypeId(17)
+        # self.manufacturer = dm[dm.keys()[0]]['data']['Manufacturer']
+        
         dmidecode_out = utils.run("dmidecode -t 17")
-        # dmidecode.QueryTypeId(7)
         
         # TODO optimize to only use a dmidecode call
         self.total_slots = int(utils.run("dmidecode -t 17 | grep -o BANK | wc -l"))
