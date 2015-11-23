@@ -95,19 +95,24 @@ class HardDrive(Device):
     def __init__(self, node):
         self.serialNumber = get_xpath_text(node, 'serial')
         self.manufacturer = get_xpath_text(node, 'vendor')
+        self.model = get_xpath_text(node, 'product')
         
         logical_name = get_xpath_text(node, 'logicalname')
         self.interface = utils.run("udevadm info --query=all --name={0} | grep ID_BUS | cut -c 11-".format(logical_name))
         
         # TODO implement method for USB disk
         if self.interface == "usb":
-            self.model = self.serial = self.size = "Unknown"
+            self.size = "Unknown"
         
         else:
             # (S)ATA disk
-            self.model = utils.run("hdparm -I {0} | grep 'Model\ Number' | cut -c 22-".format(logical_name))
-            #self.serial = utils.run("hdparm -I {0} | grep 'Serial\ Number' | cut -c 22-".format(logical_name))
-            self.size = utils.run("hdparm -I {0} | grep 'device\ size\ with\ M' | head -n1 | awk '{{print $7}}'".format(logical_name))
+            try:
+                size = int(get_xpath_text(node, 'size'))
+            except ValueError:
+                self.size = None
+            else:
+                unit = 'bytes'  # node.xpath('size/@units')[0]
+                self.size = utils.convert_capacity(size, unit, self.CAPACITY_UNITS)
         
         # TODO read config to know if we should run SMART
         self.smart = self.run_smart(logical_name)
