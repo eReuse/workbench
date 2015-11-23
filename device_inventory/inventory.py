@@ -108,7 +108,7 @@ class HardDrive(Device):
             # (S)ATA disk
             try:
                 size = int(get_xpath_text(node, 'size'))
-            except ValueError:
+            except TypeError, ValueError:
                 self.size = None
             else:
                 unit = 'bytes'  # node.xpath('size/@units')[0]
