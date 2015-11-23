@@ -2,6 +2,7 @@ import multiprocessing
 
 from xml.etree import ElementTree
 
+from . import utils
 from .xml2dict import ConvertDictToXml
 
 
@@ -139,17 +140,14 @@ def export_to_devicehub_schema(device):
         cp = getattr(device, cp_name)
         
         # We could receive an array of components (e.g. HDDs)
-        if hasattr(cp, '__iter__'):
-            for item in cp:
-                value = item.__dict__
-                value.update({"@type": type(item).__name__})
-                components.append(item.__dict__)
-        
         # Or only a component (e.g. motherboard)
-        else:
-            value = cp.__dict__
-            value.update({"@type": type(cp).__name__})
-            components.append(cp.__dict__)
+        if not hasattr(cp, '__iter__'):
+            cp = [cp]
+        
+        for item in cp:
+            value = item.__dict__
+            value.update({"@type": type(item).__name__})
+            components.append(utils.strip_null_or_empty_values(item.__dict__))
     
     snapshot = {
         "@type": "Snapshot",

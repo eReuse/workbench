@@ -55,6 +55,14 @@ def get_hw_addr(ifname):
     return ':'.join(['%02x' % ord(char) for char in info[18:24]])
 
 
-
 def run(cmd):
     return os.popen(cmd).read().strip()
+
+
+def strip_null_or_empty_values(dictionary):
+    # See if there is a more efficient way (Dict Comprehensions)
+    new = {}
+    for key, value in dictionary.iteritems():
+        if value is not None and value:
+            new[key] = value
+    return new
