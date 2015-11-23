@@ -342,7 +342,8 @@ class Computer(object):
         self.sound_cards = SoundCard.retrieve(self.lshw_xml)
         
         # deprecated (only backwards compatibility)
-        self.init_serials()
+        if kwargs.pop('backcomp', False):
+            self.init_serials()
     
     def call_hardware_inspectors(self):
         # http://www.ezix.org/project/wiki/HardwareLiSter
