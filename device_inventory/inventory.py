@@ -99,6 +99,7 @@ class HardDrive(Device):
         
         logical_name = get_xpath_text(node, 'logicalname')
         self.interface = utils.run("udevadm info --query=all --name={0} | grep ID_BUS | cut -c 11-".format(logical_name))
+        self.interface = self.interface or 'ata'
         
         # TODO implement method for USB disk
         if self.interface == "usb":
