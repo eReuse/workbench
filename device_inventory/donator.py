@@ -81,7 +81,7 @@ def get_device_status(run_smart):
 
 
 
-def main():
+def main(load_data=False):
     if not os.geteuid() == 0:
         sys.exit("Only root can run this script")
     
@@ -90,7 +90,7 @@ def main():
     # dat_state only date on human friendly format
     beg_donator_time = calendar.timegm(time.gmtime())  # INITIAL_DONATOR_TIME
     config = load_config()
-    device = Computer()  # XXX pass device type and other user input?
+    device = Computer(load_data=load_data)  # XXX pass device type and other user input?
     status = get_device_status(run_smart=config.getboolean('DEFAULT', 'DISC'))
     end_donator_time = calendar.timegm(time.gmtime())  # END_DONATOR_TIME
     

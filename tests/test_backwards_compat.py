@@ -14,8 +14,13 @@ class TestBackwardsCompat(unittest.TestCase):
         old = xml2dict.ConvertXmlToDict(os.path.join(path, "chk.orig.xml"))
         
         # Generate new XML
-        donator.main()
+        donator.main(load_data=True)
         new = xml2dict.ConvertXmlToDict("/tmp/equip.xml")
+        
+        # Pop variable items that never will match
+        for key in ["INITIAL_DONATOR_TIME", "END_DONATOR_TIME"]:
+            old["equip"].pop(key)
+            new["equip"].pop(key)
         
         old_file = "/tmp/old.txt"
         new_file = "/tmp/new.txt"

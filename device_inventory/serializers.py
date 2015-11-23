@@ -30,14 +30,18 @@ def dict_to_xml(equip, outfile):
 
 
 def export_to_legacy_schema(device, status, beg_donator_time, end_donator_time):
+    processor = device.processor[0]
+    hard_disk = device.hard_disk[0]
+    graphic_card = device.graphic_card[0]
+    
     cpu = {
-        'nom_cpu': device.processor.model,
-        'fab_cpu': device.processor.manufacturer,
-        'speed_cpu': device.processor.speed,
-        'unit_speed_cpu': device.processor.SPEED_UNIT,
+        'nom_cpu': processor.model,
+        'fab_cpu': processor.manufacturer,
+        'speed_cpu': processor.speed,
+        'unit_speed_cpu': processor.SPEED_UNIT,
         'number_cpu': multiprocessing.cpu_count(),  ## device.processor.number_cpus,
-        'number_cores': device.processor.numberOfCores,
-        'score_cpu': device.processor.score,
+        'number_cores': processor.numberOfCores,
+        'score_cpu': processor.score,
     }
     ram = {
         'size_ram': device.memory.size,
@@ -45,25 +49,25 @@ def export_to_legacy_schema(device, status, beg_donator_time, end_donator_time):
         'interface_ram': device.memory.interface,
         'free_slots_ram': device.memory.free_slots,
         'used_slots_ram': device.memory.used_slots,
-        'score_ram': device.memory.score,
+        'score_ram': None,  # device.memory.score,
     }
     hdd = {
-        "model": device.hard_disk.model,
-        "serial": device.hard_disk.serial,
-        "size": device.hard_disk.size,
-        "measure": device.hard_disk.CAPACITY_UNITS,
-        "name": device.hard_disk.logical_name,
-        "interface": device.hard_disk.interface,
+        "model": hard_disk.model,
+        "serial": hard_disk.serialNumber,
+        "size": hard_disk.size,
+        "measure": hard_disk.CAPACITY_UNITS,
+        "name": '/dev/sda',  # TODO hard_disk.logical_name,
+        "interface": hard_disk.interface,
     }
     vga = {
-        "model_vga": "{0} {1}".format(device.graphic_card.manufacturer, device.graphic_card.model),
-        "size_vga": device.graphic_card.memory,
-        "unit_size_vga": device.graphic_card.CAPACITY_UNITS,
-        "score_vga": device.graphic_card.score,
+        "model_vga": "{0} {1}".format(graphic_card.manufacturer, graphic_card.model),
+        "size_vga": graphic_card.memory,
+        "unit_size_vga": graphic_card.CAPACITY_UNITS,
+        "score_vga": graphic_card.score,
     }
     audio = [{"model_audio": card.model} for card in device.sound_cards]
     network = [
-        {"model_net": iface.model, "speed_net": iface.speed_net,}
+        {"model_net": iface.model, "speed_net": iface.speed,}
         for iface in device.network_interfaces
     ]
     optical_drives = [
@@ -94,9 +98,9 @@ def export_to_legacy_schema(device, status, beg_donator_time, end_donator_time):
             "serials": {
                 "serial_fab": device.serialNumber,
                 "serial_mot": device.motherboard.serialNumber,
-                "serial_cpu": device.processor.serialNumber,
+                "serial_cpu": processor.serialNumber,
                 "serial_ram": device.memory.serialNumber,
-                "serial_hdd": device.hard_disk.serialNumber,
+                "serial_hdd": hard_disk.serialNumber,
             },
             "estat": status,
             "caracteristiques": {
