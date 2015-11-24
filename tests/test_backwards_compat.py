@@ -11,10 +11,10 @@ class TestBackwardsCompat(unittest.TestCase):
     def test_compare_outputs(self):
         # Load old XML
         path = os.path.dirname(__file__)
-        old = xml2dict.ConvertXmlToDict(os.path.join(path, "chk.orig.xml"))
+        old = xml2dict.ConvertXmlToDict(os.path.join(path, "fixtures/vostro3300_legacy.xml"))
         
         # Generate new XML
-        donator.main(load_data=True, backcomp=True)
+        donator.legacy_main(load_data=True)
         new = xml2dict.ConvertXmlToDict("/tmp/equip.xml")
         
         # Pop variable items that never will match

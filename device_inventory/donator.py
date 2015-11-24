@@ -107,14 +107,13 @@ def main(argv=None):
     print("Device Inventory has finished properly: {0}".format(filename))
 
 
-def legacy_main():
+def legacy_main(**kwargs):
     # FIXME duplicated data initial_donator_time & status.date (dat_state)
     # initial_donator in seconds since 1970 UTC
     # dat_state only date on human friendly format
-    kwargs = dict(backcomp=True)
     beg_donator_time = calendar.timegm(time.gmtime())  # INITIAL_DONATOR_TIME
     config = load_config()
-    device = Computer(**kwargs)  # XXX pass device type and other user input?
+    device = Computer(backcomp=True, **kwargs)  # XXX pass device type and other user input?
     status = get_device_status(run_smart=config.getboolean('DEFAULT', 'DISC'))
     end_donator_time = calendar.timegm(time.gmtime())  # END_DONATOR_TIME
     
