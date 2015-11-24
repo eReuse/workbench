@@ -5,14 +5,15 @@ try:
 except ImportError:
     import configparser
 import datetime
+import json
 import os
 import socket
 import sys
 import time
 
-from . import serializers
-from .benchmark import hard_disk_smart
-from .inventory import Computer
+from device_inventory import serializers
+from device_inventory.benchmark import hard_disk_smart
+from device_inventory.inventory import Computer
 
 
 def load_config():
@@ -81,13 +82,29 @@ def get_device_status(run_smart):
 
 
 
-def main(**kwargs):
+def main(argv=None):
     if not os.geteuid() == 0:
         sys.exit("Only root can run this script")
     
+    # TODO process argv
+    kwargs = {}
+    
+    config = load_config()
+    device = Computer(**kwargs)  # XXX pass device type and other user input?
+    data = serializers.export_to_devicehub_schema(device)
+    
+    filename = "/tmp/{0}.json".format(device.serialNumber)  # get_option
+    with open(filename, "w") as outfile:
+        json.dump(data, outfile, indent=4, sort_keys=True)
+    
+    print("Device Inventory has finished properly: {0}".format(filename))
+
+
+def legacy_main():
     # FIXME duplicated data initial_donator_time & status.date (dat_state)
     # initial_donator in seconds since 1970 UTC
     # dat_state only date on human friendly format
+    kwargs = dict(backcomp=True)
     beg_donator_time = calendar.timegm(time.gmtime())  # INITIAL_DONATOR_TIME
     config = load_config()
     device = Computer(**kwargs)  # XXX pass device type and other user input?
@@ -103,4 +120,4 @@ def main(**kwargs):
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv))
