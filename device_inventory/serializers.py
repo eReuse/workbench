@@ -132,7 +132,10 @@ processor = inventory.Processor(dev.lshw_json)
 json.dumps(processor.__dict__)
 
 """
-def export_to_devicehub_schema(device):
+def export_to_devicehub_schema(device, user_input=None):
+    if user_input is None:
+        user_input = {}
+    
     components = []
     for cp_name in ["processor", "memory", "hard_disk", "graphic_card",
                     "motherboard", "network_interfaces", "optical_drives",
@@ -154,7 +157,6 @@ def export_to_devicehub_schema(device):
         "device": {
             "@type": type(device).__name__,
             "type": device.type,
-            "label": "",  # TODO ask user
             "manufacturer": device.manufacturer,
             "model": device.model,
             "serialNumber": device.serialNumber,
@@ -162,5 +164,8 @@ def export_to_devicehub_schema(device):
         },
         "components": components,
     }
+    
+    # Include user's custom fields (e.g. label, comment)
+    snapshot["device"].update(user_input)
     
     return snapshot

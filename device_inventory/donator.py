@@ -81,6 +81,11 @@ def get_device_status(run_smart):
     }
 
 
+def get_user_input(config):
+    # XXX configurable user input fields
+    label = raw_input("Label ID: ")
+    comment = raw_input("Comment: ")
+    return dict(label=label, comment=comment)
 
 def main(argv=None):
     if not os.geteuid() == 0:
@@ -90,8 +95,10 @@ def main(argv=None):
     kwargs = {}
     
     config = load_config()
+    user_input = get_user_input(config)
+    
     device = Computer(**kwargs)  # XXX pass device type and other user input?
-    data = serializers.export_to_devicehub_schema(device)
+    data = serializers.export_to_devicehub_schema(device, user_input)
     
     filename = "/tmp/{0}.json".format(device.serialNumber)  # get_option
     with open(filename, "w") as outfile:
