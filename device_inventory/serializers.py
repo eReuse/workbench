@@ -166,6 +166,6 @@ def export_to_devicehub_schema(device, user_input=None):
     }
     
     # Include user's custom fields (e.g. label, comment)
-    snapshot["device"].update(user_input)
+    snapshot.update(user_input)
     
     return snapshot
