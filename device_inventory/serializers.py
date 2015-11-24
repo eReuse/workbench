@@ -137,17 +137,15 @@ def export_to_devicehub_schema(device, user_input=None):
         user_input = {}
     
     components = []
-    for cp_name in ["processor", "memory", "hard_disk", "graphic_card",
-                    "motherboard", "network_interfaces", "optical_drives",
-                    "sound_cards"]:
-        cp = getattr(device, cp_name)
+    for comp_name in device.COMPONENTS:
+        comp = getattr(device, comp_name)
         
         # We could receive an array of components (e.g. HDDs)
         # Or only a component (e.g. motherboard)
-        if not hasattr(cp, '__iter__'):
-            cp = [cp]
+        if not hasattr(comp, '__iter__'):
+            comp = [comp]
         
-        for item in cp:
+        for item in comp:
             value = item.__dict__
             value.update({"@type": type(item).__name__})
             components.append(utils.strip_null_or_empty_values(item.__dict__))

@@ -308,6 +308,10 @@ class Computer(object):
     TYPES = (
         (DESKTOP, "desktop")
     )
+    COMPONENTS = [
+        'graphic_card', 'hard_disk', 'memory', 'motherboard',
+        'network_interfaces', 'optical_drives', 'processor', 'sound_cards'
+    ]
     
     def __init__(self, load_data=False, **kwargs):
         if load_data:
