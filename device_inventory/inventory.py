@@ -212,7 +212,10 @@ class Processor(Device):
         
         # FIXME support multiple CPUs
         #self.number_cpus = multiprocessing.cpu_count()  # Python > 3.4 os.cpu_count()
-        self.numberOfCores = os.popen("lscpu | grep 'Core(s) per socket'").read().split(':')[1].strip()
+        try:
+            self.numberOfCores = int(os.popen("lscpu | grep 'Core(s) per socket'").read().split(':')[1].strip())
+        except ValueError:
+            self.numberOfCores = None
         
         self.model = re.sub(r"\s+ ", " ", get_xpath_text(node, "product"))
         self.manufacturer = get_xpath_text(node, 'vendor')  # was /proc/cpuinfo | grep vendor_id
@@ -234,7 +237,10 @@ class Processor(Device):
         for charac in dmi_processor['Characteristics']:
             match = re.search('(32|64)-bit', charac)
             if match:
-                self.address = match.group().rstrip('-bit')
+                try:
+                    self.address = int(match.group().rstrip('-bit'))
+                except ValueError:
+                    pass
                 break
     
     @property

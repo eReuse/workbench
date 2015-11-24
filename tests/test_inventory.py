@@ -1,4 +1,5 @@
 import os
+import types
 import unittest
 
 from device_inventory import inventory
@@ -25,3 +26,11 @@ class TestNetworkAdapter(unittest.TestCase):
         device = inventory.Computer(load_data=True)
         for iface in device.network_interfaces:
             self.assertIsNotNone(iface.serialNumber, iface.model)
+
+
+class TestProcessor(unittest.TestCase):
+    def test_number_of_cores(self):
+        device = inventory.Computer(load_data=True)
+        for proc in device.processor:
+            self.assertIs(type(proc.numberOfCores), types.IntType)
+            self.assertIs(type(proc.address), types.IntType)
