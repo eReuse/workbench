@@ -85,17 +85,26 @@ def get_user_input(config):
     # XXX configurable user input fields
     label = raw_input("Label ID: ")
     comment = raw_input("Comment: ")
-    return dict(label=label, comment=comment)
+    
+    # Ask user for choosing the Device.type
+    CHOICES = dict((key, value) for value, key in Computer.TYPES)
+    device_type = None
+    while device_type not in CHOICES.keys():
+        try:
+            device_type = int(raw_input("Device type {0}: ".format(CHOICES)))
+        except ValueError:
+            print("Invalid choice.")
+    
+    return dict(label=label, comment=comment, device_type=CHOICES[device_type])
 
 def main(argv=None):
     if not os.geteuid() == 0:
         sys.exit("Only root can run this script")
     
     # TODO process argv
-    kwargs = {}
-    
     config = load_config()
     user_input = get_user_input(config)
+    kwargs = dict(type=user_input.pop('device_type'))
     
     device = Computer(**kwargs)  # XXX pass device type and other user input?
     data = serializers.export_to_devicehub_schema(device, user_input)

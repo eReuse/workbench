@@ -305,8 +305,16 @@ class SoundCard(Device):
 
 class Computer(object):
     DESKTOP = "Desktop"
+    LAPTOP = "Laptop"
+    NETBOOK = "Netbook"
+    SERVER = "Server"
+    MICROTOWER = "Microtower"
     TYPES = (
-        (DESKTOP, "desktop")
+        (DESKTOP, 1),
+        (LAPTOP, 2),
+        (NETBOOK, 3),
+        (SERVER, 4),
+        (MICROTOWER, 5),
     )
     COMPONENTS = [
         'graphic_card', 'hard_disk', 'memory', 'motherboard',
@@ -329,7 +337,7 @@ class Computer(object):
             self.call_hardware_inspectors()
         
         # Retrieve computer info
-        self.type = self.DESKTOP  # TODO ask user or asume any value if not provided
+        self.type = kwargs.pop('type', self.DESKTOP)
         self.manufacturer = get_subsection_value(self.dmi, "System Information", "Manufacturer")
         self.model = get_subsection_value(self.dmi, "System Information", "Product Name")
         
