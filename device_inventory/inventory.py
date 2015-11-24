@@ -80,11 +80,19 @@ class Motherboard(object):
             self.connectors.append(
                 Connector(name=value, count=count, verbose_name=verbose)
             )
+        
+        # TODO optimize to only use a dmidecode call
+        self.totalSlots = int(utils.run("dmidecode -t 17 | grep -o BANK | wc -l"))
+        self.usedSlots = int(utils.run("dmidecode -t 17 | grep Size | grep MB | awk '{print $2}' | wc -l"))
     
     def number_of_connectors(self, root, name):
         for i in range(10):
             if not root.xpath('//node[@id="{0}:{1}"]'.format(name, i)):
                 return i
+    
+    @property
+    def freeSlots(self):
+        return self.totalSlots - self.usedSlots
 
 
 class HardDrive(Device):
@@ -265,10 +273,6 @@ class RamModule(object):
         # self.manufacturer = dm[dm.keys()[0]]['data']['Manufacturer']
         
         dmidecode_out = utils.run("dmidecode -t 17")
-        
-        # TODO optimize to only use a dmidecode call
-        self.total_slots = int(utils.run("dmidecode -t 17 | grep -o BANK | wc -l"))
-        self.used_slots = int(utils.run("dmidecode -t 17 | grep Size | grep MB | awk '{print $2}' | wc -l"))
         self.speed = self.sanitize_speed(
             get_subsection_value(dmidecode_out, "Memory Device", "Speed")
         )
@@ -282,10 +286,6 @@ class RamModule(object):
                 size += int(value['data']['Size'].split()[0])
         
         self.size = size
-    
-    @property
-    def free_slots(self):
-        return self.total_slots - self.used_slots
     
     @property
     def score(self):

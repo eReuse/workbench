@@ -48,8 +48,8 @@ def export_to_legacy_schema(device, status, beg_donator_time, end_donator_time):
         'size_ram': device.memory.size,
         'unit_size_ram': device.memory.CAPACITY_UNIT,
         'interface_ram': device.memory.interface,
-        'free_slot_ram': device.memory.free_slots,
-        'used_slot_ram': device.memory.used_slots,
+        'free_slot_ram': device.motherboard.freeSlots,
+        'used_slot_ram': device.motherboard.usedSlots,
         'score_ram': None,  # device.memory.score,
     }
     hdd = {
