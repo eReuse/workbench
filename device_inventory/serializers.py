@@ -75,11 +75,12 @@ def export_to_legacy_schema(device, status, beg_donator_time, end_donator_time):
         {"model_uni": drive.model, "tipo_uni": drive.description,}
         for drive in device.optical_drives
     ]
+    C_VERBOSE = dict((key, value) for value, key in device.motherboard.CONNECTORS)
     connectors = [
         {"connector":
-            {"tipus_connector": c.verbose_name, "nombre_connector": c.count,}
+            {"tipus_connector": C_VERBOSE[value], "nombre_connector": count,}
         }
-        for c in device.motherboard.connectors if c.count > 0
+        for value, count in device.motherboard.connectors.items() if count > 0
     ]
     brand_info = {
         "fab_marca": device.manufacturer,

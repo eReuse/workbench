@@ -1,5 +1,4 @@
 import abc
-import collections
 import dmidecode
 import logging
 import multiprocessing
@@ -22,8 +21,6 @@ def get_subsection_value(output, section_name, subsection_name):
     subsection = output.find(subsection_name, section)#, end_section)
     end = output.find("\n", subsection)
     return output[subsection:end].split(':')[1].strip()
-
-Connector = collections.namedtuple('Connector', ['name', 'count', 'verbose_name'])
 
 
 def get_xpath_text(node, path, default=None):
@@ -74,12 +71,9 @@ class Motherboard(object):
         self.manufacturer =  get_subsection_value(dmi, "Base Board Information", "Manufacturer")
         self.model =  get_subsection_value(dmi, "Base Board Information", "Product Name")
         
-        self.connectors = []
+        self.connectors = {}
         for verbose, value in self.CONNECTORS:
-            count = self.number_of_connectors(lshw_xml, value)
-            self.connectors.append(
-                Connector(name=value, count=count, verbose_name=verbose)
-            )
+            self.connectors[value] = self.number_of_connectors(lshw_xml, value)
         
         # TODO optimize to only use a dmidecode call
         self.totalSlots = int(utils.run("dmidecode -t 17 | grep -o BANK | wc -l"))
