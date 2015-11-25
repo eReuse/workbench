@@ -254,32 +254,44 @@ class RamModule(object):
     # TODO split computer.total_memory and RamModule(s) as components
     CAPACITY_UNIT = 'MB'
     SPEED_UNIT = 'Mhz'
+    totalSize = 0
     
-    def __init__(self):
-        # TODO as we cannot retrieve this information initialize as None
-        self.manufacturer = None
-        self.model = None
+    @classmethod
+    def retrieve(cls):
+        ram_modules = []
+        for key, value in dmidecode.memory().items():
+            module = value['data']
+            #is_module = module.get('Bank Locator') not in [None, 'None']
+            is_module = module.get('Size') not in [None, 'None']
+            if is_module:
+                ram_modules.append(cls(
+                    manufacturer=module.get('Manufacturer'),
+                    serialNumber=module.get('Serial Number'),
+                    size=module.get('Size'),
+                    speed=module.get('Speed'),
+                ))
+
+        cls.totalSize = sum([module.size for module in ram_modules])
         
-        dmi_memory = subprocess.check_output(["dmidecode", "-t" "memory"], universal_newlines=True)
-        self.serialNumber = get_subsection_value(dmi_memory, "Memory Device", "Serial Number")
+        return ram_modules
+    
+    def __init__(self, manufacturer, serialNumber, size, speed):
+        self.manufacturer = manufacturer
+        self.model = None  # TODO try to retrieve this information
+        self.serialNumber = serialNumber
+        self.speed = self.sanitize_speed(speed)
         
-        # dm = dmidecode.QueryTypeId(17)
-        # self.manufacturer = dm[dm.keys()[0]]['data']['Manufacturer']
-        
+        # FIXME we cannot replace by dmidecode.QueryTypeId(17)
+        # because Type is not filled! Is this a bug?
         dmidecode_out = utils.run("dmidecode -t 17")
-        self.speed = self.sanitize_speed(
-            get_subsection_value(dmidecode_out, "Memory Device", "Speed")
-        )
         self.interface = get_subsection_value(dmidecode_out, "Memory Device", "Type")
         # EDO|SDRAM|DDR3|DDR2|DDR|RDRAM
         
-        # FIXME get total size but describe slot per slot
-        size = 0
-        for key, value in dmidecode.memory().iteritems():
-            if value['data'].get('Size', None) is not None:
-                size += int(value['data']['Size'].split()[0])
-        
-        self.size = size
+        try:
+            self.size = int(size.split()[0])
+        except ValueError, IndexError:
+            logging.debug("Cannot retrieve RamMmodule size '{0}'.".format(size))
+            self.size = None
     
     @property
     def score(self):
@@ -346,7 +358,7 @@ class Computer(object):
         
         # Initialize components
         self.processor = Processor.retrieve(self.lshw_xml)
-        self.memory = RamModule()
+        self.memory = RamModule.retrieve()
         self.hard_disk = HardDrive.retrieve(self.lshw_xml)
         self.graphic_card = GraphicCard.retrieve(self.lshw_xml)
         self.motherboard = Motherboard(self.lshw_xml, self.dmi)
@@ -395,7 +407,7 @@ class Computer(object):
             self.serialNumber,
             self.motherboard.serialNumber,
             self.processor[0].serialNumber,
-            self.memory.serialNumber,
+            self.memory[0].serialNumber,
             self.hard_disk[0].serialNumber
         )
         self.ID2 = os.popen(cmd).read().strip()

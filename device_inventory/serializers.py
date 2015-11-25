@@ -34,6 +34,7 @@ def export_to_legacy_schema(device, status, beg_donator_time, end_donator_time):
     processor = device.processor[0]
     hard_disk = device.hard_disk[0]
     graphic_card = device.graphic_card[0]
+    memory = device.memory[0]
     
     cpu = {
         'nom_cpu': processor.model,
@@ -45,9 +46,9 @@ def export_to_legacy_schema(device, status, beg_donator_time, end_donator_time):
         'score_cpu': processor.score,
     }
     ram = {
-        'size_ram': device.memory.size,
-        'unit_size_ram': device.memory.CAPACITY_UNIT,
-        'interface_ram': device.memory.interface,
+        'size_ram': memory.size,
+        'unit_size_ram': memory.CAPACITY_UNIT,
+        'interface_ram': memory.interface,
         'free_slot_ram': device.motherboard.freeSlots,
         'used_slot_ram': device.motherboard.usedSlots,
         'score_ram': None,  # device.memory.score,
@@ -101,7 +102,7 @@ def export_to_legacy_schema(device, status, beg_donator_time, end_donator_time):
                 "serial_fab": device.serialNumber,
                 "serial_mot": device.motherboard.serialNumber,
                 "serial_cpu": processor.serialNumber,
-                "serial_ram": device.memory.serialNumber,
+                "serial_ram": memory.serialNumber,
                 "serial_hdd": hard_disk.serialNumber,
             },
             "estat": status,
@@ -159,7 +160,7 @@ def export_to_devicehub_schema(device, user_input=None):
             "manufacturer": device.manufacturer,
             "model": device.model,
             "serialNumber": device.serialNumber,
-            "totalMemory": device.memory.size,
+            "totalMemory": device.memory[0].totalSize,
         },
         "components": components,
     }

@@ -15,7 +15,7 @@ class TestComputer(unittest.TestCase):
         self.assertEqual(device.processor[0].serialNumber, None)
         self.assertEqual(device.motherboard.serialNumber, ".5MQ84N1.CN7016607B001P.")
         self.assertEqual(device.network_interfaces[1].serialNumber, "a4:ba:db:da:f0:c8")
-        self.assertEqual(device.memory.serialNumber, "15723A13")
+        self.assertEqual(device.memory[0].serialNumber, "15723A13")
         self.assertEqual(device.hard_disk[0].serialNumber, "WD-WXM1A50M9524")
 
 
