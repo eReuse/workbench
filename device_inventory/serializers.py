@@ -160,7 +160,6 @@ def export_to_devicehub_schema(device, user_input=None):
             "manufacturer": device.manufacturer,
             "model": device.model,
             "serialNumber": device.serialNumber,
-            "totalMemory": device.memory[0].totalSize,
         },
         "components": components,
     }
