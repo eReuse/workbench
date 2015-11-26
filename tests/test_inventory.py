@@ -19,6 +19,18 @@ class TestComputer(unittest.TestCase):
         self.assertEqual(device.hard_disk[0].serialNumber, "WD-WXM1A50M9524")
 
 
+class TestRamModule(unittest.TestCase):
+    def test_size(self):
+        device = inventory.Computer(
+            load_data=True,
+            #lshw_xml="tests/fixtures/vostro3300_lshw.xml"
+            dmidecode="tests/fixtures/vostro3300_dmidecode.txt"
+        )
+        for module in device.memory:
+            self.assertIsNotNone(module.size)
+            # TODO more especific tests
+
+
 class TestNetworkAdapter(unittest.TestCase):
     # FIXME Cannot retrieve MAC of USB network adapters
     @unittest.expectedFailure
