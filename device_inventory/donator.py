@@ -6,12 +6,13 @@ except ImportError:
     import configparser
 import datetime
 import json
+import logging
 import os
 import socket
 import sys
 import time
 
-from device_inventory import serializers
+from device_inventory import serializers, storage
 from device_inventory.benchmark import hard_disk_smart
 from device_inventory.inventory import Computer
 
@@ -109,11 +110,27 @@ def main(argv=None):
     device = Computer(**kwargs)  # XXX pass device type and other user input?
     data = serializers.export_to_devicehub_schema(device, user_input)
     
-    filename = "/tmp/{0}.json".format(device.serialNumber)  # get_option
-    with open(filename, "w") as outfile:
+    # TODO save on the home
+    filename = "{0}.json".format(device.serialNumber)  # get_option
+    localpath = os.path.join("/tmp", filename)
+    with open(localpath, "w") as outfile:
         json.dump(data, outfile, indent=4, sort_keys=True)
     
-    print("Device Inventory has finished properly: {0}".format(filename))
+    # send files to the PXE Server
+    if config.getboolean('DEFAULT', 'sendtoserver'):
+        remotepath = os.path.join(config.get('server', 'remotepath'), filename)
+        username = config.get('server', 'username')
+        password = config.get('server', 'password')
+        server = config.get('server', 'address')
+        try:
+            storage.copy_file_to_server(localpath, remotepath, username, password, server)
+        except Exception as e:
+            logging.error("Error copying file '%s' to server '%s'", localpath, server)
+            logging.debug(e)
+    
+    # TODO move to USB
+    
+    print("Device Inventory has finished properly: {0}".format(localpath))
 
 
 def legacy_main(**kwargs):

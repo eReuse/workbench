@@ -1,0 +1,6 @@
+paramiko    # SSH2 protocol for Python
+
+# Debian repository
+# lshw
+# dmidecode
+# python-dmidecode
