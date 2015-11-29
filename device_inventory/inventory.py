@@ -233,10 +233,13 @@ class Processor(Device):
             'MHz',
             self.CLOCK_UNIT
         )
-        # address (32b/64b)
-        #self.address = get_xpath_text(node, "size")
-        self.address = None
-        for charac in dmi_processor['Characteristics']:
+        self.address = self.get_address(dmi_processor)
+    
+    def get_address(self, dmi_processor):
+        """Retrieve processor instruction size, e.g. 32 or 64 (bits)."""
+        # address = get_xpath_text(node, "size")
+        address = None
+        for charac in dmi_processor.get('Characteristics', []):
             match = re.search('(32|64)-bit', charac)
             if match:
                 try:
@@ -244,6 +247,7 @@ class Processor(Device):
                 except ValueError:
                     pass
                 break
+        return address
     
     @property
     def score(self):

@@ -54,3 +54,12 @@ class TestProcessor(unittest.TestCase):
             output = f.read()
         node = etree.fromstring(output)
         proc = inventory.Processor(node)
+    
+    def test_size(self):
+        # Force trying to retrieve address without having data
+        filename = 'tests/fixtures/processor_without_product.xml'
+        with  open(filename, 'r') as f:
+            output = f.read()
+        node = etree.fromstring(output)
+        proc = inventory.Processor(node)
+        self.assertIsNone(proc.get_address({}))
