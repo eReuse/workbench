@@ -240,7 +240,7 @@ class Processor(Device):
             match = re.search('(32|64)-bit', charac)
             if match:
                 try:
-                    self.address = int(match.group().rstrip('-bit'))
+                    address = int(match.group().rstrip('-bit'))
                 except ValueError:
                     pass
                 break
