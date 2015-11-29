@@ -222,18 +222,27 @@ class Processor(Device):
         self.model = self.sanitize_model(get_xpath_text(node, "product"))
         self.manufacturer = get_xpath_text(node, 'vendor')  # was /proc/cpuinfo | grep vendor_id
         
-        dmi_processor = dmidecode.processor()['0x0004']['data']
-        self.speed = utils.convert_frequency(
-            dmi_processor['Current Speed'],
-            'MHz',
-            self.SPEED_UNIT
-        )
-        self.busClock = utils.convert_frequency(
-            dmi_processor['External Clock'],
-            'MHz',
-            self.CLOCK_UNIT
-        )
-        self.address = self.get_address(dmi_processor)
+        try:
+            dmi_processor = dmidecode.processor()['0x0004']['data']
+        except KeyError:
+            logging.debug("Cannot retrieve processor info from DMI.")
+            logging.error("Processor.speed")
+            logging.error("Processor.busClock")
+            logging.error("Processor.address")
+            pass
+        else:
+            self.speed = utils.convert_frequency(
+                dmi_processor['Current Speed'],
+                'MHz',
+                self.SPEED_UNIT
+            )
+            # TODO remove busClock (is not anymore in specs)
+            self.busClock = utils.convert_frequency(
+                dmi_processor['External Clock'],
+                'MHz',
+                self.CLOCK_UNIT
+            )
+            self.address = self.get_address(dmi_processor)
     
     def get_address(self, dmi_processor):
         """Retrieve processor instruction size, e.g. 32 or 64 (bits)."""
