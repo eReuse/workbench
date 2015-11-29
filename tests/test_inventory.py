@@ -63,3 +63,13 @@ class TestProcessor(unittest.TestCase):
         node = etree.fromstring(output)
         proc = inventory.Processor(node)
         self.assertIsNone(proc.get_address({}))
+    
+    def test_speed(self):
+        filename = 'tests/fixtures/processor_without_product.xml'
+        with  open(filename, 'r') as f:
+            output = f.read()
+        node = etree.fromstring(output)
+        proc = inventory.Processor(node)
+        # Force trying to retrieve speed without having data
+        self.assertIsNone(proc.get_speed({}))
+        self.assertEqual(proc.get_speed({'Current Speed': 1000}), 1)

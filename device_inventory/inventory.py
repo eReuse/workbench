@@ -228,14 +228,9 @@ class Processor(Device):
             logging.debug("Cannot retrieve processor info from DMI.")
             logging.error("Processor.speed")
             logging.error("Processor.address")
-            pass
         else:
-            self.speed = utils.convert_frequency(
-                dmi_processor['Current Speed'],
-                'MHz',
-                self.SPEED_UNIT
-            )
             self.address = self.get_address(dmi_processor)
+            self.speed = self.get_speed(dmi_processor)
     
     def get_address(self, dmi_processor):
         """Retrieve processor instruction size, e.g. 32 or 64 (bits)."""
@@ -250,6 +245,12 @@ class Processor(Device):
                     pass
                 break
         return address
+    
+    def get_speed(self, dmi_processor):
+        speed = dmi_processor.get('Current Speed', None)
+        if speed is not None:
+            speed = utils.convert_frequency(speed, 'MHz', self.SPEED_UNIT)
+        return speed
     
     @property
     def score(self):
