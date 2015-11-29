@@ -1,0 +1,15 @@
+<?xml version="1.0" standalone="yes" ?>
+<node id="cpu" claimed="true" class="processor" handle="">
+ <product></product>
+ <vendor>Intel Corp.</vendor>
+ <physid>1</physid>
+ <businfo>cpu@0</businfo>
+ <size units="Hz">1197000000</size>
+ <capacity units="Hz">2395000000</capacity>
+ <width units="bits">64</width>
+ <capabilities>
+  <capability id="fpu" >mathematical co-processor</capability>
+  <capability id="fpu_exception" >FPU exceptions reporting</capability>
+  <capability id="wp" />
+ </capabilities>
+</node>

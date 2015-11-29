@@ -219,7 +219,7 @@ class Processor(Device):
         except ValueError:
             self.numberOfCores = None
         
-        self.model = re.sub(r"\s+ ", " ", get_xpath_text(node, "product"))
+        self.model = self.sanitize_model(get_xpath_text(node, "product"))
         self.manufacturer = get_xpath_text(node, 'vendor')  # was /proc/cpuinfo | grep vendor_id
         
         dmi_processor = dmidecode.processor()['0x0004']['data']
@@ -248,6 +248,11 @@ class Processor(Device):
     @property
     def score(self):
         return benchmark.score_cpu()
+    
+    def sanitize_model(self, value):
+        if value is not None:
+            value = re.sub(r"\s+ ", " ", value)
+        return value
 
 
 class RamModule(object):

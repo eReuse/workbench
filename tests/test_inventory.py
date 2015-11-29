@@ -3,6 +3,7 @@ import types
 import unittest
 
 from device_inventory import inventory
+from lxml import etree
 
 
 @unittest.skipUnless(os.geteuid() == 0, "Only root can run this script")
@@ -46,3 +47,10 @@ class TestProcessor(unittest.TestCase):
         for proc in device.processor:
             self.assertIs(type(proc.numberOfCores), types.IntType)
             self.assertIs(type(proc.address), types.IntType)
+    
+    def test_product(self):
+        filename = 'tests/fixtures/processor_without_product.xml'
+        with  open(filename, 'r') as f:
+            output = f.read()
+        node = etree.fromstring(output)
+        proc = inventory.Processor(node)
