@@ -4,3 +4,4 @@ paramiko    # SSH2 protocol for Python
 # lshw
 # dmidecode
 # python-dmidecode
+# python-lxml
