@@ -227,7 +227,6 @@ class Processor(Device):
         except KeyError:
             logging.debug("Cannot retrieve processor info from DMI.")
             logging.error("Processor.speed")
-            logging.error("Processor.busClock")
             logging.error("Processor.address")
             pass
         else:
@@ -235,12 +234,6 @@ class Processor(Device):
                 dmi_processor['Current Speed'],
                 'MHz',
                 self.SPEED_UNIT
-            )
-            # TODO remove busClock (is not anymore in specs)
-            self.busClock = utils.convert_frequency(
-                dmi_processor['External Clock'],
-                'MHz',
-                self.CLOCK_UNIT
             )
             self.address = self.get_address(dmi_processor)
     
