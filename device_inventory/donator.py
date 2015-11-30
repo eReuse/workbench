@@ -89,10 +89,12 @@ def get_user_input(config):
     
     # Ask user for choosing the Device.type
     CHOICES = dict((key, value) for value, key in Computer.TYPES)
+    formated_choices = "\n".join(["{0}. {1}".format(k,v) for k, v in CHOICES.items()])
+    choose_msg = "Choose device type \n{0}\nType: ".format(formated_choices)
     device_type = None
     while device_type not in CHOICES.keys():
         try:
-            device_type = int(raw_input("Device type {0}: ".format(CHOICES)))
+            device_type = int(raw_input(choose_msg))
         except ValueError:
             print("Invalid choice.")
     
