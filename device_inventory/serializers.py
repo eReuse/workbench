@@ -135,7 +135,7 @@ processor = inventory.Processor(dev.lshw_json)
 json.dumps(processor.__dict__)
 
 """
-def export_to_devicehub_schema(device, config, user_input=None):
+def export_to_devicehub_schema(device, user_input=None, debug=False):
     if user_input is None:
         user_input = {}
     
@@ -169,7 +169,7 @@ def export_to_devicehub_schema(device, config, user_input=None):
     snapshot.update(user_input)
     
     # Include full output (debugging purposes)
-    if config.getboolean('DEFAULT', 'debug'):
+    if debug:
         snapshot['debug'] = {
             "lshw": lxml.etree.tostring(device.lshw_xml),
             "dmi": device.dmi,
