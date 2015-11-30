@@ -5,6 +5,7 @@ import multiprocessing
 import os
 import re
 import subprocess
+import uuid
 
 from lxml import etree
 
@@ -423,3 +424,17 @@ class Computer(object):
             self.hard_disk[0].serialNumber
         )
         self.ID2 = os.popen(cmd).read().strip()
+    
+    @property
+    def verbose_name(self):
+        if self.serialNumber is not None:
+            return self.serialNumber
+        
+        if self.motherboard.serialNumber is not None:
+            return self.motherboard.serialNumber
+        
+        for iface in self.network_interfaces:
+            if iface.serialNumber is not None:
+                return iface.serialNumber.replace(':', '')
+        
+        return str(uuid.getnode())

@@ -111,7 +111,7 @@ def main(argv=None):
     data = serializers.export_to_devicehub_schema(device, user_input)
     
     # TODO save on the home
-    filename = "{0}.json".format(device.serialNumber)  # get_option
+    filename = "{0}.json".format(device.verbose_name)  # get_option
     localpath = os.path.join("/tmp", filename)
     with open(localpath, "w") as outfile:
         json.dump(data, outfile, indent=4, sort_keys=True)
