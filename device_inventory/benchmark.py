@@ -35,6 +35,7 @@ def hard_disk_smart(disk="/dev/sda"):
         lba_first_error = None
     
     return {
+        "@type": "TestHardDrive",
         "device": disk,
         "type": result[1],
         "status": result[2],
