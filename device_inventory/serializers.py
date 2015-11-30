@@ -1,3 +1,4 @@
+import lxml
 import multiprocessing
 
 from xml.etree import ElementTree
@@ -134,7 +135,7 @@ processor = inventory.Processor(dev.lshw_json)
 json.dumps(processor.__dict__)
 
 """
-def export_to_devicehub_schema(device, user_input=None):
+def export_to_devicehub_schema(device, config, user_input=None):
     if user_input is None:
         user_input = {}
     
@@ -166,5 +167,13 @@ def export_to_devicehub_schema(device, user_input=None):
     
     # Include user's custom fields (e.g. label, comment)
     snapshot.update(user_input)
+    
+    # Include full output (debugging purposes)
+    if config.getboolean('DEFAULT', 'debug'):
+        snapshot['debug'] = {
+            "lshw": lxml.etree.tostring(device.lshw_xml),
+            "dmi": device.dmi,
+            #'smart": ,
+        }
     
     return snapshot

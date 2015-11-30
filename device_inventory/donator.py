@@ -108,7 +108,7 @@ def main(argv=None):
     kwargs = dict(type=user_input.pop('device_type'))
     
     device = Computer(**kwargs)  # XXX pass device type and other user input?
-    data = serializers.export_to_devicehub_schema(device, user_input)
+    data = serializers.export_to_devicehub_schema(device, config, user_input)
     
     # TODO save on the home
     filename = "{0}.json".format(device.verbose_name)  # get_option
