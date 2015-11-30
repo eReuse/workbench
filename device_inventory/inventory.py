@@ -48,10 +48,14 @@ class Device(object):
         # IDs examples: "multimedia", "multimedia:0", "multimedia:1"
         # NOTE the use of regex has the side effect of including virtual
         # network adapters.
-        regex = '//node[re:match(@id, "{0}[:\d]?")]'.format(cls.LSHW_NODE_ID)
-        namespaces = {"re": "http://exslt.org/regular-expressions"}
-        for node in lshw_xml.xpath(regex, namespaces=namespaces):
+        for node in lshw_xml.xpath('//node[@id="{0}"]'.format(cls.LSHW_NODE_ID)):
             objects.append(cls(node))
+        
+        if len(objects) == 0:
+            regex = '//node[re:match(@id, "{0}[:\d]?")]'.format(cls.LSHW_NODE_ID)
+            namespaces = {"re": "http://exslt.org/regular-expressions"}
+            for node in lshw_xml.xpath(regex, namespaces=namespaces):
+                objects.append(cls(node))
         
         if len(objects) == 0:
             logging.debug("NOT found {0} {1}".format(cls, cls.LSHW_NODE_ID))
