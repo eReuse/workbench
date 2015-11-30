@@ -119,7 +119,10 @@ class HardDrive(Device):
                 self.size = utils.convert_capacity(size, unit, self.CAPACITY_UNITS)
         
         # TODO read config to know if we should run SMART
-        self.test = self.run_smart(logical_name)
+        if logical_name:
+            self.test = self.run_smart(logical_name)
+        else:
+            logging.error("Cannot execute SMART on device '%s'.", self.serialNumber)
     
     def run_smart(self, logical_name):  # TODO allow choosing short or extended
         return benchmark.hard_disk_smart(disk=logical_name)

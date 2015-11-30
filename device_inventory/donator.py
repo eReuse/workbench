@@ -55,10 +55,11 @@ def is_connected():
 def get_device_status(run_smart):
     # legacy (only backwards compatibility)
     if run_smart:
-        result = hard_disk_smart()  # TODO select proper HD!
+        hdd = '/dev/sda'  # TODO select proper HD!
+        result = hard_disk_smart(hdd)
         smart = {
             "check": "Yes",
-            "device_check": result['device'],
+            "device_check": hdd,
             "type_check": result['type'],
             "info_check": result['status'],
             "lifetime_check": result['lifetime'],

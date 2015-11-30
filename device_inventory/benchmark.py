@@ -17,6 +17,7 @@ def hard_disk_smart(disk="/dev/sda"):
     # smartctl -a /dev/sda | grep "# 1"
     # # 1  Short offline       Completed without error       00%     10016         -
     # XXX extract data of smartest. Decide which info is relevant.
+    assert disk is not None
     error = False
     try:
         smart = subprocess.check_output(["smartctl", "-a", disk],
