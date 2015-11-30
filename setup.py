@@ -13,6 +13,7 @@ setup(
                    'of computers. It retrieves details of the hardware '
                    'information and, optionally, runs some health and '
                    'benchmark tests.'),
+    scripts=['scripts/device-inventory'],
     url = 'https://github.com/eReuse/device-inventory',
     author = 'eReuse team',
     classifiers = [
