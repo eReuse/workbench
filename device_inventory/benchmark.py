@@ -26,7 +26,9 @@ def hard_disk_smart(disk="/dev/sda"):
         smart = e.output
         # analyze e.returncode
         if e.returncode == pow(2, 0):  # bit 0
-            raise  # command line did not parse
+            # TODO raise  # command line did not parse
+            logging.debug("Error calling smartctl: %s", e.output)
+            error = True
         elif e.returncode == pow(2, 1):  # bit 1
             pass  # only warning because low-power
         elif e.returncode == pow(2, 2):  # bit 2
