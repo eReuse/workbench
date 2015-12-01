@@ -318,7 +318,10 @@ class RamModule(object):
         return benchmark.score_ram(self.speed)
     
     def sanitize_speed(self, value):
-        value = re.search('\d+', value).group()
+        speed = re.search('\d+', value)
+        if speed is None:
+            return None
+        value = speed.group()
         try:
             return float(value)
         except ValueError:
