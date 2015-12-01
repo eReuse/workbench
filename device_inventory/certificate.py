@@ -4,6 +4,7 @@ import os
 import sys
 import fcntl
 import struct
+import subprocess
 
 # checking priveleges
 #if os.geteuid() !=  0:
@@ -21,7 +22,9 @@ def get_timestamp():
 	return time.strftime("%Y-%m-%d %H:%M:%S")
 	
 def get_cleaned_sectors():
-	return os.system("fdisk -l /dev/sda | head -1 hardware['device'] | awk '{print $7, $8}'")
+	info_sectors = subprocess.check_output(["fdisk", "-l", hardware['device']])
+	info_sectors = info_sectors.split()
+	return info_sectors[6]
 
 # INVENTORY
 
@@ -41,7 +44,7 @@ for file in dirs:
 		hardware['cert'] =  get_cert(file)
 		hardware['device'] = get_device(file)
 		hardware['timestamp'] = get_timestamp()
-		hardware['cleaned_sectors'] = get_cleaned_sectors
+		hardware['cleaned_sectors'] = get_cleaned_sectors()
 
 # Program
 		print(hardware)
