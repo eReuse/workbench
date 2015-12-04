@@ -34,6 +34,7 @@ def get_xpath_text(node, path, default=None):
 class Device(object):
     __metaclass__ = abc.ABCMeta
     
+    LSHW_REGEX = r"^{value}(:\d+)?$"
     LSHW_NODE_ID = None
     
     @classmethod
@@ -48,14 +49,11 @@ class Device(object):
         # IDs examples: "multimedia", "multimedia:0", "multimedia:1"
         # NOTE the use of regex has the side effect of including virtual
         # network adapters.
-        for node in lshw_xml.xpath('//node[@id="{0}"]'.format(cls.LSHW_NODE_ID)):
+        regex = cls.LSHW_REGEX.format(value=cls.LSHW_NODE_ID)
+        xpath_regex = '//node[re:match(@id, "{0}")]'.format(regex)
+        namespaces = {"re": "http://exslt.org/regular-expressions"}
+        for node in lshw_xml.xpath(xpath_regex, namespaces=namespaces):
             objects.append(cls(node))
-        
-        if len(objects) == 0:
-            regex = '//node[re:match(@id, "{0}[:\d]?")]'.format(cls.LSHW_NODE_ID)
-            namespaces = {"re": "http://exslt.org/regular-expressions"}
-            for node in lshw_xml.xpath(regex, namespaces=namespaces):
-                objects.append(cls(node))
         
         if len(objects) == 0:
             logging.debug("NOT found {0} {1}".format(cls, cls.LSHW_NODE_ID))
