@@ -220,17 +220,12 @@ class Processor(Device):
     LSHW_NODE_ID = 'cpu'
     
     def __init__(self, node):
-        ## Search CPU's serial number, if there are several we choose the first
-        # A) dmidecode -t processor
-        # FIXME Serial Number returns "To be filled by OEM"
-        # http://forum.giga-byte.co.uk/index.php?topic=14167.0
+        # CPU serial number is a random value due to privacy EU policy
+        # so we don't retrieve it anymore
         # self.serialNumber = get_subsection_value(self.dmi, "Processor Information", "ID")
-        self.serialNumber = get_xpath_text(node, "serial")
-        # B) Try to call CPUID? https://en.wikipedia.org/wiki/CPUID
-        # http://stackoverflow.com/a/4216034/1538221
+        # self.serialNumber = get_xpath_text(node, "serial")
+        self.serialNumber = None
         
-        # FIXME support multiple CPUs
-        #self.number_cpus = multiprocessing.cpu_count()  # Python > 3.4 os.cpu_count()
         try:
             self.numberOfCores = int(os.popen("lscpu | grep 'Core(s) per socket'").read().split(':')[1].strip())
         except ValueError:
