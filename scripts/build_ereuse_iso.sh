@@ -48,11 +48,6 @@ pip install paramiko
 
 pip install --upgrade git+https://github.com/ereuse/device-inventory.git#egg=device_inventory
 
-# FIXME config.ini not included ??
-wget https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/config.ini -O /usr/local/lib/python2.7/dist-packages/device_inventory/config.ini
-mkdir /usr/local/lib/python2.7/dist-packages/device_inventory/static/
-wget https://github.com/eReuse/device-inventory/raw/master/device_inventory/static/meaningless_values.txt -O /usr/local/lib/python2.7/dist-packages/device_inventory/static/meaningless_values.txt
-
 # Configure timezone
 dpkg-reconfigure tzdata
 
