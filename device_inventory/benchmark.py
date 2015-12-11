@@ -14,11 +14,11 @@ from .utils import run
 
 
 def hard_disk_smart(disk="/dev/sda"):
-    # smartctl -a /dev/sda | grep "# 1"
-    # # 1  Short offline       Completed without error       00%     10016         -
-    # XXX extract data of smartest. Decide which info is relevant.
+    # TODO allow choosing type of test (short, extensive...)
+    # TODO include debug information
     assert disk is not None
     error = False
+    status = ""
     try:
         smart = subprocess.check_output(["smartctl", "-a", disk],
                                         universal_newlines=True)
@@ -26,24 +26,31 @@ def hard_disk_smart(disk="/dev/sda"):
         smart = e.output
         # analyze e.returncode
         if e.returncode == pow(2, 0):  # bit 0
-            # TODO raise  # command line did not parse
-            logging.debug("Error calling smartctl: %s", e.output)
+            status = "Error calling '{0}'".format(e.cmd)
             error = True
+            # TODO command line did not parse
+            logging.error("%s: %s", status, e.output)
         elif e.returncode == pow(2, 1):  # bit 1
             pass  # only warning because low-power
         elif e.returncode == pow(2, 2):  # bit 2
             error = True  # TODO cannot perform SMART
-        else: # bit 3, 4, 5, 6, 7  device log with errors
+            status = "Some SMART or other ATA command to the disk failed."
+        elif e.returncode == pow(2, 5):  # bit 5
+            status = "SMART status check returned 'DISK OK' but some prefail."
+        else: # bit 3, 4, 6, 7  device log with errors
             error = True
+            status = "SMART status check returned 'DISK FAILING'."
     
     test = {
         "@type": "TestHardDrive",
-        #"device": disk,
         "error": error,
+        "status": status,
     }
 
-    # excepted output
+    # Retrieve SMART info as smartctl has finished without problems.
+    # expected output -> smartctl -a /dev/sda
     # Num  Test_Description  Status  Remaining  LifeTime(hours)  LBA_of_first_error
+    # # 1  Short offline       Completed without error       00%     10016         -
     try:
         beg = smart.index('# 1')
         end = smart.index('\n', beg)
