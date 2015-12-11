@@ -60,6 +60,13 @@ class TestComputer(unittest.TestCase):
         self.assertEqual(2, len(device.processor))
 
 
+class TestGraphicCard(unittest.TestCase):
+    def test_memory(self):
+        self.assertEqual(256, inventory.get_memory(['512K', '256M'], 'MB'))
+        self.assertEqual(512, inventory.get_memory(['512M', '256M'], 'MB'))
+        self.assertEqual(None, inventory.get_memory([], 'MB'))
+
+
 class TestRamModule(unittest.TestCase):
     def test_size(self):
         device = inventory.Computer(

@@ -31,6 +31,23 @@ def get_xpath_text(node, path, default=None):
         return default
 
 
+def get_memory(values, units):
+    # Get max memory value
+    max_size = 0
+    for value in values:
+        unit = re.split('\d+', value)[1]
+        size = int(value.rstrip(unit))
+        
+        # convert all values to KB before compare
+        size_kb = utils.convert_base(size, unit, 'K', distance=1024)
+        if size_kb > max_size:
+            max_size = size_kb
+    
+    if max_size > 0:
+        return utils.convert_capacity(max_size, 'KB', units)
+    return None
+
+
 class Device(object):
     __metaclass__ = abc.ABCMeta
     
@@ -140,21 +157,15 @@ class GraphicCard(Device):
         self.model = get_xpath_text(node, 'product')
         
         # Find VGA memory
+        # TODO include output on debug info
         bus_info = get_xpath_text(node, 'businfo').split("@")[1]
-        mem = utils.run("lspci -v -s {bus} | grep 'prefetchable' | grep -v 'non-prefetchable' | egrep -o '[0-9]{{1,3}}[KMGT]+'".format(bus=bus_info)).splitlines()
-        
-        # Get max memory value
-        max_size = 0
-        for value in mem:
-            unit = re.split('\d+', value)[1]
-            size = int(value.rstrip(unit))
-            
-            # convert all values to KB before compare
-            size_kb = utils.convert_base(size, unit, 'K', distance=1024)
-            if size_kb > max_size:
-                max_size = size_kb
+        mem = utils.run("lspci -v -s {bus} | "
+                        "grep 'prefetchable' | "
+                        "grep -v 'non-prefetchable' | "
+                        "egrep -o '[0-9]{{1,3}}[KMGT]+'".format(bus=bus_info)
+              ).splitlines()
 
-        self.memory = utils.convert_capacity(max_size, 'KB', 'MB')
+        self.memory = get_memory(mem, self.CAPACITY_UNITS)
     
     @property
     def score(self):
