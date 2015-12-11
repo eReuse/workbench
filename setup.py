@@ -14,6 +14,7 @@ setup(
                    'information and, optionally, runs some health and '
                    'benchmark tests.'),
     scripts=['scripts/device-inventory'],
+    package_data={'device_inventory': ['config.ini', 'data/*.txt']},
     url = 'https://github.com/eReuse/device-inventory',
     author = 'eReuse team',
     classifiers = [
