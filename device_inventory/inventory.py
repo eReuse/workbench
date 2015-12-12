@@ -248,7 +248,7 @@ class Processor(Device):
         """Retrieve processor instruction size, e.g. 32 or 64 (bits)."""
         # address = get_xpath_text(node, "size")
         address = None
-        for charac in dmi_processor.get('Characteristics', []):
+        for charac in dmi_processor.get('Characteristics') or []:
             match = re.search('(32|64)-bit', charac)
             if match:
                 try:

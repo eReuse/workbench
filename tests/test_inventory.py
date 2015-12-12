@@ -89,6 +89,13 @@ class TestNetworkAdapter(unittest.TestCase):
 
 
 class TestProcessor(unittest.TestCase):
+    def test_address(self):
+        device = inventory.Computer(load_data=True)
+        proc = device.processor[0]
+        self.assertIsNone(proc.get_address({'Characteristics': None}))
+        self.assertEqual(32, proc.get_address({'Characteristics': ['32-bit']}))
+        self.assertEqual(64, proc.get_address({'Characteristics': ['64-bit']}))
+    
     def test_number_of_cores(self):
         device = inventory.Computer(load_data=True)
         for proc in device.processor:
