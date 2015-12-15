@@ -62,5 +62,11 @@ def copy_file_to_usb(localpath):
      
     # TODO mkdir on USB?
     shutil.copy(localpath, dstpath)
+    
+    # wait until copy is completed before umounting
+    for _ in range(0, 10):
+        if not utils.run("lsof -w %s" % dstpath):
+            break
+        time.sleep(1)
     utils.run("umount %s" % dstpath)
     print("File '%s' copied properly!" % localpath)
