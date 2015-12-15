@@ -35,7 +35,7 @@ def check_local_space():
 def check_iso_space():
 	size = output["assets"][0]["size"]
 	return size / 1024 / 1024
-	
+
 def check_space():
 	if check_local_space() > check_iso_space():
 		return True
@@ -43,9 +43,9 @@ def check_space():
 		return False
 
 def check_version():
-	
-	# ← Need to check if /var/lib/tftpboot/iso is empty or eReuse image does not exist
-	
+
+	#  Need to check if /var/lib/tftpboot/iso is empty or eReuse image does not exist
+
 	files = os.listdir(os.path.join('/var/lib/tftpboot/iso'))
 	for checking in files:
 		local_version = checking.split('_')[1]
@@ -61,7 +61,7 @@ def check_version():
 
 def get_iso():
 	url = output["assets"][0]["browser_download_url"]
-		
+
 	### DOWNLOAD ###
 	file_name = url.split('/')[-1]
 	u = urllib2.urlopen(url)
@@ -84,7 +84,7 @@ def get_iso():
 		print status,
 
 	f.close()
-	
+
 	# Move it
 	origin = os.path.join('.', file_name)
 	destination = os.path.join('/var/lib/tftpboot/iso', file_name)
@@ -92,9 +92,9 @@ def get_iso():
 	print "Finished."
 
 if __name__ == '__main__':
-	
+
 	output = get_lastreleases()
-	
+
 	if check_webstatus():
 		if check_content_type("application/x-iso9660-image"):
 			print "The content founded is a iso image"
