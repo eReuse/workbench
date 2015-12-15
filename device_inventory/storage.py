@@ -37,9 +37,12 @@ def copy_file_to_usb(localpath):
     monitor.start()
     
     # Wait until a USB stick is connected
-    print("Please insert a USB to copy the output.")
+    print("Please insert a USB to copy the output or press Ctrl+C to omit.")
     while True:
-        device = monitor.poll()
+        try:
+            device = monitor.poll()
+        except KeyboardInterrupt:
+            raise
         logging.debug(device.get('DEVNAME'), device.action, device.device_type)
         if device.action == 'add':
             break

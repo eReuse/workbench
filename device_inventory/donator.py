@@ -136,6 +136,8 @@ def main(argv=None):
     if config.getboolean('DEFAULT', 'copy_to_usb'):
         try:
             storage.copy_file_to_usb(localpath)
+        except KeyboardInterrupt:
+            print("Copy to USB cancelled by user!")
         except Exception as e:
             logging.error("Error copying file '%s' to USB", localpath)
             logging.debug(e)
