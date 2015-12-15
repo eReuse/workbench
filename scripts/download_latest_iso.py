@@ -2,13 +2,21 @@
 import requests
 import urllib2
 import os
+import sys
 
 def get_lastreleases():
-	r = requests.get('https://api.github.com/repos/eReuse/device-inventory/releases/latest')
+	try:
+		r = requests.get('https://api.github.com/repos/eReuse/device-inventory/releases/latest')
+	except Exception:
+		sys.exit("Cannot connect.")
 	return r.json()
 
 def check_webstatus():
-	r = requests.get('https://api.github.com/repos/eReuse/device-inventory/releases/latest')
+	try:
+		r = requests.get('https://api.github.com/repos/eReuse/device-inventory/releases/latest')
+	except Exception:
+		sys.exit("Cannot connect.")
+
 	if r.status_code == 200:
 		return True
 	else:
