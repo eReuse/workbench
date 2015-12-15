@@ -6,5 +6,4 @@ pyudev      # pure Python libudev binding
 # dmidecode
 # python-dmidecode
 # python-lxml
-# python-gudev
-# libudev1
+# usbmount
