@@ -138,7 +138,7 @@ class HardDrive(Device):
                 self.size = utils.convert_capacity(size, unit, self.CAPACITY_UNITS)
         
         # TODO read config to know if we should run SMART
-        if logical_name:
+        if logical_name and self.interface != "usb":
             self.test = self.run_smart(logical_name)
         else:
             logging.error("Cannot execute SMART on device '%s'.", self.serialNumber)
@@ -386,7 +386,9 @@ class Computer(object):
         # Initialize components
         self.processor = Processor.retrieve(self.lshw_xml)
         self.memory = RamModule.retrieve()
-        self.hard_disk = HardDrive.retrieve(self.lshw_xml)
+        # TODO USB Hard Drive excluded until they are properly implemented
+        self.hard_disk = [hd for hd in HardDrive.retrieve(self.lshw_xml)
+                          if hd.interface != "usb"]
         self.graphic_card = GraphicCard.retrieve(self.lshw_xml)
         self.motherboard = Motherboard(self.lshw_xml, self.dmi)
         self.network_interfaces = NetworkAdapter.retrieve(self.lshw_xml)
