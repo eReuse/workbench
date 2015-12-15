@@ -43,6 +43,9 @@ def check_space():
 		return False
 
 def check_version():
+	
+	# ← Need to check if /var/lib/tftpboot/iso is empty or eReuse image does not exist
+	
 	files = os.listdir(os.path.join('/var/lib/tftpboot/iso'))
 	for checking in files:
 		local_version = checking.split('_')[1]
@@ -55,7 +58,6 @@ def check_version():
 				break
 			i = i + 1
 	return False
-
 
 def get_iso():
 	url = output["assets"][0]["browser_download_url"]
