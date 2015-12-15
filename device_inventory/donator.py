@@ -111,7 +111,7 @@ def main(argv=None):
     user_input = get_user_input(config)
     kwargs = dict(type=user_input.pop('device_type'))
     
-    device = Computer(**kwargs)  # XXX pass device type and other user input?
+    device = Computer(**kwargs)
     data = serializers.export_to_devicehub_schema(device, user_input, debug)
     
     # TODO save on the home
@@ -132,7 +132,13 @@ def main(argv=None):
             logging.error("Error copying file '%s' to server '%s'", localpath, server)
             logging.debug(e)
     
-    # TODO move to USB
+    # copy file to an USB drive
+    if config.getboolean('DEFAULT', 'copy_to_usb'):
+        try:
+            storage.copy_file_to_usb(localpath)
+        except Exception as e:
+            logging.error("Error copying file '%s' to USB", localpath)
+            logging.debug(e)
     
     print("Device Inventory has finished properly: {0}".format(localpath))
 
