@@ -443,14 +443,14 @@ class Computer(object):
     
     @property
     def verbose_name(self):
-        if self.serialNumber is not None:
+        if self.serialNumber:
             return self.serialNumber
         
-        if self.motherboard.serialNumber is not None:
+        if self.motherboard.serialNumber:
             return self.motherboard.serialNumber
         
         for iface in self.network_interfaces:
-            if iface.serialNumber is not None:
+            if iface.serialNumber:
                 return iface.serialNumber.replace(':', '')
         
         return str(uuid.getnode())
