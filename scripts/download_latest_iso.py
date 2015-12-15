@@ -8,9 +8,11 @@ def get_lastreleases():
 	return r.json()
 
 def check_webstatus():
-	if r.status_code != 200:
-		print "Error to get the last release from GitHub."
-		exit
+	r = requests.get('https://api.github.com/repos/eReuse/device-inventory/releases/latest')
+	if r.status_code == 200:
+		return True
+	else:
+		return False
 
 def check_content_type(content):
 	if output["assets"][0]["content_type"] == content:
@@ -49,46 +51,54 @@ def check_version():
 
 def get_iso():
 	url = output["assets"][0]["browser_download_url"]
-	if size < space:
-		print "Downloading iso image."
 		
-		### DOWNLOAD ###
-		file_name = url.split('/')[-1]
-		u = urllib2.urlopen(url)
-		f = open(file_name, 'wb')
-		meta = u.info()
-		file_size = int(meta.getheaders("Content-Length")[0])
-		print "Downloading: %s" % (file_name)
+	### DOWNLOAD ###
+	file_name = url.split('/')[-1]
+	u = urllib2.urlopen(url)
+	f = open(file_name, 'wb')
+	meta = u.info()
+	file_size = int(meta.getheaders("Content-Length")[0])
+	print "Downloading: %s" % (file_name)
 
-		file_size_dl = 0
-		block_sz = 8192
-		while True:
-			buffer = u.read(block_sz)
-			if not buffer:
-				break
+	file_size_dl = 0
+	block_sz = 8192
+	while True:
+		buffer = u.read(block_sz)
+		if not buffer:
+			break
 
-			file_size_dl += len(buffer)
-			f.write(buffer)
-			status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
-			status = status + chr(8)*(len(status)+1)
-			print status,
+		file_size_dl += len(buffer)
+		f.write(buffer)
+		status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
+		status = status + chr(8)*(len(status)+1)
+		print status,
 
-		f.close()
+	f.close()
+	
+	# Move it
+	origin = os.path.join('.', file_name)
+	destination = os.path.join('/var/lib/tftpboot/iso', file_name)
+	os.rename(origin_file, destination)
+	print "Finished."
 
 if __name__ == '__main__':
 	
 	output = get_lastreleases()
 	
-	if check_content_type("application/x-iso9660-image"):
-		print "The content founded is a iso image"
-		if check_version():
-			print "Update %s is available" % (output["tag_name"])
-			print "The new iso needs %sMB and you have %sMB available on your system." % (check_iso_space(),check_local_space())
-			if check_space():
-				print "You have space on your hard drive."
+	if check_webstatus():
+		if check_content_type("application/x-iso9660-image"):
+			print "The content founded is a iso image"
+			if check_version():
+				print "Update %s is available" % (output["tag_name"])
+				print "The new iso needs %sMB and you have %sMB available on your system." % (check_iso_space(),check_local_space())
+				if check_space():
+					print "You have space on your hard drive."
+					get_iso()
+				else:
+					print "You have no space on your hard drive."
 			else:
-				print "You have no space on your hard drive."
+				print "No update available"
 		else:
-			print "No update available"
+			print "The content founded is not a iso image"
 	else:
-		print "The content founded is not a iso image"	
+		print "Unable to connect to GitHub."
