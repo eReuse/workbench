@@ -4,14 +4,13 @@ import urllib2
 import os
 
 def get_lastreleases():
-	r = requests.get('https://api.github.com/repos/eReuse/DeviceInventory/releases/latest')
+	r = requests.get('https://api.github.com/repos/eReuse/device-inventory/releases/latest')
 	return r.json()
 
 def check_webstatus():
 	if r.status_code != 200:
 		print "Error to get the last release from GitHub."
 		exit
-	return r.status_code
 
 def check_content_type(content):
 	if output["assets"][0]["content_type"] == content:
@@ -26,12 +25,26 @@ def check_local_space():
 def check_iso_space():
 	size = output["assets"][0]["size"]
 	return size / 1024 / 1024
+	
+def check_space():
+	if check_local_space() > check_iso_space():
+		return True
+	else:
+		return False
 
 def check_version():
-	files = os.listdir(os.path.join('/var/lib/tftpboot/iso',))
+	files = os.listdir(os.path.join('/var/lib/tftpboot/iso'))
 	for checking in files:
-		if file == "eReuseOS_v7.0.iso":
-			print "true"
+		local_version = checking.split('_')[1]
+		number_local = local_version[1:-4].split('.')
+		number_checks = output["tag_name"].split('.')
+		i = 0
+		for number in number_checks:
+			if number > number_local[i]:
+				return True
+				break
+			i = i + 1
+	return False
 
 
 def get_iso():
@@ -39,7 +52,7 @@ def get_iso():
 	if size < space:
 		print "Downloading iso image."
 		
-		''' DOWNLOAD '''
+		### DOWNLOAD ###
 		file_name = url.split('/')[-1]
 		u = urllib2.urlopen(url)
 		f = open(file_name, 'wb')
@@ -65,20 +78,17 @@ def get_iso():
 if __name__ == '__main__':
 	
 	output = get_lastreleases()
-
-	if check_content_type("application/x-cd-image"):
+	
+	if check_content_type("application/x-iso9660-image"):
 		print "The content founded is a iso image"
-		print "The new iso needs %sMB and you have %sMB available on your system." % (check_iso_space(),check_local_space())
+		if check_version():
+			print "Update %s is available" % (output["tag_name"])
+			print "The new iso needs %sMB and you have %sMB available on your system." % (check_iso_space(),check_local_space())
+			if check_space():
+				print "You have space on your hard drive."
+			else:
+				print "You have no space on your hard drive."
+		else:
+			print "No update available"
 	else:
 		print "The content founded is not a iso image"	
-		
-	files = os.listdir(os.path.join('/var/lib/tftpboot/iso',))
-	for checking in files:
-		local_version = checking.split('_')[1]
-		print checking
-		print local_version[1:-4]
-		if local_version[1:-4] == output["tag_name"]:
-			print "true"
-		else:
-			print "false"
-
