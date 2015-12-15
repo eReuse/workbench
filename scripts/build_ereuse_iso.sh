@@ -3,15 +3,16 @@
 
 ### Pre-requisites ###
 sudo apt-get install squashfs-tools genisoimage
+wget http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/15.10/ubuntu-mini-remix-15.10-i386.iso -O base_image.iso
 
 ### UNPACK the ISO ###
 
 # Mount the base image .iso
-mkdir mnt
+mkdir -p mnt
 sudo mount -o loop base_image.iso mnt
 
 # Extract .iso contents into dir 'extract-cd'
-mkdir extract-cd
+mkdir -p extract-cd
 sudo rsync --exclude=/casper/filesystem.squashfs -a mnt/ extract-cd
 
 # Extract the SquashFS filesystem
@@ -43,8 +44,8 @@ apt-get install git python-pip
 
 # NOTE on ubuntu python-dev is required to install paramiko (pycrypto)
 # device-inventory requirements
-apt-get install lshw dmidecode python-dmidecode python-lxml smartmontools
-pip install paramiko
+apt-get install lshw dmidecode python-dev python-dmidecode python-lxml smartmontools usbmount
+pip install paramiko pyudev
 
 pip install --upgrade git+https://github.com/ereuse/device-inventory.git#egg=device_inventory
 
@@ -61,7 +62,7 @@ dpkg-reconfigure keyboard-configuration
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #   UPC REUTILITZA - GRAPHICAL ENVIRONMENT     #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-apt-get install xorg icewm
+#apt-get install xorg icewm
 
 #~~~~~~~~~~~~~~~~ end UPC ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -121,7 +122,7 @@ find -type f -print0 | sudo xargs -0 md5sum | grep -v isolinux/boot.cat | sudo t
 #sudo mkisofs -D -r -V "$IMAGE_NAME" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS_v6.3.2.iso .
 
 # B) Debian
-sudo genisoimage -D -r -V "$IMAGE_NAME" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS_v7.0.iso .
+sudo genisoimage -D -r -V "$IMAGE_NAME" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS_v7.0.1.iso .
 
 cd ..
 
