@@ -43,14 +43,14 @@ def copy_file_to_usb(localpath):
             device = monitor.poll()
         except KeyboardInterrupt:
             raise
-        logging.debug(device.get('DEVNAME'), device.action, device.device_type)
+        logging.debug("%s %s %s", device.get('DEVNAME'), device.action, device.device_type)
         if device.action == 'add':
             break
     
     # wait until partition is detected
     monitor.filter_by('partition')
     partition = monitor.poll()
-    logging.debug(partition.get('DEVNAME'), partition.action, partition.device_type)
+    logging.debug("%s %s %s", partition.get('DEVNAME'), partition.action, partition.device_type)
 
     partition = partition.get('DEVNAME')
     print("USB detected.")
