@@ -153,7 +153,7 @@ def export_to_devicehub_schema(device, user_input=None, debug=False):
             value.update({"@type": type(item).__name__})
             components.append(utils.strip_null_or_empty_values(item.__dict__))
     
-    device = utils.strip_null_or_empty_values({
+    device_serialized = utils.strip_null_or_empty_values({
         "@type": type(device).__name__,
         "type": device.type,
         "manufacturer": device.manufacturer,
@@ -163,7 +163,7 @@ def export_to_devicehub_schema(device, user_input=None, debug=False):
     
     snapshot = {
         "@type": "Snapshot",
-        "device": device,
+        "device": device_serialized,
         "components": components,
     }
     
