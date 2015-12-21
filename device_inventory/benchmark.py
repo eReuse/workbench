@@ -7,72 +7,83 @@ tests and trials against it.
 
 """
 import logging
+import pySMART
 import re
 import subprocess
+import time
+from dateutil import parser
+from datetime import datetime
 
 from .utils import run
 
 
-def hard_disk_smart(disk="/dev/sda"):
-    # TODO allow choosing type of test (short, extensive...)
-    # TODO include debug information
-    assert disk is not None
+def hard_disk_smart(disk, test_type="short"):
+    assert test_type in ["short", "long"]
+    
     error = False
     status = ""
-    try:
-        smart = subprocess.check_output(["smartctl", "-a", disk],
-                                        universal_newlines=True)
-    except subprocess.CalledProcessError as e:
-        smart = e.output
-        # analyze e.returncode
-        if e.returncode == pow(2, 0):  # bit 0
-            status = "Error calling '{0}'".format(e.cmd)
-            error = True
-            # TODO command line did not parse
-            logging.error("%s: %s", status, e.output)
-        elif e.returncode == pow(2, 1):  # bit 1
-            pass  # only warning because low-power
-        elif e.returncode == pow(2, 2):  # bit 2
-            error = True  # TODO cannot perform SMART
-            status = "Some SMART or other ATA command to the disk failed."
-        elif e.returncode == pow(2, 5):  # bit 5
-            status = "SMART status check returned 'DISK OK' but some prefail."
-        else: # bit 3, 4, 6, 7  device log with errors
-            error = True
-            status = "SMART status check returned 'DISK FAILING'."
     
+    # Enable SMART on hard drive
+    try:
+        s = subprocess.check_output(["smartctl", "-s", "on", disk],
+                                    universal_newlines=True)
+    except subprocess.CalledProcessError as e:
+        error = True
+        status = "SMART cannot be enabled on this device."
+        logging.error(status)
+        logging.debug("%s: %s", status, e.output)
+        return {
+            "@type": "TestHardDrive",
+            "error": error,
+            "status": status,
+        }
+    
+    dev = pySMART.Device(disk)
+    smt = dev.run_selftest(test_type)
+    """
+    smt = (0, 'Self-test started successfully', 'Sat Dec 12 20:14:20 2015')
+    0 - Self-test initiated successfully
+    1 - Previous self-test running. Must wait for it to finish.
+    2 - Unknown or illegal test type requested.
+    3 - Unspecified smartctl error. Self-test not initiated.
+    """
+    if smt[0] > 1:
+        logging.error(smt)
+        return {
+            "@type": "TestHardDrive",
+            "error": True,
+            "status": smt[1],
+        }
+    
+    print("Runing SMART self-test. It will finish at {0}".format(smt[2]))
+    
+    # wait until expected end time
+    test_end = parser.parse(smt[2])
+    while datetime.now() < test_end:
+        # TODO replace with progress bar
+        seconds = (test_end - datetime.now()).seconds
+        print("Please wait... {0} seconds remaining".format(seconds))
+        time.sleep(5)
+    
+    # show last test
+    dev.update()
+    last_test = dev.tests[0]
+    try:
+        lifetime = int(last_test.hours)
+    except ValueError:
+        lifetime = -1
+    try:
+        lba_first_error = int(last_test.LBA, 0)  # accepts hex and decimal value
+    except ValueError:
+        lba_first_error = None
     test = {
         "@type": "TestHardDrive",
+        "type": last_test.type,
         "error": error,
-        "status": status,
+        "status": last_test.status,
+        "lifetime": lifetime,
+        "firstError": lba_first_error,
     }
-
-    # Retrieve SMART info as smartctl has finished without problems.
-    # expected output -> smartctl -a /dev/sda
-    # Num  Test_Description  Status  Remaining  LifeTime(hours)  LBA_of_first_error
-    # # 1  Short offline       Completed without error       00%     10016         -
-    try:
-        beg = smart.index('# 1')
-        end = smart.index('\n', beg)
-        result = re.split(r'\s\s+', smart[beg:end])
-    except ValueError:
-        logging.error("Error retrieving SMART info from '%s'", disk)
-    else:
-        try:
-            lifetime = int(result[4])
-        except ValueError:
-            lifetime = -1
-        try:
-            lba_first_error = int(result[5], 0)  # accepts hex and decimal value
-        except ValueError:
-            lba_first_error = None
-        
-        test.update({
-            "type": result[1],
-            "status": result[2],
-            "lifetime": lifetime,
-            "firstError": lba_first_error,
-        })
     
     return test
 

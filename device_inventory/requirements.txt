@@ -1,5 +1,6 @@
 paramiko    # SSH2 protocol for Python
 pyudev      # pure Python libudev binding
+pySMART     # Wrapper for smartctl (smartmontools)
 
 # Debian repository
 # lshw
