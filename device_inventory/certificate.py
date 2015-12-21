@@ -13,38 +13,31 @@ import subprocess
 
 # Function definition
 def get_cert(x):
-	return os.path.join(dir,x)
+    return os.path.join(dir,x)
 
 def get_device(x):
-	return "/dev/{0}".format(x[:3])
+    return "/dev/{0}".format(x[:3])
 
 def get_timestamp():
-	return time.strftime("%Y-%m-%d %H:%M:%S")
-	
-def get_cleaned_sectors():
-	info_sectors = subprocess.check_output(["fdisk", "-l", hardware['device']])
-	info_sectors = info_sectors.split()
-	return info_sectors[6]
+    return time.strftime("%Y-%m-%d %H:%M:%S")
 
-# INVENTORY
+def get_cleaned_sectors(device):
+    sectors = subprocess.Popen(["fdisk", "-l", device], stdout=subprocess.PIPE)
+    sectors = sectors.stdout.read().split()
+    return sectors[6]
 
-#def get_serial():
 
-#MAIN
+def main(argv=None):
+    device = sys.argv[1]
+    hardware = dict()
 
-# Variables
-hardware = dict()
-dir = "/home/adria/GitHub/Donator/etc"
-dirs = os.listdir(dir)
-cert = ".cert"
+    hardware['cert'] =  get_cert(device)
+    hardware['device'] = device
+    hardware['timestamp'] = get_timestamp()
+    hardware['cleaned_sectors'] = get_cleaned_sectors(device)
 
-# FOR every certificate, do...
-for file in dirs:
-	if file.endswith(cert):
-		hardware['cert'] =  get_cert(file)
-		hardware['device'] = get_device(file)
-		hardware['timestamp'] = get_timestamp()
-		hardware['cleaned_sectors'] = get_cleaned_sectors()
+    print(hardware)
 
-# Program
-		print(hardware)
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
+
