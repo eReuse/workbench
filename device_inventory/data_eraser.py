@@ -31,6 +31,8 @@ def get_user_input(sdx_path):
     return config_erase
 
 def erasetor(dev):
+    #erasuring with 0 bits all the harddrive
+    #subprocess.call(["shred","-zvn","o",dev"])
     subprocess.call(["ls",dev])
 
 def do_erasure(sdx):
