@@ -27,7 +27,7 @@ def load_config():
 
 def get_user_input(sdx_path):
     # XXX configurable user input fields
-    config_erase = raw_input("Do you want to erase \"{0}\"? ".format(sdx_path))
+    config_erase = raw_input("Do you want to erase \"{0}\"? [y/N] ".format(sdx_path))
     return config_erase
 
 def do_erasure(device):
@@ -52,7 +52,7 @@ def main(argv=None):
                     print do_erasure(sdx_path)
                 elif config_erase == "ask":
                     erase = get_user_input(sdx_path)
-                    if erase == "yes":
+                    if erase == "y" or erase == "yes":
                         print do_erasure(sdx_path)
 
 if __name__ == "__main__":
