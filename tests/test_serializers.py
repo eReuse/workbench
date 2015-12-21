@@ -20,6 +20,10 @@ class TestDeviceHubSerializer(unittest.TestCase):
         if self.DEBUG:
             self.write_output(data, "/tmp/computer_current.json")
     
+    def test_retrieve_current_data_debug_mode(self):
+        device = inventory.Computer()
+        data = serializers.export_to_devicehub_schema(device, debug=True)
+    
     def test_load_stored_data(self):
         device = inventory.Computer(load_data=True)
         data = serializers.export_to_devicehub_schema(device)
