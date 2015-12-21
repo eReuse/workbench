@@ -27,33 +27,26 @@ def load_config():
 
 def get_user_input(sdx_path):
     # XXX configurable user input fields
-    config_erase = raw_input("Do you want to erase \"{0}\"? [y/N] ".format(sdx_path))
+    config_erase = raw_input("Are you sure to erase \"{0}\"? [y/N] ".format(sdx_path))
     return config_erase
 
-def do_erasure(device):
-    return "Erasuring \"%s\"." % (device)
+def erasetor(dev):
+    subprocess.call(["ls",dev])
+
+def do_erasure(sdx):
+    config = load_config()
+    erase = config.get('DEFAULT', 'ERASE')
+
+    if erase == "yes":
+        print erasetor(sdx)
+    elif erase == "ask":
+        erase = get_user_input(sdx)
+        if erase.lower().strip() == "y" or erase.lower().strip() == "yes":
+            print erasetor(sdx)
 
 def main(argv=None):
-    config = load_config()
-    config_erase = config.get('DEFAULT', 'ERASE')
-    dev = "/dev/"
-    devs = os.listdir(dev)
-    hdd = "sd"
-
-    # Selecting only sd? "files"
-    for file in devs:
-        if file.startswith(hdd):
-            if len(file) == 3:
-                
-                # Joining to path to start a erasure
-                sdx_path = os.path.join("/dev/",file)
-                print "Do a erasure on \"%s\"? %s" % (sdx_path,config_erase)
-                if config_erase == "yes":
-                    print do_erasure(sdx_path)
-                elif config_erase == "ask":
-                    erase = get_user_input(sdx_path)
-                    if erase == "y" or erase == "yes":
-                        print do_erasure(sdx_path)
+    device = sys.argv[1]
+    do_erasure(device)
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
