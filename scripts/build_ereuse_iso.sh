@@ -34,17 +34,21 @@ mount -t devpts none /dev/pts
 export HOME=/root
 export LC_ALL=C
 
+# TODO manually update resolv.conf
+# rm /etc/resolv.conf
+# echo "nameserver  208.67.222.222" > /etc/resolv.conf
+
 # Enable universe repository (/etc/apt/sources.list)
-apt-get install software-properties-common
+apt-get install -y software-properties-common
 add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) universe"
 
 # installation tools requirements (could be removed)
 apt-get update
-apt-get install git python-pip
+apt-get -y install git python-pip
 
 # NOTE on ubuntu python-dev is required to install paramiko (pycrypto)
 # device-inventory requirements
-apt-get install lshw dmidecode python-dev python-dmidecode python-lxml smartmontools usbmount
+apt-get install -y lshw dmidecode python-dev python-dmidecode python-lxml smartmontools usbmount
 pip install paramiko pyudev
 
 pip install --upgrade git+https://github.com/ereuse/device-inventory.git#egg=device_inventory
