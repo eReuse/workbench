@@ -25,8 +25,13 @@ def load_config():
     
     return config
 
+def get_hdinfo(path,value):
+    return subprocess.Popen(["lsblk",path,"--nodeps","-no",value], stdout=subprocess.PIPE)
+
 def get_user_input(sdx_path):
-    # XXX configurable user input fields
+    size = get_hdinfo(sdx_path,"size").stdout.read()
+    model = get_hdinfo(sdx_path,"model").stdout.read()
+    print "Erasing %s (Model: %s) (Size: %s)" % (sdx_path,model.rstrip(" \n"),size.rstrip(" \n"))
     config_erase = raw_input("Are you sure to erase \"{0}\"? [y/N] ".format(sdx_path))
     return config_erase
 
