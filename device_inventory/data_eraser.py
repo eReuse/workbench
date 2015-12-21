@@ -31,7 +31,8 @@ def get_hdinfo(path,value):
 def get_user_input(sdx_path):
     size = get_hdinfo(sdx_path,"size").stdout.read()
     model = get_hdinfo(sdx_path,"model").stdout.read()
-    print "Erasing %s (Model: %s) (Size: %s)" % (sdx_path,model.rstrip(" \n"),size.rstrip(" \n"))
+    disk = get_hdinfo(sdx_path,"tran").stdout.read()
+    print "Erasing %s (Model: %s) (Size:%s) (Type: %s)." % (sdx_path,model.rstrip(" \n"),size.rstrip(" \n"),disk.rstrip(" \n"))
     config_erase = raw_input("Are you sure to erase \"{0}\"? [y/N] ".format(sdx_path))
     return config_erase
 
