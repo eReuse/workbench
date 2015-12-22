@@ -26,18 +26,43 @@ def get_cleaned_sectors(device):
     sectors = sectors.stdout.read().split()
     return sectors[6]
 
+def get_hdinfo(path,value):
+    return subprocess.Popen(["lsblk",path,"--nodeps","-no",value], stdout=subprocess.PIPE)
 
 def main(argv=None):
     device = sys.argv[1]
+
     hardware = dict()
 
     hardware['cert'] =  get_cert(device)
     hardware['device'] = device
     hardware['timestamp'] = get_timestamp()
-    hardware['cleaned_sectors'] = get_cleaned_sectors(device)
+    # CHECK IF IS A USB
+    disk = get_hdinfo(device,"tran").stdout.read()
+    print disk
+    if disk == "usb":
+        hardware['cleaned_sectors'] = "0" # review
+        hardware['failed_sectors'] = "0" # review
+        hardware['total_errors'] = "0" # review
+    else:
+        hardware['cleaned_sectors'] = get_cleaned_sectors(device) # review
+        hardware['failed_sectors'] = "0" # review
+        hardware['total_errors'] = "0" # review
+    hardware['state'] = "Successful" # review
+    hardware['elapsed_time'] = '00:00:00' # review
+
 
     print(hardware)
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    try:
+        arg_var = sys.argv[1]
+    except IndexError:
+        exit("No devices selected.")
+    if len(arg_var) < 7:
+        exit("Device not valid.")
+    if os.path.exists(arg_var):
+        sys.exit(main(sys.argv))
+    else:
+        exit("Device does not exit.")
 
