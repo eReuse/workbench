@@ -18,7 +18,9 @@ from .utils import run
 
 
 def hard_disk_smart(disk, test_type="short"):
-    assert test_type in ["short", "long"]
+    TEST_TYPES = ["short", "long"]
+    if test_type not in TEST_TYPES:
+        raise ValueError("SMART test_type should be {0}".format(TEST_TYPES))
     
     error = False
     status = ""
