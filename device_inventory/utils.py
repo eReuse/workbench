@@ -62,7 +62,7 @@ def run(cmd):
 def strip_null_or_empty_values(dictionary):
     # read meaningless values from a file
     basepath = os.path.dirname(__file__)
-    with open(os.path.join(basepath, 'static/meaningless_values.txt')) as f:
+    with open(os.path.join(basepath, 'data/meaningless_values.txt')) as f:
         meaningless = [m.strip() for m in f.readlines()]
     
     # See if there is a more efficient way (Dict Comprehensions)

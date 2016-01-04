@@ -31,9 +31,27 @@ def get_xpath_text(node, path, default=None):
         return default
 
 
+def get_memory(values, units):
+    # Get max memory value
+    max_size = 0
+    for value in values:
+        unit = re.split('\d+', value)[1]
+        size = int(value.rstrip(unit))
+        
+        # convert all values to KB before compare
+        size_kb = utils.convert_base(size, unit, 'K', distance=1024)
+        if size_kb > max_size:
+            max_size = size_kb
+    
+    if max_size > 0:
+        return utils.convert_capacity(max_size, 'KB', units)
+    return None
+
+
 class Device(object):
     __metaclass__ = abc.ABCMeta
     
+    LSHW_REGEX = r"^{value}(:\d+)?$"
     LSHW_NODE_ID = None
     
     @classmethod
@@ -48,14 +66,11 @@ class Device(object):
         # IDs examples: "multimedia", "multimedia:0", "multimedia:1"
         # NOTE the use of regex has the side effect of including virtual
         # network adapters.
-        for node in lshw_xml.xpath('//node[@id="{0}"]'.format(cls.LSHW_NODE_ID)):
+        regex = cls.LSHW_REGEX.format(value=cls.LSHW_NODE_ID)
+        xpath_regex = '//node[re:match(@id, "{0}")]'.format(regex)
+        namespaces = {"re": "http://exslt.org/regular-expressions"}
+        for node in lshw_xml.xpath(xpath_regex, namespaces=namespaces):
             objects.append(cls(node))
-        
-        if len(objects) == 0:
-            regex = '//node[re:match(@id, "{0}[:\d]?")]'.format(cls.LSHW_NODE_ID)
-            namespaces = {"re": "http://exslt.org/regular-expressions"}
-            for node in lshw_xml.xpath(regex, namespaces=namespaces):
-                objects.append(cls(node))
         
         if len(objects) == 0:
             logging.debug("NOT found {0} {1}".format(cls, cls.LSHW_NODE_ID))
@@ -123,7 +138,7 @@ class HardDrive(Device):
                 self.size = utils.convert_capacity(size, unit, self.CAPACITY_UNITS)
         
         # TODO read config to know if we should run SMART
-        if logical_name:
+        if logical_name and self.interface != "usb":
             self.test = self.run_smart(logical_name)
         else:
             logging.error("Cannot execute SMART on device '%s'.", self.serialNumber)
@@ -142,21 +157,15 @@ class GraphicCard(Device):
         self.model = get_xpath_text(node, 'product')
         
         # Find VGA memory
+        # TODO include output on debug info
         bus_info = get_xpath_text(node, 'businfo').split("@")[1]
-        mem = utils.run("lspci -v -s {bus} | grep 'prefetchable' | grep -v 'non-prefetchable' | egrep -o '[0-9]{{1,3}}[KMGT]+'".format(bus=bus_info)).splitlines()
-        
-        # Get max memory value
-        max_size = 0
-        for value in mem:
-            unit = re.split('\d+', value)[1]
-            size = int(value.rstrip(unit))
-            
-            # convert all values to KB before compare
-            size_kb = utils.convert_base(size, unit, 'K', distance=1024)
-            if size_kb > max_size:
-                max_size = size_kb
+        mem = utils.run("lspci -v -s {bus} | "
+                        "grep 'prefetchable' | "
+                        "grep -v 'non-prefetchable' | "
+                        "egrep -o '[0-9]{{1,3}}[KMGT]+'".format(bus=bus_info)
+              ).splitlines()
 
-        self.memory = utils.convert_capacity(max_size, 'KB', 'MB')
+        self.memory = get_memory(mem, self.CAPACITY_UNITS)
     
     @property
     def score(self):
@@ -211,17 +220,12 @@ class Processor(Device):
     LSHW_NODE_ID = 'cpu'
     
     def __init__(self, node):
-        ## Search CPU's serial number, if there are several we choose the first
-        # A) dmidecode -t processor
-        # FIXME Serial Number returns "To be filled by OEM"
-        # http://forum.giga-byte.co.uk/index.php?topic=14167.0
+        # CPU serial number is a random value due to privacy EU policy
+        # so we don't retrieve it anymore
         # self.serialNumber = get_subsection_value(self.dmi, "Processor Information", "ID")
-        self.serialNumber = get_xpath_text(node, "serial")
-        # B) Try to call CPUID? https://en.wikipedia.org/wiki/CPUID
-        # http://stackoverflow.com/a/4216034/1538221
+        # self.serialNumber = get_xpath_text(node, "serial")
+        self.serialNumber = None
         
-        # FIXME support multiple CPUs
-        #self.number_cpus = multiprocessing.cpu_count()  # Python > 3.4 os.cpu_count()
         try:
             self.numberOfCores = int(os.popen("lscpu | grep 'Core(s) per socket'").read().split(':')[1].strip())
         except ValueError:
@@ -244,7 +248,7 @@ class Processor(Device):
         """Retrieve processor instruction size, e.g. 32 or 64 (bits)."""
         # address = get_xpath_text(node, "size")
         address = None
-        for charac in dmi_processor.get('Characteristics', []):
+        for charac in dmi_processor.get('Characteristics') or []:
             match = re.search('(32|64)-bit', charac)
             if match:
                 try:
@@ -382,7 +386,9 @@ class Computer(object):
         # Initialize components
         self.processor = Processor.retrieve(self.lshw_xml)
         self.memory = RamModule.retrieve()
-        self.hard_disk = HardDrive.retrieve(self.lshw_xml)
+        # TODO USB Hard Drive excluded until they are properly implemented
+        self.hard_disk = [hd for hd in HardDrive.retrieve(self.lshw_xml)
+                          if hd.interface != "usb"]
         self.graphic_card = GraphicCard.retrieve(self.lshw_xml)
         self.motherboard = Motherboard(self.lshw_xml, self.dmi)
         self.network_interfaces = NetworkAdapter.retrieve(self.lshw_xml)
@@ -437,14 +443,14 @@ class Computer(object):
     
     @property
     def verbose_name(self):
-        if self.serialNumber is not None:
+        if self.serialNumber:
             return self.serialNumber
         
-        if self.motherboard.serialNumber is not None:
+        if self.motherboard.serialNumber:
             return self.motherboard.serialNumber
         
         for iface in self.network_interfaces:
-            if iface.serialNumber is not None:
+            if iface.serialNumber:
                 return iface.serialNumber.replace(':', '')
         
         return str(uuid.getnode())
