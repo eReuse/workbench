@@ -35,8 +35,8 @@ export HOME=/root
 export LC_ALL=C
 
 # TODO manually update resolv.conf
-# rm /etc/resolv.conf
-# echo "nameserver  208.67.222.222" > /etc/resolv.conf
+rm /etc/resolv.conf
+echo "nameserver  208.67.222.222" > /etc/resolv.conf
 
 # Enable universe repository (/etc/apt/sources.list)
 apt-get install -y software-properties-common
@@ -44,12 +44,14 @@ add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) univ
 
 # installation tools requirements (could be removed)
 apt-get update
-apt-get -y install git python-pip
+apt-get -y install git-core python-pip  # vim
 
 # NOTE on ubuntu python-dev is required to install paramiko (pycrypto)
 # device-inventory requirements
-apt-get install -y lshw dmidecode python-dev python-dmidecode python-lxml smartmontools usbmount
-pip install paramiko pyudev
+apt-get install -y lshw dmidecode python-dev python-dmidecode python-lxml smartmontools usbmount python-dateutil
+
+# paramiko pyudev pySMART
+pip install -r https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/requirements.txt
 
 pip install --upgrade git+https://github.com/ereuse/device-inventory.git#egg=device_inventory
 
@@ -101,7 +103,7 @@ sudo sed -i '/ubiquity/d' extract-cd/casper/filesystem.manifest-desktop
 sudo sed -i '/casper/d' extract-cd/casper/filesystem.manifest-desktop
 
 # remove previous squashfs
-sudo rm extract-cd/casper/filesystem.squashfs
+sudo rm -f extract-cd/casper/filesystem.squashfs
 
 # highest compression (~3min) FIXME xz compression is not compatible
 #sudo mksquashfs edit extract-cd/casper/filesystem.squashfs -comp xz -e edit/boot
@@ -126,7 +128,7 @@ find -type f -print0 | sudo xargs -0 md5sum | grep -v isolinux/boot.cat | sudo t
 #sudo mkisofs -D -r -V "$IMAGE_NAME" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS_v6.3.2.iso .
 
 # B) Debian
-sudo genisoimage -D -r -V "$IMAGE_NAME" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS_v7.0.1.iso .
+sudo genisoimage -D -r -V "$IMAGE_NAME" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS_v7.0.2a1.iso .
 
 cd ..
 
