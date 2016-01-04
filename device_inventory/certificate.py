@@ -6,11 +6,6 @@ import fcntl
 import struct
 import subprocess
 
-# checking priveleges
-#if os.geteuid() !=  0:
-#    print("ERROR: Must be root to export certificates")
-#    sys.exit(1)
-
 # Function definition
 def get_cert(x):
     return os.path.join(dir,x)
@@ -51,6 +46,7 @@ def main(argv=None):
     hardware['target_id'] = "50" # !! Buscar informacio de que es aixo
     hardware['type'] = get_hdinfo(device,"type").stdout.read().rstrip(" \n")
     hardware['model'] = get_hdinfo(device,"model").stdout.read().rstrip(" \n")
+    hardware['vendor'] = get_hdinfo(device,"vendor").stdout.read().rstrip(" \n")
 
     
     export_xml(hardware)
@@ -76,16 +72,25 @@ def export_xml(get):
     export = export + "\n\t\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("target_id","uint",hardware['target_id'])
     export = export + "\n\t\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("type","string",hardware['type'])
     export = export + "\n\t\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("model","string",hardware['model'])
+    export = export + "\n\t\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("vendor","string",hardware['vendor'])
 
     print export
 
 if __name__ == "__main__":
+
+# checking priveleges
+    if os.geteuid() !=  0:
+        sys.exit("Must be root to export certificates")
+
     try:
         arg_var = sys.argv[1]
     except IndexError:
         exit("No devices selected.")
+
     if len(arg_var) < 7:
         exit("Device not valid.")
+        
+    # Start
     if os.path.exists(arg_var):
         sys.exit(main(sys.argv))
     else:
