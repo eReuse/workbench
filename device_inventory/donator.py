@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import argparse
 import calendar
 import datetime
 import json
@@ -84,6 +85,14 @@ def main(argv=None):
     if not os.geteuid() == 0:
         sys.exit("Only root can run this script")
     
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--smart', choices=['none', 'short', 'long'])
+    args = parser.parse_args()
+    
+    # override settings with command line args
+    if args.smart:
+        settings.set('DEFAULT', 'smart', args.smart)
+    
     debug = settings.getboolean('DEFAULT', 'debug')
     user_input = get_user_input()
     kwargs = dict(type=user_input.pop('device_type'),
@@ -129,7 +138,7 @@ def legacy_main(**kwargs):
     # dat_state only date on human friendly format
     beg_donator_time = calendar.timegm(time.gmtime())  # INITIAL_DONATOR_TIME
     device = Computer(backcomp=True, **kwargs)  # XXX pass device type and other user input?
-    status = get_device_status(run_smart=settings.getboolean('DEFAULT', 'DISC'))
+    status = get_device_status(run_smart=settings.get('DEFAULT', 'smart') != 'none')
     end_donator_time = calendar.timegm(time.gmtime())  # END_DONATOR_TIME
     
     # Export to legacy XML
