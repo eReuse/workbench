@@ -11,6 +11,7 @@ from lxml import etree
 
 from . import benchmark
 from . import utils
+from .conf import settings
 
 
 def get_subsection_value(output, section_name, subsection_name):
@@ -144,7 +145,10 @@ class HardDrive(Device):
             logging.error("Cannot execute SMART on device '%s'.", self.serialNumber)
     
     def run_smart(self, logical_name):  # TODO allow choosing short or extended
-        return benchmark.hard_disk_smart(disk=logical_name)
+        smart = settings.get('DEFAULT', 'smart')
+        if smart == 'none':
+            return None
+        return benchmark.hard_disk_smart(disk=logical_name, test_type=smart)
 
 
 class GraphicCard(Device):

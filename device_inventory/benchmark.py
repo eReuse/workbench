@@ -18,7 +18,9 @@ from .utils import run
 
 
 def hard_disk_smart(disk, test_type="short"):
-    assert test_type in ["short", "long"]
+    TEST_TYPES = ["short", "long"]
+    if test_type not in TEST_TYPES:
+        raise ValueError("SMART test_type should be {0}".format(TEST_TYPES))
     
     error = False
     status = ""
@@ -57,9 +59,18 @@ def hard_disk_smart(disk, test_type="short"):
     
     print("Runing SMART self-test. It will finish at {0}".format(smt[2]))
     
-    # wait until expected end time
+    # wait until test has finished
     test_end = parser.parse(smt[2])
-    while datetime.now() < test_end:
+    remaining = 100
+    while remaining > 0:
+        dev.update()
+        last_test = dev.tests[0]
+        try:
+            remaining = int(last_test.remain.strip('%'))
+        except ValueError as e:
+            logging.error(e)
+            if datetime.now() > test_end:  # TODO wait a few seconds more
+                break  # avoid infinite loop
         # TODO replace with progress bar
         seconds = (test_end - datetime.now()).seconds
         print("Please wait... {0} seconds remaining".format(seconds))

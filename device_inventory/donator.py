@@ -1,9 +1,6 @@
 #!/usr/bin/env python
+import argparse
 import calendar
-try:
-    import ConfigParser as configparser  # Python2
-except ImportError:
-    import configparser
 import datetime
 import json
 import logging
@@ -14,26 +11,8 @@ import time
 
 from device_inventory import serializers, storage
 from device_inventory.benchmark import hard_disk_smart
+from device_inventory.conf import settings
 from device_inventory.inventory import Computer
-
-
-def load_config():
-    # https://docs.python.org/3.4/library/configparser.html
-    path = os.path.dirname(__file__)
-    config_file = os.path.join(path, 'config.ini')
-    assert os.path.exists(config_file), config_file
-
-    config = configparser.ConfigParser()
-    config.read(config_file)  # donator.cfg merged here
-    
-    #print(config['DEFAULT']['DISC'])
-    #print(config['DEFAULT'].getboolean('DISC'))
-    #print(config['donator']['email'])
-    
-    # TODO set fallback values if config is empty
-    # https://docs.python.org/3.4/library/configparser.html#fallback-values
-    
-    return config
 
 
 def is_connected():
@@ -83,7 +62,7 @@ def get_device_status(run_smart):
     }
 
 
-def get_user_input(config):
+def get_user_input():
     # XXX configurable user input fields
     label = raw_input("Label ID: ")
     comment = raw_input("Comment: ")
@@ -101,15 +80,23 @@ def get_user_input(config):
     
     return dict(label=label, comment=comment, device_type=CHOICES[device_type])
 
+
 def main(argv=None):
     if not os.geteuid() == 0:
         sys.exit("Only root can run this script")
     
-    # TODO process argv
-    config = load_config()
-    debug = config.getboolean('DEFAULT', 'debug')
-    user_input = get_user_input(config)
-    kwargs = dict(type=user_input.pop('device_type'))
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--smart', choices=['none', 'short', 'long'])
+    args = parser.parse_args()
+    
+    # override settings with command line args
+    if args.smart:
+        settings.set('DEFAULT', 'smart', args.smart)
+    
+    debug = settings.getboolean('DEFAULT', 'debug')
+    user_input = get_user_input()
+    kwargs = dict(type=user_input.pop('device_type'),
+                  smart=args.smart)
     
     device = Computer(**kwargs)
     data = serializers.export_to_devicehub_schema(device, user_input, debug)
@@ -121,11 +108,11 @@ def main(argv=None):
         json.dump(data, outfile, indent=4, sort_keys=True)
     
     # send files to the PXE Server
-    if config.getboolean('DEFAULT', 'sendtoserver'):
-        remotepath = os.path.join(config.get('server', 'remotepath'), filename)
-        username = config.get('server', 'username')
-        password = config.get('server', 'password')
-        server = config.get('server', 'address')
+    if settings.getboolean('DEFAULT', 'sendtoserver'):
+        remotepath = os.path.join(settings.get('server', 'remotepath'), filename)
+        username = settings.get('server', 'username')
+        password = settings.get('server', 'password')
+        server = settings.get('server', 'address')
         try:
             storage.copy_file_to_server(localpath, remotepath, username, password, server)
         except Exception as e:
@@ -133,7 +120,7 @@ def main(argv=None):
             logging.debug(e)
     
     # copy file to an USB drive
-    if config.getboolean('DEFAULT', 'copy_to_usb'):
+    if settings.getboolean('DEFAULT', 'copy_to_usb'):
         try:
             storage.copy_file_to_usb(localpath)
         except KeyboardInterrupt:
@@ -150,9 +137,8 @@ def legacy_main(**kwargs):
     # initial_donator in seconds since 1970 UTC
     # dat_state only date on human friendly format
     beg_donator_time = calendar.timegm(time.gmtime())  # INITIAL_DONATOR_TIME
-    config = load_config()
     device = Computer(backcomp=True, **kwargs)  # XXX pass device type and other user input?
-    status = get_device_status(run_smart=config.getboolean('DEFAULT', 'DISC'))
+    status = get_device_status(run_smart=settings.get('DEFAULT', 'smart') != 'none')
     end_donator_time = calendar.timegm(time.gmtime())  # END_DONATOR_TIME
     
     # Export to legacy XML
