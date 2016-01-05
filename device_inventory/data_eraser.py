@@ -30,34 +30,20 @@ def load_config():
 def get_hdinfo(path,value):
     return subprocess.Popen(["lsblk",path,"--nodeps","-no",value], stdout=subprocess.PIPE)
 
-def average(dev):
-    size = subprocess.Popen(["fdisk", "-s", dev], stdout=subprocess.PIPE)
-    size = size.communicate()[0]
-
-    print size
-
-    cal_time = subprocess.Popen(["hdparm", "-t", dev,], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = cal_time.communicate()
-
-    average_time = stdout.split() 
-    #"/n/nAverage time is {0} {1} minutes".format(average_time[11],average_time[12])
-    return "\nAverage time is {0} {1} minutes".format(average_time[11],average_time[12])
-
 def get_user_input(sdx_path):
     size = get_hdinfo(sdx_path,"size").stdout.read()
     model = get_hdinfo(sdx_path,"model").stdout.read()
     disk = get_hdinfo(sdx_path,"tran").stdout.read()
     print "Selected %s (Model: %s) (Size:%s) (Type: %s)." % (sdx_path,model.rstrip(" \n"),size.rstrip(" \n"),disk.rstrip(" \n"))
-    print "Please, wait until to get the average time."
-    print average(sdx_path)
     config_erase = raw_input("Do you want to erase \"{0}\"? [y/N] ".format(sdx_path))
     return config_erase
 
-def erasetor(dev):
-    #erasuring with 0 bits all the harddrive
-    #num_steps = "0"
-    #subprocess.call(["shred","-zvn",num_steps,dev])
-    subprocess.Popen(["ls", "-l", dev])
+def erasetor(dev, steps="0"):
+     try:
+         subprocess.call(["shred","-zvn",steps,dev])
+     except ValueError:
+         print "ERROR:root:Cannot erase the hard drive {0}".format(dev)
+        
 
 def do_erasure(sdx):
     config = load_config()
