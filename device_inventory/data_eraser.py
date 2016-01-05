@@ -7,6 +7,8 @@ try:
 except ImportError:
     import configparser
 
+    import device_inventory
+
 def load_config():
     # https://docs.python.org/3.4/library/configparser.html
     path = os.path.dirname(__file__)
@@ -28,18 +30,34 @@ def load_config():
 def get_hdinfo(path,value):
     return subprocess.Popen(["lsblk",path,"--nodeps","-no",value], stdout=subprocess.PIPE)
 
+def average(dev):
+    size = subprocess.Popen(["fdisk", "-s", dev], stdout=subprocess.PIPE)
+    size = size.communicate()[0]
+
+    print size
+
+    cal_time = subprocess.Popen(["hdparm", "-t", dev,], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = cal_time.communicate()
+
+    average_time = stdout.split() 
+    #"/n/nAverage time is {0} {1} minutes".format(average_time[11],average_time[12])
+    return "\nAverage time is {0} {1} minutes".format(average_time[11],average_time[12])
+
 def get_user_input(sdx_path):
     size = get_hdinfo(sdx_path,"size").stdout.read()
     model = get_hdinfo(sdx_path,"model").stdout.read()
     disk = get_hdinfo(sdx_path,"tran").stdout.read()
-    print "Erasing %s (Model: %s) (Size:%s) (Type: %s)." % (sdx_path,model.rstrip(" \n"),size.rstrip(" \n"),disk.rstrip(" \n"))
-    config_erase = raw_input("Are you sure to erase \"{0}\"? [y/N] ".format(sdx_path))
+    print "Selected %s (Model: %s) (Size:%s) (Type: %s)." % (sdx_path,model.rstrip(" \n"),size.rstrip(" \n"),disk.rstrip(" \n"))
+    print "Please, wait until to get the average time."
+    print average(sdx_path)
+    config_erase = raw_input("Do you want to erase \"{0}\"? [y/N] ".format(sdx_path))
     return config_erase
 
 def erasetor(dev):
     #erasuring with 0 bits all the harddrive
-    #subprocess.call(["shred","-zvn","o",dev"])
-    subprocess.call(["ls",dev])
+    #num_steps = "0"
+    #subprocess.call(["shred","-zvn",num_steps,dev])
+    subprocess.Popen(["ls", "-l", dev])
 
 def do_erasure(sdx):
     config = load_config()
@@ -57,4 +75,20 @@ def main(argv=None):
     do_erasure(device)
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+# checking priveleges
+    if os.geteuid() !=  0:
+        sys.exit("Must be root to erase data.")
+
+    try:
+        arg_var = sys.argv[1]
+    except IndexError:
+        exit("No devices selected.")
+
+    if len(arg_var) < 7:
+        exit("Device not valid.")
+        
+    # Start
+    if os.path.exists(arg_var):
+        sys.exit(main(sys.argv))
+    else:
+        exit("Device does not exit.")

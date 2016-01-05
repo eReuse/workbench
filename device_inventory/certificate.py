@@ -5,6 +5,9 @@ import sys
 import fcntl
 import struct
 import subprocess
+import json
+import pprint
+from collections import OrderedDict
 
 # Function definition
 def get_cert(x):
@@ -24,57 +27,50 @@ def get_cleaned_sectors(device):
 def get_hdinfo(path,value):
     return subprocess.Popen(["lsblk",path,"--nodeps","-no",value], stdout=subprocess.PIPE)
 
+def get_firmware_revision(dev):
+    disk = get_hdinfo(dev,"tran").stdout.read()
+    if disk != usb:
+        print yes
+
 def main(argv=None):
+
     device = sys.argv[1]
 
     hardware = dict()
 
-    hardware['cert'] =  get_cert(device)
-    hardware['device'] = device
-    hardware['timestamp'] = get_timestamp()
-    hardware['cleaned_sectors'] = get_cleaned_sectors(device) # review
-    hardware['failed_sectors'] = "0" # review
-    hardware['total_errors'] = "0" # review
-    hardware['state'] = "Successful" # review
-    hardware['elapsed_time'] = '00:00:00' # review
-    hardware['start_time'] = '00:00:01' # review
-    hardware['end_time'] = '00:00:02' # review
-    hardware['erasure_standard_name'] = 'Zeros, Lower Standard' # review (type of erasure, by default is 1, fast)
-    hardware['overwriting_rounds'] = '1' # review (depen of standard erasure)
-    hardware['firmware_rounds'] = '0' # 0, no rounds on firmware
-    hardware['total_erasure_rounds'] = '1' # total rounds
-    hardware['target_id'] = "50" # !! Buscar informacio de que es aixo
-    hardware['type'] = get_hdinfo(device,"type").stdout.read().rstrip(" \n")
-    hardware['model'] = get_hdinfo(device,"model").stdout.read().rstrip(" \n")
-    hardware['vendor'] = get_hdinfo(device,"vendor").stdout.read().rstrip(" \n")
-
+    #hardware['cert'] =  get_cert(device)
+    #hardware['device'] = device
+    timestamp = get_timestamp()
+    cleaned_sectors = get_cleaned_sectors(device)
+    device_type = get_hdinfo(device,"type").stdout.read().rstrip(" \n")
+    device_model = get_hdinfo(device,"model").stdout.read().rstrip(" \n")
+    device_vendor = get_hdinfo(device,"vendor").stdout.read().rstrip(" \n")
+    device_serial = get_hdinfo(device,"serial").stdout.read().rstrip(" \n")
     
-    export_xml(hardware)
+    # Real start of the certificate
+    hardware = {'erasure_id': "1",
+                'timestamp': timestamp,
+                'cleaned_sectors': cleaned_sectors,
+                'failed_sectors': "0",
+                'total_errors': "0",
+                'state': "Successful",
+                'elapsed_time': '00:00:00',
+                'start_time': '00:00:01',
+                'end_time': '00:00:02',
+                'erasure_standard_name': 'Zeros, Lower Standard',
+                'overwriting_rounds': '1',
+                'firmware_rounds': '0',
+                'total_erasure_rounds': '1',
+                'target': {
+                    'target_id': "50",
+                    'type': device_type,
+                    'model': device_model,
+                    'vendor': device_vendor,
+                    'serial': device_serial,
+                    'firmware_revision': "WT100-33"} 
+                }
 
-def export_xml(get):
-    hardware = get
-    export = "<blancco_erasure_report>"
-    export = export + "\n\t<entries name=\"erasures\">"
-    export = export + "\n\t\t<entries name=\"erasure\">"
-    export = export + "\n\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("timestamp","string",hardware['timestamp'])
-    export = export + "\n\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("cleaned_sectors","uint",hardware['cleaned_sectors'])
-    export = export + "\n\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("failed_sectors","uint",hardware['failed_sectors'])
-    export = export + "\n\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("total_errors","uint",hardware['total_errors'])
-    export = export + "\n\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("state","string",hardware['state'])
-    export = export + "\n\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("elapsed_time","string",hardware['elapsed_time'])
-    export = export + "\n\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("start_time","string",hardware['start_time'])
-    export = export + "\n\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("end_time","string",hardware['end_time'])
-    export = export + "\n\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("erasure_standard_name","string",hardware['erasure_standard_name'])
-    export = export + "\n\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("overwriting_rounds","uint",hardware['overwriting_rounds'])
-    export = export + "\n\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("firmware_rounds","uint",hardware['firmware_rounds'])
-    export = export + "\n\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("total_erasure_rounds","uint",hardware['total_erasure_rounds'])
-    export = export + "\n\t\t\t<entries name=\"target\">"
-    export = export + "\n\t\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("target_id","uint",hardware['target_id'])
-    export = export + "\n\t\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("type","string",hardware['type'])
-    export = export + "\n\t\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("model","string",hardware['model'])
-    export = export + "\n\t\t\t\t<entry name=\"{0}\" type=\"{1}\">{2}</entry>".format("vendor","string",hardware['vendor'])
-
-    print export
+    pprint.pprint(hardware)
 
 if __name__ == "__main__":
 
