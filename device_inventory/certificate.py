@@ -7,7 +7,8 @@ import struct
 import subprocess
 import json
 import pprint
-from collections import OrderedDict
+import re
+from subprocess import check_output
 
 # Function definition
 def get_cert(x):
@@ -28,9 +29,11 @@ def get_hdinfo(path,value):
     return subprocess.Popen(["lsblk",path,"--nodeps","-no",value], stdout=subprocess.PIPE)
 
 def get_firmware_revision(dev):
-    disk = get_hdinfo(dev,"tran").stdout.read()
-    if disk != usb:
-        print yes
+    disk = get_hdinfo(dev,"tran").stdout.read().rstrip(" \n")
+    if disk != "usb":
+        out = check_output(["hdparm", "-I", dev])
+        
+        re.search(r"Firmware", out)
 
 def main(argv=None):
 
@@ -46,6 +49,7 @@ def main(argv=None):
     device_model = get_hdinfo(device,"model").stdout.read().rstrip(" \n")
     device_vendor = get_hdinfo(device,"vendor").stdout.read().rstrip(" \n")
     device_serial = get_hdinfo(device,"serial").stdout.read().rstrip(" \n")
+    get_firmware_revision(device)
     
     # Real start of the certificate
     hardware = {'erasure_id': "1",
