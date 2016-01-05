@@ -42,7 +42,7 @@ def erasetor(dev, steps="0"):
      try:
          subprocess.call(["shred","-zvn",steps,dev])
      except ValueError:
-         print "ERROR:root:Cannot erase the hard drive '{0}'".format(dev)
+         print "Cannot erase the hard drive '{0}'".format(dev)
         
 
 def do_erasure(sdx):
