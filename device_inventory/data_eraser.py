@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 import subprocess
 import os
+import time
 import sys
+from datetime import datetime
 try:
     import ConfigParser as configparser  # Python2
 except ImportError:
@@ -30,35 +32,56 @@ def load_config():
 def get_hdinfo(path,value):
     return subprocess.Popen(["lsblk",path,"--nodeps","-no",value], stdout=subprocess.PIPE)
 
-def get_user_input(sdx_path):
+def show_selected(sdx_path):
     size = get_hdinfo(sdx_path,"size").stdout.read()
     model = get_hdinfo(sdx_path,"model").stdout.read()
     disk = get_hdinfo(sdx_path,"tran").stdout.read()
     print "Selected %s (Model: %s) (Size:%s) (Type: %s)." % (sdx_path,model.rstrip(" \n"),size.rstrip(" \n"),disk.rstrip(" \n"))
+
+def get_user_input(sdx_path):
+    show_selected(sdx_path)
     config_erase = raw_input("Do you want to erase \"{0}\"? [y/N] ".format(sdx_path))
     return config_erase
 
-def erasetor(dev, steps="0"):
-     try:
-         subprocess.call(["shred","-zvn",steps,dev])
-     except ValueError:
-         print "Cannot erase the hard drive '{0}'".format(dev)
-        
+def erasetor(dev, erase_mode="0"):
+    if erase_mode == "0":
+        standard = "All zeros, lower Standard"
+        step = "0"
+    elif erase_mode == "1":
+        standard = "Sector by sector, high Standard"
+    time_start = time.strftime("%Y-%m-%d %H:%M:%S")
+    FMT = "%Y-%m-%d %H:%M:%S"
+    try:
+         #subprocess.call(["shred","-zvn",steps,dev])
+         state = "Successful"
+         time_end = time.strftime("%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        state = "With errors."
+        print "Cannot erase the hard drive '{0}'".format(dev)
+    elapsed = datetime.strptime(time_end, FMT) - datetime.strptime(time_start, FMT)
+    dict = {'erasure_standard_name': standard,
+            'state': state,
+            'elapsed_time': str(elapsed),
+            'start_time': time_start,
+            'end_time': time_end }
+    return dict
 
 def do_erasure(sdx):
     config = load_config()
     erase = config.get('DEFAULT', 'ERASE')
 
     if erase == "yes":
+        show_selected(sdx_path)
         print erasetor(sdx)
     elif erase == "ask":
         erase = get_user_input(sdx)
         if erase.lower().strip() == "y" or erase.lower().strip() == "yes":
-            print erasetor(sdx)
+            return erasetor(sdx)
 
 def main(argv=None):
     device = sys.argv[1]
-    do_erasure(device)
+    print do_erasure(device)
+    
 
 if __name__ == "__main__":
 # checking priveleges
