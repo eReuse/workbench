@@ -5,6 +5,9 @@
 sudo apt-get install squashfs-tools genisoimage
 wget http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/15.10/ubuntu-mini-remix-15.10-i386.iso -O base_image.iso
 
+md5sum base_image.iso
+# 78399fed67fc503d2f770f5ad7dcab45  ubuntu-mini-remix-15.10-i386.iso
+
 ### UNPACK the ISO ###
 
 # Mount the base image .iso
