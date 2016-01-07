@@ -32,8 +32,12 @@ def get_firmware_revision(dev):
     disk = get_hdinfo(dev,"tran").stdout.read().rstrip(" \n")
     if disk != "usb":
         out = check_output(["hdparm", "-I", dev])
-        
-        re.search(r"Firmware", out)
+        firmware = out.splitlines()[6]
+
+        if firmware.split()[0] == "Firmware":
+            return firmware.split()[2]
+        else:
+            return "Null"
 
 def main(argv=None):
 
@@ -49,7 +53,7 @@ def main(argv=None):
     device_model = get_hdinfo(device,"model").stdout.read().rstrip(" \n")
     device_vendor = get_hdinfo(device,"vendor").stdout.read().rstrip(" \n")
     device_serial = get_hdinfo(device,"serial").stdout.read().rstrip(" \n")
-    get_firmware_revision(device)
+    firmware_revision = get_firmware_revision(device)
     
     # Real start of the certificate
     hardware = {'erasure_id': "1",
@@ -71,7 +75,7 @@ def main(argv=None):
                     'model': device_model,
                     'vendor': device_vendor,
                     'serial': device_serial,
-                    'firmware_revision': "WT100-33"} 
+                    'firmware_revision': firmware_revision} 
                 }
 
     pprint.pprint(hardware)
