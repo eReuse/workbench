@@ -1,5 +1,6 @@
 import time
 import sys
+# pip install tqdm
 from tqdm import *
 
 def main(argv=None):
