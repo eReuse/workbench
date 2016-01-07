@@ -71,7 +71,12 @@ def do_erasure(sdx):
     erase = config.get('DEFAULT', 'ERASE')
 
     if erase == "yes":
-        show_selected(sdx_path)
+        show_selected(sdx)
+        a = 10
+        while a != 0:
+            a -= 1
+            print "Starting erasetor, you have {0} seconds to cancel. (Ctrl+C)".format(a)
+            time.sleep(1)
         print erasetor(sdx)
     elif erase == "ask":
         erase = get_user_input(sdx)
