@@ -149,9 +149,9 @@ def export_to_devicehub_schema(device, user_input=None, debug=False):
             comp = [comp]
         
         for item in comp:
-            value = item.__dict__
-            value.update({"@type": type(item).__name__})
-            components.append(utils.strip_null_or_empty_values(item.__dict__))
+            comp_data = utils.strip_null_or_empty_values(item.__dict__)
+            comp_data.update({"@type": type(item).__name__})
+            components.append(comp_data)
     
     device_serialized = utils.strip_null_or_empty_values({
         "@type": type(device).__name__,
