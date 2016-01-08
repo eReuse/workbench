@@ -9,18 +9,7 @@ from .conf import settings
 
 
 def get_hdinfo(path,value):
-    return subprocess.Popen(["lsblk",path,"--nodeps","-no",value], stdout=subprocess.PIPE)
-
-def show_selected(sdx_path):
-    size = get_hdinfo(sdx_path,"size").stdout.read()
-    model = get_hdinfo(sdx_path,"model").stdout.read()
-    disk = get_hdinfo(sdx_path,"tran").stdout.read()
-    print "Selected %s (Model: %s) (Size:%s) (Type: %s)." % (sdx_path,model.rstrip(" \n"),size.rstrip(" \n"),disk.rstrip(" \n"))
-
-def get_user_input(sdx_path):
-    show_selected(sdx_path)
-    config_erase = raw_input("Do you want to erase \"{0}\"? [y/N] ".format(sdx_path))
-    return config_erase
+    return subprocess.check_output(["lsblk", path, "--nodeps", "-no", value]).strip()
 
 def erase_disk(dev, erase_mode="0"):
     if erase_mode == "0":
@@ -50,10 +39,17 @@ def erase_disk(dev, erase_mode="0"):
     }
 
 def do_erasure(sdx):
-    erase = settings.get('DEFAULT', 'erase')
+    print(
+        "Selected '{disk}' (model: {model}, size: {size}, type: {connector})".format(
+            disk=sdx,
+            model=get_hdinfo(sdx, "model"),
+            size=get_hdinfo(sdx, "size"),
+            connector=get_hdinfo(sdx, "tran")
+        )
+    )
 
+    erase = settings.get('DEFAULT', 'erase')
     if erase == "yes":
-        show_selected(sdx)
         print("Eraser will start in 10 seconds, ALL DATA WILL BE LOST! Press "
               "Ctrl+C to cancel.")
         try:
@@ -64,9 +60,11 @@ def do_erasure(sdx):
         return erase_disk(sdx)
     
     elif erase == "ask":
-        erase = get_user_input(sdx)
-        if erase.lower().strip() == "y" or erase.lower().strip() == "yes":
+        confirm = raw_input("Do you want to erase \"{0}\"? [y/N] ".format(sdx))
+        if confirm.lower().strip() == "y" or confirm.lower().strip() == "yes":
             return erase_disk(sdx)
+    
+    print("No disk erased.")
 
 def main(argv=None):
     device = sys.argv[1]
