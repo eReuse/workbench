@@ -22,7 +22,7 @@ def get_user_input(sdx_path):
     config_erase = raw_input("Do you want to erase \"{0}\"? [y/N] ".format(sdx_path))
     return config_erase
 
-def erasetor(dev, erase_mode="0"):
+def erase_disk(dev, erase_mode="0"):
     if erase_mode == "0":
         standard = "All zeros, low standard"
         iterations = "0"  # zero extra iterations (-z implies one)
@@ -61,12 +61,12 @@ def do_erasure(sdx):
         except KeyboardInterrupt:
             print("Eraser on disk '{0}' cancelled by user!".format(sdx))
             return
-        return erasetor(sdx)
+        return erase_disk(sdx)
     
     elif erase == "ask":
         erase = get_user_input(sdx)
         if erase.lower().strip() == "y" or erase.lower().strip() == "yes":
-            return erasetor(sdx)
+            return erase_disk(sdx)
 
 def main(argv=None):
     device = sys.argv[1]
