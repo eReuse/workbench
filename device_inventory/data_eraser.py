@@ -49,6 +49,7 @@ def erasetor(dev, erase_mode="0"):
         steps = "0"
     elif erase_mode == "1":
         standard = "Sector by sector, high Standard"
+        raise NotImplementedError
     time_start = time.strftime("%Y-%m-%d %H:%M:%S")
     FMT = "%Y-%m-%d %H:%M:%S"
     try:
