@@ -46,13 +46,13 @@ def get_user_input(sdx_path):
 def erasetor(dev, erase_mode="0"):
     if erase_mode == "0":
         standard = "All zeros, lower Standard"
-        step = "0"
+        steps = "0"
     elif erase_mode == "1":
         standard = "Sector by sector, high Standard"
     time_start = time.strftime("%Y-%m-%d %H:%M:%S")
     FMT = "%Y-%m-%d %H:%M:%S"
     try:
-         #subprocess.call(["shred","-zvn",steps,dev])
+         subprocess.call(["shred", "-zvn", steps, dev])
          state = "Successful"
          time_end = time.strftime("%Y-%m-%d %H:%M:%S")
     except ValueError:
