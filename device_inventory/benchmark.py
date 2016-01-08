@@ -12,7 +12,7 @@ import re
 import subprocess
 import time
 from dateutil import parser
-from datetime import datetime
+from datetime import datetime, timedelta
 from device_inventory import progress_bar
 
 from .utils import run
@@ -58,10 +58,14 @@ def hard_disk_smart(disk, test_type="short"):
             "status": smt[1],
         }
     
-    print("Runing SMART self-test. It will finish at {0}".format(smt[2]))
+    # get estimated end of the test
+    try:
+        test_end = parser.parse(smt[2])
+    except AttributeError:  # smt[2] is None, estimate end time
+        duration = 2 if test_type == "short" else 120
+        test_end = datetime.now() + timedelta(minutes=duration)
+    print("Runing SMART self-test. It will finish at {0}".format(test_end))
     
-    # wait until test has finished
-    test_end = parser.parse(smt[2])
     seconds = (test_end - datetime.now()).seconds
     seconds = seconds + 2 # wait SMART just 2 second more to be finished
     progress_bar.sec(seconds)
