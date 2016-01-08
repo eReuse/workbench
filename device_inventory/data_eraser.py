@@ -4,30 +4,9 @@ import os
 import time
 import sys
 from datetime import datetime
-try:
-    import ConfigParser as configparser  # Python2
-except ImportError:
-    import configparser
 
-    import device_inventory
+from .conf import settings
 
-def load_config():
-    # https://docs.python.org/3.4/library/configparser.html
-    path = os.path.dirname(__file__)
-    config_file = os.path.join(path, 'config.ini')
-    assert os.path.exists(config_file), config_file
-
-    config = configparser.ConfigParser()
-    config.read(config_file)  # donator.cfg merged here
-    
-    #print(config['DEFAULT']['DISC'])
-    #print(config['DEFAULT'].getboolean('DISC'))
-    #print(config['donator']['email'])
-    
-    # TODO set fallback values if config is empty
-    # https://docs.python.org/3.4/library/configparser.html#fallback-values
-    
-    return config
 
 def get_hdinfo(path,value):
     return subprocess.Popen(["lsblk",path,"--nodeps","-no",value], stdout=subprocess.PIPE)
@@ -68,8 +47,7 @@ def erasetor(dev, erase_mode="0"):
     return dict
 
 def do_erasure(sdx):
-    config = load_config()
-    erase = config.get('DEFAULT', 'ERASE')
+    erase = settings.get('DEFAULT', 'erase')
 
     if erase == "yes":
         show_selected(sdx)
