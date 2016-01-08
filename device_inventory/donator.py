@@ -9,7 +9,7 @@ import socket
 import sys
 import time
 
-from device_inventory import serializers, storage
+from device_inventory import eraser, serializers, storage
 from device_inventory.benchmark import hard_disk_smart
 from device_inventory.conf import settings
 from device_inventory.inventory import Computer
@@ -99,6 +99,15 @@ def main(argv=None):
                   smart=args.smart)
     
     device = Computer(**kwargs)
+    # TODO move smart call here!!!
+    
+    # call eraser for every hard disk!
+    for hd in device.hard_disk:
+        hd.erasure = eraser.do_erasure(hd.logical_name)
+        # FIXME hack to exclude logical_name from serialization
+        # create serializer where you can exclude fields
+        delattr(hd, 'logical_name')
+    
     data = serializers.export_to_devicehub_schema(device, user_input, debug)
     
     # TODO save on the home
