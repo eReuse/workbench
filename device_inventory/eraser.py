@@ -1,9 +1,9 @@
+import datetime
 import os
 import stat
 import subprocess
 import time
 
-from datetime import datetime
 from .conf import settings
 
 
@@ -20,22 +20,22 @@ def erase_disk(dev, erase_mode="0"):
         raise NotImplementedError
     
     FMT = "%Y-%m-%d %H:%M:%S"
-    time_start = time.strftime(FMT)
+    time_start = datetime.datetime.now()
     try:
         subprocess.check_call(["shred", "-zvn", iterations, dev])
         state = "Successful"
     except subprocess.CalledProcessError:
         state = "With errors."
         print "Cannot erase the hard drive '{0}'".format(dev)
-    time_end = time.strftime("%Y-%m-%d %H:%M:%S")
-    elapsed = datetime.strptime(time_end, FMT) - datetime.strptime(time_start, FMT)
+    time_end = datetime.datetime.now()
+    elapsed = time_end - time_start
     
     return {
         'erasure_standard_name': standard,
         'state': state,
         'elapsed_time': str(elapsed),
-        'start_time': time_start,
-        'end_time': time_end
+        'start_time': time_start.isoformat(),
+        'end_time': time_end.isoformat()
     }
 
 
