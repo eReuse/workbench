@@ -1,15 +1,15 @@
-#!/usr/bin/env python
-import subprocess
 import os
+import stat
+import subprocess
 import time
-import sys
-from datetime import datetime
 
+from datetime import datetime
 from .conf import settings
 
 
 def get_hdinfo(path,value):
     return subprocess.check_output(["lsblk", path, "--nodeps", "-no", value]).strip()
+
 
 def erase_disk(dev, erase_mode="0"):
     if erase_mode == "0":
@@ -38,7 +38,15 @@ def erase_disk(dev, erase_mode="0"):
         'end_time': time_end
     }
 
+
 def do_erasure(sdx):
+    if not os.path.exists(sdx):
+        raise ValueError("Device '{0}' does not exist.".format(sdx))
+
+    # check if file is a block special device
+    if not stat.S_ISBLK(os.stat(sdx).st_mode):
+        raise ValueError("File '{0}' is not a block special device.".format(sdx))
+    
     print(
         "Selected '{disk}' (model: {model}, size: {size}, type: {connector})".format(
             disk=sdx,
@@ -65,27 +73,3 @@ def do_erasure(sdx):
             return erase_disk(sdx)
     
     print("No disk erased.")
-
-def main(argv=None):
-    device = sys.argv[1]
-    print do_erasure(device)
-    
-
-if __name__ == "__main__":
-# checking priveleges
-    if os.geteuid() !=  0:
-        sys.exit("Must be root to erase data.")
-
-    try:
-        arg_var = sys.argv[1]
-    except IndexError:
-        exit("No devices selected.")
-
-    if len(arg_var) < 7:
-        exit("Device not valid.")
-        
-    # Start
-    if os.path.exists(arg_var):
-        sys.exit(main(sys.argv))
-    else:
-        exit("Device does not exit.")
