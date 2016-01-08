@@ -24,27 +24,30 @@ def get_user_input(sdx_path):
 
 def erasetor(dev, erase_mode="0"):
     if erase_mode == "0":
-        standard = "All zeros, lower Standard"
-        steps = "0"
+        standard = "All zeros, low standard"
+        iterations = "0"  # zero extra iterations (-z implies one)
     elif erase_mode == "1":
-        standard = "Sector by sector, high Standard"
+        standard = "Sector by sector, high standard"
         raise NotImplementedError
-    time_start = time.strftime("%Y-%m-%d %H:%M:%S")
+    
     FMT = "%Y-%m-%d %H:%M:%S"
+    time_start = time.strftime(FMT)
     try:
-        subprocess.check_call(["shred", "-zvn", steps, dev])
+        subprocess.check_call(["shred", "-zvn", iterations, dev])
         state = "Successful"
     except subprocess.CalledProcessError:
         state = "With errors."
         print "Cannot erase the hard drive '{0}'".format(dev)
     time_end = time.strftime("%Y-%m-%d %H:%M:%S")
     elapsed = datetime.strptime(time_end, FMT) - datetime.strptime(time_start, FMT)
-    dict = {'erasure_standard_name': standard,
-            'state': state,
-            'elapsed_time': str(elapsed),
-            'start_time': time_start,
-            'end_time': time_end }
-    return dict
+    
+    return {
+        'erasure_standard_name': standard,
+        'state': state,
+        'elapsed_time': str(elapsed),
+        'start_time': time_start,
+        'end_time': time_end
+    }
 
 def do_erasure(sdx):
     erase = settings.get('DEFAULT', 'erase')
