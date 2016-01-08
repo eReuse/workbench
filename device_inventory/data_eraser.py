@@ -73,12 +73,15 @@ def do_erasure(sdx):
 
     if erase == "yes":
         show_selected(sdx)
-        a = 10
-        while a != 0:
-            a -= 1
-            print "Starting erasetor, you have {0} seconds to cancel. (Ctrl+C)".format(a)
-            time.sleep(1)
-        print erasetor(sdx)
+        print("Eraser will start in 10 seconds, ALL DATA WILL BE LOST! Press "
+              "Ctrl+C to cancel.")
+        try:
+            time.sleep(10)
+        except KeyboardInterrupt:
+            print("Eraser on disk '{0}' cancelled by user!".format(sdx))
+            return
+        return erasetor(sdx)
+    
     elif erase == "ask":
         erase = get_user_input(sdx)
         if erase.lower().strip() == "y" or erase.lower().strip() == "yes":
