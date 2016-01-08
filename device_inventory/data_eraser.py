@@ -32,12 +32,12 @@ def erasetor(dev, erase_mode="0"):
     time_start = time.strftime("%Y-%m-%d %H:%M:%S")
     FMT = "%Y-%m-%d %H:%M:%S"
     try:
-         subprocess.call(["shred", "-zvn", steps, dev])
-         state = "Successful"
-         time_end = time.strftime("%Y-%m-%d %H:%M:%S")
-    except ValueError:
+        subprocess.check_call(["shred", "-zvn", steps, dev])
+        state = "Successful"
+    except subprocess.CalledProcessError:
         state = "With errors."
         print "Cannot erase the hard drive '{0}'".format(dev)
+    time_end = time.strftime("%Y-%m-%d %H:%M:%S")
     elapsed = datetime.strptime(time_end, FMT) - datetime.strptime(time_start, FMT)
     dict = {'erasure_standard_name': standard,
             'state': state,
