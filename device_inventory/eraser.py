@@ -15,7 +15,7 @@ def erase_disk(dev, erase_mode="0"):
     if erase_mode == "0":
         standard = "Zeros"
         iterations = "0"  # zero extra iterations (-z implies one)
-        steps = iterations + 1
+        steps = int(iterations) + 1
     elif erase_mode == "1":
         steps = "1"
         standard = "Sectors"
