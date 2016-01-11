@@ -13,9 +13,11 @@ def get_hdinfo(path,value):
 
 def erase_disk(dev, erase_mode="0"):
     if erase_mode == "0":
-        standard = "All zeros"
+        standard = "Zeros"
+        steps = "1"
         iterations = "0"  # zero extra iterations (-z implies one)
     elif erase_mode == "1":
+		steps = iterations
         standard = "Sectors"
         raise NotImplementedError
     
@@ -32,7 +34,7 @@ def erase_disk(dev, erase_mode="0"):
     
     return {
         'type': standard,
-        'steps': iterations+1,
+        'steps': steps,
         'state': state,
         'elapsed_time': str(elapsed),
         'start_time': time_start.isoformat(),
