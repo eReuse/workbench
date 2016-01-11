@@ -11,6 +11,7 @@ import pySMART
 import re
 import subprocess
 import time
+import tqdm
 from dateutil import parser
 from datetime import datetime, timedelta
 
@@ -75,10 +76,11 @@ def hard_disk_smart(disk, test_type="short"):
             logging.error(e)
             if datetime.now() > test_end:  # TODO wait a few seconds more
                 break  # avoid infinite loop
-        # TODO replace with progress bar
+        # progress meter based on estimated time, we use seconds instead
+        # of remaining because time provides more accuracy
         seconds = (test_end - datetime.now()).seconds
-        print("Please wait... {0} seconds remaining".format(seconds))
-        time.sleep(5)
+        for _ in tqdm.trange(seconds, leave=True):
+            time.sleep(1)
     
     # show last test
     dev.update()
