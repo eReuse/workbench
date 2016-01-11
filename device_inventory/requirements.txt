@@ -9,3 +9,4 @@ pySMART     # Wrapper for smartctl (smartmontools)
 # python-dmidecode
 # python-lxml
 # usbmount
+# tqdm
