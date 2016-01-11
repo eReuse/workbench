@@ -14,6 +14,7 @@ def get_hdinfo(path,value):
 def erase_disk(dev, erase_mode="0"):
     if erase_mode == "0":
         standard = "All zeros, low standard"
+        erase_type = "Zeros"
         iterations = "0"  # zero extra iterations (-z implies one)
     elif erase_mode == "1":
         standard = "Sector by sector, high standard"
@@ -31,7 +32,8 @@ def erase_disk(dev, erase_mode="0"):
     elapsed = time_end - time_start
     
     return {
-        'erasure_standard_name': standard,
+        'type': erase_type,
+        'steps': iterations+1,
         'state': state,
         'elapsed_time': str(elapsed),
         'start_time': time_start.isoformat(),
