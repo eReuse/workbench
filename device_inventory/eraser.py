@@ -23,7 +23,7 @@ def erase_disk(dev, erase_mode="0"):
     FMT = "%Y-%m-%d %H:%M:%S"
     time_start = datetime.datetime.now()
     try:
-        subprocess.check_call(["shred", "-zvn", iterations, dev])
+        #subprocess.check_call(["shred", "-zvn", iterations, dev])
         state = "Successful"
     except subprocess.CalledProcessError:
         state = "With errors."
