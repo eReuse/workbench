@@ -17,14 +17,14 @@ def erase_disk(dev, erase_mode="0"):
         steps = "1"
         iterations = "0"  # zero extra iterations (-z implies one)
     elif erase_mode == "1":
-		steps = iterations
+        steps = "1"
         standard = "Sectors"
         raise NotImplementedError
     
     FMT = "%Y-%m-%d %H:%M:%S"
     time_start = datetime.datetime.now()
     try:
-        #subprocess.check_call(["shred", "-zvn", iterations, dev])
+        subprocess.check_call(["shred", "-zvn", iterations, dev])
         state = "Successful"
     except subprocess.CalledProcessError:
         state = "With errors."
