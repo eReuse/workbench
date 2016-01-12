@@ -1,11 +1,49 @@
 #!/usr/bin/env python
 import requests
 import urllib2
+from os import listdir
+from os.path import isfile, join
 
-def download_iso(url):
+github = "https://api.github.com/repos/eReuse/device-inventory/releases/latest"
+save_path = "/var/lib/tftpboot/iso/"
+
+
+def check_local_space(): #CHECK
+	st = os.statvfs('.')
+	return st.f_bavail * st.f_frsize / 1024 / 1024
+
+def check_iso_space(): #CHECK
+	size = output["assets"][0]["size"]
+	return size / 1024 / 1024
+
+def check_space(): #CHECK
+	if check_local_space() > check_iso_space():
+		return True
+	else:
+		return False
+
+def check_version(save_path, r):
+
+	files = [f for f in listdir(save_path) if isfile(join(save_path, f))]
+	for check in files:
+		local_version = check.split('_')[1]
+		number_local = local_version[1:-4].split('.')
+		number_checks = r.json()['tag_name'][1:]
+		
+		i = 0
+		for number in number_local: # should check the version from github, not from local version
+			if number > number_local[i]:
+				return True
+				break
+			i = i + 1
+	return False
+
+def download_iso(save_path, url):
     file_name = url.split('/')[-1]
     u = urllib2.urlopen(url)
-    f = open(file_name, 'wb')
+    to_file = os.path.join(save_path, file_name)
+    print to_file
+    f = open(to_file, 'wb')
     meta = u.info()
     file_size = int(meta.getheaders("Content-Length")[0])
     print "Downloading: {0} {1}MB".format(file_name, file_size)
@@ -25,7 +63,12 @@ def download_iso(url):
 
     f.close()
 
-def main(r):
+def main(save_path, r):
+	
+	print "New update is available."
+	ask_user(save_path, r )
+	
+def ask_user(save_path, r):
     assets = r.json()["assets"] # Get Assets
 
     asset = 0
@@ -56,17 +99,17 @@ def main(r):
         # ONLY 1 ISO AVAILABLE
         size = assets[detected[1]]["size"]
         size_MB = size / 1024 / 1024
-        choice = raw_input("New update is available. \nUpdate to {0} (Size: {1}MB)? [y/N] ".format(assets[detected[1]]["name"],size_MB)).lower()
+        choice = raw_input("Update to {0} (Size: {1}MB)? [y/N] ".format(assets[detected[1]]["name"],size_MB)).lower()
         print choice
         if choice in valid:
             print assets[detected[1]]["browser_download_url"]
-            download_iso(assets[detected[1]]["browser_download_url"])
+            download_iso(save_path, assets[detected[1]]["browser_download_url"])
 
 
 if __name__ == "__main__":
     
     # Get latest releases
-    r = requests.get("https://api.github.com/repos/eReuse/device-inventory/releases/latest")
+    r = requests.get(github)
 
     # Check if connection is ok
     if r.status_code != 200:
@@ -74,5 +117,5 @@ if __name__ == "__main__":
         exit("Cannot connect to server")
 
     # Start
-    exit(main(r))
+    exit(main(save_path, r))
  
