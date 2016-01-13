@@ -9,34 +9,37 @@ save_path = "/var/lib/tftpboot/iso/"
 
 
 def check_local_space(): #CHECK
-	st = os.statvfs('.')
-	return st.f_bavail * st.f_frsize / 1024 / 1024
+    st = os.statvfs('.')
+    return st.f_bavail * st.f_frsize / 1024 / 1024
 
 def check_iso_space(): #CHECK
-	size = output["assets"][0]["size"]
-	return size / 1024 / 1024
+    size = output["assets"][0]["size"]
+    return size / 1024 / 1024
 
 def check_space(): #CHECK
-	if check_local_space() > check_iso_space():
-		return True
-	else:
-		return False
+    if check_local_space() > check_iso_space():
+        return True
+    else:
+        return False
 
 def check_version(save_path, r):
+        
+    # Check number version to github
+    number_checks = r.json()['tag_name'][1:].split('.')
 
-	files = [f for f in listdir(save_path) if isfile(join(save_path, f))]
-	for check in files:
-		local_version = check.split('_')[1]
-		number_local = local_version[1:-4].split('.')
-		number_checks = r.json()['tag_name'][1:]
-		
-		i = 0
-		for number in number_local: # should check the version from github, not from local version
-			if number > number_local[i]:
-				return True
-				break
-			i = i + 1
-	return False
+    files = [f for f in listdir(save_path) if isfile(join(save_path, f))]
+    for check in files:
+        local_version = check.split('_')[1]
+        number_local = local_version[1:-4].split('.')
+                
+        i = 0
+        # should check the version from github, not from local version
+        for number in number_local:
+            if number > number_local[i]:
+                return True
+                break
+            i = i + 1
+    return False
 
 def download_iso(save_path, url):
     file_name = url.split('/')[-1]
@@ -64,10 +67,9 @@ def download_iso(save_path, url):
     f.close()
 
 def main(save_path, r):
-	
-	print "New update is available."
-	ask_user(save_path, r )
-	
+    print "New update is available."
+    ask_user(save_path, r )
+
 def ask_user(save_path, r):
     assets = r.json()["assets"] # Get Assets
 
