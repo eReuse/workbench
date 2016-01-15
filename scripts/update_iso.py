@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import requests
 import urllib2
+import os
 from os import listdir
 from os.path import isfile, join
 
@@ -23,29 +24,42 @@ def check_space(): #CHECK
         return False
 
 def check_version(save_path, r):
-        
     # Check number version to github
     number_checks = r.json()['tag_name'][1:].split('.')
-
+    
     files = [f for f in listdir(save_path) if isfile(join(save_path, f))]
     for check in files:
         local_version = check.split('_')[1]
         number_local = local_version[1:-4].split('.')
-                
+
         i = 0
-        # should check the version from github, not from local version
-        for number in number_local:
-            if number > number_local[i]:
-                return True
-                break
+        update = False
+        for number in number_checks:
+            if len(number_local) != i:
+                if number_local[i] < number:
+                    update = True
+                    break
+                elif number_local[i] > number:
+                    exit("You have a niewer version")
+            elif len(number_local) > len(number_checks):
+                exit("You have a niewer version")
+            else:
+                if update == False and len(number_checks) > len(number_local):
+                    update = True
+                    break
             i = i + 1
-    return False
+        if update == False and len(number_checks) < len(number_local):
+            exit("You have a niewer version")
+
+
+
+    return update
 
 def download_iso(save_path, url):
     file_name = url.split('/')[-1]
     u = urllib2.urlopen(url)
     to_file = os.path.join(save_path, file_name)
-    print to_file
+    # +Add TRY if user cancel it, then remove the downloaded unfinished
     f = open(to_file, 'wb')
     meta = u.info()
     file_size = int(meta.getheaders("Content-Length")[0])
@@ -65,10 +79,6 @@ def download_iso(save_path, url):
         print status,
 
     f.close()
-
-def main(save_path, r):
-    print "New update is available."
-    ask_user(save_path, r )
 
 def ask_user(save_path, r):
     assets = r.json()["assets"] # Get Assets
@@ -93,6 +103,7 @@ def ask_user(save_path, r):
 
     if detected["number"] != 1:
         # MORE THAN 1, ASK WHAT WANT TO BE DOWNLOADED
+        # +Add Need to give the option to choose what image to download
         i = 0
         while (i != detected["number"]):
             i = i +1
@@ -107,6 +118,14 @@ def ask_user(save_path, r):
             print assets[detected[1]]["browser_download_url"]
             download_iso(save_path, assets[detected[1]]["browser_download_url"])
 
+def main(save_path, r):
+    # +Add before cheking version, check if dir is empty
+    if check_version(save_path, r) == True:
+        print "Update available."
+        ask_user(save_path, r)
+        #rm_old(save_path, r)
+    else:
+        print "Already up-to-date."
 
 if __name__ == "__main__":
     
