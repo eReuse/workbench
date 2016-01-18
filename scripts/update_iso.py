@@ -108,7 +108,8 @@ def ask_user(save_path, r):
 
     # IF more than 1 iso is detected or...
     valid = {"yes": True, "y": True, "ye": True,}
-
+    print detected
+    time.sleep(10)
     if detected["number"] != 1:
         # MORE THAN 1, ASK WHAT WANT TO BE DOWNLOADED
         # +Add Need to give the option to choose what image to download
@@ -135,14 +136,18 @@ def main(save_path, r):
         else:
             if len(os.listdir(save_path)) != 0:
                 print("Some files found on `{0}`:".format(save_path))
-            files = [f for f in listdir(save_path) if isfile(join(save_path, f))]
-            for check in files:
-                print(check)
+                files = [f for f in listdir(save_path) if isfile(join(save_path, f))]
+                print files
                 deletion = raw_input("Do you want to delete them? ")
                 valid = {"yes": True, "y": True, "ye": True,}
                 if deletion in valid:
-                    print("Deleting...")
-            #rm_old(save_path, r)
+                    for rem in files:
+                        delete = os.path.join(save_path,rem)
+                        os.remove(delete)
+                        print("deleted `{0}`.".format(delete))
+                        # +add ummount + rm_old(save_path, r)
+                    if check_space(save_path, r) == True:
+                       ask_user(save_path, r)
     else:
         print "Already up-to-date."
 
