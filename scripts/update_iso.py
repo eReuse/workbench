@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import requests
 import urllib2
+import time
 import os
 from os import listdir
 from os.path import isfile, join
@@ -9,51 +10,56 @@ github = "https://api.github.com/repos/eReuse/device-inventory/releases/latest"
 save_path = "/var/lib/tftpboot/iso/"
 
 
-def check_local_space(): #CHECK
+def check_local_space(save_path, r): #CHECK
     st = os.statvfs('.')
     return st.f_bavail * st.f_frsize / 1024 / 1024
 
-def check_iso_space(): #CHECK
-    size = output["assets"][0]["size"]
+def check_iso_space(save_path, r): #CHECK
+    size = r.json()["assets"][0]["size"]
     return size / 1024 / 1024
 
-def check_space(): #CHECK
-    if check_local_space() > check_iso_space():
+def check_space(save_path, r): #CHECK
+    print("{0}MB free space for {1}MB from iso.".format(check_local_space(save_path, r),check_iso_space(save_path, r)))
+    if check_local_space(save_path, r) > check_iso_space(save_path, r):
         return True
     else:
         return False
 
 def check_version(save_path, r):
-    # Check number version to github
-    number_checks = r.json()['tag_name'][1:].split('.')
     
-    files = [f for f in listdir(save_path) if isfile(join(save_path, f))]
-    for check in files:
-        local_version = check.split('_')[1]
-        number_local = local_version[1:-4].split('.')
+    if len(os.listdir(save_path)) == 0:
+        return True
+    else:
+        # Check number version to github
+        number_checks = r.json()['tag_name'][1:].split('.')
 
-        i = 0
-        update = False
-        for number in number_checks:
-            if len(number_local) != i:
-                if number_local[i] < number:
-                    update = True
-                    break
-                elif number_local[i] > number:
+        files = [f for f in listdir(save_path) if isfile(join(save_path, f))]
+        for check in files:
+            # Check if name eReuseOS_vXXX.iso exist.
+            if '_v' in check:
+                local_version = check.split('_')[1]
+                number_local = local_version[1:-4].split('.')
+
+                i = 0
+                update = False
+                for number in number_checks:
+                    if len(number_local) != i:
+                        if number_local[i] < number:
+                            update = True
+                            break
+                        elif number_local[i] > number:
+                            exit("You have a niewer version")
+                    elif len(number_local) > len(number_checks):
+                        exit("You have a niewer version")
+                    else:
+                        if update == False and len(number_checks) > len(number_local):
+                            update = True
+                            break
+                    i = i + 1
+                if update == False and len(number_checks) < len(number_local):
                     exit("You have a niewer version")
-            elif len(number_local) > len(number_checks):
-                exit("You have a niewer version")
-            else:
-                if update == False and len(number_checks) > len(number_local):
-                    update = True
-                    break
-            i = i + 1
-        if update == False and len(number_checks) < len(number_local):
-            exit("You have a niewer version")
 
-
-
-    return update
+        return update
 
 def download_iso(save_path, url):
     file_name = url.split('/')[-1]
@@ -67,6 +73,7 @@ def download_iso(save_path, url):
 
     file_size_dl = 0
     block_sz = 8192
+
     while True:
         buffer = u.read(block_sz)
         if not buffer:
@@ -74,11 +81,12 @@ def download_iso(save_path, url):
 
         file_size_dl += len(buffer)
         f.write(buffer)
-        status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
+        speed = file_size 
+        status = r"%10d  [%3.2f%%] Speed: %" % (file_size_dl, file_size_dl * 100. / file_size, "hi")
         status = status + chr(8)*(len(status)+1)
         print status,
-
     f.close()
+
 
 def ask_user(save_path, r):
     assets = r.json()["assets"] # Get Assets
@@ -122,7 +130,10 @@ def main(save_path, r):
     # +Add before cheking version, check if dir is empty
     if check_version(save_path, r) == True:
         print "Update available."
-        ask_user(save_path, r)
+        if check_space(save_path, r):
+            ask_user(save_path, r)
+        elif len(os.listdir(save_path)) != 0:
+            print("Some files found on `{0}`, do you want to delete them?")
         #rm_old(save_path, r)
     else:
         print "Already up-to-date."
