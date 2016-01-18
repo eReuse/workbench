@@ -42,20 +42,35 @@ def check_version(save_path, r):
 
                 i = 0
                 update = False
+                
                 for number in number_checks:
+                    
+                    # if is not on the number limit
                     if len(number_local) != i:
+                        
+                        #check if local version is minor number
                         if number_local[i] < number:
                             update = True
                             break
+                            
+                        # if local number is bigger, exit
                         elif number_local[i] > number:
                             exit("You have a niewer version")
+                        
+                    # if is equal but local number have more numbers than update version, exit
                     elif len(number_local) > len(number_checks):
                         exit("You have a niewer version")
+                    
+                    # if local number is equal but update version have more numbers available, then true
                     else:
                         if update == False and len(number_checks) > len(number_local):
                             update = True
                             break
+                    
+                    # Sum more nums to checks
                     i = i + 1
+                
+                # if local version have more number, then exit. NEED TO CHECK IT
                 if update == False and len(number_checks) < len(number_local):
                     exit("You have a niewer version")
 
@@ -128,10 +143,11 @@ def ask_user(save_path, r):
             download_iso(save_path, assets[detected[1]]["browser_download_url"])
 
 def main(save_path, r):
-    # +Add before cheking version, check if dir is empty
+    # Check free space
     if check_version(save_path, r) == True:
         print "Update available."
         if check_space(save_path, r) == True:
+            # if space is true, ask to download
             ask_user(save_path, r)
         else:
             if len(os.listdir(save_path)) != 0:
@@ -145,7 +161,7 @@ def main(save_path, r):
                         delete = os.path.join(save_path,rem)
                         os.remove(delete)
                         print("deleted `{0}`.".format(delete))
-                        # +add ummount + rm_old(save_path, r)
+                        # +add ummount
                     if check_space(save_path, r) == True:
                        ask_user(save_path, r)
     else:
