@@ -103,16 +103,13 @@ def download_iso(save_path, url):
         print buffer
     f.close()
 
-
-def ask_user(save_path, r):
-    assets = r.json()["assets"] # Get Assets
-
+def get_iso_asset(save_path, r):
     asset = 0
     detected = dict()
     detected["number"] = 0
     while True:
         try:
-            log = assets[asset]
+            log = detected[asset]
             if log["content_type"] == "application/x-iso9660-image" or log["content_type"] =="application/x-cd-image":
                 detected["number"] = detected["number"] + 1
                 number = detected["number"]
@@ -121,6 +118,13 @@ def ask_user(save_path, r):
             asset = asset - 1
             break
         asset = asset + 1
+    return detected
+
+def ask_user(save_path, r):
+    assets = r.json()["assets"] # Get Assets
+    detected = get_iso_asset(save_path, r)
+    print(detected)
+    time.sleep(10)
 
     # IF more than 1 iso is detected or...
     valid = {"yes": True, "y": True, "ye": True,}
