@@ -97,9 +97,10 @@ def download_iso(save_path, url):
         file_size_dl += len(buffer)
         f.write(buffer)
         speed = file_size 
-        status = r"%10d  [%3.2f%%] Speed: %" % (file_size_dl, file_size_dl * 100. / file_size, "hi")
+        status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
         status = status + chr(8)*(len(status)+1)
         print status,
+        print buffer
     f.close()
 
 
@@ -123,7 +124,6 @@ def ask_user(save_path, r):
 
     # IF more than 1 iso is detected or...
     valid = {"yes": True, "y": True, "ye": True,}
-    print detected
     time.sleep(10)
     if detected["number"] != 1:
         # MORE THAN 1, ASK WHAT WANT TO BE DOWNLOADED
@@ -137,7 +137,6 @@ def ask_user(save_path, r):
         size = assets[detected[1]]["size"]
         size_MB = size / 1024 / 1024
         choice = raw_input("Update to {0} (Size: {1}MB)? [y/N] ".format(assets[detected[1]]["name"],size_MB)).lower()
-        print choice
         if choice in valid:
             print assets[detected[1]]["browser_download_url"]
             download_iso(save_path, assets[detected[1]]["browser_download_url"])
