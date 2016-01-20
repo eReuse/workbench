@@ -16,10 +16,10 @@ connected on the LAN network.
 - PC/s to register
 
 ####Server info: 
-User: ereuse 
-Password: ereuse 
-IP of eReuse server: 192.168.2.2 
-Shared folder: 
+- User: ereuse 
+- Password: ereuse 
+- IP of eReuse server: 192.168.2.2 
+- Shared folder: 
   - Windows: `\\192.168.2.2\`
   - Linux: `smb://192.168.2.2/`
 
