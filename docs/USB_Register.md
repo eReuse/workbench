@@ -35,7 +35,7 @@
   2. Run device inventory
     - Write `sudo device-inventory` on the terminal.
 
-![UNetbootin_example](./images/sudo_device-inventory.png)
+![sudo_device](./images/sudo_device-inventory.png)
 
 3. **Fill the following fields:**
    - Label (optional): to help identifying the PC. (e.g.: PC­1, PC­2, PC­3...) .
@@ -49,7 +49,7 @@
 
 7. **Process is done! If you want to review the result open the file stored on the USB on another computer or just run this command on the inventoried device (where “your_filename” is the name of the file printed on the screen):**
 
-![UNetbootin_example](./images/json_device-inventory.png)
+![json_device](./images/json_device-inventory.png)
   - `less /tmp/your_filename.json`
 
 8. Press “q” to quit the program, unplug the USB and you can power off the computer.
