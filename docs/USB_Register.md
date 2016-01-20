@@ -17,7 +17,7 @@
   3. Select the Drive to write.
   4. Click `ok` to start.
 
-![UNetbootinexample](./images/UNetbootin_example.png)
+  ![UNetbootinexample](./images/UNetbootin_example.png)
 
 ####3. Run eReuseOS
   1. Connect the USB with the eReuseOS image to the PC where you are going to register.
@@ -35,7 +35,7 @@
 2. Run device inventory
     - Write `sudo device-inventory` on the terminal.
 
-![sudodevice](./images/sudo_device-inventory.png)
+  ![sudodevice](./images/sudo_device-inventory.png)
 
 3. Fill the following fields:
    - Label (optional): to help identifying the PC. (e.g.: PC­1, PC­2, PC­3...) .
@@ -49,7 +49,7 @@
 
 7. Process is done! If you want to review the result open the file stored on the USB on another computer or just run this command on the inventoried device (where “your_filename” is the name of the file printed on the screen):
 
-![jsondevice](./images/json_device-inventory.png)
+  ![jsondevice](./images/json_device-inventory.png)
   - `less /tmp/your_filename.json`
 
 8. Press `q` to quit the program, unplug the USB and you can power off the computer.
