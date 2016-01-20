@@ -30,27 +30,27 @@
     - Press F2 or F10 to enter on BIOS menu. 
 
 ####4. Inventory process register hardware characteristics of a computer
-  1. User login.
+1. User login.
     - Login user: `ubuntu` Password: `(empty, no password)`
-  2. Run device inventory
+2. Run device inventory
     - Write `sudo device-inventory` on the terminal.
 
 ![sudodevice](./images/sudo_device-inventory.png)
 
-####3. Fill the following fields:
+3. Fill the following fields:
    - Label (optional): to help identifying the PC. (e.g.: PC­1, PC­2, PC­3...) .
    - Comment (optional): to introduce extra information (e.g. describe If any of peripheral equipment does not work).
 
-####4. Device type: choose what kind of equipment are you registering (e.g.: Desktop, Laptop, etc).
+4. Device type: choose what kind of equipment are you registering (e.g.: Desktop, Laptop, etc).
 
-####5. Wait until inventory of equipment is completed (it will take less than a minute).
+5. Wait until inventory of equipment is completed (it will take less than a minute).
 
-####6. You will be asked to insert another USB drive to store the result, just plug­in and wait until the result is saved.
+6. You will be asked to insert another USB drive to store the result, just plug­in and wait until the result is saved.
 
-####7. Process is done! If you want to review the result open the file stored on the USB on another computer or just run this command on the inventoried device (where “your_filename” is the name of the file printed on the screen):
+7. Process is done! If you want to review the result open the file stored on the USB on another computer or just run this command on the inventoried device (where “your_filename” is the name of the file printed on the screen):
 
 ![jsondevice](./images/json_device-inventory.png)
   - `less /tmp/your_filename.json`
 
-####8. Press `q` to quit the program, unplug the USB and you can power off the computer.
+8. Press `q` to quit the program, unplug the USB and you can power off the computer.
   - `sudo poweroff`  # introduce this command or just press computer’s power button 
