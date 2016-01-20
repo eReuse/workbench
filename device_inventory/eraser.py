@@ -13,29 +13,34 @@ def get_hdinfo(path,value):
 
 def erase_disk(dev, erase_mode="0"):
     if erase_mode == "0":
-        standard = "All zeros, low standard"
-        iterations = "0"  # zero extra iterations (-z implies one)
+        standard = "EraseBasic"
+        zeros = settings.getboolean('eraser', 'ZEROS')
+        if zeros == False:
+            options = "-vn"
+        else:
+            options = "-zvn"
     elif erase_mode == "1":
-        standard = "Sector by sector, high standard"
+        standard = "EraseBySectors"
         raise NotImplementedError
     
-    FMT = "%Y-%m-%d %H:%M:%S"
+    # FMT = "%Y-%m-%d %H:%M:%S"
     time_start = datetime.datetime.now()
     try:
-        subprocess.check_call(["shred", "-zvn", iterations, dev])
-        state = "Successful"
+        steps = settings.getint('eraser', 'STEPS')
+        subprocess.check_call(["shred", options, str(steps), dev])
+        state = "Succeed"
     except subprocess.CalledProcessError:
-        state = "With errors."
+        state = "Fail"
         print "Cannot erase the hard drive '{0}'".format(dev)
     time_end = datetime.datetime.now()
-    elapsed = time_end - time_start
     
     return {
-        'erasure_standard_name': standard,
+        '@type': standard,
+        'secureAleatorySteps': steps,
+        'cleanWithZeros': zeros,
         'state': state,
-        'elapsed_time': str(elapsed),
-        'start_time': time_start.isoformat(),
-        'end_time': time_end.isoformat()
+        'startTime': time_start.isoformat(),
+        'endTime': time_end.isoformat()
     }
 
 
@@ -56,7 +61,7 @@ def do_erasure(sdx):
         )
     )
 
-    erase = settings.get('DEFAULT', 'erase')
+    erase = settings.get('eraser', 'ERASE')
     if erase == "yes":
         print("Eraser will start in 10 seconds, ALL DATA WILL BE LOST! Press "
               "Ctrl+C to cancel.")
