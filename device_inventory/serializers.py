@@ -3,7 +3,7 @@ import multiprocessing
 
 from xml.etree import ElementTree
 
-from . import utils
+from . import get_version, utils
 from .xml2dict import ConvertDictToXml
 
 
@@ -165,6 +165,7 @@ def export_to_devicehub_schema(device, user_input=None, debug=False):
         "@type": "Snapshot",
         "device": device_serialized,
         "components": components,
+        "version": get_version(),
     }
     
     # Include user's custom fields (e.g. label, comment)

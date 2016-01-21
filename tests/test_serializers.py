@@ -43,3 +43,8 @@ class TestDeviceHubSerializer(unittest.TestCase):
         
         if self.DEBUG:
             self.write_output(data, "/tmp/computer_stored_usb_disk.json")
+    
+    def test_snapshot_includes_version(self):
+        device = inventory.Computer(load_data=True)
+        data = serializers.export_to_devicehub_schema(device)
+        self.assertIn('version', data)
