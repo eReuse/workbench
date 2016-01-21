@@ -22,8 +22,7 @@ def erase_disk(dev, erase_mode="0"):
     elif erase_mode == "1":
         standard = "EraseBySectors"
         raise NotImplementedError
-    
-    # FMT = "%Y-%m-%d %H:%M:%S"
+
     time_start = datetime.datetime.now()
     try:
         steps = settings.getint('eraser', 'STEPS')
