@@ -66,7 +66,6 @@ nano /etc/network/interfaces
 ```
 
 And add or remplace the following lines for `eth0` interface:
-Only do this if you are on a `192.168.2.X` range, if you need eth0 on auto dhcp mode, just comment the following lines and uncomment when you finished the installation.
 ```
 auto eth0
 iface eth0 inet static
@@ -75,6 +74,18 @@ iface eth0 inet static
     gateway         192.168.2.1
     dns-nameservers 8.8.8.8
 ```
+
+if you need eth0 on auto dhcp mode to acces on internet, just comment the following lines and uncomment when you finished the installation. Exemple:
+```
+auto eth0
+iface eth0 inet dhcp
+#static
+#    address         192.168.2.2
+#    netmask         255.255.255.0
+#    gateway         192.168.2.1
+#    dns-nameservers 8.8.8.8
+```
+
 
 Reset network interfaces:
 ```
@@ -87,7 +98,12 @@ apt-get install isc-dhcp-server
 ```
 
 See `man dhcpd` for more information. 
-Edit `/etc/dhcp/dhcpd.conf` and remove all remplacing with the next lines:
+Make a backup of `/etc/dhcp/dhcpd.conf`:
+```
+mv /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.backup
+```
+
+Edit file with `nano /etc/dhcp/dhcpd.conf` and add the following lines:
 ```
 ddns-update-style interim;
 ignore client-updates;
@@ -100,7 +116,7 @@ allow bootp;
 subnet 192.168.2.0 netmask 255.255.255.0 {
  next-server 192.168.2.2;
  filename "pxelinux.0";
- range dynamic-bootp 192.168.15.100 192.168.2.200;
+ range dynamic-bootp 192.168.2.10 192.168.2.210;
  option domain-name-servers 208.67.222.222;
  option routers 192.168.2.1;
  option broadcast-address 192.168.2.255;
@@ -110,6 +126,8 @@ Reset the service and check if service is running:
 ```
 service isc-dhcp-server restart
 ```
+If your `eth0` is on auto dhcp you will get an error. Uncomment and restart network interafes on static mode.
+
 Test if service is running correctly:
 ```
 ss -upna
@@ -121,6 +139,13 @@ NFS will allow us to share network images. Install it with:
 apt-get install nfs-kernel-server
 ```
 
+Edit `/etc/exports` with the folders that we will use, add:
+```
+/var/lib/tftpboot/ks *(no_root_squash,no_subtree_check,ro)
+/var/lib/tftpboot/mnt/eReuseOS_iso *(no_root_squash,no_subtree_check,ro)
+```
+
+##4. install TFTP
 Install the PXE network image from to `/var/lib/tftpboot/`:
 ```
 cd /var/lib/tftpboot/
@@ -128,5 +153,74 @@ wget http://kaplah.org/system/files/field/files/pxelinux.tar.gz
 tar xzvf pxelinux.tar.gz
 ```
 
+Make all the folders that we will use for the configuration:
+```
+mkdir /var/lib/tftpboot/iso
+mkdir /var/lib/tftpboot/mnt
+mkdir /var/lib/tftpboot/ks
+```
 
+Get the latest iso from our github [releases](https://github.com/eReuse/device-inventory/releases/latest), copy the link of the newest ISO and donwload it with:
+```
+wget -O /var/lib/tftpboot/iso https://github.com/eReuse/device-inventory/releases/download/v7.0.2b/eReuseOS_v7.0.2b.iso
+```
 
+Make the dir to mount the eReuseOS iso. This is the folder that will be shared on network:
+```
+mkdir /var/lib/tftpboot/mnt/eReuseOS_iso/
+```
+
+Now edit `/etc/fstab` to mount it when server starts:
+```
+sudo nano /etc/fstab
+```
+
+Add the line:
+```
+/var/lib/tftpboot/eReuseOS_v7.0.2b.iso /var/lib/tftpboot/mnt/eReuseOS_iso iso9660 user,ro,loop 0 0
+```
+
+Test if is automounted with:
+```
+mount -a
+ls -l /var/lib/tftpboot/mnt/eReuseOS_iso/
+```
+
+Reload NFS service:
+```
+service nfs-kernel-server reload
+```
+
+Check if is mounted on network:
+```
+showmount -e 192.168.15.2
+```
+
+Make a backup of `/var/lib/tftpboot/pxelinux.cfg/default` and open it.
+```
+mv /var/lib/tftpboot/pxelinux.cfg/default /var/lib/tftpboot/pxelinux.cfg/default.backup
+nano /var/lib/tftpboot/pxelinux.cfg/default
+```
+
+Add the following lines:
+```
+default eReuseOS
+prompt 0
+
+LABEL eReuseOS
+    MENU LABEL eReuseOS
+        kernel mnt/eReuseOS_iso/casper/vmlinuz
+        append file=mnt/eReuseOS_iso/preseed/ubuntu.seed intrd=mnt/eReuse_image/casper/initrd.lz boot=casper netboot=nfs ip=dhcp nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/eReuse_image
+```
+####5. Finish
+If you changed your interfaces to dhcp mode, turn it to static, edit `/etc/network/interfaces` to:
+```
+auto eth0
+iface eth0 inet static
+    address         192.168.2.2
+    netmask         255.255.255.0
+    gateway         192.168.2.1
+    dns-nameservers 8.8.8.8
+```
+
+Test connecting a computer on the same network as the sever and seleect network boot.
