@@ -32,30 +32,30 @@ def erase_disk(dev, erase_mode="0"):
     if erase_mode == "0":
         standard = "EraseBasic"
         
-        # Zeros
-        if zeros == True:
-            step[step_number] = dict()
-            step[step_number]["@type"] = "Zeros"
-            start_time_step = datetime.datetime.now()
-            step[step_number]["endTime"] = start_time_step.isoformat()
-            step[step_number]["state"] = erase_process(dev,"-zvn",0)
-            end_time_step = datetime.datetime.now()
-            step[step_number]["end_time"] = end_time_step.isoformat()
-            step[step_number]["number"] = step_number + 1
-            step_number = step_number + 1
-            
         # Random
         while count != 0:
             step[step_number] = dict()
             step[step_number]["@type"] = "Random"
             start_time_step = datetime.datetime.now()
-            step[step_number]["endTime"] = start_time_step.isoformat()
+            step[step_number]["startTime"] = start_time_step.isoformat()
             step[step_number]["state"] = erase_process(dev,"-vn",1)
             end_time_step = datetime.datetime.now()
             step[step_number]["end_time"] = end_time_step.isoformat()
             step[step_number]["number"] = step_number + 1
             step_number = step_number + 1
             count = count - 1
+            
+        # Zeros
+        if zeros == True:
+            step[step_number] = dict()
+            step[step_number]["@type"] = "Zeros"
+            start_time_step = datetime.datetime.now()
+            step[step_number]["startTime"] = start_time_step.isoformat()
+            step[step_number]["state"] = erase_process(dev,"-zvn",0)
+            end_time_step = datetime.datetime.now()
+            step[step_number]["end_time"] = end_time_step.isoformat()
+            step[step_number]["number"] = step_number + 1
+            step_number = step_number + 1
             
     elif erase_mode == "1":
         standard = "EraseBySectors"
@@ -64,7 +64,7 @@ def erase_disk(dev, erase_mode="0"):
     time_end = datetime.datetime.now()
     return {
         '@type': standard,
-        'secureAleatorySteps': steps,
+        'secureRandomSteps': steps,
         'cleanWithZeros': zeros,
         'startTime': time_start.isoformat(),
         'endTime': time_end.isoformat(),
