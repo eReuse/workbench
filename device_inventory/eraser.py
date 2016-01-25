@@ -3,6 +3,7 @@ import os
 import stat
 import subprocess
 import time
+import json
 
 from .conf import settings
 
@@ -10,36 +11,64 @@ from .conf import settings
 def get_hdinfo(path,value):
     return subprocess.check_output(["lsblk", path, "--nodeps", "-no", value]).strip()
 
-
-def erase_disk(dev, erase_mode="0"):
-    if erase_mode == "0":
-        standard = "EraseBasic"
-        zeros = settings.getboolean('eraser', 'ZEROS')
-        if zeros == False:
-            options = "-vn"
-        else:
-            options = "-zvn"
-    elif erase_mode == "1":
-        standard = "EraseBySectors"
-        raise NotImplementedError
-
-    time_start = datetime.datetime.now()
+def erase_process(dev, options, steps):
+    # Erasing
     try:
-        steps = settings.getint('eraser', 'STEPS')
         subprocess.check_call(["shred", options, str(steps), dev])
         state = "Succeed"
     except subprocess.CalledProcessError:
         state = "Fail"
         print "Cannot erase the hard drive '{0}'".format(dev)
+    return state
+
+def erase_disk(dev, erase_mode="0"):
+    time_start = datetime.datetime.now()
+    zeros = settings.getboolean('eraser', 'ZEROS')
+    steps = settings.getint('eraser', 'STEPS')
+    count = steps
+    step_number = 0
+    step = dict()
+
+    if erase_mode == "0":
+        standard = "EraseBasic"
+        
+        # Zeros
+        if zeros == True:
+            step[step_number] = dict()
+            step[step_number]["@type"] = "Zeros"
+            start_time_step = datetime.datetime.now()
+            step[step_number]["endTime"] = start_time_step.isoformat()
+            step[step_number]["state"] = erase_process(dev,"-zvn",0)
+            end_time_step = datetime.datetime.now()
+            step[step_number]["end_time"] = end_time_step.isoformat()
+            step[step_number]["number"] = step_number + 1
+            step_number = step_number + 1
+            
+        # Random
+        while count != 0:
+            step[step_number] = dict()
+            step[step_number]["@type"] = "Random"
+            start_time_step = datetime.datetime.now()
+            step[step_number]["endTime"] = start_time_step.isoformat()
+            step[step_number]["state"] = erase_process(dev,"-vn",1)
+            end_time_step = datetime.datetime.now()
+            step[step_number]["end_time"] = end_time_step.isoformat()
+            step[step_number]["number"] = step_number + 1
+            step_number = step_number + 1
+            count = count - 1
+            
+    elif erase_mode == "1":
+        standard = "EraseBySectors"
+        raise NotImplementedError
+
     time_end = datetime.datetime.now()
-    
     return {
         '@type': standard,
         'secureAleatorySteps': steps,
         'cleanWithZeros': zeros,
-        'state': state,
         'startTime': time_start.isoformat(),
-        'endTime': time_end.isoformat()
+        'endTime': time_end.isoformat(),
+        'steps': step
     }
 
 
