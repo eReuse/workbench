@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Device-inventory : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Device-inventory</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/eReuse/device-inventory">View on GitHub</a>
+
+          <h1 id="project_title">Device-inventory</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/eReuse/device-inventory/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/eReuse/device-inventory/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="device-inventory" class="anchor" href="#device-inventory" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Device inventory</h1>
+
+<p>Device inventory is a set of tools and services to assist the preparation for reuse and traceability of digital devices (capture of hardware characteristics, hardware rating and testing and secure deletion of data).</p>
+
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li><p>Run in an unattended way without the need for additional steps rather than powering up the computer.</p></li>
+<li><p>Provides signed documents for deletion of data, tests of operation,
+hardware information and serial numbers for traceability.</p></li>
+<li><p>Only a few minutes required to register and select devices wich reach user defined requirements (e.g. hard drive witouth faulty sectors, at least one NIC...).</p></li>
+</ul>
+
+<h2>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h2>
+
+<ul>
+<li>Python (2.7)</li>
+<li>lshw</li>
+<li>dmidecode</li>
+<li>smartmontools</li>
+</ul>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>On a Debian based distribution using <code>apt</code>:</p>
+
+<pre><code>apt-get install lshw dmidecode python-dmidecode python-lxml smartmontools
+</code></pre>
+
+<p>And then install <code>device_inventory</code> and its requirements using <code>pip</code>:</p>
+
+<pre><code>pip install -r https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/requirements.txt
+pip install git+https://github.com/ereuse/device-inventory.git#egg=device_inventory
+</code></pre>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Just run it as priviliged user and fill some information:</p>
+
+<pre><code>$ sudo device-inventory
+    Label ID: 7
+    Comment: eReuse device inventory.
+    Choose device type
+    1. Desktop
+    2. Laptop
+    3. Netbook
+    4. Server
+    5. Microtower
+    Type: 1
+    Device Inventory has finished properly: /tmp/A1B2C3SN.json
+</code></pre>
+
+<p>Generated output example:</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>@type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Snapshot<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>comment<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>eReuse device inventory.<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>components<span class="pl-pds">"</span></span>: [
+        {
+            <span class="pl-s"><span class="pl-pds">"</span>@type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>GraphicCard<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>manufacturer<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Acme Corporation<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>memory<span class="pl-pds">"</span></span>: <span class="pl-c1">256.0</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>model<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>82945G/GZ Integrated Graphics Controller<span class="pl-pds">"</span></span>
+        },
+        {
+            <span class="pl-s"><span class="pl-pds">"</span>@type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>HardDrive<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>interface<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ata<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>manufacturer<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ACME<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>model<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ST380815AS<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>serialNumber<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>2QZBZX1M<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>size<span class="pl-pds">"</span></span>: <span class="pl-c1">76319</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>test<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>@type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>TestHardDrive<span class="pl-pds">"</span></span>,
+                <span class="pl-s"><span class="pl-pds">"</span>error<span class="pl-pds">"</span></span>: <span class="pl-c1">false</span>,
+                <span class="pl-s"><span class="pl-pds">"</span>firstError<span class="pl-pds">"</span></span>: <span class="pl-c1">null</span>,
+                <span class="pl-s"><span class="pl-pds">"</span>lifetime<span class="pl-pds">"</span></span>: <span class="pl-c1">0</span>,
+                <span class="pl-s"><span class="pl-pds">"</span>status<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Completed without error<span class="pl-pds">"</span></span>,
+                <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Short offline<span class="pl-pds">"</span></span>
+            }
+        },
+        {
+            <span class="pl-s"><span class="pl-pds">"</span>@type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>RamModule<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>interface<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>DDR<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>manufacturer<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>7F98000000000000<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>serialNumber<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>AB6F3B4D<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>size<span class="pl-pds">"</span></span>: <span class="pl-c1">512</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>speed<span class="pl-pds">"</span></span>: <span class="pl-c1">533.0</span>
+        },
+        {
+            <span class="pl-s"><span class="pl-pds">"</span>@type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Motherboard<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>connectors<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>firewire<span class="pl-pds">"</span></span>: <span class="pl-c1">0</span>,
+                <span class="pl-s"><span class="pl-pds">"</span>pcmcia<span class="pl-pds">"</span></span>: <span class="pl-c1">0</span>,
+                <span class="pl-s"><span class="pl-pds">"</span>serial<span class="pl-pds">"</span></span>: <span class="pl-c1">0</span>,
+                <span class="pl-s"><span class="pl-pds">"</span>usb<span class="pl-pds">"</span></span>: <span class="pl-c1">5</span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>manufacturer<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Acme Inc.<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>model<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>0RJ291<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>serialNumber<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>..NC317046CX01ZJ.<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>totalSlots<span class="pl-pds">"</span></span>: <span class="pl-c1">0</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>usedSlots<span class="pl-pds">"</span></span>: <span class="pl-c1">2</span>
+        },
+        {
+            <span class="pl-s"><span class="pl-pds">"</span>@type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>NetworkAdapter<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>manufacturer<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ACME Corporation<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>model<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>NetXtreme BCM5751 Gigabit Ethernet PCI Express<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>serialNumber<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>00:11:22:33:44:55<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>speed<span class="pl-pds">"</span></span>: <span class="pl-c1">1000</span>
+        },
+        {
+            <span class="pl-s"><span class="pl-pds">"</span>@type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>OpticalDrive<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>description<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>DVD-RAM writer<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>manufacturer<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>HL-DT-ST<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>model<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>DVD-RAM GSA-H55N<span class="pl-pds">"</span></span>
+        },
+        {
+            <span class="pl-s"><span class="pl-pds">"</span>@type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Processor<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>manufacturer<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ACME Corp.<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>model<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ACME(R) Pontium(R) D CPU 2.80GHz<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>numberOfCores<span class="pl-pds">"</span></span>: <span class="pl-c1">2</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>serialNumber<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>0000-0F47-0000-0000-0000-0000<span class="pl-pds">"</span></span>
+        },
+        {
+            <span class="pl-s"><span class="pl-pds">"</span>@type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>SoundCard<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>manufacturer<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ACME Corporation<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>model<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>82801G (ICH7 Family) AC'97 Audio Controller<span class="pl-pds">"</span></span>
+        }
+    ],
+    <span class="pl-s"><span class="pl-pds">"</span>device<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>@type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Computer<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>manufacturer<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ACME Inc.<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>model<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Super GX520<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>serialNumber<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>GTK1N3J<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Desktop<span class="pl-pds">"</span></span>
+    },
+    <span class="pl-s"><span class="pl-pds">"</span>label<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>7<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h2>
+<a id="known-limitations" class="anchor" href="#known-limitations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Known limitations</h2>
+
+<ul>
+<li>Unsupported USB network adaptors.</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Device-inventory maintained by <a href="https://github.com/eReuse">eReuse</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
