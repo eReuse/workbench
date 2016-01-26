@@ -22,52 +22,45 @@ def erase_process(dev, options, steps):
     return state
 
 def erase_disk(dev, erase_mode="0"):
-    time_start = datetime.datetime.now()
+    time_start = get_datetime()
     zeros = settings.getboolean('eraser', 'ZEROS')
     steps = settings.getint('eraser', 'STEPS')
     count = steps
-    step_number = 0
-    step = dict()
+    step = []
 
     if erase_mode == "0":
         standard = "EraseBasic"
         
         # Random
         while count != 0:
-            step[step_number] = dict()
-            step[step_number]["@type"] = "Random"
-            start_time_step = datetime.datetime.now()
-            step[step_number]["startTime"] = start_time_step.isoformat()
-            step[step_number]["state"] = erase_process(dev,"-vn",1)
-            end_time_step = datetime.datetime.now()
-            step[step_number]["end_time"] = end_time_step.isoformat()
-            step[step_number]["number"] = step_number + 1
-            step_number = step_number + 1
-            count = count - 1
+            step.append({
+                '@type': 'Random',
+                'startingTime': get_datetime(),
+                'state': erase_process(dev, '-vn', 1),
+                'endingTime': get_datetime(),
+            })
+            count -= 1
             
         # Zeros
         if zeros == True:
-            step[step_number] = dict()
-            step[step_number]["@type"] = "Zeros"
-            start_time_step = datetime.datetime.now()
-            step[step_number]["startTime"] = start_time_step.isoformat()
-            step[step_number]["state"] = erase_process(dev,"-zvn",0)
-            end_time_step = datetime.datetime.now()
-            step[step_number]["end_time"] = end_time_step.isoformat()
-            step[step_number]["number"] = step_number + 1
-            step_number = step_number + 1
+            step.append({
+                '@type': 'Zeros',
+                'startingTime': get_datetime(),
+                'state': erase_process(dev, '-zvn', 0),
+                'endingTime': get_datetime(),
+            })
             
     elif erase_mode == "1":
         standard = "EraseBySectors"
         raise NotImplementedError
 
-    time_end = datetime.datetime.now()
+    time_end = get_datetime()
     return {
         '@type': standard,
         'secureRandomSteps': steps,
         'cleanWithZeros': zeros,
-        'startTime': time_start.isoformat(),
-        'endTime': time_end.isoformat(),
+        'startingTime': time_start,
+        'endingTime': time_end,
         'steps': step
     }
 
@@ -106,3 +99,6 @@ def do_erasure(sdx):
             return erase_disk(sdx)
     
     print("No disk erased.")
+
+def get_datetime():
+    return datetime.datetime.utcnow().replace(microsecond=0).isoformat()
