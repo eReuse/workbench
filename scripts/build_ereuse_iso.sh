@@ -85,6 +85,17 @@ rm /var/lib/dbus/machine-id
 rm /sbin/initctl
 dpkg-divert --rename --remove /sbin/initctl
 
+# Add ubuntu user:
+adduser ubuntu
+# password: ubuntu
+
+# Autologin
+nano /etc/systemd/system/getty.target.wants/getty@tty1.service
+# change the line for: ExecStart=/sbin/agetty --noclear --autologin ubuntu %I $TERM
+
+# Autostart
+echo "clear ; sudo device-inventory" >> /home/ubuntu/.profile
+
 # delete temporary files
 rm -rf /tmp/* ~/.bash_history
 
@@ -120,7 +131,6 @@ printf $(sudo du -sx --block-size=1 edit | cut -f1) > extract-cd/casper/filesyst
 # Set an image name in extract-cd/README.diskdefines
 ##sudo vim extract-cd/README.diskdefines
 
-
 # Remove old md5sum.txt and calculate new md5 sums
 cd extract-cd
 sudo rm md5sum.txt
@@ -131,7 +141,6 @@ find -type f -print0 | sudo xargs -0 md5sum | grep -v isolinux/boot.cat | sudo t
 #sudo mkisofs -D -r -V "$IMAGE_NAME" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS_v7.0.2b.iso .
 
 # B) Debian
-sudo genisoimage -D -r -V "$IMAGE_NAME" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS_v7.0.2b.iso .
+sudo genisoimage -D -r -V "eReuseOS" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS_v7.0.2b.iso .
 
 cd ..
-
