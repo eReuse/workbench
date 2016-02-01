@@ -15,9 +15,9 @@ def erase_process(dev, options, steps):
     # Erasing
     try:
         subprocess.check_call(["shred", options, str(steps), dev])
-        state = "Succeed"
+        state = True
     except subprocess.CalledProcessError:
-        state = "Fail"
+        state = False
         print "Cannot erase the hard drive '{0}'".format(dev)
     return state
 
@@ -36,7 +36,7 @@ def erase_disk(dev, erase_mode="0"):
             step.append({
                 '@type': 'Random',
                 'startingTime': get_datetime(),
-                'state': erase_process(dev, '-vn', 1),
+                'success': erase_process(dev, '-vn', 1),
                 'endingTime': get_datetime(),
             })
             count -= 1
@@ -46,7 +46,7 @@ def erase_disk(dev, erase_mode="0"):
             step.append({
                 '@type': 'Zeros',
                 'startingTime': get_datetime(),
-                'state': erase_process(dev, '-zvn', 0),
+                'success': erase_process(dev, '-zvn', 0),
                 'endingTime': get_datetime(),
             })
             
