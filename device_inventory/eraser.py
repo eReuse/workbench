@@ -3,13 +3,13 @@ import os
 import stat
 import subprocess
 import time
-import json
 
 from .conf import settings
 
 
 def get_hdinfo(path,value):
     return subprocess.check_output(["lsblk", path, "--nodeps", "-no", value]).strip()
+
 
 def erase_process(dev, options, steps):
     # Erasing
@@ -20,6 +20,7 @@ def erase_process(dev, options, steps):
         state = False
         print "Cannot erase the hard drive '{0}'".format(dev)
     return state
+
 
 def erase_disk(dev, erase_mode="0"):
     time_start = get_datetime()
@@ -100,5 +101,7 @@ def do_erasure(sdx):
     
     print("No disk erased.")
 
+
+# TODO move to utils
 def get_datetime():
     return datetime.datetime.utcnow().replace(microsecond=0).isoformat()
