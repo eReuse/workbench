@@ -78,7 +78,7 @@ def hard_disk_smart(disk, test_type="short"):
                 break  # avoid infinite loop
         # progress meter based on estimated time, we use seconds instead
         # of remaining because time provides more accuracy
-        seconds = (test_end - datetime.now()).seconds
+        seconds = int((test_end - datetime.now()).total_seconds())
         for _ in tqdm.trange(seconds, leave=True):
             time.sleep(1)
     
