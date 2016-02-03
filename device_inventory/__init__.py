@@ -1,4 +1,4 @@
-VERSION = (7, 0, 2, 'beta', 1)
+VERSION = (7, 0, 2, 'final', 0)
 
 
 def get_version():
