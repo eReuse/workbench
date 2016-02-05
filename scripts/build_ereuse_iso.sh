@@ -2,7 +2,7 @@
 
 
 ### Pre-requisites ###
-sudo apt-get install squashfs-tools genisoimage
+apt-get install squashfs-tools genisoimage
 wget http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/15.10/ubuntu-mini-remix-15.10-i386.iso -O base_image.iso
 
 md5sum base_image.iso
@@ -12,23 +12,23 @@ md5sum base_image.iso
 
 # Mount the base image .iso
 mkdir -p mnt
-sudo mount -o loop base_image.iso mnt
+mount -o loop base_image.iso mnt
 
 # Extract .iso contents into dir 'extract-cd'
 mkdir -p extract-cd
-sudo rsync --exclude=/casper/filesystem.squashfs -a mnt/ extract-cd
+rsync --exclude=/casper/filesystem.squashfs -a mnt/ extract-cd
 
 # Extract the SquashFS filesystem
-sudo unsquashfs mnt/casper/filesystem.squashfs
-sudo mv squashfs-root edit
+unsquashfs mnt/casper/filesystem.squashfs
+mv squashfs-root edit
 
 ### CUSTOMIZE IT ###
 # Prepare chroot
-sudo mount -o bind /run/ edit/run
+mount -o bind /run/ edit/run
 
 # chroot
-sudo mount --bind /dev/ edit/dev
-sudo chroot edit
+mount --bind /dev/ edit/dev
+chroot edit
 mount -t proc none /proc
 mount -t sysfs none /sys
 mount -t devpts none /dev/pts
@@ -85,6 +85,17 @@ rm /var/lib/dbus/machine-id
 rm /sbin/initctl
 dpkg-divert --rename --remove /sbin/initctl
 
+# Add ubuntu user:
+adduser ubuntu
+# password: ubuntu
+
+# Autologin
+nano /etc/systemd/system/getty.target.wants/getty@tty1.service
+# change the line for: ExecStart=/sbin/agetty --noclear --autologin ubuntu %I $TERM
+
+# Autostart
+echo "clear ; sudo device-inventory" >> /home/ubuntu/.profile
+
 # delete temporary files
 rm -rf /tmp/* ~/.bash_history
 
@@ -93,45 +104,45 @@ umount /proc || umount -lf /proc
 umount /sys
 umount /dev/pts
 exit
-sudo umount edit/run
-sudo umount edit/dev
+umount edit/run
+umount edit/dev
 
 ### PACK the ISO ###
 
 # Regenerate manifest
-sudo chmod +w extract-cd/casper/filesystem.manifest
-sudo chroot edit dpkg-query -W --showformat='${Package} ${Version}\n' | sudo tee extract-cd/casper/filesystem.manifest
-sudo cp extract-cd/casper/filesystem.manifest extract-cd/casper/filesystem.manifest-desktop
-sudo sed -i '/ubiquity/d' extract-cd/casper/filesystem.manifest-desktop
-sudo sed -i '/casper/d' extract-cd/casper/filesystem.manifest-desktop
+chmod +w extract-cd/casper/filesystem.manifest
+chroot edit dpkg-query -W --showformat='${Package} ${Version}\n' | tee extract-cd/casper/filesystem.manifest
+cp extract-cd/casper/filesystem.manifest extract-cd/casper/filesystem.manifest-desktop
+sed -i '/ubiquity/d' extract-cd/casper/filesystem.manifest-desktop
+sed -i '/casper/d' extract-cd/casper/filesystem.manifest-desktop
 
 # remove previous squashfs
-sudo rm -f extract-cd/casper/filesystem.squashfs
+rm -f extract-cd/casper/filesystem.squashfs
 
 # highest compression (~3min) FIXME xz compression is not compatible
-#sudo mksquashfs edit extract-cd/casper/filesystem.squashfs -comp xz -e edit/boot
+#mksquashfs edit extract-cd/casper/filesystem.squashfs -comp xz -e edit/boot
 
 # XXX NO COMPRESSION - DEBUG PURPOSES (~1min)
-sudo mksquashfs edit extract-cd/casper/filesystem.squashfs -e edit/boot
+mksquashfs edit extract-cd/casper/filesystem.squashfs -e edit/boot
 
 # Update the filesystem.size file, which is needed by the installer:
-printf $(sudo du -sx --block-size=1 edit | cut -f1) > extract-cd/casper/filesystem.size
+printf $(du -sx --block-size=1 edit | cut -f1) > extract-cd/casper/filesystem.size
 
 # Set an image name in extract-cd/README.diskdefines
-##sudo vim extract-cd/README.diskdefines
+##vim extract-cd/README.diskdefines
 
 
 # Remove old md5sum.txt and calculate new md5 sums
 cd extract-cd
-sudo rm md5sum.txt
-find -type f -print0 | sudo xargs -0 md5sum | grep -v isolinux/boot.cat | sudo tee md5sum.txt
+rm md5sum.txt
+find -type f -print0 | xargs -0 md5sum | grep -v isolinux/boot.cat | tee md5sum.txt
 
 # Create the ISO image
 # A) Ubuntu
-#sudo mkisofs -D -r -V "$IMAGE_NAME" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS_v7.0.2b.iso .
+#mkisofs -D -r -V "eReuseOS" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS_v7.0.3b.iso .
 
 # B) Debian
-sudo genisoimage -D -r -V "$IMAGE_NAME" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS_v7.0.2b.iso .
+genisoimage -D -r -V "eReuseOS" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS_v7.0.3b.iso .
 
 cd ..
 
