@@ -10,7 +10,7 @@ import sys
 import time
 
 from device_inventory import eraser, serializers, storage
-from device_inventory.benchmark import hard_disk_smart
+from device_inventory.benchmark import hard_disk_smart, benchmark_hdd
 from device_inventory.conf import settings
 from device_inventory.inventory import Computer
 
@@ -104,6 +104,7 @@ def main(argv=None):
     # call eraser for every hard disk!
     for hd in device.hard_disk:
         hd.erasure = eraser.do_erasure(hd.logical_name)
+        hd.benchmark = benchmark_hdd(hd.logical_name)
         # FIXME hack to exclude logical_name from serialization
         # create serializer where you can exclude fields
         delattr(hd, 'logical_name')

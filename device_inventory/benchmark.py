@@ -17,6 +17,28 @@ from datetime import datetime, timedelta
 
 from .utils import run
 
+def benchmark_hdd(disk):
+    
+    # READ
+    cmd_read = ["dd", "if="+disk, "of=/dev/null", "bs=1M", "count=256", "oflag=dsync"]
+    p = subprocess.Popen(cmd_read, stdout=subprocess.PIPE, 
+                                    stderr=subprocess.PIPE)
+    out, err = p.communicate()
+
+    reading = "{0} {1}".format(err.split()[-2], err.split()[-1])
+
+    # WRITE
+    cmd_write = ["dd", "of="+disk, "if="+disk, "bs=1M", "count=256", "oflag=dsync"]
+    p = subprocess.Popen(cmd_write, stdout=subprocess.PIPE, 
+                                    stderr=subprocess.PIPE)
+    out, err = p.communicate()
+    writting = "{0} {1}".format(err.split()[-2], err.split()[-1])
+    
+    return {
+            "@type": "hddBenchmark",
+            "reading": reading,
+            "writting": writting,
+        }
 
 def hard_disk_smart(disk, test_type="short"):
     TEST_TYPES = ["short", "long"]
