@@ -25,19 +25,19 @@ def benchmark_hdd(disk):
                                     stderr=subprocess.PIPE)
     out, err = p.communicate()
 
-    reading = "{0} {1}".format(err.split()[-2], err.split()[-1])
+    reading = "{0}".format(err.split()[-2].replace(',', '.'))
 
     # WRITE
     cmd_write = ["dd", "of="+disk, "if="+disk, "bs=1M", "count=256", "oflag=dsync"]
     p = subprocess.Popen(cmd_write, stdout=subprocess.PIPE, 
                                     stderr=subprocess.PIPE)
     out, err = p.communicate()
-    writting = "{0} {1}".format(err.split()[-2], err.split()[-1])
+    writting = "{0}".format(err.split()[-2].replace(',', '.'))
     
     return {
             "@type": "hddBenchmark",
-            "reading": reading,
-            "writting": writting,
+            "readingSpeed": reading,
+            "writtingSpeed": writting,
         }
 
 def hard_disk_smart(disk, test_type="short"):
