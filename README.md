@@ -8,7 +8,7 @@ Device inventory is a set of tools and services to assist the preparation for re
 - Provides signed documents for deletion of data, tests of operation,
 hardware information and serial numbers for traceability.
 
-- Only a few minutes required to register and select devices wich reach user defined requirements (e.g. hard drive witouth faulty sectors, at least one NIC...).
+- Only a few minutes required to register and select devices which reach user defined requirements (e.g. hard drive witouth faulty sectors, at least one NIC...).
 
 
 ## Requirements
