@@ -6,7 +6,7 @@ import os
 import socket
 import sys
 
-from device_inventory import eraser, serializers, storage
+from device_inventory import eraser, serializers, storage, utils
 from device_inventory.conf import settings
 from device_inventory.benchmark import benchmark_hdd
 from device_inventory.inventory import Computer
@@ -121,6 +121,14 @@ def main(argv=None):
     localpath = os.path.join("/tmp", filename)
     with open(localpath, "w") as outfile:
         json.dump(data, outfile, indent=4, sort_keys=True)
+    
+    # sign output
+    if settings.getboolean('signature', 'sign_output'):
+        signed_data = utils.sign_data(json.dumps(data, indent=4, sort_keys=True))
+        filename = "{0}.json.asc".format(device.verbose_name)
+        localpath = os.path.join("/tmp", filename)
+        with open(localpath, "w") as outfile:
+            outfile.write(signed_data)
     
     # send files to the PXE Server
     if settings.getboolean('DEFAULT', 'sendtoserver'):
