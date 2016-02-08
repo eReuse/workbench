@@ -51,7 +51,8 @@ apt-get -y install git-core python-pip  # vim
 
 # NOTE on ubuntu python-dev is required to install paramiko (pycrypto)
 # device-inventory requirements
-apt-get install -y lshw dmidecode python-dev python-dmidecode python-lxml smartmontools usbmount python-dateutil
+# TODO read from requirements.txt
+apt-get install -y gpg lshw dmidecode python-dev python-dmidecode python-lxml smartmontools usbmount python-dateutil
 
 # paramiko pyudev pySMART
 pip install -r https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/requirements.txt
