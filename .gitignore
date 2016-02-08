@@ -51,3 +51,4 @@ target/
 *.save
 *.swp
 .Rproj.user
+device-inventory.Rproj
