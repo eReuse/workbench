@@ -52,14 +52,29 @@ def main(argv=None):
         sys.exit("Only root can run this script")
     
     parser = argparse.ArgumentParser()
+    
+    # allow enabling/disabling debug mode
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--debug', action='store_true',
+            help='enable debug mode (extended output file!)')
+    group.add_argument('--no-debug', dest='debug', action='store_false',
+            help='disable debug mode')
+    parser.set_defaults(debug=None)
+    
     parser.add_argument('--smart', choices=['none', 'short', 'long'])
+    parser.add_argument('--erase', choices=['ask', 'yes', 'no'])
     args = parser.parse_args()
     
     # override settings with command line args
     if args.smart:
         settings.set('DEFAULT', 'smart', args.smart)
+    if args.erase:
+        settings.set('eraser', 'erase', args.erase)
+    if args.debug is not None:
+        settings.set('DEFAULT', 'debug', str(args.debug).lower())
     
     debug = settings.getboolean('DEFAULT', 'debug')
+    
     user_input = get_user_input()
     kwargs = dict(type=user_input.pop('device_type'),
                   smart=args.smart)
