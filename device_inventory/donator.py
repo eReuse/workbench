@@ -53,11 +53,14 @@ def main(argv=None):
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--smart', choices=['none', 'short', 'long'])
+    parser.add_argument('--erase', choices=['ask', 'yes', 'no'])
     args = parser.parse_args()
     
     # override settings with command line args
     if args.smart:
         settings.set('DEFAULT', 'smart', args.smart)
+    if args.erase:
+        settings.set('eraser', 'erase', args.erase)
     
     debug = settings.getboolean('DEFAULT', 'debug')
     user_input = get_user_input()
