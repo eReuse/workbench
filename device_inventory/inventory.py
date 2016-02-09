@@ -131,7 +131,7 @@ class HardDrive(Device):
             # (S)ATA disk
             try:
                 size = int(get_xpath_text(node, 'size'))
-            except TypeError, ValueError:
+            except (TypeError, ValueError):
                 self.size = None
             else:
                 unit = 'bytes'  # node.xpath('size/@units')[0]
@@ -316,7 +316,7 @@ class RamModule(object):
         
         try:
             self.size = int(size.split()[0])
-        except ValueError, IndexError:
+        except (ValueError, IndexError):
             logging.debug("Cannot retrieve RamMmodule size '{0}'.".format(size))
             self.size = None
     
