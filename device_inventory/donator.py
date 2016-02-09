@@ -1,21 +1,18 @@
 #!/usr/bin/env python
 import argparse
-import calendar
-import datetime
 import json
 import logging
 import os
 import socket
 import sys
-import time
 
 from device_inventory import eraser, serializers, storage
-from device_inventory.benchmark import hard_disk_smart
 from device_inventory.conf import settings
 from device_inventory.inventory import Computer
 
 
 def is_connected():
+    # TODO move to utils package
     # TODO: unittests?
     # [Errno -5] No address associated with hostname
     # https://docs.python.org/3.4/library/socket.html#exceptions
@@ -29,37 +26,6 @@ def is_connected():
     except (socket.herror, socket.gaierror, socket.timeout) as e: # OSError as e:
         pass
     return False
-
-
-def get_device_status(run_smart):
-    # legacy (only backwards compatibility)
-    if run_smart:
-        hdd = '/dev/sda'  # TODO select proper HD!
-        result = hard_disk_smart(hdd)
-        smart = {
-            "check": "Yes",
-            "device_check": hdd,
-            "type_check": result['type'],
-            "info_check": result['status'],
-            "lifetime_check": result['lifetime'],
-            "first_error_check": result['firstError'],
-        }
-    else:
-        smart = {
-            "check": "No",
-            "device_check": 'null',
-            "type_check": 'null',
-            "info_check": 'null',
-            "lifetime_check": 'null',
-            "first_error_check": '-',
-        }
-    
-    return {
-        "dat_estat": datetime.date.today().isoformat(),
-        "version": "1.0",
-        "online": "SI" if is_connected() else "NO",
-        "smartest": smart,
-    }
 
 
 def get_user_input():
@@ -139,23 +105,6 @@ def main(argv=None):
             logging.debug(e)
     
     print("Device Inventory has finished properly: {0}".format(localpath))
-
-
-def legacy_main(**kwargs):
-    # FIXME duplicated data initial_donator_time & status.date (dat_state)
-    # initial_donator in seconds since 1970 UTC
-    # dat_state only date on human friendly format
-    beg_donator_time = calendar.timegm(time.gmtime())  # INITIAL_DONATOR_TIME
-    device = Computer(backcomp=True, **kwargs)  # XXX pass device type and other user input?
-    status = get_device_status(run_smart=settings.get('DEFAULT', 'smart') != 'none')
-    end_donator_time = calendar.timegm(time.gmtime())  # END_DONATOR_TIME
-    
-    # Export to legacy XML
-    legacy = serializers.export_to_legacy_schema(
-        device, status, beg_donator_time, end_donator_time
-    )
-    serializers.dict_to_xml(legacy, "/tmp/equip.xml")
-    print("END OF EXECUTION!!! look at /tmp/equip.xml")
 
 
 if __name__ == "__main__":
