@@ -2,12 +2,8 @@
 import time
 import os
 import sys
-import fcntl
-import struct
 import subprocess
-import json
 import pprint
-import re
 from subprocess import check_output
 
 # Function definition

@@ -1,7 +1,6 @@
 import abc
 import dmidecode
 import logging
-import multiprocessing
 import os
 import re
 import subprocess

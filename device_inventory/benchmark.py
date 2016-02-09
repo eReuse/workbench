@@ -15,8 +15,6 @@ import tqdm
 from dateutil import parser
 from datetime import datetime, timedelta
 
-from .utils import run
-
 
 def hard_disk_smart(disk, test_type="short"):
     TEST_TYPES = ["short", "long"]
