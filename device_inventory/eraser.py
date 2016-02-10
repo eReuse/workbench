@@ -20,9 +20,19 @@ def erase_process(dev, options, steps):
         state = False
         print "Cannot erase the hard drive '{0}'".format(dev)
     return state
+def erase_sectors(disk, output):
+    try:
+        subprocess.check_output(["badblocks", "-swt", "random", disk, "-o", output])
+        return True
+    except subprocess.CalledProcessError:
+        return False
 
+def get_output(output):
+    with open(output) as f:
+        content = f.readlines()
+    return content
 
-def erase_disk(dev, erase_mode="0"):
+def erase_disk(dev, erase_mode="1"):
     time_start = get_datetime()
     zeros = settings.getboolean('eraser', 'ZEROS')
     steps = settings.getint('eraser', 'STEPS')
@@ -50,10 +60,16 @@ def erase_disk(dev, erase_mode="0"):
                 'success': erase_process(dev, '-zvn', 0),
                 'endingTime': get_datetime(),
             })
-            
     elif erase_mode == "1":
-        standard = "EraseBySectors"
-        raise NotImplementedError
+        standard = "StepByStep"
+        output = "/tmp/badblocks"
+        step.append({
+            '@type': 'Random',
+            'startingTime': get_datetime(),
+            'success': erase_sectors(dev, output),
+            'endingTime': get_datetime(),
+            'errorOutput': get_output(output),
+        })
 
     time_end = get_datetime()
     return {
