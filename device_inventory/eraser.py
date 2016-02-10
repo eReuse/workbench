@@ -22,9 +22,10 @@ def erase_process(dev, options, steps):
     return state
 def erase_sectors(disk, output):
     try:
-        subprocess.check_output(["badblocks", "-swt", "random", disk, "-o", output])
+        subprocess.check_output(["badblocks", "-st", "random", "-w", disk, "-o", output])
         return True
     except subprocess.CalledProcessError:
+        print "Cannot erase the hard drive '{0}'".format(disk)
         return False
 
 def get_output(output):
@@ -38,11 +39,10 @@ def erase_disk(dev, erase_mode="1"):
     steps = settings.getint('eraser', 'STEPS')
     count = steps
     step = []
-
+    
+    # RANDOM WITH SHRED
     if erase_mode == "0":
         standard = "EraseBasic"
-        
-        # Random
         while count != 0:
             step.append({
                 '@type': 'Random',
@@ -51,26 +51,29 @@ def erase_disk(dev, erase_mode="1"):
                 'endingTime': get_datetime(),
             })
             count -= 1
-            
-        # Zeros
-        if zeros == True:
-            step.append({
-                '@type': 'Zeros',
-                'startingTime': get_datetime(),
-                'success': erase_process(dev, '-zvn', 0),
-                'endingTime': get_datetime(),
-            })
+    # RANDOM WITH BADBLOCK
     elif erase_mode == "1":
-        standard = "StepByStep"
-        output = "/tmp/badblocks"
+        while count != 0:
+            standard = "StepByStep"
+            output = "/tmp/badblocks"
+            step.append({
+                '@type': 'Random',
+                'startingTime': get_datetime(),
+                'success': erase_sectors(dev, output),
+                'endingTime': get_datetime(),
+                'errorOutput': get_output(output),
+            })
+            count -= 1
+    
+    # ZEROS WITH SHRED
+    if zeros == True:
         step.append({
-            '@type': 'Random',
+            '@type': 'Zeros',
             'startingTime': get_datetime(),
-            'success': erase_sectors(dev, output),
+            'success': erase_process(dev, '-zvn', 0),
             'endingTime': get_datetime(),
-            'errorOutput': get_output(output),
         })
-
+        
     time_end = get_datetime()
     return {
         '@type': standard,
