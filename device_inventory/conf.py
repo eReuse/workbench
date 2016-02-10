@@ -15,7 +15,8 @@ class Settings(object):
     
     def __init__(self):
         if Settings.__instance is None:
-            Settings.__instance = self.load_config()
+            Settings.__instance = configparser.ConfigParser()
+            self.load_config()
         
     def __getattr__(self, attr):
         """ Delegate access to implementation """
@@ -25,19 +26,16 @@ class Settings(object):
         """ Delegate access to implementation """
         return setattr(self.__instance, attr, value)
     
-    def load_config(self):
-        # https://docs.python.org/3.4/library/configparser.html
-        path = os.path.dirname(__file__)
-        config_file = os.path.join(path, 'config.ini')
-        assert os.path.exists(config_file), config_file
+    def load_config(self, config_file=None):
+        if config_file is None:
+            path = os.path.dirname(__file__)
+            config_file = os.path.join(path, 'config.ini')
+        
+        if not os.path.exists(config_file):
+            raise IOError("No such file or directory: '%s'" % config_file)
 
-        config = configparser.ConfigParser()
-        config.read(config_file)  # donator.cfg merged here
+        self.__instance.read(config_file)
         
-        # TODO set fallback values if config is empty
-        # https://docs.python.org/3.4/library/configparser.html#fallback-values
-        
-        return config
 
 
 settings = Settings()

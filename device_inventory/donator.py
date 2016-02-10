@@ -63,7 +63,13 @@ def main(argv=None):
     
     parser.add_argument('--smart', choices=['none', 'short', 'long'])
     parser.add_argument('--erase', choices=['ask', 'yes', 'no'])
+    parser.add_argument('--settings',
+            help='file to be loaded as config file')
     args = parser.parse_args()
+    
+    # load specified config file (if any)
+    if args.settings:
+        cfg = settings.load_config(config_file=args.settings)
     
     # override settings with command line args
     if args.smart:
