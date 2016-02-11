@@ -33,16 +33,16 @@ def get_output(output):
         content = f.readlines()
     return content
 
-def erase_disk(dev, erase_mode="1"):
+def erase_disk(dev):
     time_start = get_datetime()
+    mode= settings.get('eraser', 'MODE')
     zeros = settings.getboolean('eraser', 'ZEROS')
     steps = settings.getint('eraser', 'STEPS')
     count = steps
     step = []
     
     # RANDOM WITH SHRED
-    if erase_mode == "0":
-        standard = "EraseBasic"
+    if mode == "EraseBasic":
         while count != 0:
             step.append({
                 '@type': 'Random',
@@ -52,9 +52,8 @@ def erase_disk(dev, erase_mode="1"):
             })
             count -= 1
     # RANDOM WITH BADBLOCK
-    elif erase_mode == "1":
+    elif mode == "StepByStep":
         while count != 0:
-            standard = "StepByStep"
             output = "/tmp/badblocks"
             step.append({
                 '@type': 'Random',
@@ -76,7 +75,7 @@ def erase_disk(dev, erase_mode="1"):
         
     time_end = get_datetime()
     return {
-        '@type': standard,
+        '@type': mode,
         'secureRandomSteps': steps,
         'cleanWithZeros': zeros,
         'startingTime': time_start,
