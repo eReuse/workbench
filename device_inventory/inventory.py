@@ -235,9 +235,11 @@ class Processor(Device):
         except ValueError:
             self.numberOfCores = None
         
+        self.benchmark = benchmark.score_cpu()
+        
         self.model = self.sanitize_model(get_xpath_text(node, "product"))
         self.manufacturer = get_xpath_text(node, 'vendor')  # was /proc/cpuinfo | grep vendor_id
-        
+                
         try:
             dmi_processor = dmidecode.processor()['0x0004']['data']
         except KeyError:
