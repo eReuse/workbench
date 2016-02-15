@@ -6,6 +6,7 @@ tqdm        # progress meter
 # Debian repository
 # lshw
 # dmidecode
+# libxml2 # required by dmidecode
 # python-dateutil
 # python-dmidecode
 # python-lxml
