@@ -4,8 +4,8 @@ python:
 sudo: required
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y lshw dmidecode libxml2 python-dateutil python-dmidecode python-lxml usbmount
+  - sudo apt-get install -y lshw dmidecode python-dev python-dateutil python-dmidecode python-lxml smartmontools usbmount
 install:
-  - sudo pip install -r device_inventory/requirements.txt
+  - pip install -r device_inventory/requirements.txt
 script:
   - sudo python -m unittest discover
