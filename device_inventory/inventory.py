@@ -234,6 +234,8 @@ class Processor(Device):
         except ValueError:
             self.numberOfCores = None
         
+        self.benchmark = benchmark.score_cpu()
+        
         self.model = self.sanitize_model(get_xpath_text(node, "product"))
         self.manufacturer = get_xpath_text(node, 'vendor')  # was /proc/cpuinfo | grep vendor_id
         
