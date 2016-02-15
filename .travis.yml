@@ -2,8 +2,8 @@ language: python
 python:
   - "2.7"
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq lshw dmidecode python-dateutil python-dmidecode python-lxml usbmount
+  - sudo apt-get -qq update
+  - sudo apt-get install -y lshw dmidecode python-dateutil python-dmidecode python-lxml usbmount
 install:
   - pip install -r device_inventory/requirements.txt
 script:
