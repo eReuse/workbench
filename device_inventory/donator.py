@@ -67,6 +67,23 @@ def main(argv=None):
             help='file to be loaded as config file')
     args = parser.parse_args()
     
+    # try to get custom config file from PXE server
+    server = settings.get('server', 'address')
+    username = settings.get('server', 'username')
+    password = settings.get('server', 'password')
+    
+    localpath = '/tmp/remote_custom_config.ini'
+    remotepath = '/home/ereuse/config.ini'
+    try:
+        storage.get_file_from_server(remotepath, localpath, username, password, server)
+    except Exception as e:  # TODO catch specific exceptions to avoid mask errors
+        logging.error("Error retrieving config file '%s' from server '%s'",
+                      remotepath, server)
+        logging.debug(e)
+    else:
+        print("Loading configuration from '%s'" % localpath)
+        settings.load_config(config_file=localpath)
+    
     # load specified config file (if any)
     if args.settings:
         cfg = settings.load_config(config_file=args.settings)

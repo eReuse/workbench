@@ -7,6 +7,17 @@ import time
 from . import utils
 
 
+def get_file_from_server(remotepath, localpath, username, password, server):
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(server, username=username, password=password, timeout=30)
+    
+    sftp = ssh.open_sftp()
+    sftp.get(remotepath, localpath)
+    sftp.close()
+    ssh.close()
+
+    
 def copy_file_to_server(localpath, remotepath, username, password, server):
     """
     Any other exception will be passed through.
