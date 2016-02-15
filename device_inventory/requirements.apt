@@ -1,0 +1,9 @@
+lshw
+dmidecode
+python-dateutil
+python-dev
+python-dmidecode
+python-lxml
+python-libxml2
+smartmontools
+usbmount
