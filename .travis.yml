@@ -1,6 +1,7 @@
 language: python
 python:
   - "2.7"
+sudo: required
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y lshw dmidecode libxml2 python-dateutil python-dmidecode python-lxml usbmount
