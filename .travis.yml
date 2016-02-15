@@ -6,6 +6,6 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y lshw dmidecode libxml2 python-dateutil python-dmidecode python-lxml usbmount
 install:
-  - pip install -r device_inventory/requirements.txt
+  - sudo pip install -r device_inventory/requirements.txt
 script:
   - sudo python -m unittest discover
