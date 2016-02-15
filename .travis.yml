@@ -7,4 +7,4 @@ before_install:
 install:
   - pip install -r device_inventory/requirements.txt
 script:
-  - python -m unittest discover
+  - sudo python -m unittest discover
