@@ -15,6 +15,37 @@ import tqdm
 from dateutil import parser
 from datetime import datetime, timedelta
 
+from .utils import run, convert_capacity
+
+def benchmark_hdd(disk):
+    
+    # READ
+    cmd_read = ["dd", "if="+disk, "of=/dev/null", "bs=1M", "count=256", "oflag=dsync"]
+    p = subprocess.Popen(cmd_read, stdout=subprocess.PIPE, 
+                                    stderr=subprocess.PIPE)
+    out, err = p.communicate()
+    
+    # Convert value to MB
+    value = float(err.split()[-2].replace(',', '.'))
+    unit = err.split()[-1]
+    reading = convert_capacity(value,unit[0:2], "MB")
+
+    # WRITE
+    cmd_write = ["dd", "of="+disk, "if="+disk, "bs=1M", "count=256", "oflag=dsync"]
+    p = subprocess.Popen(cmd_write, stdout=subprocess.PIPE, 
+                                    stderr=subprocess.PIPE)
+    out, err = p.communicate()
+    
+    # Convert value to MB
+    value = float(err.split()[-2].replace(',', '.'))
+    unit = err.split()[-1]
+    writting = convert_capacity(value,unit[0:2], "MB")
+    
+    return {
+            "@type": "hddBenchmark",
+            "readingSpeed": reading,
+            "writtingSpeed": writting,
+        }
 
 def hard_disk_smart(disk, test_type="short"):
     TEST_TYPES = ["short", "long"]
