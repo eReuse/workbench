@@ -30,9 +30,32 @@ def is_connected():
 
 def get_user_input():
     # XXX configurable user input fields
-    label = raw_input("Label ID: ")
-    comment = raw_input("Comment: ")
+    do_label = settings.get('DEFAULT', 'LABEL').lower()
+    do_comment = settings.get('DEFAULT', 'OBS').lower()
+    do_ID = settings.get('DEFAULT', 'ID').lower()
+    do_donor = settings.get('DEFAULT', 'DONOR').lower()
+    do_equip = settings.get('DEFAULT', 'EQUIP')
     
+    if do_label == "yes":
+        label = raw_input("Label ID: ")
+    else:
+        label = ""
+        
+    if do_ID == "yes":
+        ID = raw_input("ID: ")
+    else:
+        ID = ""
+    
+    if do_donor == "yes":
+        donor = raw_input("Donor: ")
+    else:
+        donor = ""
+    
+    if do_comment == "yes":
+        comment = raw_input("Comment: ")
+    else:
+        comment = ""
+
     # Ask user for choosing the Device.type
     CHOICES = dict((key, value) for value, key in Computer.TYPES)
     formated_choices = "\n".join(["{0}. {1}".format(k,v) for k, v in CHOICES.items()])
@@ -40,11 +63,14 @@ def get_user_input():
     device_type = None
     while device_type not in CHOICES.keys():
         try:
-            device_type = int(raw_input(choose_msg))
+            if do_equip in ["1", "2", "3", "4", "5"]:
+                device_type = int(do_equip)
+            else:
+                device_type = int(raw_input(choose_msg))
         except ValueError:
             print("Invalid choice.")
     
-    return dict(label=label, comment=comment, device_type=CHOICES[device_type])
+    return dict(ID=ID, donor=donor, label=label, comment=comment, device_type=CHOICES[device_type])
 
 
 def main(argv=None):
