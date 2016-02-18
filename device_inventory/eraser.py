@@ -7,8 +7,9 @@ import time
 from .conf import settings
 
 
-def get_hdinfo(path,value):
-    return subprocess.check_output(["lsblk", path, "--nodeps", "-no", value]).strip()
+def get_hdinfo(path, value):
+    return subprocess.check_output(["lsblk", path, "--nodeps", "-no",
+                                    value]).strip()
 
 
 def erase_process(dev, options, steps):
@@ -22,47 +23,71 @@ def erase_process(dev, options, steps):
     return state
 
 
-def erase_disk(dev, erase_mode="0"):
-    time_start = get_datetime()
-    zeros = settings.getboolean('eraser', 'ZEROS')
-    steps = settings.getint('eraser', 'STEPS')
-    count = steps
-    step = []
+def erase_sectors(disk, output):
+    try:
+        subprocess.check_output(["badblocks", "-st", "random", "-w", disk,
+                                 "-o", output])
+        return True
+    except subprocess.CalledProcessError:
+        print "Cannot erase the hard drive '{0}'".format(disk)
+        return False
 
-    if erase_mode == "0":
-        standard = "EraseBasic"
-        
-        # Random
+
+def get_output(output):
+    with open(output) as f:
+        content = f.readlines()
+    return content
+
+
+def erase_disk(dev):
+    time_start = get_datetime()
+    mode = settings.get('eraser', 'MODE')
+    zeros = settings.getboolean('eraser', 'ZEROS')
+    count = settings.getint('eraser', 'STEPS')
+    steps = []
+    
+    # RANDOM WITH SHRED
+    if mode == "EraseBasic":
         while count != 0:
-            step.append({
+            steps.append({
                 '@type': 'Random',
                 'startingTime': get_datetime(),
                 'success': erase_process(dev, '-vn', 1),
                 'endingTime': get_datetime(),
             })
             count -= 1
-            
-        # Zeros
-        if zeros == True:
-            step.append({
-                '@type': 'Zeros',
+    # RANDOM WITH BADBLOCK
+    elif mode == "StepByStep":
+        while count != 0:
+            output = "/tmp/badblocks"
+            steps.append({
+                '@type': 'Random',
                 'startingTime': get_datetime(),
-                'success': erase_process(dev, '-zvn', 0),
+                'success': erase_sectors(dev, output),
                 'endingTime': get_datetime(),
+                'errorOutput': get_output(output),
             })
-            
-    elif erase_mode == "1":
-        standard = "EraseBySectors"
-        raise NotImplementedError
-
+            count -= 1
+    else:
+        raise ValueError("Unknown erase mode '{0}'".format(mode))
+    
+    # ZEROS WITH SHRED
+    if zeros:
+        steps.append({
+            '@type': 'Zeros',
+            'startingTime': get_datetime(),
+            'success': erase_process(dev, '-zvn', 0),
+            'endingTime': get_datetime(),
+        })
+    
     time_end = get_datetime()
     return {
-        '@type': standard,
-        'secureRandomSteps': steps,
+        '@type': mode,
+        'secureRandomSteps': count,
         'cleanWithZeros': zeros,
         'startingTime': time_start,
         'endingTime': time_end,
-        'steps': step
+        'steps': steps
     }
 
 
