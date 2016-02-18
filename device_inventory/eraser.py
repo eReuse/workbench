@@ -7,8 +7,9 @@ import time
 from .conf import settings
 
 
-def get_hdinfo(path,value):
-    return subprocess.check_output(["lsblk", path, "--nodeps", "-no", value]).strip()
+def get_hdinfo(path, value):
+    return subprocess.check_output(["lsblk", path, "--nodeps", "-no", value]
+                                   ).strip()
 
 
 def erase_process(dev, options, steps):
@@ -20,22 +21,27 @@ def erase_process(dev, options, steps):
         state = False
         print "Cannot erase the hard drive '{0}'".format(dev)
     return state
+
+
 def erase_sectors(disk, output):
     try:
-        subprocess.check_output(["badblocks", "-st", "random", "-w", disk, "-o", output])
+        subprocess.check_output(["badblocks", "-st", "random", "-w", disk,
+                                 "-o", output])
         return True
     except subprocess.CalledProcessError:
         print "Cannot erase the hard drive '{0}'".format(disk)
         return False
+
 
 def get_output(output):
     with open(output) as f:
         content = f.readlines()
     return content
 
+
 def erase_disk(dev):
     time_start = get_datetime()
-    mode= settings.get('eraser', 'MODE')
+    mode = settings.get('eraser', 'MODE')
     zeros = settings.getboolean('eraser', 'ZEROS')
     steps = settings.getint('eraser', 'STEPS')
     count = steps
@@ -65,7 +71,7 @@ def erase_disk(dev):
             count -= 1
     
     # ZEROS WITH SHRED
-    if zeros == True:
+    if zeros:
         step.append({
             '@type': 'Zeros',
             'startingTime': get_datetime(),
