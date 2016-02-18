@@ -1,7 +1,10 @@
 import fcntl
+import gnupg
 import os
+import shutil
 import socket
 import struct
+import tempfile
 
 
 def convert_base(value, src_unit, dst_unit, distance=1000):
@@ -71,3 +74,21 @@ def strip_null_or_empty_values(dictionary):
         if not (value is None or value in meaningless):
             new[key] = value
     return new
+
+
+def sign_data(data):
+    # create temporal workspace
+    workspace = tempfile.mkdtemp()
+    gpg = gnupg.GPG(homedir=workspace)
+    
+    # import key and sign data
+    basepath = os.path.dirname(__file__)
+    with open(os.path.join(basepath, "data/private.key")) as private_key:
+        gpg.import_keys(private_key.read())
+    
+    sig = gpg.sign(data, clearsign=True)
+    
+    # clean workspace
+    shutil.rmtree(workspace)
+    
+    return sig.data
