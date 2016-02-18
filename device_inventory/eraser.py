@@ -43,14 +43,13 @@ def erase_disk(dev):
     time_start = get_datetime()
     mode = settings.get('eraser', 'MODE')
     zeros = settings.getboolean('eraser', 'ZEROS')
-    steps = settings.getint('eraser', 'STEPS')
-    count = steps
-    step = []
+    count = settings.getint('eraser', 'STEPS')
+    steps = []
     
     # RANDOM WITH SHRED
     if mode == "EraseBasic":
         while count != 0:
-            step.append({
+            steps.append({
                 '@type': 'Random',
                 'startingTime': get_datetime(),
                 'success': erase_process(dev, '-vn', 1),
@@ -61,7 +60,7 @@ def erase_disk(dev):
     elif mode == "StepByStep":
         while count != 0:
             output = "/tmp/badblocks"
-            step.append({
+            steps.append({
                 '@type': 'Random',
                 'startingTime': get_datetime(),
                 'success': erase_sectors(dev, output),
@@ -74,7 +73,7 @@ def erase_disk(dev):
     
     # ZEROS WITH SHRED
     if zeros:
-        step.append({
+        steps.append({
             '@type': 'Zeros',
             'startingTime': get_datetime(),
             'success': erase_process(dev, '-zvn', 0),
@@ -84,11 +83,11 @@ def erase_disk(dev):
     time_end = get_datetime()
     return {
         '@type': mode,
-        'secureRandomSteps': steps,
+        'secureRandomSteps': count,
         'cleanWithZeros': zeros,
         'startingTime': time_start,
         'endingTime': time_end,
-        'steps': step
+        'steps': steps
     }
 
 
