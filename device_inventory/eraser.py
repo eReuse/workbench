@@ -69,6 +69,8 @@ def erase_disk(dev):
                 'errorOutput': get_output(output),
             })
             count -= 1
+    else:
+        raise ValueError("Unknown erase mode '{0}'".format(mode))
     
     # ZEROS WITH SHRED
     if zeros:
