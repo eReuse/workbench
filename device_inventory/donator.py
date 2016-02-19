@@ -30,16 +30,13 @@ def is_connected():
 
 
 def get_user_input():
-    
     user_input = {}
     for field in ['label', 'comment', 'pid', '_id']:
         if settings.getboolean('DEFAULT', field):
-            user_in = raw_input("%s: " % field)
-        # probably 'else' could be removed because we don't want to
-        # store an empty field, do we?
-        if user_in != "":
-            user_input[field] = user_in
-
+            value = raw_input("%s: " % field).strip()
+            if value:
+                user_input[field] = value
+    
     # Ask user for choosing the Device.type
     do_equip = settings.get('DEFAULT', 'EQUIP')
     CHOICES = dict((key, value) for value, key in Computer.TYPES)
@@ -56,7 +53,7 @@ def get_user_input():
             print("Invalid choice.")
     user_input['device_type'] = CHOICES[device_type]
     
-    return dict(user_input)
+    return user_input
 
 
 def main(argv=None):
