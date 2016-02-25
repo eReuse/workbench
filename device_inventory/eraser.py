@@ -57,7 +57,7 @@ def erase_disk(dev):
             })
             count -= 1
     # RANDOM WITH BADBLOCK
-    elif mode == "StepByStep":
+    elif mode == "EraseSectors":
         while count != 0:
             output = "/tmp/badblocks"
             steps.append({
