@@ -3,6 +3,8 @@
 
 # eReuse: How to use our (PXE) server
 
+Guide version: 7.0.3
+
 This server allow us to register easily and very fast by sending the image of the system to all PC 
 connected on the LAN network.
 
@@ -29,12 +31,19 @@ There is two network interfaces on the VirtualBox server.
 
 ####Steps to install and setup the server:
 1. Install VirtualBox on any Win/Linux/Mac computer.
-2. Double click on `eReusePXE_v7.0.2b.ova` file to import the server.
+2. Double click on `eReusePXE_CD.ova` to import the server on VirtualBox.
 3. Check the network configuration on VirtualBox.
   1. Adapter 1 should be on Ethernet (cable) interface with others computer (to be registed).
   2. Adapter 2 should be on NET if you have a second interface (from your second Ethernet or Wi-Fi interface)
 4. Run the virtual server and wait until system is loaded.
 5. When the system asks for a login you can start to register computers.
+
+####Configure ISO options
+Info: The configuration file is called [config.ini](https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/config.ini).
+
+1. On the server machine from VirtualBox, acces with the credentials.
+2. write `nano /home/ereuse/config.ini`
+3. Enable or disable all the options that you want.
 
 ####Steps to register a computer
 1. Connect a PC to register on the LAN network.

@@ -3,6 +3,8 @@
 
 #eReuse: How to make PXE server (Debian Server)
 
+Guide version: 7.0.3
+
 This guide will allow you to make a PXE server and boot computers via ethernet network.
 
 ####First steps, install debain server image:
@@ -33,6 +35,7 @@ Download all files we need:
 ```
 wget http://kaplah.org/system/files/field/files/pxelinux.tar.gz
 wget https://github.com/eReuse/device-inventory/releases/download/v7.0.2b/eReuseOS_v7.0.2b.iso
+wget -O /home/ereuse/config.ini https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/config.ini
 ```
 
 ####2. Configure TFTP

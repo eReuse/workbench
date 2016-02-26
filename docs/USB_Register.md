@@ -3,6 +3,8 @@
 
 # eReuse: How to register via USB 
 
+Guide version: 7.0.3
+
 ####1. Download the eReuseOS image
   1. Go to [our repository](https://github.com/eReuse/Device-Inventory/releases/latest) and download the latest ISO.
   2. Install [UNetbootin](https://unetbootin.github.io/) software to make a USB live.
@@ -30,22 +32,24 @@
     - Press F2 or F10 to enter on BIOS menu. 
 
 ####4. Inventory process register hardware characteristics of a computer
-1. User login.
-    - Login user: `ubuntu` Password: `(empty, no password)`
-2. Run device inventory
-    - Write `sudo device-inventory` on the terminal.
+1. When system starts, it will ask you for some fields.
+   (Optional) If you have a PXE server on LAN you can choose the fields to ask.
 
-  ![sudodevice](./images/sudo_device-inventory.png)
-
-3. Fill the following fields:
+2. You will need to fill the following fields:
    - Label (optional): to help identifying the PC. (e.g.: PC­1, PC­2, PC­3...) .
-   - Comment (optional): to introduce extra information (e.g. describe If any of peripheral equipment does not work).
+   - Comment (optional): to introduce extra information (e.g.: describe If any of peripheral equipment does not work).
+   - Device type: choose what kind of equipment are you registering (e.g.: Desktop, Laptop, etc).
 
-4. Device type: choose what kind of equipment are you registering (e.g.: Desktop, Laptop, etc).
+3. Wait until inventory gets all the information from equipment.
 
-5. Wait until inventory of equipment is completed (it will take less than a minute).
+4. By default, a SMART check will start to execute. (takes 1 minute approximately)
 
-6. You will be asked to insert another USB drive to store the result, just plug­in and wait until the result is saved.
+5. A erasing process will start.
+    - By default, it will ask for every hard drive if you want to do a secure erase. (it takes some hours)
+    
+6. (Optional) If a server is available, will try to upload the JSON.
+
+5. You will be asked to insert another USB drive to store the result, just plug­in and wait until the result is saved.
 
 7. Process is done! If you want to review the result open the file stored on the USB on another computer or just run this command on the inventoried device (where “your_filename” is the name of the file printed on the screen):
 
