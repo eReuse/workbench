@@ -7,6 +7,23 @@ import struct
 import tempfile
 
 
+def is_connected():
+    # TODO move to utils package
+    # TODO: unittests?
+    # [Errno -5] No address associated with hostname
+    # https://docs.python.org/3.4/library/socket.html#exceptions
+    REMOTE_SERVER = "upc.edu"  # TODO make it a configuration option
+    try:
+        # see if we can resolve the host name (DNS)
+        host = socket.gethostbyname(REMOTE_SERVER)
+        # connect to the host (network reachable)
+        s = socket.create_connection((host, 80), 2)
+        return True
+    except (socket.herror, socket.gaierror, socket.timeout) as e: # OSError as e:
+        pass
+    return False
+
+
 def convert_base(value, src_unit, dst_unit, distance=1000):
     UNITS = ['unit', 'K', 'M', 'G', 'T']
     assert src_unit in UNITS, src_unit
@@ -54,7 +71,7 @@ def convert_speed(value, src_unit, dst_unit):
 # http://stackoverflow.com/a/4789267/1538221
 def get_hw_addr(ifname):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    info = fcntl.ioctl(s.fileno(), 0x8927,  struct.pack('256s', ifname[:15]))
+    info = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', ifname[:15]))
     return ':'.join(['%02x' % ord(char) for char in info[18:24]])
 
 
