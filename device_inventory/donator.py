@@ -170,8 +170,8 @@ def main(argv=None):
         try:
             storage.copy_file_to_server(localpath, remotepath, username, password, server)
         except Exception as e:
-            logging.error("Error copying file '%s' to server '%s'", localpath, server)
-            logging.debug(e)
+            logger.error("Error copying file '%s' to server '%s'", localpath, server)
+            logger.debug(e, exc_info=True)
     
     # copy file to an USB drive
     if settings.getboolean('DEFAULT', 'copy_to_usb'):
@@ -180,8 +180,8 @@ def main(argv=None):
         except KeyboardInterrupt:
             print("Copy to USB cancelled by user!")
         except Exception as e:
-            logging.error("Error copying file '%s' to USB", localpath)
-            logging.debug(e)
+            logger.error("Error copying file '%s' to USB", localpath)
+            logger.debug(e, exc_info=True)
     
     print("Device Inventory has finished properly: {0}".format(localpath))
 
