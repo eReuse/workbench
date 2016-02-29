@@ -101,7 +101,13 @@ def hard_disk_smart(disk, test_type="short"):
     remaining = 100
     while remaining > 0:
         dev.update()
-        last_test = dev.tests[0]
+        try:
+            last_test = dev.tests[0]
+        except (TypeError, IndexError):
+            pass  # work around because SMART has not been initialized
+                  # yet but pySMART library doesn't wait
+                  # Just ignore the error because we alreday have an
+                  # estimation of the ending time
         try:
             remaining = int(last_test.remain.strip('%'))
         except ValueError as e:
