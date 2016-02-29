@@ -33,12 +33,6 @@ def erase_sectors(disk, output):
         return False
 
 
-def get_output(output):
-    with open(output) as f:
-        content = f.readlines()
-    return content
-
-
 def erase_disk(dev):
     time_start = get_datetime()
     mode = settings.get('eraser', 'MODE')
@@ -47,12 +41,16 @@ def erase_disk(dev):
     steps = []
     
     # RANDOM WITH SHRED
+    total_success = True
     if mode == "EraseBasic":
         while count != 0:
+            success = erase_process(dev, '-vn', 1)
+            if not success:
+                total_success = False
             steps.append({
                 '@type': 'Random',
                 'startingTime': get_datetime(),
-                'success': erase_process(dev, '-vn', 1),
+                'success': success,
                 'endingTime': get_datetime(),
             })
             count -= 1
@@ -60,12 +58,14 @@ def erase_disk(dev):
     elif mode == "EraseSectors":
         while count != 0:
             output = "/tmp/badblocks"
+            success = erase_sectors(dev, output)
+            if not success:
+                total_success = False
             steps.append({
                 '@type': 'Random',
                 'startingTime': get_datetime(),
-                'success': erase_sectors(dev, output),
+                'success': success,
                 'endingTime': get_datetime(),
-                'errorOutput': get_output(output),
             })
             count -= 1
     else:
@@ -73,10 +73,13 @@ def erase_disk(dev):
     
     # ZEROS WITH SHRED
     if zeros:
+        success = erase_process(dev, '-zvn', 0)
+        if not success:
+            total_success = False
         steps.append({
             '@type': 'Zeros',
             'startingTime': get_datetime(),
-            'success': erase_process(dev, '-zvn', 0),
+            'success': success,
             'endingTime': get_datetime(),
         })
     
@@ -87,6 +90,7 @@ def erase_disk(dev):
         'cleanWithZeros': zeros,
         'startingTime': time_start,
         'endingTime': time_end,
+        'success': total_success,
         'steps': steps
     }
 

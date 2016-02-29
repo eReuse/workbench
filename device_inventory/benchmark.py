@@ -47,9 +47,9 @@ def benchmark_hdd(disk):
     writting = convert_capacity(value, unit[0:2], "MB")
     
     return {
-        "@type": "hddBenchmark",
+        "@type": "BenchmarkHardDrive",
         "readingSpeed": reading,
-        "writtingSpeed": writting,
+        "writingSpeed": writting,
     }
 
 
