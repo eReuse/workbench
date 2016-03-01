@@ -18,6 +18,9 @@ from datetime import datetime, timedelta
 from .utils import run, convert_capacity
 
 
+logger = logging.getLogger(__name__)
+
+
 def benchmark_hdd(disk):
     # READ
     cmd_read = ["dd", "if=%s" % disk, "of=/dev/null", "bs=1M", "count=256",
@@ -65,8 +68,8 @@ def hard_disk_smart(disk, test_type="short"):
     except subprocess.CalledProcessError as e:
         error = True
         status = "SMART cannot be enabled on this device."
-        logging.error(status)
-        logging.debug("%s: %s", status, e.output)
+        logger.error(status)
+        logger.debug("%s: %s", status, e.output)
         return {
             "@type": "TestHardDrive",
             "error": error,
@@ -83,7 +86,7 @@ def hard_disk_smart(disk, test_type="short"):
     3 - Unspecified smartctl error. Self-test not initiated.
     """
     if smt[0] > 1:
-        logging.error(smt)
+        logger.error(smt)
         return {
             "@type": "TestHardDrive",
             "error": True,
@@ -111,7 +114,7 @@ def hard_disk_smart(disk, test_type="short"):
         try:
             remaining = int(last_test.remain.strip('%'))
         except ValueError as e:
-            logging.error(e)
+            logger.error(e)
             if datetime.now() > test_end:  # TODO wait a few seconds more
                 break  # avoid infinite loop
         # progress meter based on estimated time, we use seconds instead

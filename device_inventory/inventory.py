@@ -13,6 +13,9 @@ from . import utils
 from .conf import settings
 
 
+logger = logging.getLogger(__name__)
+
+
 def get_subsection_value(output, section_name, subsection_name):
     """Extract data from tabulated output like lshw and dmidecode."""
     section = output.find(section_name)
@@ -73,7 +76,7 @@ class Device(object):
             objects.append(cls(node))
         
         if len(objects) == 0:
-            logging.debug("NOT found {0} {1}".format(cls, cls.LSHW_NODE_ID))
+            logger.debug("NOT found {0} {1}".format(cls, cls.LSHW_NODE_ID))
         
         return objects
     
@@ -141,7 +144,7 @@ class HardDrive(Device):
         if self.logical_name and self.interface != "usb":
             self.test = self.run_smart(self.logical_name)
         else:
-            logging.error("Cannot execute SMART on device '%s'.", self.serialNumber)
+            logger.error("Cannot execute SMART on device '%s'.", self.serialNumber)
     
     def run_smart(self, logical_name):  # TODO allow choosing short or extended
         smart = settings.get('DEFAULT', 'smart')
@@ -198,8 +201,8 @@ class NetworkAdapter(Device):
             logical_name = get_xpath_text(node, 'logicalname')
             if logical_name is None:
                 error = "Error retrieving MAC: '%s'"
-                logging.error(error, self.model)
-                logging.debug(error, etree.tostring(node))
+                logger.error(error, self.model)
+                logger.debug(error, etree.tostring(node))
             else:
                 serial = utils.get_hw_addr(logical_name)
         
@@ -242,9 +245,9 @@ class Processor(Device):
         try:
             dmi_processor = dmidecode.processor()['0x0004']['data']
         except KeyError:
-            logging.debug("Cannot retrieve processor info from DMI.")
-            logging.error("Processor.speed")
-            logging.error("Processor.address")
+            logger.debug("Cannot retrieve processor info from DMI.")
+            logger.error("Processor.speed")
+            logger.error("Processor.address")
         else:
             self.address = self.get_address(dmi_processor)
             self.speed = self.get_speed(dmi_processor)
@@ -318,8 +321,8 @@ class RamModule(object):
         
         try:
             self.size = int(size.split()[0])
-        except (ValueError, IndexError):
-            logging.debug("Cannot retrieve RamMmodule size '{0}'.".format(size))
+        except ValueError, IndexError:
+            logger.debug("Cannot retrieve RamMmodule size '{0}'.".format(size))
             self.size = None
     
     @property
@@ -334,7 +337,7 @@ class RamModule(object):
         try:
             return float(value)
         except ValueError:
-            logging.error("Error sanitizing RAM speed: '{0}'".format(value))
+            logger.error("Error sanitizing RAM speed: '{0}'".format(value))
             return None
 
 

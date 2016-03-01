@@ -7,6 +7,9 @@ import time
 from . import utils
 
 
+logger = logging.getLogger(__name__)
+
+
 def get_file_from_server(remotepath, localpath, username, password, server):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -54,14 +57,14 @@ def copy_file_to_usb(localpath):
             device = monitor.poll()
         except KeyboardInterrupt:
             raise
-        logging.debug("%s %s %s", device.get('DEVNAME'), device.action, device.device_type)
+        logger.debug("%s %s %s", device.get('DEVNAME'), device.action,device.device_type)
         if device.action == 'add':
             break
     
     # wait until partition is detected
     monitor.filter_by('partition')
     partition = monitor.poll()
-    logging.debug("%s %s %s", partition.get('DEVNAME'), partition.action, partition.device_type)
+    logger.debug("%s %s %s", partition.get('DEVNAME'), partition.action, partition.device_type)
 
     partition = partition.get('DEVNAME')
     print("USB detected.")
@@ -70,7 +73,7 @@ def copy_file_to_usb(localpath):
     dstpath = ''
     while not dstpath:
         dstpath = utils.run("mount | grep %s | awk '{print $3}'" % partition)
-        logging.debug("Fetching to retrieve mount point '%s'.", dstpath)
+        logger.debug("Fetching to retrieve mount point '%s'.", dstpath)
         time.sleep(1)
     print("USB mounted on %s" % dstpath)
      

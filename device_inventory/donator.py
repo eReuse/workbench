@@ -2,6 +2,7 @@
 import argparse
 import json
 import logging
+import logging.config
 import os
 import socket
 import sys
@@ -10,6 +11,24 @@ from device_inventory import eraser, serializers, storage, utils
 from device_inventory.conf import settings
 from device_inventory.benchmark import benchmark_hdd
 from device_inventory.inventory import Computer
+
+
+def setup_logging(default_path='config_logging.json',
+                  default_level=logging.ERROR, env_key='CFG_LOG'):
+    """
+    Setup logging configuration
+
+    """
+    path = os.path.join(os.path.dirname(__file__), default_path)
+    value = os.getenv(env_key, None)
+    if value:
+        path = value
+    if os.path.exists(path):
+        with open(path, 'rt') as f:
+            config = json.load(f)
+        logging.config.dictConfig(config)
+    else:
+        logging.basicConfig(level=default_level)
 
 
 def is_connected():
@@ -59,6 +78,10 @@ def get_user_input():
 def main(argv=None):
     if not os.geteuid() == 0:
         sys.exit("Only root can run this script")
+    
+    # configure logging
+    setup_logging()
+    logger = logging.getLogger(__name__)
     
     parser = argparse.ArgumentParser()
     
@@ -147,8 +170,8 @@ def main(argv=None):
         try:
             storage.copy_file_to_server(localpath, remotepath, username, password, server)
         except Exception as e:
-            logging.error("Error copying file '%s' to server '%s'", localpath, server)
-            logging.debug(e)
+            logger.error("Error copying file '%s' to server '%s'", localpath, server)
+            logger.debug(e, exc_info=True)
     
     # copy file to an USB drive
     if settings.getboolean('DEFAULT', 'copy_to_usb'):
@@ -157,8 +180,8 @@ def main(argv=None):
         except KeyboardInterrupt:
             print("Copy to USB cancelled by user!")
         except Exception as e:
-            logging.error("Error copying file '%s' to USB", localpath)
-            logging.debug(e)
+            logger.error("Error copying file '%s' to USB", localpath)
+            logger.debug(e, exc_info=True)
     
     print("Device Inventory has finished properly: {0}".format(localpath))
 

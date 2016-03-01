@@ -8,16 +8,20 @@ setup(
     name="device-inventory",
     version=version,
     packages=find_packages(),
-    license = 'AGPLv3 License',
-    description = ('The Device Inventory is a tool to help the inventory '
-                   'of computers. It retrieves details of the hardware '
-                   'information and, optionally, runs some health and '
-                   'benchmark tests.'),
+    license='AGPLv3 License',
+    description=('The Device Inventory is a tool to help the inventory '
+                 'of computers. It retrieves details of the hardware '
+                 'information and, optionally, runs some health and '
+                 'benchmark tests.'),
     scripts=['scripts/device-inventory'],
-    package_data={'device_inventory': ['config.ini', 'data/*']},
-    url = 'https://github.com/eReuse/device-inventory',
-    author = 'eReuse team',
-    classifiers = [
+    package_data={'device_inventory': [
+        'config.ini',
+        'config_logging.json',
+        'data/*'
+    ]},
+    url='https://github.com/eReuse/device-inventory',
+    author='eReuse team',
+    classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: Information Technology',
