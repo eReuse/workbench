@@ -125,6 +125,7 @@ def hard_disk_smart(disk, test_type="short"):
             logger.error(e)
             if datetime.now() > test_end:  # TODO wait a few seconds more
                 break  # avoid infinite loop
+        time.sleep(5)  # wait a few seconds between smart retrievals
     
     # show last test
     dev.update()
