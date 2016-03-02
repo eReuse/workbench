@@ -101,6 +101,14 @@ def hard_disk_smart(disk, test_type="short"):
         test_end = datetime.now() + timedelta(minutes=duration)
     print("Runing SMART self-test. It will finish at {0}".format(test_end))
     
+    # wait, at least, until estimated end time showing the user
+    # a progress meter
+    seconds = int((test_end - datetime.now()).total_seconds())
+    for _ in tqdm.trange(seconds, leave=True):
+        time.sleep(1)
+    
+    # check if the self-test has really finish by checking the
+    # remaining percentage
     remaining = 100
     while remaining > 0:
         dev.update()
@@ -117,11 +125,6 @@ def hard_disk_smart(disk, test_type="short"):
             logger.error(e)
             if datetime.now() > test_end:  # TODO wait a few seconds more
                 break  # avoid infinite loop
-        # progress meter based on estimated time, we use seconds instead
-        # of remaining because time provides more accuracy
-        seconds = int((test_end - datetime.now()).total_seconds())
-        for _ in tqdm.trange(seconds, leave=True):
-            time.sleep(1)
     
     # show last test
     dev.update()
