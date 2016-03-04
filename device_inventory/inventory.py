@@ -293,8 +293,9 @@ class RamModule(object):
         ram_modules = []
         for key, value in dmidecode.memory().items():
             module = value['data']
-            #is_module = module.get('Bank Locator') not in [None, 'None']
-            is_module = module.get('Size') not in [None, 'None']
+            # exclude empty modules and System ROM (issue #5)
+            is_module = (module.get('Size') not in [None, 'None'] and
+                         module.get('Form Factor') not in [None, 'Chip'])
             if is_module:
                 ram_modules.append(cls(
                     manufacturer=module.get('Manufacturer'),
