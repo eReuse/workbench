@@ -12,7 +12,8 @@ connected on the LAN network.
 
 - A PC with:
   - [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-  - [eReuse OVA (for VirtualBox)](https://github.com/eReuse/device-inventory/releases/latest)
+  - [eReusePXE_CD-ROUTER.ova](https://github.com/eReuse/device-inventory/releases/latest)
+  - [eReuseOS_vX.iso](https://github.com/eReuse/device-inventory/releases/latest)
 - Switch
 - Network cables
 - PC/s to register
@@ -35,8 +36,9 @@ There is two network interfaces on the VirtualBox server.
 3. Check the network configuration on VirtualBox.
   1. Adapter 1 should be on Ethernet (cable) interface with others computer (to be registed).
   2. Adapter 2 should be on NET if you have a second interface (from your second Ethernet or Wi-Fi interface)
-4. Run the virtual server and wait until system is loaded.
-5. When the system asks for a login you can start to register computers.
+4. Insert [eReuseOS_v7.0.3b6.iso](https://github.com/eReuse/device-inventory/releases/download/v7.0.3b6/eReuseOS_v7.0.3b6.iso) as CD media.
+5. Run the virtual server and wait until system is loaded.
+6. When the system asks for a login you can start to register computers.
 
 ####Configure ISO options
 Info: The configuration file is called [config.ini](https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/config.ini).
