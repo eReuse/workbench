@@ -21,7 +21,7 @@ Remplace X for:
 **4** = Server  
 **5** = Microtower  
   
-- _ID = **X**  
+- PID = **X**  
   
 This options will enable the field PID. By default is set to `no`.  
 Remplace X for:  
@@ -64,11 +64,7 @@ This option allow to upload the inventory to the web server automatically. By de
 Remplace X for:  
 **yes** = do not upload  
 **no** = upload to web server  
-  
-- MOVE = X  
-  
-? By default is set to `no`.  
-  
+
 - COPY_TO_USB = **X**  
   
 Copy the inventory file (json) to USB when process is finished. It will wait until USB is detected to copy. By default is set to `yes`.  

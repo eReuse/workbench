@@ -35,7 +35,7 @@ There is two network interfaces on the VirtualBox server.
 2. Double click on `eReusePXE_CD.ova` to import the server on VirtualBox.
 3. Check the network configuration on VirtualBox.
   1. Adapter 1 should be on Ethernet (cable) interface with others computer (to be registed).
-  2. Adapter 2 should be on NET if you have a second interface (from your second Ethernet or Wi-Fi interface)
+  2. Adapter 2 should be on NAT if you have a second interface (from your second Ethernet or Wi-Fi interface)
 4. Insert [eReuseOS_v7.0.3b6.iso](https://github.com/eReuse/device-inventory/releases/download/v7.0.3b6/eReuseOS_v7.0.3b6.iso) as CD media.
 5. Run the virtual server and wait until system is loaded.
 6. When the system asks for a login you can start to register computers.
@@ -46,11 +46,12 @@ Info: The configuration file is called [config.ini](https://raw.githubuserconten
 1. On the server machine from VirtualBox, acces with the credentials.
 2. write `nano /home/ereuse/config.ini`
 3. Enable or disable all the options that you want.
+4. Save the changes pressing **Control + O** and enter. Exit with **Control + C**.
 
 ####Steps to register a computer
 1. Connect a PC to register on the LAN network.
 2. Configure the BIOS (the first few seconds when computer starts) to boot LAN.
-  1. Maybe there is a option to automatically boot from the network. 
+  1. Maybe there is an option to automatically boot from the network. 
     - Watch for the BIOS Setup Message. 
     - Press F12, F8 or F9 to enter on boot menu selection.
   2. Enter to Setup and change the boot priority.
