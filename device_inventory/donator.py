@@ -151,6 +151,7 @@ def main(argv=None):
         server = settings.get('server', 'address')
         try:
             storage.copy_file_to_server(localpath, remotepath, username, password, server)
+            print("The file `{0}` has been successfully sent to the server.".format(localpath))
         except Exception as e:
             logger.error("Error copying file '%s' to server '%s'", localpath, server)
             logger.debug(e, exc_info=True)
