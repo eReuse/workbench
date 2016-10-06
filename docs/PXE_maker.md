@@ -212,6 +212,7 @@ prompt 0
 LABEL eReuseOS
     MENU LABEL eReuseOS
         kernel mnt/eReuseOS_iso/casper/vmlinuz
-        append file=mnt/eReuseOS_iso/preseed/ubuntu.seed initrd=mnt/eReuseOS_iso/casper/initrd.lz boot=casper netboot=nfs ip=dhcp nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/eReuseOS_iso ksdevice=bootif forcepae -- forcepae
+        initrd mnt/eReuseOS_iso/casper/initrd.lz
+        append boot=casper ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/eReuseOS_iso text forcepae
         IPAPPEND 2
 ```
