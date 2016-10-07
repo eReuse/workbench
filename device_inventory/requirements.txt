@@ -10,5 +10,6 @@ tqdm        # progress meter
 # dmidecode
 # python-dateutil
 # python-dmidecode
+# python-enum34
 # python-lxml
 # usbmount

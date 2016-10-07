@@ -1,4 +1,6 @@
 import abc
+import collections
+import enum
 import dmidecode
 import logging
 import os
@@ -364,6 +366,31 @@ class Computer(object):
         (SERVER, 4),
         (MICROTOWER, 5),
     )
+    # Similar to US academic grading.
+    class Condition(enum.Enum):
+        new = 'A'
+        used = 'B'
+        ugly = 'C'
+        broken = 'D'
+        @classmethod
+        def default(cls):
+            return cls.used
+    # The order may be used as a hint when asking questions
+    # about this feature.
+    # This order puts the most informative choice first,
+    # so that choosing one option makes the following ones
+    # unnecessary to be read.
+    CONDITIONS = collections.OrderedDict([
+        (Condition.broken,
+         "Defects affecting functionality (broken mechanisms, missing buttons,"
+         "audio/video artifacts, strange noises)"),
+        (Condition.ugly,
+         "Purely aesthetic defects (scratches, dents, decoloration)"),
+        (Condition.used,
+         "Used, but no remarkable aesthetic defects"),
+        (Condition.new,
+         "Brand new device"),
+    ])
     COMPONENTS = [
         'graphic_card', 'hard_disk', 'memory', 'motherboard',
         'network_interfaces', 'optical_drives', 'processor', 'sound_cards'
@@ -386,6 +413,7 @@ class Computer(object):
         
         # Retrieve computer info
         self.type = kwargs.pop('type', self.DESKTOP)
+        self.condition = kwargs.pop('condition', self.Condition.default())
         self.manufacturer = get_subsection_value(self.dmi, "System Information", "Manufacturer")
         self.model = get_subsection_value(self.dmi, "System Information", "Product Name")
         
