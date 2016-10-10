@@ -39,6 +39,14 @@ def get_user_input():
             if value:
                 user_input[field] = value
 
+    def get_option_default(opt_name, opt_class):
+        try:
+            default_opt = settings.get('DEFAULT', opt_name)
+            default_val = opt_class(default_opt)
+        except (ConfigParser.NoOptionError, ValueError):
+            default_val = None
+        return default_val
+
     def choose_from_dict(val_to_desc, msg_template):
         entry_to_item = dict(enumerate(val_to_desc.items(), start=1))
         choice_msg = '\n' + msg_template.format(
@@ -56,19 +64,11 @@ def get_user_input():
         return entry_to_item[entry][0]
     
     # Ask user for choosing the Device.type
-    try:
-        default_opt = settings.get('DEFAULT', 'EQUIP')
-        type_dflt = Computer.Type(default_opt)
-    except (ConfigParser.NoOptionError, ValueError):
-        type_dflt = None
+    type_dflt = get_option_default('EQUIP', Computer.Type)
     user_input['device_type'] = type_dflt if type_dflt else choose_from_dict(
         Computer.TYPES, "Choose device type:\n{0}\nType: ")
     # Ask user for the device condition.
-    try:
-        default_opt = settings.get('DEFAULT', 'CONDITION')
-        cond_dflt = Computer.Condition(default_opt)
-    except (ConfigParser.NoOptionError, ValueError):
-        cond_dflt = None
+    cond_dflt = get_option_default('CONDITION', Computer.Condition)
     user_input['condition'] = cond_dflt if cond_dflt else choose_from_dict(
         Computer.CONDITIONS, "Choose device condition:\n{0}\nCondition: ")
     
