@@ -53,6 +53,19 @@ def get_user_input():
         except ValueError:
             print("Invalid choice.")
     user_input['device_type'] = CHOICES[device_type]
+    # Ask user for the device condition.
+    entry_to_item = dict(enumerate(Computer.CONDITIONS.items(), start=1))
+    choice_msg = "Choose device condition:\n{0}\nCondition: ".format(
+        '\n'.join('%d. %s' % (idx, desc)
+                  for (idx, (_, desc)) in entry_to_item.items())
+    )
+    entry = None
+    while entry not in entry_to_item:
+        try:
+            entry = int(raw_input(choice_msg))
+        except ValueError:
+            print("Invalid choice, please try again.")
+    user_input['condition'] = entry_to_item[entry][0]
     
     return user_input
 
