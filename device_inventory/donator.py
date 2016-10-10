@@ -67,12 +67,14 @@ def get_user_input():
     
     # Ask user for choosing the Device.type
     type_dflt = get_option_default('EQUIP', Computer.Type)
-    user_input['device_type'] = type_dflt if type_dflt else choose_from_dict(
+    type_ = type_dflt if type_dflt else choose_from_dict(
         Computer.TYPES, "Choose device type:\n{0}\nType: ")
+    user_input['device_type'] = type_.value
     # Ask user for the device condition.
     cond_dflt = get_option_default('CONDITION', Computer.Condition)
-    user_input['condition'] = cond_dflt if cond_dflt else choose_from_dict(
+    cond = cond_dflt if cond_dflt else choose_from_dict(
         Computer.CONDITIONS, "Choose device condition:\n{0}\nCondition: ")
+    user_input['condition'] = cond.value
     
     return user_input
 
