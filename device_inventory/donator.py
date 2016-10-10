@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import argparse
+import ConfigParser
 import json
 import logging
 import logging.config
@@ -68,7 +69,12 @@ def get_user_input():
             print("Invalid choice.")
     user_input['device_type'] = CHOICES[device_type]
     # Ask user for the device condition.
-    user_input['condition'] = choose_from_dict(
+    try:
+        default_opt = settings.get('DEFAULT', 'CONDITION')
+        cond_dflt = Computer.Condition(default_opt)
+    except (ConfigParser.NoOptionError, ValueError):
+        cond_dflt = None
+    user_input['condition'] = cond_dflt if cond_dflt else choose_from_dict(
         Computer.CONDITIONS, "Choose device condition:\n{0}\nCondition: ")
     
     return user_input

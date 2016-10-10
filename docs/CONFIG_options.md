@@ -21,6 +21,16 @@ Remplace X for:
 **4** = Server  
 **5** = Microtower  
   
+- CONDITION = **X**
+    
+This option allows you to automatically indicate the aesthetic condition of the computers that you are going to register.  
+Remplace X for:  
+**A** = Brand new device  
+**B** = Used, remarkable aesthetic defects  
+**C** = Purely aesthetic defects  
+**D** = Defects affecting functionality  
+**(other)** = Ask  
+  
 - PID = **X**  
   
 This options will enable the field PID. By default is set to `no`.  
