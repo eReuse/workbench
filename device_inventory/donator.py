@@ -62,7 +62,6 @@ def get_user_input():
             except ValueError:
                 entry = -1  # invalid and not none
         (val, desc) = entry_to_item[entry]
-        print("Choice: {0}".format(desc))
         return val
     
     # Ask user for choosing the Device.type
