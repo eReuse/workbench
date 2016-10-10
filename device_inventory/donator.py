@@ -61,7 +61,9 @@ def get_user_input():
                 entry = int(raw_input(choice_msg))
             except ValueError:
                 entry = -1  # invalid and not none
-        return entry_to_item[entry][0]
+        (val, desc) = entry_to_item[entry]
+        print("Choice: {0}".format(desc))
+        return val
     
     # Ask user for choosing the Device.type
     type_dflt = get_option_default('EQUIP', Computer.Type)
