@@ -54,20 +54,13 @@ def get_user_input():
         return entry_to_item[entry][0]
     
     # Ask user for choosing the Device.type
-    do_equip = settings.get('DEFAULT', 'EQUIP')
-    CHOICES = dict((key, value) for value, key in Computer.TYPES)
-    formated_choices = "\n".join(["{0}. {1}".format(k,v) for k, v in CHOICES.items()])
-    choose_msg = "Choose device type \n{0}\nType: ".format(formated_choices)
-    device_type = None
-    while device_type not in CHOICES.keys():
-        try:
-            if do_equip in ["1", "2", "3", "4", "5"]:
-                device_type = int(do_equip)
-            else:
-                device_type = int(raw_input(choose_msg))
-        except ValueError:
-            print("Invalid choice.")
-    user_input['device_type'] = CHOICES[device_type]
+    try:
+        default_opt = settings.get('DEFAULT', 'EQUIP')
+        type_dflt = Computer.Type(default_opt)
+    except (ConfigParser.NoOptionError, ValueError):
+        type_dflt = None
+    user_input['device_type'] = type_dflt if type_dflt else choose_from_dict(
+        Computer.TYPES, "Choose device type:\n{0}\nType: ")
     # Ask user for the device condition.
     try:
         default_opt = settings.get('DEFAULT', 'CONDITION')

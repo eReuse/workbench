@@ -12,14 +12,14 @@ This guide will explain you every option in config.ini file.
 
 - EQUIP = **X**
     
-This option allows you to automatically select the computers that you are going to register. By default is set to `0`.  
+This option allows you to automatically select the computers that you are going to register.  
 Remplace X for:  
-**0** = Ask  
-**1** = Desktop  
-**2** = Laptop  
-**3** = Netbook  
-**4** = Server  
-**5** = Microtower  
+**Desktop**  
+**Laptop**  
+**Netbook**  
+**Server**  
+**Microtower**  
+**(other)** = Ask  
   
 - CONDITION = **X**
     

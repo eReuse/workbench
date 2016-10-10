@@ -354,18 +354,24 @@ class SoundCard(Device):
 
 
 class Computer(object):
-    DESKTOP = "Desktop"
-    LAPTOP = "Laptop"
-    NETBOOK = "Netbook"
-    SERVER = "Server"
-    MICROTOWER = "Microtower"
-    TYPES = (
-        (DESKTOP, 1),
-        (LAPTOP, 2),
-        (NETBOOK, 3),
-        (SERVER, 4),
-        (MICROTOWER, 5),
-    )
+    class Type(enum.Enum):
+        desktop = 'Desktop'
+        laptop = 'Laptop'
+        netbook = 'Netbook'
+        server = 'Server'
+        microtower = 'Microtower'
+        @classmethod
+        def default(cls):
+            return cls.desktop
+    # The order may be used as a hint when asking questions
+    # about this feature.
+    TYPES = collections.OrderedDict([
+        (Type.desktop, "Desktop computer"),
+        (Type.laptop, "Laptop computer"),
+        (Type.netbook, "Netbook"),
+        (Type.server, "Server"),
+        (Type.microtower, "Micro tower"),
+    ])
     # Similar to US academic grading.
     class Condition(enum.Enum):
         new = 'A'
@@ -412,7 +418,7 @@ class Computer(object):
             self.call_hardware_inspectors()
         
         # Retrieve computer info
-        self.type = kwargs.pop('type', self.DESKTOP)
+        self.type = kwargs.pop('type', self.Type.default())
         self.condition = kwargs.pop('condition', self.Condition.default())
         self.manufacturer = get_subsection_value(self.dmi, "System Information", "Manufacturer")
         self.model = get_subsection_value(self.dmi, "System Information", "Product Name")

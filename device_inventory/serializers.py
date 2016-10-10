@@ -33,7 +33,7 @@ def export_to_devicehub_schema(device, user_input=None, debug=False):
     
     device_serialized = utils.strip_null_or_empty_values({
         "@type": type(device).__name__,
-        "type": device.type,
+        "type": device.type.value,
         "condition": device.condition.value,
         "manufacturer": device.manufacturer,
         "model": device.model,
