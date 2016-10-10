@@ -47,10 +47,12 @@ def get_user_input():
         )
         entry = None
         while entry not in entry_to_item:
+            if entry is not None:
+                print("Invalid choice, please try again.")
             try:
                 entry = int(raw_input(choice_msg))
             except ValueError:
-                print("Invalid choice, please try again.")
+                entry = -1  # invalid and not none
         return entry_to_item[entry][0]
     
     # Ask user for choosing the Device.type
