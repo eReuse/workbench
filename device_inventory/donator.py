@@ -40,7 +40,7 @@ def get_user_input():
 
     def choose_from_dict(val_to_desc, msg_template):
         entry_to_item = dict(enumerate(val_to_desc.items(), start=1))
-        choice_msg = msg_template.format(
+        choice_msg = '\n' + msg_template.format(
             '\n'.join('%d. %s' % (idx, desc)
                       for (idx, (_, desc)) in entry_to_item.items())
         )
