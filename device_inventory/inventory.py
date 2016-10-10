@@ -382,7 +382,7 @@ class Computer(object):
     # unnecessary to be read.
     CONDITIONS = collections.OrderedDict([
         (Condition.broken,
-         "Defects affecting functionality (broken mechanisms, missing buttons,"
+         "Defects affecting functionality (broken mechanisms, missing buttons, "
          "audio/video artifacts, strange noises)"),
         (Condition.ugly,
          "Purely aesthetic defects (scratches, dents, decoloration)"),
