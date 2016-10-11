@@ -21,16 +21,6 @@ Remplace X for:
 **Microtower**  
 **(other)** = Ask  
   
-- CONDITION = **X**
-    
-This option allows you to automatically indicate the aesthetic condition of the computers that you are going to register.  
-Remplace X for:  
-**A** = Brand new device  
-**B** = Used, remarkable aesthetic defects  
-**C** = Purely aesthetic defects  
-**D** = Defects affecting functionality  
-**(other)** = Ask  
-  
 - PID = **X**  
   
 This options will enable the field PID. By default is set to `no`.  
@@ -67,6 +57,16 @@ Used for describe if computer have something in bad state or send some message t
 Remplace X for:  
 **yes** = ask for LABEL  
 **no** = don't ask for  
+  
+- VISUAL_STATE = **X**
+    
+This option allows you to automatically indicate the aesthetic condition of the computers that you are going to register.  
+Remplace X for:  
+**A** = Brand new device  
+**B** = Used, but no aesthetic defects  
+**C** = Light aesthetic defects (scratches, dents, decoloration)  
+**D** = Serious aesthetic defects (cracked covers, broken parts)  
+**(other)** = Ask  
   
 - OFFLINE = **X**  *(Not implemented)*  
   

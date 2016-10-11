@@ -34,7 +34,7 @@ def setup_logging(default_path='config_logging.json',
         logging.basicConfig(level=default_level)
 
 # Similar to US academic grading.
-class ComputerCondition(enum.Enum):
+class ComputerState(enum.Enum):
     new = 'A'
     used = 'B'
     ugly = 'C'
@@ -45,15 +45,14 @@ class ComputerCondition(enum.Enum):
 # This order puts the most informative choice first,
 # so that choosing one option makes the following ones
 # unnecessary to be read.
-CONDITIONS = collections.OrderedDict([
-    (ComputerCondition.broken,
-     "Defects affecting functionality (broken mechanisms, missing buttons, "
-     "audio/video artifacts, strange noises)"),
-    (ComputerCondition.ugly,
-     "Purely aesthetic defects (scratches, dents, decoloration)"),
-    (ComputerCondition.used,
+VISUAL_STATES = collections.OrderedDict([
+    (ComputerState.broken,
+     "Serious aesthetic defects (cracked covers, broken parts)"),
+    (ComputerState.ugly,
+     "Light aesthetic defects (scratches, dents, decoloration)"),
+    (ComputerState.used,
      "Used, but no remarkable aesthetic defects"),
-    (ComputerCondition.new,
+    (ComputerState.new,
      "Brand new device"),
 ])
 
@@ -98,13 +97,16 @@ def get_user_input():
     type_ = type_dflt if type_dflt else choose_from_dict(
         Computer.TYPES, "Choose device type:\n{0}\nType: ")
     user_input['device_type'] = type_
-    # Ask user for the device condition.
-    cond_dflt = get_option_default('CONDITION', ComputerCondition)
-    cond = cond_dflt if cond_dflt else choose_from_dict(
-        CONDITIONS, "Choose device condition:\n{0}\nCondition (empty to skip): ",
+    # Ask user for the device visual state.
+    vstate_dflt = get_option_default('VISUAL_STATE', ComputerState)
+    vstate = vstate_dflt if vstate_dflt else choose_from_dict(
+        VISUAL_STATES, """\
+Choose the option that better describes the visual state of the computer:
+{0}
+Visual state (empty to skip): """,
         allow_empty=True)
-    if cond:
-        user_input['condition'] = cond
+    if vstate:
+        user_input['visual_state'] = vstate
     
     return user_input
 
