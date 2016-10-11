@@ -103,7 +103,8 @@ def get_user_input():
     cond = cond_dflt if cond_dflt else choose_from_dict(
         CONDITIONS, "Choose device condition:\n{0}\nCondition (empty to skip): ",
         allow_empty=True)
-    user_input['condition'] = cond
+    if cond:
+        user_input['condition'] = cond
     
     return user_input
 
