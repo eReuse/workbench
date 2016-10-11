@@ -95,7 +95,7 @@ nano /etc/systemd/system/getty.target.wants/getty@tty1.service
 # change the line for: ExecStart=/sbin/agetty --noclear --autologin ubuntu %I $TERM
 
 # Autostart
-echo "clear ; sudo device-inventory" >> /home/ubuntu/.profile
+echo "clear ; sudo device-inventory ; sudo di-stress-test" >> /home/ubuntu/.profile
 
 # delete temporary files
 rm -rf /tmp/* ~/.bash_history
