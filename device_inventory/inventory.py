@@ -419,7 +419,6 @@ class Computer(object):
         
         # Retrieve computer info
         self.type = kwargs.pop('type', self.Type.default())
-        self.condition = kwargs.pop('condition', self.Condition.default())
         self.manufacturer = get_subsection_value(self.dmi, "System Information", "Manufacturer")
         self.model = get_subsection_value(self.dmi, "System Information", "Product Name")
         

@@ -136,7 +136,6 @@ def main(argv=None):
     
     user_input = get_user_input()
     kwargs = dict(type=user_input.pop('device_type'),
-                  condition=user_input.pop('condition'),
                   smart=args.smart)
     
     device = Computer(**kwargs)
