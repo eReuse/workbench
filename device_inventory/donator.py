@@ -97,7 +97,7 @@ def get_user_input():
     type_ = type_dflt if type_dflt else choose_from_dict(
         Computer.TYPES, "Choose device type:\n{0}\nType: ")
     user_input['device_type'] = type_
-    # Ask user for the device visual state.
+    # Ask user for the device's visual state.
     vstate_dflt = get_option_default('VISUAL_STATE', ComputerState)
     vstate = vstate_dflt if vstate_dflt else choose_from_dict(
         VISUAL_STATES, """\
