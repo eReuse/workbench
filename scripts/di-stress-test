@@ -13,7 +13,8 @@ fi
 NCORES=$(egrep '^processor\b' /proc/cpuinfo | wc -l)
 MEM_KiB=$(sed -rn 's/^MemAvailable:\s*([0-9]+) kB.*/\1/p' /proc/meminfo)
 
-MEM_WORKER_KiB=$((MEM_KiB/NCORES))
+# Exclude a percentage of available memory for the stress processes themselves.
+MEM_WORKER_KiB=$(((MEM_KiB/NCORES)*90/100))
 
 echo "Performing stress test for $STRESS_MINUTES minutes, press Ctrl+C at any time to cancel."
 stress -v -c "$NCORES" -m "$NCORES" --vm-bytes "${MEM_WORKER_KiB}K" -t "${STRESS_MINUTES}m"
