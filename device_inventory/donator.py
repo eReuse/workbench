@@ -66,6 +66,26 @@ FUNCTIONAL_STATES = collections.OrderedDict([
      "Brand new device"),
 ])
 
+# Data for user choice questions:
+# (field, opt, cls, choices, allow_empty, msg)
+_user_input_questions = [
+    # Device type
+    ('device_type', 'EQUIP', Computer.Type, Computer.TYPES, False,
+     "Choose device type:\n{0}\nType: "),
+    # Visual state
+    ('visualState', 'VISUAL_STATE', ComputerState, VISUAL_STATES, True,
+     """\
+Choose the option that better describes the visual state of the computer:
+{0}
+Visual state (empty to skip): """),
+    # Functional state
+    ('functionalState', 'FUNCTIONAL_STATE', ComputerState, FUNCTIONAL_STATES, True,
+     """\
+Choose the option that better describes the functional state of the computer:
+{0}
+Functional state (empty to skip): """),
+]
+
 def get_user_input():
     user_input = {}
     for field in ['label', 'comment', 'pid', '_id']:
@@ -103,23 +123,7 @@ def get_user_input():
         return val
     
     # Ask the user for several choice questions.
-    for (field, opt, cls, choices, allow_empty, msg) in [
-            # Device type
-            ('device_type', 'EQUIP', Computer.Type, Computer.TYPES, False,
-             "Choose device type:\n{0}\nType: "),
-            # Visual state
-            ('visualState', 'VISUAL_STATE', ComputerState, VISUAL_STATES, True,
-             """\
-Choose the option that better describes the visual state of the computer:
-{0}
-Visual state (empty to skip): """),
-            # Functional state
-            ('functionalState', 'FUNCTIONAL_STATE', ComputerState, FUNCTIONAL_STATES, True,
-             """\
-Choose the option that better describes the functional state of the computer:
-{0}
-Functional state (empty to skip): """),
-    ]:
+    for (field, opt, cls, choices, allow_empty, msg) in _user_input_questions:
         val_dflt = get_option_default(opt, cls)
         val = val_dflt if val_dflt else choose_from_dict(choices, msg, allow_empty)
         if val:
