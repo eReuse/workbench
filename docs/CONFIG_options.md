@@ -68,6 +68,16 @@ Remplace X for:
 **D** = Serious aesthetic defects (cracked covers, broken parts)  
 **(other)** = Ask  
   
+- FUNCTIONAL_STATE = **X**
+    
+This option allows you to automatically indicate the working condition of the computers that you are going to register.  
+Remplace X for:  
+**A** = Brand new device  
+**B** = Used, but no functional defects  
+**C** = Light functional defects (soft noises, dead pixels, erased key labels)  
+**D** = Serious functional defects (loud noises, annoying audio/video artifacts, missing keys)  
+**(other)** = Ask  
+  
 - OFFLINE = **X**  *(Not implemented)*  
   
 This option allow to upload the inventory to the web server automatically. By default is set to `yes`.  

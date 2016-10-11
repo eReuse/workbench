@@ -55,6 +55,16 @@ VISUAL_STATES = collections.OrderedDict([
     (ComputerState.new,
      "Brand new device"),
 ])
+FUNCTIONAL_STATES = collections.OrderedDict([
+    (ComputerState.broken,
+     "Serious functional defects (loud noises, annoying audio/video artifacts, missing keys)"),
+    (ComputerState.ugly,
+     "Light functional defects (soft noises, dead pixels, erased key labels)"),
+    (ComputerState.used,
+     "Used, but no remarkable functional defects"),
+    (ComputerState.new,
+     "Brand new device"),
+])
 
 def get_user_input():
     user_input = {}
@@ -107,6 +117,16 @@ Visual state (empty to skip): """,
         allow_empty=True)
     if vstate:
         user_input['visualState'] = vstate
+    # Ask user for the device's functional state.
+    fstate_dflt = get_option_default('FUNCTIONAL_STATE', ComputerState)
+    fstate = fstate_dflt if fstate_dflt else choose_from_dict(
+        FUNCTIONAL_STATES, """\
+Choose the option that better describes the functional state of the computer:
+{0}
+Functional state (empty to skip): """,
+        allow_empty=True)
+    if fstate:
+        user_input['functionalState'] = fstate
     
     return user_input
 
