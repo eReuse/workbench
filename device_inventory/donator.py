@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import argparse
+import collections
 import ConfigParser
+import enum
 import json
 import logging
 import logging.config
@@ -31,6 +33,29 @@ def setup_logging(default_path='config_logging.json',
     else:
         logging.basicConfig(level=default_level)
 
+# Similar to US academic grading.
+class ComputerCondition(enum.Enum):
+    new = 'A'
+    used = 'B'
+    ugly = 'C'
+    broken = 'D'
+
+# The order may be used as a hint when asking questions
+# about this feature.
+# This order puts the most informative choice first,
+# so that choosing one option makes the following ones
+# unnecessary to be read.
+CONDITIONS = collections.OrderedDict([
+    (ComputerCondition.broken,
+     "Defects affecting functionality (broken mechanisms, missing buttons, "
+     "audio/video artifacts, strange noises)"),
+    (ComputerCondition.ugly,
+     "Purely aesthetic defects (scratches, dents, decoloration)"),
+    (ComputerCondition.used,
+     "Used, but no remarkable aesthetic defects"),
+    (ComputerCondition.new,
+     "Brand new device"),
+])
 
 def get_user_input():
     user_input = {}
@@ -71,9 +96,9 @@ def get_user_input():
         Computer.TYPES, "Choose device type:\n{0}\nType: ")
     user_input['device_type'] = type_
     # Ask user for the device condition.
-    cond_dflt = get_option_default('CONDITION', Computer.Condition)
+    cond_dflt = get_option_default('CONDITION', ComputerCondition)
     cond = cond_dflt if cond_dflt else choose_from_dict(
-        Computer.CONDITIONS, "Choose device condition:\n{0}\nCondition: ")
+        CONDITIONS, "Choose device condition:\n{0}\nCondition: ")
     user_input['condition'] = cond
     
     return user_input
