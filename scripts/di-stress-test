@@ -16,5 +16,13 @@ MEM_KiB=$(sed -rn 's/^MemAvailable:\s*([0-9]+) kB.*/\1/p' /proc/meminfo)
 # Exclude a percentage of available memory for the stress processes themselves.
 MEM_WORKER_KiB=$(((MEM_KiB/NCORES)*90/100))
 
+echo
 echo "Performing stress test for $STRESS_MINUTES minutes, press Ctrl+C at any time to cancel."
 stress -c "$NCORES" -m "$NCORES" --vm-bytes "${MEM_WORKER_KiB}K" -t "${STRESS_MINUTES}m"
+ret=$?
+if [ $ret -eq 0 ]; then
+    echo "Stress test succeeded."
+else
+    echo "Stress test failed, please note this down."
+fi
+exit $ret
