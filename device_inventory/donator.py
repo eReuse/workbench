@@ -73,7 +73,7 @@ def get_user_input():
             default_val = None
         return default_val
 
-    def choose_from_dict(val_to_desc, msg_template):
+    def choose_from_dict(val_to_desc, msg_template, allow_empty=False):
         entry_to_item = dict(enumerate(val_to_desc.items(), start=1))
         choice_msg = '\n' + msg_template.format(
             '\n'.join('%d. %s' % (idx, desc)
@@ -83,8 +83,11 @@ def get_user_input():
         while entry not in entry_to_item:
             if entry is not None:
                 print("Invalid choice, please try again.")
+            input_ = raw_input(choice_msg)
+            if not input_.strip() and allow_empty:
+                return None
             try:
-                entry = int(raw_input(choice_msg))
+                entry = int(input_)
             except ValueError:
                 entry = -1  # invalid and not none
         (val, desc) = entry_to_item[entry]
@@ -98,7 +101,8 @@ def get_user_input():
     # Ask user for the device condition.
     cond_dflt = get_option_default('CONDITION', ComputerCondition)
     cond = cond_dflt if cond_dflt else choose_from_dict(
-        CONDITIONS, "Choose device condition:\n{0}\nCondition: ")
+        CONDITIONS, "Choose device condition:\n{0}\nCondition (empty to skip): ",
+        allow_empty=True)
     user_input['condition'] = cond
     
     return user_input
