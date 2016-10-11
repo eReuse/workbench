@@ -102,31 +102,28 @@ def get_user_input():
         (val, desc) = entry_to_item[entry]
         return val
     
-    # Ask user for choosing the Device.type
-    type_dflt = get_option_default('EQUIP', Computer.Type)
-    type_ = type_dflt if type_dflt else choose_from_dict(
-        Computer.TYPES, "Choose device type:\n{0}\nType: ")
-    user_input['device_type'] = type_
-    # Ask user for the device's visual state.
-    vstate_dflt = get_option_default('VISUAL_STATE', ComputerState)
-    vstate = vstate_dflt if vstate_dflt else choose_from_dict(
-        VISUAL_STATES, """\
+    # Ask the user for several choice questions.
+    for (field, opt, cls, choices, allow_empty, msg) in [
+            # Device type
+            ('device_type', 'EQUIP', Computer.Type, Computer.TYPES, False,
+             "Choose device type:\n{0}\nType: "),
+            # Visual state
+            ('visualState', 'VISUAL_STATE', ComputerState, VISUAL_STATES, True,
+             """\
 Choose the option that better describes the visual state of the computer:
 {0}
-Visual state (empty to skip): """,
-        allow_empty=True)
-    if vstate:
-        user_input['visualState'] = vstate
-    # Ask user for the device's functional state.
-    fstate_dflt = get_option_default('FUNCTIONAL_STATE', ComputerState)
-    fstate = fstate_dflt if fstate_dflt else choose_from_dict(
-        FUNCTIONAL_STATES, """\
+Visual state (empty to skip): """),
+            # Functional state
+            ('functionalState', 'FUNCTIONAL_STATE', ComputerState, FUNCTIONAL_STATES, True,
+             """\
 Choose the option that better describes the functional state of the computer:
 {0}
-Functional state (empty to skip): """,
-        allow_empty=True)
-    if fstate:
-        user_input['functionalState'] = fstate
+Functional state (empty to skip): """),
+    ]:
+        val_dflt = get_option_default(opt, cls)
+        val = val_dflt if val_dflt else choose_from_dict(choices, msg, allow_empty)
+        if val:
+            user_input[field] = val
     
     return user_input
 
