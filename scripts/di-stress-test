@@ -11,9 +11,9 @@ if [ -z "$STRESS_MINUTES" -o "$STRESS_MINUTES" = 0 ]; then
 fi
 
 NCORES=$(egrep '^processor\b' /proc/cpuinfo | wc -l)
-MEM_MiB=$(free -m | sed -nr 's/^Mem:\s*([0-9]+).*/\1/p')
+MEM_KiB=$(sed -rn 's/^MemAvailable:\s*([0-9]+) kB.*/\1/p' /proc/meminfo)
 
-MEM_WORKER_MiB=$((MEM_MiB/NCORES))
+MEM_WORKER_KiB=$((MEM_KiB/NCORES))
 
 echo "Performing stress test for $STRESS_MINUTES minutes, press Ctrl+C at any time to cancel."
-stress -v -c "$NCORES" -m "$NCORES" --vm-bytes "${MEM_WORKER_MiB}M" -t "${STRESS_MINUTES}m"
+stress -v -c "$NCORES" -m "$NCORES" --vm-bytes "${MEM_WORKER_KiB}K" -t "${STRESS_MINUTES}m"
