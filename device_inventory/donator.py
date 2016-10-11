@@ -106,7 +106,7 @@ Choose the option that better describes the visual state of the computer:
 Visual state (empty to skip): """,
         allow_empty=True)
     if vstate:
-        user_input['visual_state'] = vstate
+        user_input['visualState'] = vstate
     
     return user_input
 
