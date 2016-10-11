@@ -11,6 +11,7 @@ from device_inventory import eraser, serializers, storage, utils
 from device_inventory.conf import settings
 from device_inventory.benchmark import benchmark_hdd
 from device_inventory.inventory import Computer
+from device_inventory.utils import InventoryJSONEncoder as InvEncoder
 
 
 def setup_logging(default_path='config_logging.json',
@@ -155,11 +156,11 @@ def main(argv=None):
     filename = "{0}.json".format(device.verbose_name)  # get_option
     localpath = os.path.join("/tmp", filename)
     with open(localpath, "w") as outfile:
-        json.dump(data, outfile, indent=4, sort_keys=True)
+        json.dump(data, outfile, indent=4, sort_keys=True, cls=InvEncoder)
     
     # sign output
     if settings.getboolean('signature', 'sign_output'):
-        signed_data = utils.sign_data(json.dumps(data, indent=4, sort_keys=True))
+        signed_data = utils.sign_data(json.dumps(data, indent=4, sort_keys=True, cls=InvEncoder))
         filename = "{0}.json.asc".format(device.verbose_name)
         localpath = os.path.join("/tmp", filename)
         with open(localpath, "w") as outfile:

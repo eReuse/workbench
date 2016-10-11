@@ -1,4 +1,5 @@
 import fcntl
+import json
 import gnupg
 import os
 import shutil
@@ -109,3 +110,9 @@ def sign_data(data):
     shutil.rmtree(workspace)
     
     return sig.data
+
+class InventoryJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj, 'value'):  # an enumerated value
+            return obj.value
+        return json.JSONEncoder.default(self, obj)
