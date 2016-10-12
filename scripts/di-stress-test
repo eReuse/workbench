@@ -1,0 +1,28 @@
+#!/bin/sh
+# Run stress test on CPU (one thread per core) and RAM (one thread per core,
+# totalling all main memory available to user processes).
+
+CONFIG_FILE=/tmp/remote_custom_config.ini
+STRESS_MINUTES=$(sed -rn 's/^\s*STRESS\s*=\s*([^\s+]).*/\1/p' "$CONFIG_FILE")
+
+if [ -z "$STRESS_MINUTES" -o "$STRESS_MINUTES" = 0 ]; then
+    echo "Skipping stress test (not enabled in remote configuration file)."
+    exit 0
+fi
+
+NCORES=$(egrep '^processor\b' /proc/cpuinfo | wc -l)
+MEM_KiB=$(sed -rn 's/^MemAvailable:\s*([0-9]+) kB.*/\1/p' /proc/meminfo)
+
+# Exclude a percentage of available memory for the stress processes themselves.
+MEM_WORKER_KiB=$(((MEM_KiB/NCORES)*90/100))
+
+echo
+echo "Performing stress test for $STRESS_MINUTES minutes, press Ctrl+C at any time to cancel."
+stress -c "$NCORES" -m "$NCORES" --vm-bytes "${MEM_WORKER_KiB}K" -t "${STRESS_MINUTES}m"
+ret=$?
+if [ $ret -eq 0 ]; then
+    echo "Stress test succeeded."
+else
+    echo "Stress test failed, please note this down."
+fi
+exit $ret

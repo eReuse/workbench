@@ -87,6 +87,10 @@ Remplace X for:
 **short** = do a short SMART on hard drive *(this process takes one minute approximately)*  
 **long** = do a long SMART on hard drive *(this process takes 70 minutes approximately)*  
   
+- STRESS = **X**  
+  
+Perform a CPU and memory stress test for X minutes. By default is set to `0` (i.e. no stress test).  
+  
 DEBUG = **X**  
   
 Add full log of hardware to inventory (json) file for a better debugging. Default is set to `no`.  

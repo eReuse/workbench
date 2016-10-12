@@ -52,7 +52,7 @@ apt-get -y install git-core python-pip  # vim
 # NOTE on ubuntu python-dev is required to install paramiko (pycrypto)
 # device-inventory requirements
 # TODO read from requirements.txt
-apt-get install -y gnupg lshw dmidecode python-dev python-dmidecode python-lxml smartmontools usbmount python-dateutil
+apt-get install -y gnupg lshw dmidecode stress python-dev python-dmidecode python-lxml smartmontools usbmount python-dateutil
 
 # paramiko pyudev pySMART
 pip install -r https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/requirements.txt
@@ -95,7 +95,7 @@ nano /etc/systemd/system/getty.target.wants/getty@tty1.service
 # change the line for: ExecStart=/sbin/agetty --noclear --autologin ubuntu %I $TERM
 
 # Autostart
-echo "clear ; sudo device-inventory" >> /home/ubuntu/.profile
+echo "clear ; sudo device-inventory ; di-stress-test" >> /home/ubuntu/.profile
 
 # delete temporary files
 rm -rf /tmp/* ~/.bash_history
