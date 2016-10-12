@@ -34,7 +34,7 @@ def setup_logging(default_path='config_logging.json',
         logging.basicConfig(level=default_level)
 
 # Similar to US academic grading.
-class ComputerState(enum.Enum):
+class ComputerGrade(enum.Enum):
     new = 'A'
     used = 'B'
     ugly = 'C'
@@ -45,24 +45,24 @@ class ComputerState(enum.Enum):
 # This order puts the most informative choice first,
 # so that choosing one option makes the following ones
 # unnecessary to be read.
-VISUAL_STATES = collections.OrderedDict([
-    (ComputerState.broken,
+VISUAL_GRADES = collections.OrderedDict([
+    (ComputerGrade.broken,
      "Serious aesthetic defects (cracked covers, broken parts)"),
-    (ComputerState.ugly,
+    (ComputerGrade.ugly,
      "Light aesthetic defects (scratches, dents, decoloration)"),
-    (ComputerState.used,
+    (ComputerGrade.used,
      "Used, but no remarkable aesthetic defects"),
-    (ComputerState.new,
+    (ComputerGrade.new,
      "Brand new device"),
 ])
-FUNCTIONAL_STATES = collections.OrderedDict([
-    (ComputerState.broken,
+FUNCTIONAL_GRADES = collections.OrderedDict([
+    (ComputerGrade.broken,
      "Serious functional defects (loud noises, annoying audio/video artifacts, missing keys)"),
-    (ComputerState.ugly,
+    (ComputerGrade.ugly,
      "Light functional defects (soft noises, dead pixels, erased key labels)"),
-    (ComputerState.used,
+    (ComputerGrade.used,
      "Used, but no remarkable functional defects"),
-    (ComputerState.new,
+    (ComputerGrade.new,
      "Brand new device"),
 ])
 
@@ -72,18 +72,18 @@ _user_input_questions = [
     # Device type
     ('device_type', 'EQUIP', Computer.Type, Computer.TYPES, False,
      "Choose device type:\n{0}\nType: "),
-    # Visual state
-    ('visual_state', 'VISUAL_STATE', ComputerState, VISUAL_STATES, True,
+    # Visual grade
+    ('visual_grade', 'VISUAL_GRADE', ComputerGrade, VISUAL_GRADES, True,
      """\
-Choose the option that better describes the visual state of the computer:
+Choose the option that better describes the visual grade of the computer:
 {0}
-Visual state (empty to skip): """),
-    # Functional state
-    ('functional_state', 'FUNCTIONAL_STATE', ComputerState, FUNCTIONAL_STATES, True,
+Visual grade (empty to skip): """),
+    # Functional grade
+    ('functional_grade', 'FUNCTIONAL_GRADE', ComputerGrade, FUNCTIONAL_GRADES, True,
      """\
-Choose the option that better describes the functional state of the computer:
+Choose the option that better describes the functional grade of the computer:
 {0}
-Functional state (empty to skip): """),
+Functional grade (empty to skip): """),
 ]
 
 def get_user_input():

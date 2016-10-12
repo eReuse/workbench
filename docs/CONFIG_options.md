@@ -58,7 +58,7 @@ Remplace X for:
 **yes** = ask for LABEL  
 **no** = don't ask for  
   
-- VISUAL_STATE = **X**
+- VISUAL_GRADE = **X**
     
 This option allows you to automatically indicate the aesthetic condition of the computers that you are going to register.  
 Remplace X for:  
@@ -68,7 +68,7 @@ Remplace X for:
 **D** = Serious aesthetic defects (cracked covers, broken parts)  
 **(other)** = Ask  
   
-- FUNCTIONAL_STATE = **X**
+- FUNCTIONAL_GRADE = **X**
     
 This option allows you to automatically indicate the working condition of the computers that you are going to register.  
 Remplace X for:  
