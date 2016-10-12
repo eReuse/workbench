@@ -12,14 +12,14 @@ This guide will explain you every option in config.ini file.
 
 - EQUIP = **X**
     
-This option allows you to automatically select the computers that you are going to register. By default is set to `0`.  
+This option allows you to automatically select the computers that you are going to register.  
 Remplace X for:  
-**0** = Ask  
-**1** = Desktop  
-**2** = Laptop  
-**3** = Netbook  
-**4** = Server  
-**5** = Microtower  
+**Desktop**  
+**Laptop**  
+**Netbook**  
+**Server**  
+**Microtower**  
+**(other)** = Ask  
   
 - PID = **X**  
   
@@ -57,6 +57,26 @@ Used for describe if computer have something in bad state or send some message t
 Remplace X for:  
 **yes** = ask for LABEL  
 **no** = don't ask for  
+  
+- VISUAL_STATE = **X**
+    
+This option allows you to automatically indicate the aesthetic condition of the computers that you are going to register.  
+Remplace X for:  
+**A** = Brand new device  
+**B** = Used, but no aesthetic defects  
+**C** = Light aesthetic defects (scratches, dents, decoloration)  
+**D** = Serious aesthetic defects (cracked covers, broken parts)  
+**(other)** = Ask  
+  
+- FUNCTIONAL_STATE = **X**
+    
+This option allows you to automatically indicate the working condition of the computers that you are going to register.  
+Remplace X for:  
+**A** = Brand new device  
+**B** = Used, but no functional defects  
+**C** = Light functional defects (soft noises, dead pixels, erased key labels)  
+**D** = Serious functional defects (loud noises, annoying audio/video artifacts, missing keys)  
+**(other)** = Ask  
   
 - OFFLINE = **X**  *(Not implemented)*  
   

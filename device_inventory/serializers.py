@@ -48,6 +48,14 @@ def export_to_devicehub_schema(device, user_input=None, debug=False):
     
     # Include user's custom fields (e.g. label, comment)
     snapshot.update(user_input)
+    # Move visual and functional state to a more structured format.
+    state = {}
+    for state_name in ['visual', 'functional']:
+        state_value = snapshot.pop(state_name + '_state', None)
+        if state_value:
+            state[state_name] = {'general': state_value}
+    if state:
+        snapshot['state'] = state
     
     # Include full output (debugging purposes)
     if debug:

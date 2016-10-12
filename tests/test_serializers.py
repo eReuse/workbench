@@ -3,13 +3,14 @@ import subprocess
 import unittest
 
 from device_inventory import inventory, serializers
+from device_inventory.utils import InventoryJSONEncoder as InvEncoder
 
 class TestDeviceHubSerializer(unittest.TestCase):
     DEBUG = True
     
     def write_output(self, data, filename):
         with open(filename, "w") as outfile:
-            json.dump(data, outfile, indent=4, sort_keys=True)
+            json.dump(data, outfile, indent=4, sort_keys=True, cls=InvEncoder)
 
         print(subprocess.check_output(["cat", filename]))
         

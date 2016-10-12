@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 import argparse
+import collections
+import ConfigParser
+import enum
 import json
 import logging
 import logging.config
@@ -10,6 +13,7 @@ from device_inventory import eraser, serializers, storage, utils
 from device_inventory.conf import settings
 from device_inventory.benchmark import benchmark_hdd
 from device_inventory.inventory import Computer
+from device_inventory.utils import InventoryJSONEncoder as InvEncoder
 
 
 def setup_logging(default_path='config_logging.json',
@@ -29,6 +33,58 @@ def setup_logging(default_path='config_logging.json',
     else:
         logging.basicConfig(level=default_level)
 
+# Similar to US academic grading.
+class ComputerState(enum.Enum):
+    new = 'A'
+    used = 'B'
+    ugly = 'C'
+    broken = 'D'
+
+# The order may be used as a hint when asking questions
+# about this feature.
+# This order puts the most informative choice first,
+# so that choosing one option makes the following ones
+# unnecessary to be read.
+VISUAL_STATES = collections.OrderedDict([
+    (ComputerState.broken,
+     "Serious aesthetic defects (cracked covers, broken parts)"),
+    (ComputerState.ugly,
+     "Light aesthetic defects (scratches, dents, decoloration)"),
+    (ComputerState.used,
+     "Used, but no remarkable aesthetic defects"),
+    (ComputerState.new,
+     "Brand new device"),
+])
+FUNCTIONAL_STATES = collections.OrderedDict([
+    (ComputerState.broken,
+     "Serious functional defects (loud noises, annoying audio/video artifacts, missing keys)"),
+    (ComputerState.ugly,
+     "Light functional defects (soft noises, dead pixels, erased key labels)"),
+    (ComputerState.used,
+     "Used, but no remarkable functional defects"),
+    (ComputerState.new,
+     "Brand new device"),
+])
+
+# Data for user choice questions:
+# (field, opt, cls, choices, allow_empty, msg)
+_user_input_questions = [
+    # Device type
+    ('device_type', 'EQUIP', Computer.Type, Computer.TYPES, False,
+     "Choose device type:\n{0}\nType: "),
+    # Visual state
+    ('visual_state', 'VISUAL_STATE', ComputerState, VISUAL_STATES, True,
+     """\
+Choose the option that better describes the visual state of the computer:
+{0}
+Visual state (empty to skip): """),
+    # Functional state
+    ('functional_state', 'FUNCTIONAL_STATE', ComputerState, FUNCTIONAL_STATES, True,
+     """\
+Choose the option that better describes the functional state of the computer:
+{0}
+Functional state (empty to skip): """),
+]
 
 def get_user_input():
     user_input = {}
@@ -37,22 +93,41 @@ def get_user_input():
             value = raw_input("%s: " % field).strip()
             if value:
                 user_input[field] = value
-    
-    # Ask user for choosing the Device.type
-    do_equip = settings.get('DEFAULT', 'EQUIP')
-    CHOICES = dict((key, value) for value, key in Computer.TYPES)
-    formated_choices = "\n".join(["{0}. {1}".format(k,v) for k, v in CHOICES.items()])
-    choose_msg = "Choose device type \n{0}\nType: ".format(formated_choices)
-    device_type = None
-    while device_type not in CHOICES.keys():
+
+    def get_option_default(opt_name, opt_class):
         try:
-            if do_equip in ["1", "2", "3", "4", "5"]:
-                device_type = int(do_equip)
-            else:
-                device_type = int(raw_input(choose_msg))
-        except ValueError:
-            print("Invalid choice.")
-    user_input['device_type'] = CHOICES[device_type]
+            default_opt = settings.get('DEFAULT', opt_name)
+            default_val = opt_class(default_opt)
+        except (ConfigParser.NoOptionError, ValueError):
+            default_val = None
+        return default_val
+
+    def choose_from_dict(val_to_desc, msg_template, allow_empty=False):
+        entry_to_item = dict(enumerate(val_to_desc.items(), start=1))
+        choice_msg = '\n' + msg_template.format(
+            '\n'.join('%d. %s' % (idx, desc)
+                      for (idx, (_, desc)) in entry_to_item.items())
+        )
+        entry = None
+        while entry not in entry_to_item:
+            if entry is not None:
+                print("Invalid choice, please try again.")
+            input_ = raw_input(choice_msg)
+            if not input_.strip() and allow_empty:
+                return None
+            try:
+                entry = int(input_)
+            except ValueError:
+                entry = -1  # invalid and not none
+        (val, desc) = entry_to_item[entry]
+        return val
+    
+    # Ask the user for several choice questions.
+    for (field, opt, cls, choices, allow_empty, msg) in _user_input_questions:
+        val_dflt = get_option_default(opt, cls)
+        val = val_dflt if val_dflt else choose_from_dict(choices, msg, allow_empty)
+        if val:
+            user_input[field] = val
     
     return user_input
 
@@ -133,11 +208,11 @@ def main(argv=None):
     filename = "{0}.json".format(device.verbose_name)  # get_option
     localpath = os.path.join("/tmp", filename)
     with open(localpath, "w") as outfile:
-        json.dump(data, outfile, indent=4, sort_keys=True)
+        json.dump(data, outfile, indent=4, sort_keys=True, cls=InvEncoder)
     
     # sign output
     if settings.getboolean('signature', 'sign_output'):
-        signed_data = utils.sign_data(json.dumps(data, indent=4, sort_keys=True))
+        signed_data = utils.sign_data(json.dumps(data, indent=4, sort_keys=True, cls=InvEncoder))
         filename = "{0}.json.asc".format(device.verbose_name)
         localpath = os.path.join("/tmp", filename)
         with open(localpath, "w") as outfile:
