@@ -73,13 +73,13 @@ _user_input_questions = [
     ('device_type', 'EQUIP', Computer.Type, Computer.TYPES, False,
      "Choose device type:\n{0}\nType: "),
     # Visual state
-    ('visualState', 'VISUAL_STATE', ComputerState, VISUAL_STATES, True,
+    ('visual_state', 'VISUAL_STATE', ComputerState, VISUAL_STATES, True,
      """\
 Choose the option that better describes the visual state of the computer:
 {0}
 Visual state (empty to skip): """),
     # Functional state
-    ('functionalState', 'FUNCTIONAL_STATE', ComputerState, FUNCTIONAL_STATES, True,
+    ('functional_state', 'FUNCTIONAL_STATE', ComputerState, FUNCTIONAL_STATES, True,
      """\
 Choose the option that better describes the functional state of the computer:
 {0}
