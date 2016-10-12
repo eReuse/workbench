@@ -3,7 +3,7 @@
 
 # Options for "config.ini"
 
-Guide version: 7.0.3  
+Guide version: 7.1.0  
 
 This guide will explain you every option in config.ini file.  
 

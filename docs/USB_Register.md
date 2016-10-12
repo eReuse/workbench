@@ -3,7 +3,7 @@
 
 # eReuse: How to register via USB 
 
-Guide version: 7.0.3
+Guide version: 7.1.0
 
 ####1. Download the eReuseOS image
   1. Go to [our repository](https://github.com/eReuse/Device-Inventory/releases/latest) and download the latest ISO.
