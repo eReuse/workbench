@@ -50,12 +50,12 @@ def export_to_devicehub_schema(device, user_input=None, debug=False):
     snapshot.update(user_input)
     # Move visual and functional grade to a more structured format.
     grade = {}
-    for grade_name in ['visual', 'functional']:
+    for grade_name in ['appearance', 'functionality']:
         grade_value = snapshot.pop(grade_name + '_grade', None)
         if grade_value:
             grade[grade_name] = {'general': grade_value}
     if grade:
-        snapshot['grade'] = grade
+        snapshot['condition'] = grade
     
     # Include full output (debugging purposes)
     if debug:

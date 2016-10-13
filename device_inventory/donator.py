@@ -73,13 +73,13 @@ _user_input_questions = [
     ('device_type', 'EQUIP', Computer.Type, Computer.TYPES, False,
      "Choose device type:\n{0}\nType: "),
     # Visual grade
-    ('visual_grade', 'VISUAL_GRADE', ComputerGrade, VISUAL_GRADES, True,
+    ('appearance_grade', 'VISUAL_GRADE', ComputerGrade, VISUAL_GRADES, True,
      """\
 Choose the option that better describes the visual grade of the computer:
 {0}
 Visual grade (empty to skip): """),
     # Functional grade
-    ('functional_grade', 'FUNCTIONAL_GRADE', ComputerGrade, FUNCTIONAL_GRADES, True,
+    ('functionality_grade', 'FUNCTIONAL_GRADE', ComputerGrade, FUNCTIONAL_GRADES, True,
      """\
 Choose the option that better describes the functional grade of the computer:
 {0}
