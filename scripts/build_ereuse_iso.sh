@@ -120,8 +120,9 @@ sudo sed -i '/casper/d' extract-cd/casper/filesystem.manifest-desktop
 # remove previous squashfs
 sudo rm -f extract-cd/casper/filesystem.squashfs
 
-# create new squashfs using same compression as initrd, skip boot dir to save some space
-sudo mksquashfs edit extract-cd/casper/filesystem.squashfs -comp lzma -e edit/boot
+# Create new squashfs using default compression, skip boot dir to save some space.
+# LZMA is currently not supported even if the initramfs uses it for compression.
+sudo mksquashfs edit extract-cd/casper/filesystem.squashfs -e edit/boot
 
 # Update the filesystem.size file, which is needed by the installer:
 printf $(sudo du -sx --block-size=1 edit | cut -f1) > extract-cd/casper/filesystem.size
