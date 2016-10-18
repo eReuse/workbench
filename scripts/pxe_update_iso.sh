@@ -1,5 +1,5 @@
 # Copy to the PXE Server
-ISO="eReuseOS_v7.1.0a3.iso"
+ISO="eReuseOS_v7.1a4.iso"
 scp $ISO xsr@192.168.2.2:/var/lib/tftpboot/iso/XSR_1.6-Desktop.iso
 
 # Login and replace the old one with the new one
