@@ -12,7 +12,7 @@ connected on the LAN network.
   - [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
   - [eReusePXEserver-<VERSION>.ova](https://github.com/eReuse/device-inventory/releases/latest)
   - [eReuseOS-<VERSION>.iso](https://github.com/eReuse/device-inventory/releases/latest)
-  - Some Ubuntu-derived installation ISO to optionally install in computers, [lubuntu-<...>.iso](http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/)
+  - Optionally, some Ubuntu-derived installation ISO to optionally install in computers, e.g. [lubuntu-<...>.iso](http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/)
 - Switch
 - Network cables
 - PC to register
@@ -25,7 +25,7 @@ connected on the LAN network.
   1. Adapter 1 should be on Ethernet (cable) interface with others computer (to be registed): ![Virtualbox network](./images/virtualbox-network.png)
   2. Adapter 2 should be on NAT if you have a second ethernet slot or WiFi adapter.
 4. Insert [DeviceInventory](https://github.com/eReuse/device-inventory/releases/latest) (download it from Downloads section, at the bottom) as primary CD media: ![Virtualbox disk](./images/virtualbox-disk.png)
-5. Insert Ubuntu ISO as secondary CD media: ![Virtualbox disk](./images/virtualbox-disk.png)
+5. If you have it, insert Ubuntu ISO as secondary CD media: ![Virtualbox disk](./images/virtualbox-disk.png)
 6. Run the virtual server and wait until it asks for *login*. There is no need for login. Now you [can start registering your computers](#register-a-computer), or [configure the server to automate tasks](#configure-iso-options)
 
 ####Register a computer
