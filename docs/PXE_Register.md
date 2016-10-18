@@ -12,6 +12,7 @@ connected on the LAN network.
   - [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
   - [eReusePXE_CD-ROUTER.ova](https://github.com/eReuse/device-inventory/releases/latest)
   - [eReuseOS_vX.iso](https://github.com/eReuse/device-inventory/releases/latest)
+  - Some Ubuntu-derived installation ISO to optionally install in computers, [lubuntu-X.iso](http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/)
 - Switch
 - Network cables
 - PC to register
@@ -23,8 +24,9 @@ connected on the LAN network.
 3. Check the network configuration on VirtualBox.
   1. Adapter 1 should be on Ethernet (cable) interface with others computer (to be registed): ![Virtualbox network](./images/virtualbox-network.png)
   2. Adapter 2 should be on NAT if you have a second ethernet slot or WiFi adapter.
-4. Insert [DeviceInventory](https://github.com/eReuse/device-inventory/releases/latest) (download it from Downloads section, at the bottom) as CD media: ![Virtualbox disk](./images/virtualbox-disk.png)
-5. Run the virtual server and wait until it asks for *login*. There is no need for login. Now you [can start registering your computers](#register-a-computer), or [configure the server to automate tasks](#configure-iso-options)
+4. Insert [DeviceInventory](https://github.com/eReuse/device-inventory/releases/latest) (download it from Downloads section, at the bottom) as first CD media: ![Virtualbox disk](./images/virtualbox-disk.png)
+5. Insert Ubuntu ISO as second CD media: ![Virtualbox disk](./images/virtualbox-disk.png)
+6. Run the virtual server and wait until it asks for *login*. There is no need for login. Now you [can start registering your computers](#register-a-computer), or [configure the server to automate tasks](#configure-iso-options)
 
 ####Register a computer
 1. Connect a PC on the LAN network.
@@ -40,6 +42,9 @@ connected on the LAN network.
 5. The file will be automatically uploaded to the PXE Server, but you can still copy it too to a USB memory stick.
 
 The generated files of all computers will be stored in a public folder in the PXE Server. To access the folder write, on the host machine, `\\192.168.2.2\` in Windows Explorer, or `smb://192.168.2.2/` in a Linux console or after pressing <kbd>⌘</kbd><kbd>K</kbd> in Mac's Finder, and access as the public user (which can be called guest, public or anonymous).
+
+####Install a computer
+After registering the computer, you may want to perform an installation from the Ubuntu ISO that you attached to the server. To do it, reboot the computer (with Ctrl+Alt+Supr or by running ``sudo reboot``) and ensure that it boots again via PXE (see the previous section). As soon as the ``boot:`` prompt appears, be quick to hit Tab to see the boot options. Besides the ``eReuse`` option (which is used to run the computer registration, as explained before), you should be able to enter ``Ubuntu`` and boot the installer.
 
 ####Configure ISO options
 You can automatize tasks of DeviceInventory by modifying the configuration file ([config.ini](https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/config.ini)). For example, you can set to always erase disks in a specific way, so the system will not ask the user about this, avoiding spending time and user errors. To modify the configuration file on the server, do the following:
