@@ -120,11 +120,8 @@ sudo sed -i '/casper/d' extract-cd/casper/filesystem.manifest-desktop
 # remove previous squashfs
 sudo rm -f extract-cd/casper/filesystem.squashfs
 
-# highest compression (~3min) FIXME xz compression is not compatible
-#sudo mksquashfs edit extract-cd/casper/filesystem.squashfs -comp xz -e edit/boot
-
-# XXX NO COMPRESSION - DEBUG PURPOSES (~1min)
-sudo mksquashfs edit extract-cd/casper/filesystem.squashfs -e edit/boot
+# create new squashfs using same compression as initrd, skip boot dir to save some space
+sudo mksquashfs edit extract-cd/casper/filesystem.squashfs -comp lzma -e edit/boot
 
 # Update the filesystem.size file, which is needed by the installer:
 printf $(sudo du -sx --block-size=1 edit | cut -f1) > extract-cd/casper/filesystem.size
