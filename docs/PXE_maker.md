@@ -11,6 +11,7 @@ This guide will allow you to make a PXE server and boot computers via ethernet n
 1. You can find the newest stable Debian Server [here](http://debian.xfree.com.ar/debian-cd/current/amd64/iso-cd/)
   - Netinst mode recommended.
 2. Download the latest release of eReuseOS image from [here](https://github.com/eReuse/device-inventory/releases/latest)
+3. Download the installation ISO of the OS you want to install in clients (we will be using 32-bit Lubuntu from [here](http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/) as an example, but any other 32-bit Ubuntu will do)
 
 ####Services 
 On this guide, you will install the following services:
@@ -22,6 +23,7 @@ On this guide, you will install the following services:
 - Clients receive DHCP network parameters: IP of BOOTP server that is serving network boot image and the name of the network image.
 - Clients asks for the network image via TFTP, then load and run it.
 - When network image starts to run, loads the kernel of the system and mount the filesystem via NFS.
+- On reboot, the user can choose to run the installation ISO from the network.
 
 ##Installation
 ####1. Install the services and get all files needed
@@ -35,6 +37,7 @@ Download all files we need:
 ```
 wget http://kaplah.org/system/files/field/files/pxelinux.tar.gz
 wget https://github.com/eReuse/device-inventory/releases/download/v7.1.0a3/eReuseOS_v7.1.0a3.iso
+wget http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/lubuntu-16.04.1-desktop-i386.iso
 wget -O /home/ereuse/config.ini https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/config.ini
 ```
 
@@ -146,7 +149,8 @@ nano /etc/exports
 Add the following lines:
 ```
 /var/lib/tftpboot/ks *(no_root_squash,no_subtree_check,ro)
-/var/lib/tftpboot/mnt/eReuseOS_iso *(no_root_squash,no_subtree_check,ro)
+/var/lib/tftpboot/mnt/eReuse_image *(no_root_squash,no_subtree_check,ro)
+/var/lib/tftpboot/mnt/Ubuntu_image *(no_root_squash,no_subtree_check,ro)
 ```
 
 ####5. Configure TFTP final step
@@ -162,14 +166,16 @@ Make all the folders that we will use for the configuration:
 mkdir iso mnt ks
 ```
 
-Move the iso to `/var/lib/tftpboot/iso`:
+Move the isos to `/var/lib/tftpboot/iso`:
 ```
 mv ~/eReuseOS_v7.1.0a3.iso iso
+mv ~/lubuntu-16.04.1-desktop-i386.iso iso
 ```
 
-Make the dir to mount the eReuseOS iso. This is the folder that will be shared on network:
+Make the dir to mount the eReuseOS iso. These are the folders that will be shared on network:
 ```
-mkdir mnt/eReuseOS_iso/
+mkdir mnt/eReuse_image/
+mkdir mnt/Ubuntu_image/
 ```
 
 Now edit `/etc/fstab` to mount it when server starts:
@@ -177,15 +183,17 @@ Now edit `/etc/fstab` to mount it when server starts:
 nano /etc/fstab
 ```
 
-Add the line:
+Add the lines:
 ```
-/var/lib/tftpboot/iso/eReuseOS_v7.1.0a3.iso /var/lib/tftpboot/mnt/eReuseOS_iso iso9660 user,ro,loop 0 0
+/var/lib/tftpboot/iso/eReuseOS_v7.1.0a3.iso /var/lib/tftpboot/mnt/eReuse_image iso9660 user,ro,loop 0 0
+/var/lib/tftpboot/iso/lubuntu-16.04.1-desktop-i386.iso /var/lib/tftpboot/mnt/Ubuntu_image iso9660 user,ro,loop 0 0
 ```
 
-Test if is automounted with:
+Test they are automounted with:
 ```
 mount -a
-ls -l mnt/eReuseOS_iso/
+ls -l mnt/eReuse_image/
+ls -l mnt/Ubuntu_image/
 ```
 
 Reload NFS service:
@@ -206,13 +214,21 @@ nano pxelinux.cfg/default
 
 Add the following lines:
 ```
-default eReuseOS
-prompt 0
+default eReuse
+prompt 1
+timeout 50
 
-LABEL eReuseOS
-    MENU LABEL eReuseOS
-        kernel mnt/eReuseOS_iso/casper/vmlinuz
-        initrd mnt/eReuseOS_iso/casper/initrd.lz
-        append boot=casper ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/eReuseOS_iso text forcepae
+LABEL eReuse
+    MENU LABEL eReuse
+        kernel mnt/eReuse_image/casper/vmlinuz
+        initrd mnt/eReuse_image/casper/initrd.lz
+        append boot=casper ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/eReuse_image text forcepae
+        IPAPPEND 2
+
+LABEL Ubuntu
+    MENU LABEL ^Ubuntu
+        kernel mnt/Ubuntu_image/casper/vmlinuz
+        initrd mnt/Ubuntu_image/casper/initrd.lz
+        append boot=casper ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/Ubuntu_image ksdevice=bootif ks=nfs:192.168.2.2:/var/lib/tftpboot/ks/ks.cfg forcepae quiet splash -- forcepae quiet splash
         IPAPPEND 2
 ```
