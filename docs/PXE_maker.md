@@ -185,8 +185,8 @@ nano /etc/fstab
 
 Add the lines:
 ```
-/var/lib/tftpboot/iso/eReuseOS_v7.1.0a3.iso /var/lib/tftpboot/mnt/eReuse_image iso9660 user,ro,loop 0 0
-/var/lib/tftpboot/iso/lubuntu-16.04.1-desktop-i386.iso /var/lib/tftpboot/mnt/Ubuntu_image iso9660 user,ro,loop 0 0
+/var/lib/tftpboot/iso/eReuseOS_v7.1.0a3.iso /var/lib/tftpboot/mnt/eReuse_image iso9660 auto,ro,loop 0 0
+/var/lib/tftpboot/iso/lubuntu-16.04.1-desktop-i386.iso /var/lib/tftpboot/mnt/Ubuntu_image iso9660 auto,ro,loop 0 0
 ```
 
 Test they are automounted with:
