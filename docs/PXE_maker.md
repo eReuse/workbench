@@ -36,7 +36,7 @@ apt-get install tftpd-hpa isc-dhcp-server nfs-kernel-server
 Download all files we need:
 ```
 wget http://kaplah.org/system/files/field/files/pxelinux.tar.gz
-wget https://github.com/eReuse/device-inventory/releases/download/v7.1a4/eReuseOS_v7.1a4.iso
+wget https://github.com/eReuse/device-inventory/releases/download/v7.1a4/eReuseOS-7.1a4.iso
 wget http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/lubuntu-16.04.1-desktop-i386.iso
 wget -O /home/ereuse/config.ini https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/config.ini
 ```
@@ -168,7 +168,7 @@ mkdir iso mnt ks
 
 Move the isos to `/var/lib/tftpboot/iso`:
 ```
-mv ~/eReuseOS_v7.1a4.iso iso
+mv ~/eReuseOS-7.1a4.iso iso
 mv ~/lubuntu-16.04.1-desktop-i386.iso iso
 ```
 
@@ -185,7 +185,7 @@ nano /etc/fstab
 
 Add the lines:
 ```
-/var/lib/tftpboot/iso/eReuseOS_v7.1a4.iso /var/lib/tftpboot/mnt/eReuse_image iso9660 ro 0 0
+/var/lib/tftpboot/iso/eReuseOS-7.1a4.iso /var/lib/tftpboot/mnt/eReuse_image iso9660 ro 0 0
 /var/lib/tftpboot/iso/lubuntu-16.04.1-desktop-i386.iso /var/lib/tftpboot/mnt/Ubuntu_image iso9660 ro,nofail 0 0
 ```
 
