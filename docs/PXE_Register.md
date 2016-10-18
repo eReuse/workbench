@@ -10,9 +10,9 @@ connected on the LAN network.
 
 - A PC with:
   - [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-  - [eReusePXE_CD-ROUTER.ova](https://github.com/eReuse/device-inventory/releases/latest)
-  - [eReuseOS_vX.iso](https://github.com/eReuse/device-inventory/releases/latest)
-  - Some Ubuntu-derived installation ISO to optionally install in computers, [lubuntu-X.iso](http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/)
+  - [eReusePXEserver-<VERSION>.ova](https://github.com/eReuse/device-inventory/releases/latest)
+  - [eReuseOS-<VERSION>.iso](https://github.com/eReuse/device-inventory/releases/latest)
+  - Some Ubuntu-derived installation ISO to optionally install in computers, [lubuntu-<...>.iso](http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/)
 - Switch
 - Network cables
 - PC to register
@@ -20,7 +20,7 @@ connected on the LAN network.
 ####Steps to install and setup the server:
 1. Disconnect any router (any DHCP provider in general) from the network. Just use the switch or hub.
 2. Install VirtualBox on any Win/Linux/Mac computer. We will call this computer as the *host*.
-2. Double click on `eReusePXE_CD.ova` to import the server on VirtualBox.
+2. Double click on `eReusePXEserver-<VERSION>.ova` to import the server on VirtualBox.
 3. Check the network configuration on VirtualBox.
   1. Adapter 1 should be on Ethernet (cable) interface with others computer (to be registed): ![Virtualbox network](./images/virtualbox-network.png)
   2. Adapter 2 should be on NAT if you have a second ethernet slot or WiFi adapter.
