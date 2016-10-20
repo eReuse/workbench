@@ -24,7 +24,7 @@ On a Debian based distribution using `apt`:
 
 And then install `device_inventory` and its requirements using `pip`:
 
-    pip install -r https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/requirements.txt
+    pip install -r https://raw.githubusercontent.com/eReuse/device-inventory/master/requirements.txt
     pip install git+https://github.com/ereuse/device-inventory.git#egg=device_inventory
 
 ## Usage
