@@ -4,6 +4,14 @@ from setuptools import setup, find_packages
 # Dynamically calculate the version
 version = __import__('device_inventory').get_version()
 
+# Collect installation requirements
+with open('requirements.txt') as reqf:
+    import re
+    dep_re = re.compile(r'^([^\s#]+)')
+    inst_reqs = [m.group(0) for m in
+                 [dep_re.match(l) for l in reqf]
+                 if m]
+
 setup(
     name="device-inventory",
     version=version,
@@ -33,4 +41,5 @@ setup(
         'Topic :: System :: Logging',
         'Topic :: Utilities',
     ],
+    install_requires=inst_reqs,
 )
