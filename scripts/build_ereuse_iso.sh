@@ -54,9 +54,6 @@ apt-get -y install git-core python-pip  # vim
 # TODO read from requirements.txt
 apt-get install -y gnupg lshw dmidecode stress python-dev python-dmidecode python-lxml smartmontools usbmount
 
-# paramiko pyudev pySMART
-pip install -r https://raw.githubusercontent.com/eReuse/device-inventory/master/requirements.txt
-
 pip install --upgrade git+https://github.com/ereuse/device-inventory.git#egg=device_inventory
 
 # Configure timezone
