@@ -1,4 +1,4 @@
-dateutil    # Extensions to the standard Python datetime module
+python-dateutil  # Extensions to the standard Python datetime module
 enum34      # Python 3.4 Enum backport
 gnupg       # A Python wrapper for GnuPG
 paramiko    # SSH2 protocol for Python
