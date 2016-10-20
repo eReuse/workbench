@@ -52,7 +52,7 @@ apt-get -y install git-core python-pip  # vim
 # NOTE on ubuntu python-dev is required to install paramiko (pycrypto)
 # device-inventory requirements
 # TODO read from requirements.txt
-apt-get install -y gnupg lshw dmidecode stress python-dev python-dmidecode python-lxml smartmontools usbmount
+apt-get install -y gnupg lshw dmidecode stress python-dev python-dmidecode smartmontools usbmount
 
 pip install --upgrade git+https://github.com/ereuse/device-inventory.git#egg=device_inventory
 
