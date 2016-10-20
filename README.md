@@ -20,7 +20,7 @@ hardware information and serial numbers for traceability.
 ## Installation
 On a Debian based distribution using `apt`:
 
-    apt-get install lshw dmidecode python-dmidecode smartmontools
+    apt-get install lshw dmidecode python-dmidecode python-lxml smartmontools
 
 And then install `device_inventory` and its requirements using `pip`:
 
