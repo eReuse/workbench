@@ -49,13 +49,9 @@ add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) univ
 apt-get update
 apt-get -y install git-core python-pip  # vim
 
-# NOTE on ubuntu python-dev is required to install paramiko (pycrypto)
 # device-inventory requirements
 # TODO read from requirements.txt
-apt-get install -y gnupg lshw dmidecode stress python-dev python-dmidecode python-lxml smartmontools usbmount python-dateutil python-enum34
-
-# paramiko pyudev pySMART
-pip install -r https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/requirements.txt
+apt-get install -y dmidecode gnupg lshw python-dmidecode smartmontools stress usbmount python-gnupg python-lxml python-paramiko
 
 pip install --upgrade git+https://github.com/ereuse/device-inventory.git#egg=device_inventory
 

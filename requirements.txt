@@ -1,0 +1,16 @@
+# Packages with platform-independent Python dependencies:
+enum34  # Python 3.4 Enum backport
+python-dateutil  # Extensions to the standard Python datetime module
+pySMART  # Wrapper for smartctl (smartmontools)
+pyudev  # A libudev binding
+tqdm  # A Fast, Extensible Progress Meter
+
+# Packages from the Debian repository:
+# deb:dmidecode
+# deb:gnupg
+# deb:lshw
+# deb:python-dmidecode
+# deb:usbmount
+
+# You may extract Debian dependencies with:
+#     sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements*.txt

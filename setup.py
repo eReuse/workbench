@@ -1,8 +1,21 @@
+import re
+
 from setuptools import setup, find_packages
 
 
 # Dynamically calculate the version
 version = __import__('device_inventory').get_version()
+
+# Collect installation requirements
+def read_requirements(path):
+    with open(path) as reqf:
+        dep_re = re.compile(r'^([^\s#]+)')
+        return [m.group(0) for m in
+                (dep_re.match(l) for l in reqf)
+                if m]
+
+inst_reqs = read_requirements('requirements.txt')
+full_reqs = read_requirements('requirements-full.txt')
 
 setup(
     name="device-inventory",
@@ -33,4 +46,6 @@ setup(
         'Topic :: System :: Logging',
         'Topic :: Utilities',
     ],
+    install_requires=inst_reqs,
+    extras_require={'full': full_reqs},
 )
