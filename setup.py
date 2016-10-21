@@ -1,3 +1,5 @@
+import re
+
 from setuptools import setup, find_packages
 
 
@@ -5,12 +7,14 @@ from setuptools import setup, find_packages
 version = __import__('device_inventory').get_version()
 
 # Collect installation requirements
-with open('requirements.txt') as reqf:
-    import re
-    dep_re = re.compile(r'^([^\s#]+)')
-    inst_reqs = [m.group(0) for m in
-                 [dep_re.match(l) for l in reqf]
-                 if m]
+def read_requirements(path):
+    with open(path) as reqf:
+        dep_re = re.compile(r'^([^\s#]+)')
+        return [m.group(0) for m in
+                (dep_re.match(l) for l in reqf)
+                if m]
+
+inst_reqs = read_requirements('requirements.txt')
 
 setup(
     name="device-inventory",
