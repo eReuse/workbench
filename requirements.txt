@@ -1,6 +1,5 @@
 # Packages with platform-independent Python dependencies:
 enum34  # Python 3.4 Enum backport
-gnupg  # A Python wrapper for GnuPG
 python-dateutil  # Extensions to the standard Python datetime module
 pySMART  # Wrapper for smartctl (smartmontools)
 pyudev  # A libudev binding

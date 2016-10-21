@@ -51,7 +51,7 @@ apt-get -y install git-core python-pip  # vim
 
 # device-inventory requirements
 # TODO read from requirements.txt
-apt-get install -y dmidecode gnupg lshw python-dmidecode smartmontools stress usbmount python-lxml python-paramiko
+apt-get install -y dmidecode gnupg lshw python-dmidecode smartmontools stress usbmount python-gnupg python-lxml python-paramiko
 
 pip install --upgrade git+https://github.com/ereuse/device-inventory.git#egg=device_inventory
 
