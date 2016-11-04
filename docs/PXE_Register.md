@@ -47,7 +47,7 @@ The generated files of all computers will be stored in a public folder in the PX
 After registering the computer, you may want to perform an installation from the Ubuntu ISO that you attached to the server. To do it, reboot the computer (with Ctrl+Alt+Supr or by running ``sudo reboot``) and ensure that it boots again via PXE (see the previous section). As soon as the PXELINUX ``boot:`` prompt appears, be quick to hit Tab to see the boot options. Besides the ``eReuse`` option (which is used to run the computer registration, as explained before), you should be able to enter ``Ubuntu`` and boot the installer.
 
 ####Configure ISO options
-You can automatize tasks of DeviceInventory by modifying the configuration file ([config.ini](https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/config.ini)). For example, you can set to always erase disks in a specific way, so the system will not ask the user about this, avoiding spending time and user errors. To modify the configuration file on the server, do the following:
+You can automatize tasks of DeviceInventory by modifying the configuration file ([config.ini](https://github.com/eReuse/device-inventory/blob/master/device_inventory/config.ini)). For example, you can set to always erase disks in a specific way, so the system will not ask the user about this, avoiding spending time and user errors. To modify the configuration file on the server, do the following:
 
 1. On the server machine from VirtualBox, login with the credentials (username: ereuse, password: ereuse).
 2. write in the terminal `nano /home/ereuse/config.ini`
