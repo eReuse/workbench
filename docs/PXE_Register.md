@@ -54,6 +54,8 @@ You can automatize tasks of DeviceInventory by modifying the configuration file 
 3. Enable or disable all the options that you want.
 4. Save the changes pressing <kbd>Ctrl</kbd><kbd>O</kbd> and enter. Exit with <kbd>Ctrl</kbd><kbd>X</kbd>.
 
+Please check the comments in the `config.ini` file itself for documentation on the different configuration options.
+
 ####Server info: 
 - User: ereuse 
 - Password: ereuse 
