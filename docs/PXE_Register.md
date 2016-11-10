@@ -41,7 +41,7 @@ connected on the LAN network.
 4. Follow [this guide about the inventory process](https://github.com/eReuse/device-inventory/blob/master/docs/USB_Register.md#4-inventory-process-register-hardware-characteristics-of-a-computer)
 5. The file will be automatically uploaded to the PXE Server, but you can still copy it too to a USB memory stick.
 
-The generated files of all computers will be stored in a public folder in the PXE Server. To access the folder write, on the host machine, `\\192.168.2.2\` in Windows Explorer, or `smb://192.168.2.2/` in a Linux console or after pressing <kbd>⌘</kbd><kbd>K</kbd> in Mac's Finder, and access as the public user (which can be called guest, public or anonymous).
+The generated files of all computers will be stored in a public folder in the PXE Server. To access the folder from the host machine, first setup the host's network interface associated with Adapter 1 in the server to configure itself using DHCP; then you may access as the public user (which can be called guest, public or anonymous) the address `\\192.168.2.2\` in Windows Explorer, or `smb://192.168.2.2/` in a Linux box or after pressing <kbd>⌘</kbd><kbd>K</kbd> in Mac's Finder.
 
 ####Install a computer
 After registering the computer, you may want to perform an installation from the Ubuntu ISO that you attached to the server. To do it, reboot the computer (with Ctrl+Alt+Supr or by running ``sudo reboot``) and ensure that it boots again via PXE (see the previous section). As soon as the PXELINUX ``boot:`` prompt appears, be quick to hit Tab to see the boot options. Besides the ``eReuse`` option (which is used to run the computer registration, as explained before), you should be able to enter ``Ubuntu`` and boot the installer.
@@ -57,9 +57,9 @@ You can automatize tasks of DeviceInventory by modifying the configuration file 
 Please check the comments in the `config.ini` file itself for documentation on the different configuration options.
 
 ####Server info: 
-- User: ereuse 
-- Password: ereuse 
-- IP of eReuse server: 192.168.2.2 
+- IP address: 192.168.2.2 
+- User: ereuse (password: ereuse) 
+- Root password: eReuse 
 - Shared folder: 
   - Windows: `\\192.168.2.2\`
   - Linux: `smb://192.168.2.2/`
