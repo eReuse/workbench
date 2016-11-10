@@ -232,3 +232,20 @@ LABEL Ubuntu
         append boot=casper ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/Ubuntu_image ksdevice=bootif ks=nfs:192.168.2.2:/var/lib/tftpboot/ks/ks.cfg forcepae quiet splash -- forcepae quiet splash
         IPAPPEND 2
 ```
+
+####5. Configure public access via SMB to TFTP inventory files
+
+Install Samba with ``apt-get install samba`` and add the following share
+definition to ``/etc/samba/smb.conf`` to enable public read/write access to
+inventory files:
+
+```
+[eReuse Inventory]
+        comment = eReuse Inventory
+        path = /home/ereuse/inventory
+        browseable = yes
+        read only = no
+        guest ok = yes
+```
+
+Then reload the service with ``service samba reload``.
