@@ -37,23 +37,10 @@ mount -t devpts none /dev/pts
 export HOME=/root
 export LC_ALL=C
 
-# Delete swap enabled by Casper at fstab
-cat > /etc/systemd/system/disable-swap.service << 'EOF'
-[Unit]
-Description=Disable all swap spaces
-DefaultDependencies=no
-Before=swap.target
-
-[Service]
-Type=oneshot
-ExecStart=/sbin/swapoff -a
-ExecStart=/bin/sed -i /\\bswap\\b/d /etc/fstab
-
-[Install]
-WantedBy=sysinit.target
-EOF
-systemctl enable disable-swap.service
-systemctl mask swap.target
+# Disable swapping to disk in a systemd-friendly way.
+# See <https://tails.boum.org/contribute/design/#index34h3>.
+dpkg-divert --rename --add /sbin/swapon
+ln -s /bin/true /sbin/swapon
 
 # TODO manually update resolv.conf
 rm /etc/resolv.conf
