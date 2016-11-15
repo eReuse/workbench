@@ -10,6 +10,8 @@ tqdm  # A Fast, Extensible Progress Meter
 # deb:gnupg
 # deb:lshw
 # deb:python-dmidecode
+# deb:smartmontools
+# deb:stress
 # deb:usbmount
 
 # You may extract Debian dependencies with:
