@@ -1,0 +1,20 @@
+#!/bin/sh
+# Select and install a system image from a remote server
+# using Reciclanet's installation script.
+CONFIG_FILE=/tmp/remote_custom_config.ini
+
+get_conf_value() {
+    sed -rn "s/^\s*$1\s*=\s*([^\s+]).*/\1/p" "$CONFIG_FILE"
+}
+
+export CONFIRM="$(get_conf_value INSTALL_CONFIRM)"
+export SERVER="$(get_conf_value ADDRESS)"
+export REMOTE_MP="$(get_conf_value INSTALL_REMOTE_MP)"
+export IMAGE_DIR="$(get_conf_value INSTALL_IMAGE_DIR)"
+export IMAGE_NAME="$(get_conf_value INSTALL_IMAGE_NAME)"
+
+export REMOTE_TYPE='CIFS'
+export HD_SWAP='AUTO'
+export HD_ROOT='FILL'
+
+exec "$(basename "$0").real"
