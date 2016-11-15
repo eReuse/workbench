@@ -6,6 +6,7 @@ pyudev  # A libudev binding
 tqdm  # A Fast, Extensible Progress Meter
 
 # Packages from the Debian repository:
+# deb:cifs-utils
 # deb:dmidecode
 # deb:fsarchiver
 # deb:gnupg
