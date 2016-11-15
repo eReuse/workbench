@@ -58,6 +58,10 @@ apt-get -y install git-core python-pip  # vim
 # TODO read from requirements.txt
 apt-get install -y dmidecode gnupg lshw python-dmidecode smartmontools stress usbmount python-gnupg python-lxml python-paramiko
 
+# Install Reciclanet's image installation script
+curl "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" > /usr/local/bin/di-install-image.real
+chmod a+rx /usr/local/bin/di-install-image.real
+
 pip install --upgrade git+https://github.com/ereuse/device-inventory.git#egg=device_inventory
 
 # Configure timezone
