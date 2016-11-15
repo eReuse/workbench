@@ -12,7 +12,7 @@ connected on the LAN network.
   - [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
   - [eReusePXEserver-<VERSION>.ova](https://github.com/eReuse/device-inventory/releases/latest)
   - [eReuseOS-<VERSION>.iso](https://github.com/eReuse/device-inventory/releases/latest)
-  - Optionally, some Ubuntu-derived installation ISO to optionally install in computers, e.g. [lubuntu-<...>.iso](http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/)
+  - Optionally, some FSArchiver images to install in computers (currently only Debian/Ubuntu installations where everything is placed in a single ext4 root file system are supported). Create a folder called ``ereuse-data``, another one inside of it called ``images``, and copy the images in the latter.
 - Switch
 - Network cables
 - PC to register
@@ -24,8 +24,8 @@ connected on the LAN network.
 3. Check the network configuration on VirtualBox.
   1. Adapter 1 should be on Ethernet (cable) interface with others computer (to be registed): ![Virtualbox network](./images/virtualbox-network.png)
   2. Adapter 2 should be on NAT if you have a second ethernet slot or WiFi adapter.
-4. Insert [DeviceInventory](https://github.com/eReuse/device-inventory/releases/latest) (download it from Downloads section, at the bottom) as primary CD media: ![Virtualbox disk](./images/virtualbox-disk.png)
-5. If you have it, insert Ubuntu ISO as secondary CD media: ![Virtualbox disk](./images/virtualbox-disk.png)
+4. Insert [DeviceInventory](https://github.com/eReuse/device-inventory/releases/latest) (download it from Downloads section, at the bottom) as CD media: ![Virtualbox disk](./images/virtualbox-disk.png)
+5. In the machine settings, select the *Shared Folders* tab, then the ``ereuse-data`` entry in the list and click on the edit button (orange) on the right. In the following dialog, click on the drop down list, then on *Other…* and choose the ``ereuse-data`` folder that you created at the beginning, then accept the new configuration: ![Virtualbox shared folder](./images/virtualbox-shared.png)
 6. Run the virtual server and wait until it asks for *login*. There is no need for login. Now you [can start registering your computers](#register-a-computer), or [configure the server to automate tasks](#configure-iso-options)
 
 ####Register a computer
@@ -44,10 +44,10 @@ connected on the LAN network.
 The generated files of all computers will be stored in a public folder in the PXE Server. To access the folder from the host machine, first setup the host's network interface associated with Adapter 1 in the server to configure itself using DHCP; then you may access as the public user (which can be called guest, public or anonymous) the address `\\192.168.2.2\` in Windows Explorer, or `smb://192.168.2.2/` in a Linux box or after pressing <kbd>⌘</kbd><kbd>K</kbd> in Mac's Finder.
 
 ####Install a computer
-After registering the computer, you may want to perform an installation from the Ubuntu ISO that you attached to the server. To do it, reboot the computer (with Ctrl+Alt+Supr or by running ``sudo reboot``) and ensure that it boots again via PXE (see the previous section). As soon as the PXELINUX ``boot:`` prompt appears, be quick to hit Tab to see the boot options. Besides the ``eReuse`` option (which is used to run the computer registration, as explained before), you should be able to enter ``Ubuntu`` and boot the installer.
+After registering the computer, you may want to perform an installation from one of the FSAarchiver system images in the shared folder that you attached to the server. After the diagnostic and inventory process has completed, you will be given the chance to perform the installation. Follow the instructions in the screen to proceed and select one of the images (both steps can be automated via the ``config.ini`` file, see below).  After some minutes, the installation will be complete and you will be able to boot into the new system with Ctrl+Alt+Supr or by running ``sudo reboot``.
 
 ####Configure ISO options
-You can automatize tasks of DeviceInventory by modifying the configuration file ([config.ini](https://github.com/eReuse/device-inventory/blob/master/device_inventory/config.ini)). For example, you can set to always erase disks in a specific way, so the system will not ask the user about this, avoiding spending time and user errors. To modify the configuration file on the server, do the following:
+You can automatize tasks of DeviceInventory by modifying the configuration file ([config.ini](https://github.com/eReuse/device-inventory/blob/master/device_inventory/config.ini)). For example, you can set to always erase disks in a specific way, or to automatically install some image, so the system will not ask the user about this, avoiding spending time and user errors. To modify the configuration file on the server, do the following:
 
 1. On the server machine from VirtualBox, login with the credentials (username: ereuse, password: ereuse).
 2. write in the terminal `nano /home/ereuse/config.ini`
