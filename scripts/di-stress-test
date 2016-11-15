@@ -3,7 +3,7 @@
 # totalling all main memory available to user processes).
 
 CONFIG_FILE=/tmp/remote_custom_config.ini
-STRESS_MINUTES=$(sed -rn 's/^\s*STRESS\s*=\s*([^\s+]).*/\1/p' "$CONFIG_FILE")
+STRESS_MINUTES=$(sed -rn 's/^\s*STRESS\s*=\s*([^\s]+)\s*/\1/p' "$CONFIG_FILE")
 
 if [ -z "$STRESS_MINUTES" -o "$STRESS_MINUTES" = 0 ]; then
     echo "Skipping stress test (not enabled in remote configuration file)."
