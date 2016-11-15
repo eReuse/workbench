@@ -7,6 +7,7 @@ tqdm  # A Fast, Extensible Progress Meter
 
 # Packages from the Debian repository:
 # deb:dmidecode
+# deb:fsarchiver
 # deb:gnupg
 # deb:lshw
 # deb:python-dmidecode
