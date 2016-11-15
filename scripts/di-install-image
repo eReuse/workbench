@@ -7,7 +7,17 @@ get_conf_value() {
     sed -rn "s/^\s*$1\s*=\s*([^\s]+)\s*/\1/p" "$CONFIG_FILE"
 }
 
-export CONFIRM="$(get_conf_value INSTALL_CONFIRM)"
+install="$(get_conf_value INSTALL)"
+
+case "$install" in
+    (yes) export CONFIRM=no
+          ;;
+    (ask) export CONFIRM=yes
+          ;;
+    (*) echo "Skipping installation (not enabled in remote configuration file)."
+        exit 0
+esac
+
 export SERVER="$(get_conf_value ADDRESS)"
 export REMOTE_MP="$(get_conf_value INSTALL_REMOTE_MP)"
 export IMAGE_DIR="$(get_conf_value INSTALL_IMAGE_DIR)"
