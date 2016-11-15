@@ -4,7 +4,7 @@
 CONFIG_FILE=/tmp/remote_custom_config.ini
 
 get_conf_value() {
-    sed -rn "s/^\s*$1\s*=\s*([^\s+]).*/\1/p" "$CONFIG_FILE"
+    sed -rn "s/^\s*$1\s*=\s*([^\s]+)\s*/\1/p" "$CONFIG_FILE"
 }
 
 export CONFIRM="$(get_conf_value INSTALL_CONFIRM)"
