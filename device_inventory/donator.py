@@ -157,6 +157,16 @@ def stress(minutes):
         "-t", "%dm" % minutes])
     return ret == 0
 
+def install(confirm=True):
+    """Install a system image to the local hard disk.
+
+    If `confirm` is true, give the chance to cancel installation before
+    proceeding.
+    """
+    import time
+    time.sleep(20)  # dummy!
+    return
+
 
 def main(argv=None):
     if not os.geteuid() == 0:
@@ -180,6 +190,8 @@ def main(argv=None):
     parser.add_argument('--erase', choices=['ask', 'yes', 'no'])
     parser.add_argument('--stress', metavar='MINUTES', type=int,
             help='run stress test for the given MINUTES (0 to disable, default)')
+    parser.add_argument('--install', choices=['ask', 'yes', 'no'],
+            help='install a system image ("yes" avoids confirmation)')
     parser.add_argument('--settings',
             help='file to be loaded as config file')
     args = parser.parse_args()
@@ -212,6 +224,8 @@ def main(argv=None):
         settings.set('eraser', 'erase', args.erase)
     if args.stress is not None:
         settings.set('DEFAULT', 'stress', str(args.stress))
+    if args.install is not None:
+        settings.set('DEFAULT', 'install', args.install)
     if args.debug is not None:
         settings.set('DEFAULT', 'debug', str(args.debug).lower())
     
@@ -287,6 +301,19 @@ def main(argv=None):
             logger.debug(e, exc_info=True)
     else:
         print("Skipping stress test (not enabled in remote configuration file).")
+
+    # install system image
+    install_image = settings.getint('DEFAULT', 'install')
+    if install_image in ('yes', 'ask'):
+        try:
+            install(confirm=(install_image == 'ask'))
+        except KeyboardInterrupt:
+            print("System installation cancelled by user!")
+        except Exception as e:
+            logger.error("Error installing system image")
+            logger.debug(e, exc_info=True)
+    else:
+        print("Skipping installation (not enabled in remote configuration file).")
     
     print("Device Inventory has finished properly: {0}".format(localpath))
 
