@@ -192,7 +192,7 @@ def main(argv=None):
     if args.erase:
         settings.set('eraser', 'erase', args.erase)
     if args.stress is not None:
-        settings.set('DEFAULT', 'stress', args.stress)
+        settings.set('DEFAULT', 'stress', str(args.stress))
     if args.debug is not None:
         settings.set('DEFAULT', 'debug', str(args.debug).lower())
     
