@@ -7,6 +7,8 @@ import json
 import logging
 import logging.config
 import os
+import re
+import subprocess
 import sys
 
 from device_inventory import eraser, serializers, storage, utils
@@ -133,10 +135,27 @@ def get_user_input():
 
 
 def stress(minutes):
-    """Perform a CPU and memory stress test for the given `minutes`."""
-    import time
-    time.sleep(minutes*60)  # dummy!
-    return True
+    """Perform a CPU and memory stress test for the given `minutes`.
+
+    The CPU stress test uses one thread per core, and the RAM stress test one
+    thread per core, totalling all main memory available to user processes.
+
+    Return a boolean indicating whether the stress test was successful.
+    """
+    with open('/proc/cpuinfo') as cpuinfo:
+        ncores = len(re.findall(r'^processor\b', cpuinfo.read(), re.M))
+    with open('/proc/meminfo') as meminfo:
+        match = re.search(r'^MemAvailable:\s*([0-9]+) kB.*', meminfo.read(), re.M)
+        mem_kib = int(match.group(1))
+    # Exclude a percentage of available memory for the stress processes themselves.
+    mem_worker_kib = (mem_kib / ncores) * 90 / 100
+    ret = subprocess.call([
+        "stress",
+        "-c", str(ncores),
+        "-m", str(ncores),
+        "--vm-bytes", "%dK" % mem_worker_kib,
+        "-t", "%dm" % minutes])
+    return ret == 0
 
 
 def main(argv=None):
