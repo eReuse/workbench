@@ -157,8 +157,10 @@ def stress(minutes):
         "-t", "%dm" % minutes])
     return ret == 0
 
-def install(confirm=True):
+def install(name=None, confirm=True):
     """Install a system image to the local hard disk.
+
+    If a `name` is provided, select that image for installation.
 
     If `confirm` is true, give the chance to cancel installation before
     proceeding.
@@ -166,12 +168,13 @@ def install(confirm=True):
     # Customizations are passed as environment variables.
     env = os.environ.copy()
 
+    if name is not None:
+        env['IMAGE_NAME'] = name
     env['CONFIRM'] = 'yes' if confirm else 'no'
 
     env['SERVER'] = settings.get('server', 'address')
     env['REMOTE_MP'] = settings.get('installer', 'remote_mp')
     env['IMAGE_DIR'] = settings.get('installer', 'image_dir')
-    env['IMAGE_NAME'] = settings.get('installer', 'image_name')
 
     env['REMOTE_TYPE'] = 'CIFS'
     env['HD_SWAP'] = 'AUTO'
@@ -204,6 +207,8 @@ def main(argv=None):
             help='run stress test for the given MINUTES (0 to disable, default)')
     parser.add_argument('--install', choices=['ask', 'yes', 'no'],
             help='install a system image ("yes" avoids confirmation)')
+    parser.add_argument('--image-name', metavar='NAME',
+            help='select the system image with the given NAME for installation')
     parser.add_argument('--settings',
             help='file to be loaded as config file')
     args = parser.parse_args()
@@ -238,6 +243,8 @@ def main(argv=None):
         settings.set('DEFAULT', 'stress', str(args.stress))
     if args.install is not None:
         settings.set('installer', 'install', args.install)
+    if args.image_name is not None:
+        settings.set('installer', 'image_name', args.image_name)
     if args.debug is not None:
         settings.set('DEFAULT', 'debug', str(args.debug).lower())
     
@@ -317,9 +324,10 @@ def main(argv=None):
     # install system image
     install_image = settings.get('installer', 'install')
     if install_image in ('yes', 'ask'):
+        image_name = settings.get('installer', 'image_name')
         print("Starting installation of system image.")
         try:
-            install(confirm=(install_image == 'ask'))
+            install(name=image_name, confirm=(install_image == 'ask'))
         except KeyboardInterrupt:
             print("System installation cancelled by user!")
         except Exception as e:
