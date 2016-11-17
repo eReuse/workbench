@@ -303,7 +303,7 @@ def main(argv=None):
         print("Skipping stress test (not enabled in remote configuration file).")
 
     # install system image
-    install_image = settings.getint('DEFAULT', 'install')
+    install_image = settings.get('DEFAULT', 'install')
     if install_image in ('yes', 'ask'):
         try:
             install(confirm=(install_image == 'ask'))
