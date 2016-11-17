@@ -163,9 +163,21 @@ def install(confirm=True):
     If `confirm` is true, give the chance to cancel installation before
     proceeding.
     """
-    import time
-    time.sleep(20)  # dummy!
-    return
+    # Customizations are passed as environment variables.
+    env = os.environ.copy()
+
+    env['CONFIRM'] = 'yes' if confirm else 'no'
+
+    env['SERVER'] = settings.get('server', 'address')
+    env['REMOTE_MP'] = settings.get('DEFAULT', 'install_remote_mp')
+    env['IMAGE_DIR'] = settings.get('DEFAULT', 'install_image_dir')
+    env['IMAGE_NAME'] = settings.get('DEFAULT', 'install_image_name')
+
+    env['REMOTE_TYPE'] = 'CIFS'
+    env['HD_SWAP'] = 'AUTO'
+    env['HD_ROOT'] = 'FILL'
+
+    subprocess.call(['di-install-image.real'], env=env)
 
 
 def main(argv=None):
