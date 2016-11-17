@@ -177,7 +177,7 @@ def install(confirm=True):
     env['HD_SWAP'] = 'AUTO'
     env['HD_ROOT'] = 'FILL'
 
-    subprocess.check_call(['di-install-image.real'], env=env)
+    subprocess.check_call(['di-install-image'], env=env)
 
 
 def main(argv=None):

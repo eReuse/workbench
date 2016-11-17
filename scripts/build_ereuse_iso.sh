@@ -59,8 +59,8 @@ apt-get -y install git-core python-pip  # vim
 apt-get install -y cifs-utils dmidecode fsarchiver gnupg lshw python-dmidecode smartmontools stress usbmount python-gnupg python-lxml python-paramiko
 
 # Install Reciclanet's image installation script
-wget "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" -O /usr/local/bin/di-install-image.real
-chmod a+rx /usr/local/bin/di-install-image.real
+wget "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" -O /usr/local/bin/di-install-image
+chmod a+rx /usr/local/bin/di-install-image
 
 pip install --upgrade git+https://github.com/ereuse/device-inventory.git#egg=device_inventory
 
@@ -100,7 +100,7 @@ nano /etc/systemd/system/getty.target.wants/getty@tty1.service
 # change the line for: ExecStart=/sbin/agetty --noclear --autologin ubuntu %I $TERM
 
 # Autostart
-echo "clear ; sudo device-inventory ; sudo di-install-image" >> /home/ubuntu/.profile
+echo "clear ; sudo device-inventory" >> /home/ubuntu/.profile
 
 # delete temporary files
 rm -rf /tmp/* ~/.bash_history
