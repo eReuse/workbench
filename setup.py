@@ -26,8 +26,7 @@ setup(
                  'of computers. It retrieves details of the hardware '
                  'information and, optionally, runs some health and '
                  'benchmark tests.'),
-    scripts=['scripts/device-inventory', 'scripts/di-stress-test',
-             'scripts/di-install-image'],
+    scripts=['scripts/device-inventory', 'scripts/di-install-image'],
     package_data={'device_inventory': [
         'config.ini',
         'config_logging.json',
