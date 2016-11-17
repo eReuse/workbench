@@ -132,6 +132,13 @@ def get_user_input():
     return user_input
 
 
+def stress(minutes):
+    """Perform a CPU and memory stress test for the given `minutes`."""
+    import time
+    time.sleep(minutes*60)  # dummy!
+    return True
+
+
 def main(argv=None):
     if not os.geteuid() == 0:
         sys.exit("Only root can run this script")
@@ -249,10 +256,16 @@ def main(argv=None):
     stress_mins = settings.getint('DEFAULT', 'stress')
     if stress_mins > 0:
         print("Performing stress test for %d minutes, press Ctrl+C at any time to cancel." % stress_mins)
-        if True:
-            print("Stress test succeeded.")
-        else:
-            print("Stress test failed, please note this down.")
+        try:
+            if stress(stress_mins):
+                print("Stress test succeeded.")
+            else:
+                print("Stress test failed, please note this down.")
+        except KeyboardInterrupt:
+            print("Stress test cancelled by user!")
+        except Exception as e:
+            logger.error("Error running stress test")
+            logger.debug(e, exc_info=True)
     else:
         print("Skipping stress test (not enabled in remote configuration file).")
     
