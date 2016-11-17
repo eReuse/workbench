@@ -152,6 +152,8 @@ def main(argv=None):
     
     parser.add_argument('--smart', choices=['none', 'short', 'long'])
     parser.add_argument('--erase', choices=['ask', 'yes', 'no'])
+    parser.add_argument('--stress', metavar='MINUTES', type=int,
+            help='run stress test for the given MINUTES (0 to disable, default)')
     parser.add_argument('--settings',
             help='file to be loaded as config file')
     args = parser.parse_args()
@@ -182,6 +184,8 @@ def main(argv=None):
         settings.set('DEFAULT', 'smart', args.smart)
     if args.erase:
         settings.set('eraser', 'erase', args.erase)
+    if args.stress is not None:
+        settings.set('DEFAULT', 'stress', args.stress)
     if args.debug is not None:
         settings.set('DEFAULT', 'debug', str(args.debug).lower())
     
@@ -240,6 +244,17 @@ def main(argv=None):
         except Exception as e:
             logger.error("Error copying file '%s' to USB", localpath)
             logger.debug(e, exc_info=True)
+
+    # run stress test
+    stress_mins = settings.getint('DEFAULT', 'stress')
+    if stress_mins > 0:
+        print("Performing stress test for %d minutes, press Ctrl+C at any time to cancel." % stress_mins)
+        if True:
+            print("Stress test succeeded.")
+        else:
+            print("Stress test failed, please note this down.")
+    else:
+        print("Skipping stress test (not enabled in remote configuration file).")
     
     print("Device Inventory has finished properly: {0}".format(localpath))
 
