@@ -305,6 +305,7 @@ def main(argv=None):
     # install system image
     install_image = settings.get('DEFAULT', 'install')
     if install_image in ('yes', 'ask'):
+        print("Starting installation of system image.")
         try:
             install(confirm=(install_image == 'ask'))
         except KeyboardInterrupt:
