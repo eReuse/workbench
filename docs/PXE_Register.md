@@ -19,6 +19,16 @@ connected on the LAN network.
 
 **Note on system installation images:** Currently the only kind of images supported and assumed are FSArchiver images corresponding to 32-bit ``i386`` or 64-bit ``amd64`` Debian/Ubuntu or derivative OS installations, where the whole system is contained in a single ext4 file system in BIOS partition ``sda1``, and GRUB2 is used as a bootloader.
 
+**How to create a FSArchiver image:** To prepare an installation image you must perform in a different machine (either real or virtual) the complete installation that you want to replicate (taking into account the limitations from the previous note).  One possible way to capture this installation to a FSArchiver image is to reboot the already installed machine into the [SystemRescueCd](https://www.system-rescue-cd.org/SystemRescueCd_Homepage), then enter the keyboard language, plug an external USB drive of sufficient capacity (note that FAT file systems may cause file size limitation issues) and run the following commands:
+
+```
+# mount /dev/sdb1 /mnt  # ``sdb`` is the external USB drive
+# fsarchiver savefs /mnt/IMAGE_NAME.fsa /dev/sda1  # ``sda`` is the main hard drive
+# umount /mnt  # wait until the command is complete
+```
+
+Use some informative ``IMAGE_NAME`` like ``lubuntu-xenial-amd64-ca``.  Now you can plug the USB drive into your PC and copy the image to it.
+
 ####Steps to install and setup the server:
 1. Disconnect any router (any DHCP provider in general) from the network. Just use the switch or hub.
 2. Install VirtualBox on any Win/Linux/Mac computer. We will call this computer as the *host*.
