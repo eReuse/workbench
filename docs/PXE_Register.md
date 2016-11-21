@@ -12,10 +12,12 @@ connected on the LAN network.
   - [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
   - [eReusePXEserver-<VERSION>.ova](https://github.com/eReuse/device-inventory/releases/latest)
   - [eReuseOS-<VERSION>.iso](https://github.com/eReuse/device-inventory/releases/latest)
-  - Optionally, some FSArchiver images to install in computers (currently only Debian/Ubuntu installations where everything is placed in a single ext4 root file system are supported). Create a folder called ``ereuse-data``, another one inside of it called ``images``, and copy the images in the latter.
+  - Optionally, some FSArchiver system installation images to be installed in computers. Create in your PC a folder called ``ereuse-data``, another one inside of it called ``images``, and copy the images in the latter.
 - Switch
 - Network cables
 - PC to register
+
+**Note on system installation images:** Currently the only kind of images supported and assumed are FSArchiver images corresponding to 32-bit Debian/Ubuntu or derivative OS installations, where the whole system is contained in a single ext4 file system in BIOS partition ``sda1``, and GRUB2 is used as a bootloader.
 
 ####Steps to install and setup the server:
 1. Disconnect any router (any DHCP provider in general) from the network. Just use the switch or hub.
