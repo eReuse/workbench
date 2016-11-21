@@ -17,7 +17,7 @@ connected on the LAN network.
 - Network cables
 - PC to register
 
-**Note on system installation images:** Currently the only kind of images supported and assumed are FSArchiver images corresponding to 32-bit Debian/Ubuntu or derivative OS installations, where the whole system is contained in a single ext4 file system in BIOS partition ``sda1``, and GRUB2 is used as a bootloader.
+**Note on system installation images:** Currently the only kind of images supported and assumed are FSArchiver images corresponding to 32-bit ``i386`` or 64-bit ``amd64`` Debian/Ubuntu or derivative OS installations, where the whole system is contained in a single ext4 file system in BIOS partition ``sda1``, and GRUB2 is used as a bootloader.
 
 ####Steps to install and setup the server:
 1. Disconnect any router (any DHCP provider in general) from the network. Just use the switch or hub.

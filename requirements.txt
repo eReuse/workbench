@@ -10,6 +10,7 @@ tqdm  # A Fast, Extensible Progress Meter
 # deb:dmidecode
 # deb:fsarchiver
 # deb:gnupg
+# deb:grub2-common
 # deb:lshw
 # deb:python-dmidecode
 # deb:smartmontools
