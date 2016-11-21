@@ -1,0 +1,4 @@
+[submodule "reciclanet-scripts"]
+	path = reciclanet-scripts
+	url = https://github.com/eReuse/SCRIPTS.git
+	branch = ereuse
