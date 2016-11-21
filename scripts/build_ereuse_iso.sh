@@ -56,7 +56,7 @@ apt-get -y install git-core python-pip  # vim
 
 # device-inventory requirements
 # TODO read from requirements.txt
-apt-get install -y cifs-utils dmidecode fsarchiver gnupg grub2-common lshw python-dmidecode smartmontools stress usbmount python-gnupg python-lxml python-paramiko
+apt-get install -y $(sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements.txt requirements-full.txt)
 
 # Install Reciclanet's image installation script
 wget "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" -O /usr/local/bin/di-install-image

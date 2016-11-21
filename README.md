@@ -20,7 +20,7 @@ hardware information and serial numbers for traceability.
 ## Installation
 On a Debian based distribution using `apt`:
 
-    apt-get install cifs-utils dmidecode fsarchiver gnupg grub2-common lshw python-dmidecode smartmontools stress usbmount python-gnupg python-lxml python-paramiko
+    apt-get install $(sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements.txt requirements-full.txt)
 
 Then download and install Reciclanet's image installation script:
 
