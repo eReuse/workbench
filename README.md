@@ -12,10 +12,8 @@ hardware information and serial numbers for traceability.
 
 
 ## Requirements
-* Python (2.7)
-* lshw
-* dmidecode
-* smartmontools
+* A Debian/Ubuntu or derived system with ``wget``
+* Python 2.7 with ``pip``
 
 ## Installation
 On a Debian based distribution using `apt`:
