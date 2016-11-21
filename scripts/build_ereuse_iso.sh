@@ -62,7 +62,7 @@ apt-get install -y $(sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements.txt requirement
 wget "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" -O /usr/local/bin/di-install-image
 chmod a+rx /usr/local/bin/di-install-image
 
-pip install --upgrade git+https://github.com/ereuse/device-inventory.git#egg=device_inventory
+pip install --upgrade git+https://github.com/eReuse/device-inventory.git#egg=device_inventory
 
 # Configure timezone
 dpkg-reconfigure tzdata

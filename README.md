@@ -29,7 +29,7 @@ Then download and install Reciclanet's image installation script:
 
 And then install `device_inventory` and its requirements using `pip`:
 
-    pip install git+https://github.com/ereuse/device-inventory.git#egg=device_inventory
+    pip install git+https://github.com/eReuse/device-inventory.git#egg=device_inventory
 
 ## Usage
 Just run it as priviliged user and fill some information:
