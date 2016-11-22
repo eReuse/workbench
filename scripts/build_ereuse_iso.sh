@@ -1,150 +1,163 @@
+#!/bin/sh
+
 # https://help.ubuntu.com/community/LiveCDCustomization
 
+set -e
 
-### Pre-requisites ###
-sudo apt-get install squashfs-tools genisoimage
-wget http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/15.10/ubuntu-mini-remix-15.10-i386.iso -O base_image.iso
+VERSION=7.1a5
+WORK_DIR="dist/iso"
 
-md5sum base_image.iso
-# 78399fed67fc503d2f770f5ad7dcab45  ubuntu-mini-remix-15.10-i386.iso
+BASE_ISO_URL="http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/15.10/ubuntu-mini-remix-15.10-i386.iso"
+BASE_ISO_MD5="78399fed67fc503d2f770f5ad7dcab45"
+BASE_ISO_PATH=$WORK_DIR/$(basename "$BASE_ISO_URL")
+BASE_ISO_MD5SUM="$BASE_ISO_MD5  $BASE_ISO_PATH"
 
-### UNPACK the ISO ###
+ISO_PATH=$WORK_DIR/eReuseOS-$VERSION.iso
 
-# Mount the base image .iso
-mkdir -p mnt
-sudo mount -o loop base_image.iso mnt
+genisoimage --version > /dev/null  # fail if missing
+mksquashfs -version > /dev/null  # fail if missing
 
-# Extract .iso contents into dir 'extract-cd'
-mkdir -p extract-cd
-sudo rsync --exclude=/casper/filesystem.squashfs -a mnt/ extract-cd
+mkdir -p $WORK_DIR
 
-# Extract the SquashFS filesystem
-sudo unsquashfs mnt/casper/filesystem.squashfs
-sudo mv squashfs-root edit
+# Download the base ISO.
+while ! echo "$BASE_ISO_MD5SUM" | md5sum -c --quiet --status; do
+    wget -c -O $BASE_ISO_PATH "$BASE_ISO_URL"
+done
 
-### CUSTOMIZE IT ###
-# Prepare chroot
-sudo mount -o bind /run/ edit/run
+# Mount a writable version of the ISO and the FS in it.
+ISO_RO=$(mktemp -d -p$WORK_DIR)
+ISO_RW_DATA=$(mktemp -d -p$WORK_DIR)
+ISO_RW_WORK=$(mktemp -d -p$WORK_DIR)
+ISO_ROOT=$(mktemp -d -p$WORK_DIR)
 
-# chroot
-sudo mount --bind /dev/ edit/dev
-sudo chroot edit
-mount -t proc none /proc
-mount -t sysfs none /sys
-mount -t devpts none /dev/pts
+mount -t iso9660 -o loop,ro $BASE_ISO_PATH $ISO_RO
+mount -t overlay -o lowerdir=$ISO_RO,upperdir=$ISO_RW_DATA,workdir=$ISO_RW_WORK base-iso $ISO_ROOT
 
-# avoid local issues
-export HOME=/root
-export LC_ALL=C
+FS_RO=$(mktemp -d -p$WORK_DIR)
+FS_RW_DATA=$(mktemp -d -p$WORK_DIR)
+FS_RW_WORK=$(mktemp -d -p$WORK_DIR)
+FS_ROOT=$(mktemp -d -p$WORK_DIR)
+
+mount -t squashfs -o loop,ro $ISO_RO/casper/filesystem.squashfs $FS_RO
+mount -t overlay -o lowerdir=$FS_RO,upperdir=$FS_RW_DATA,workdir=$FS_RW_WORK ereuse $FS_ROOT
+
+# Customize filesystem.
+alias ch="chroot $FS_ROOT env HOME=/root LC_ALL=C"
+alias chi="ch apt-get install -y --no-install-recommends"
 
 # Disable swapping to disk in a systemd-friendly way.
 # See <https://tails.boum.org/contribute/design/#index34h3>.
-dpkg-divert --rename --add /sbin/swapon
-ln -s /bin/true /sbin/swapon
+ch dpkg-divert --rename --add /sbin/swapon
+ch ln -s /bin/true /sbin/swapon
 
 # TODO manually update resolv.conf
-rm /etc/resolv.conf
-echo "nameserver  208.67.222.222" > /etc/resolv.conf
+ch rm /etc/resolv.conf  # in case it's a link
+echo "nameserver  208.67.222.222" > $FS_ROOT/etc/resolv.conf
 
 # Enable universe repository (/etc/apt/sources.list)
-apt-get install -y software-properties-common
-add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) universe"
+chi software-properties-common
+ch add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(ch lsb_release -sc) universe"
 
 # installation tools requirements (could be removed)
-apt-get update
-apt-get -y install git-core python-pip  # vim
+ch apt-get update
+chi git-core python-pip  # vim
 
 # device-inventory requirements
 # TODO read from requirements.txt
-apt-get install -y $(sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements.txt requirements-full.txt)
+chi $(sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements.txt requirements-full.txt)
 
 # Install Reciclanet's image installation script
-wget "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" -O /usr/local/bin/di-install-image
-chmod a+rx /usr/local/bin/di-install-image
+ch wget "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" -O /usr/local/bin/di-install-image
+ch chmod a+rx /usr/local/bin/di-install-image
 
-pip install --upgrade git+https://github.com/eReuse/device-inventory.git#egg=device_inventory
+ch pip install --upgrade "git+https://github.com/eReuse/device-inventory.git#egg=device_inventory"
 
-# Configure timezone
-dpkg-reconfigure tzdata
+# Configure regional settings
+echo 'Etc/UTC' > $FS_ROOT/etc/timezone
+ch debconf-set-selections << 'EOF'
+locales locales/locales_to_be_generated multiselect es_ES.UTF-8 UTF-8
+locales locales/default_environment_locale select es_ES.UTF-8
+keyboard-configuration keyboard-configuration/layout select Spanish
+keyboard-configuration keyboard-configuration/layoutcode select es
+keyboard-configuration keyboard-configuration/variant select Spanish
+EOF
 
-# Generate and update default locale
-locale-gen es_ES.UTF-8
-update-locale LANG=es_ES.UTF-8 LANGUAGE=es_ES.UTF-8 LC_ALL=es_ES.UTF-8
-
-# Set keyboard layout
-dpkg-reconfigure keyboard-configuration
+ch dpkg-reconfigure -f noninteractive tzdata locales keyboard-configuration
+ch locale-gen es_ES.UTF-8
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #   UPC REUTILITZA - GRAPHICAL ENVIRONMENT     #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#apt-get install xorg icewm
+#ch apt-get install xorg icewm
 
 #~~~~~~~~~~~~~~~~ end UPC ~~~~~~~~~~~~~~~~~~~~~~
 
 ## CLEAN UP ##
 ## PURGE temporal packages XXX?
-#apt-get purge git python-pip
-apt-get clean
+#ch apt-get purge git python-pip
+ch apt-get clean
 
 # If you installed software, be sure to run
-rm /var/lib/dbus/machine-id
-rm /sbin/initctl
-dpkg-divert --rename --remove /sbin/initctl
+ch rm -f /var/lib/dbus/machine-id
+ch rm -f /sbin/initctl
+ch dpkg-divert --rename --remove /sbin/initctl
 
 # Add ubuntu user:
-adduser ubuntu
-# password: ubuntu
+printf 'ubuntu\nubuntu\n' | ch adduser -q --gecos 'Ubuntu' ubuntu
 
 # Autologin
-nano /etc/systemd/system/getty.target.wants/getty@tty1.service
-# change the line for: ExecStart=/sbin/agetty --noclear --autologin ubuntu %I $TERM
+ch sed -i -r 's#(ExecStart=.*agetty )(.*)#\1--autologin ubuntu \2#' '/etc/systemd/system/getty.target.wants/getty@tty1.service'
 
 # Autostart
-echo "clear ; sudo device-inventory" >> /home/ubuntu/.profile
+echo "clear ; sudo device-inventory" >> $FS_ROOT/home/ubuntu/.profile
 
 # delete temporary files
-rm -rf /tmp/* ~/.bash_history
-
-# now umount (unmount) special filesystems and exit chroot
-umount /proc || umount -lf /proc
-umount /sys
-umount /dev/pts
-exit
-sudo umount edit/run
-sudo umount edit/dev
+rm -rf $FS_ROOT/tmp/* $FS_ROOT/root/.bash_history
 
 ### PACK the ISO ###
 
 # Regenerate manifest
-sudo chmod +w extract-cd/casper/filesystem.manifest
-sudo chroot edit dpkg-query -W --showformat='${Package} ${Version}\n' | sudo tee extract-cd/casper/filesystem.manifest
-sudo cp extract-cd/casper/filesystem.manifest extract-cd/casper/filesystem.manifest-desktop
-sudo sed -i '/ubiquity/d' extract-cd/casper/filesystem.manifest-desktop
-sudo sed -i '/casper/d' extract-cd/casper/filesystem.manifest-desktop
-
-# remove previous squashfs
-sudo rm -f extract-cd/casper/filesystem.squashfs
+ch dpkg-query -W --showformat='${Package} ${Version}\n' > $ISO_ROOT/casper/filesystem.manifest
+cp $ISO_ROOT/casper/filesystem.manifest $ISO_ROOT/casper/filesystem.manifest-desktop
+sed -i '/ubiquity/d' $ISO_ROOT/casper/filesystem.manifest-desktop
+sed -i '/casper/d' $ISO_ROOT/casper/filesystem.manifest-desktop
 
 # Create new squashfs using default compression, skip boot dir to save some space.
 # LZMA is currently not supported even if the initramfs uses it for compression.
-sudo mksquashfs edit extract-cd/casper/filesystem.squashfs -e edit/boot
+mksquashfs $FS_ROOT $ISO_ROOT/casper/filesystem-new.squashfs -e $FS_ROOT/boot
+
+# replace squashfs
+umount $FS_ROOT
+umount $FS_RO
+mv $ISO_ROOT/casper/filesystem-new.squashfs $ISO_ROOT/casper/filesystem.squashfs
 
 # Update the filesystem.size file, which is needed by the installer:
-printf $(sudo du -sx --block-size=1 edit | cut -f1) > extract-cd/casper/filesystem.size
+mount -t squashfs -o loop,ro $ISO_ROOT/casper/filesystem.squashfs $FS_RO
+printf $(sudo du -sx --block-size=1 $FS_RO | cut -f1) > $ISO_ROOT/casper/filesystem.size
+umount $FS_RO
 
 # Set an image name in extract-cd/README.diskdefines
 ##sudo vim extract-cd/README.diskdefines
 
+# Calculate new SHA256 sums.
+( cd $ISO_ROOT \
+      && sed -i '/  \.\/casper\/filesystem\..*$/d' SHA256SUMS \
+      && sha256sum ./casper/filesystem.* >> SHA256SUMS )
+
 # Remove old md5sum.txt and calculate new md5 sums
-cd extract-cd
-sudo rm md5sum.txt
-find -type f -print0 | sudo xargs -0 md5sum | grep -v isolinux/boot.cat | sudo tee md5sum.txt
+( cd $ISO_ROOT \
+     && rm -f md5sum.txt \
+     && find -type f -print0 | xargs -0 md5sum | grep -v isolinux/boot.cat > md5sum.txt )
 
 # Create the ISO image
 # A) Ubuntu
-#sudo mkisofs -D -r -V "$IMAGE_NAME" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS-7.1a5.iso .
+#sudo mkisofs -D -r -V "$IMAGE_NAME" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o $ISO_PATH $ISO_ROOT
 
 # B) Debian
-sudo genisoimage -D -r -V "eReuseOS" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../eReuseOS-7.1a5.iso .
+genisoimage -D -r -V "eReuseOS" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o $ISO_PATH $ISO_ROOT
 
-cd ..
+umount $ISO_ROOT
+
+rm -rf $ISO_ROOT $ISO_WORK $ISO_DATA $ISO_RO $FS_ROOT $FS_WORK $FS_DATA $FS_RO
+
+echo "Done, image created:" $ISO_PATH
