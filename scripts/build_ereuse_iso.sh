@@ -139,7 +139,7 @@ ch apt-get clean
 printf 'ubuntu\nubuntu\n' | ch adduser -q --gecos 'Ubuntu' ubuntu
 
 # Autologin
-ch sed -i -r 's#(ExecStart=.*agetty )(.*)#\1--autologin ubuntu \2#' '/etc/systemd/system/getty.target.wants/getty@tty1.service'
+ch sed -i -r 's#(ExecStart=.*getty\b.*)(%I \$TERM)#\1--autologin ubuntu \2#' '/etc/systemd/system/getty.target.wants/getty@tty1.service'
 
 # Autostart
 echo "clear ; sudo device-inventory" >> $FS_ROOT/home/ubuntu/.profile
