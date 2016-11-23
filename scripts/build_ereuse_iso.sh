@@ -41,9 +41,14 @@ FS_ROOT=$(mktemp -d -p$WORK_DIR)
 mount -t squashfs -o loop,ro $ISO_RO/casper/filesystem.squashfs $FS_RO
 mount -t overlay -o lowerdir=$FS_RO,upperdir=$FS_RW_DATA,workdir=$FS_RW_WORK ereuse $FS_ROOT
 
-# Customize filesystem.
+# To customize filesystem.
 alias ch="chroot $FS_ROOT env HOME=/root LC_ALL=C"
 alias chi="ch apt-get install -y --no-install-recommends"
+
+# Customization prerequisites.
+ch dbus-uuidgen > $FS_ROOT/var/lib/dbus/machine-id
+ch dpkg-divert --local --rename --add /sbin/initctl
+ch ln -s /bin/true /sbin/initctl
 
 # Disable swapping to disk in a systemd-friendly way.
 # See <https://tails.boum.org/contribute/design/#index34h3>.
