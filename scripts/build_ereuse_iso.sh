@@ -18,11 +18,11 @@ WORK_DIR=${WORK_DIR:-dist/iso}
 # Version-specific settings.
 VERSION=7.1a5
 BASE_ISO_URL="http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/15.10/ubuntu-mini-remix-15.10-i386.iso"
-BASE_ISO_MD5="78399fed67fc503d2f770f5ad7dcab45"
+BASE_ISO_SHA256="e9985f0bcb05678d87d62c3d70191aab7a80540dc17523d93c313aa8515e173e"
 
 # Other derived values.
 BASE_ISO_PATH=$WORK_DIR/$(basename "$BASE_ISO_URL")
-BASE_ISO_MD5SUM="$BASE_ISO_MD5  $BASE_ISO_PATH"
+BASE_ISO_SHA256SUM="$BASE_ISO_SHA256  $BASE_ISO_PATH"
 ISO_PATH=$WORK_DIR/eReuseOS-$VERSION.iso
 
 
@@ -36,7 +36,7 @@ cat << 'EOF'
 **WARNING:** Please run this script UNDER YOUR OWN RESPONSIBILITY.  Be warned
 that, in particular, it may trash your keyboard layout.  You may also be
 exposed to security attacks if the base ISO image is compromised (although the
-image's MD5 hash is checked).
+image's SHA256 hash is checked).
 
 EOF
 read -p "Press Enter to continue, Ctrl+C to abort." dummy
@@ -48,7 +48,7 @@ mksquashfs -version > /dev/null  # fail if missing
 mkdir -p $WORK_DIR
 
 # Download the base ISO.
-while ! echo "$BASE_ISO_MD5SUM" | md5sum -c --quiet --status; do
+while ! echo "$BASE_ISO_SHA256SUM" | sha256sum -c --quiet --status; do
     wget -c -O $BASE_ISO_PATH "$BASE_ISO_URL"
 done
 
