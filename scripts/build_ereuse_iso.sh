@@ -52,7 +52,7 @@ ch ln -s /bin/true /sbin/initctl
 
 # Disable swapping to disk in a systemd-friendly way.
 # See <https://tails.boum.org/contribute/design/#index34h3>.
-ch dpkg-divert --rename --add /sbin/swapon
+ch dpkg-divert --local --rename --add /sbin/swapon
 ch ln -s /bin/true /sbin/swapon
 
 # TODO manually update resolv.conf
