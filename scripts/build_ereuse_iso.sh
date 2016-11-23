@@ -34,9 +34,10 @@ fi
 cat << 'EOF'
 
 **WARNING:** Please run this script UNDER YOUR OWN RESPONSIBILITY.  Be warned
-that, in particular, it may trash your keyboard layout.  You may also be
-exposed to security attacks if the base ISO image is compromised (although the
-image's SHA256 hash is checked).
+that, in particular, it may alter your keyboard layout and you may need a
+reboot to fix it.  You may also be exposed to security attacks if the base ISO
+image is compromised (although the image's SHA256 hash is checked before using
+it).
 
 EOF
 read -p "Press Enter to continue, Ctrl+C to abort." dummy
