@@ -5,9 +5,10 @@
 set -e
 
 # Configurable regional settings.
-LOCALE=${LOCALE:-es_ES.UTF8}
 KB_LAYOUT=${KB_LAYOUT:-Spanish}
-KB_LAYOUT_CODE=${KB_LAYOUT_CODE:-es}
+KB_LAYOUT_VARIANT=${KB_LAYOUT_CODE:-Spanish}
+LOCALE=${LOCALE:-es_ES.UTF8}
+TIMEZONE=${TIMEZONE:Etc/UTC}
 
 # Configurable settings.
 WORK_DIR=${WORK_DIR:-dist/iso}
@@ -87,15 +88,19 @@ ch chmod a+rx /usr/local/bin/di-install-image
 ch pip install --upgrade "git+https://github.com/eReuse/device-inventory.git#egg=device_inventory"
 
 # Configure regional settings
-echo 'Etc/UTC' > $FS_ROOT/etc/timezone
+ch debconf-set-selections << EOF
+keyboard-configuration keyboard-configuration/layout select $KB_LAYOUT
+keyboard-configuration keyboard-configuration/variant select $KB_LAYOUT_VARIANT
+EOF
+ch dpkg-reconfigure -f noninteractive keyboard-configuration
+
+echo "$TIMEZONE" > $FS_ROOT/etc/timezone
 ch debconf-set-selections << EOF
 locales locales/locales_to_be_generated multiselect $LOCALE ${LOCALE##*.}
 locales locales/default_environment_locale select $LOCALE
-keyboard-configuration keyboard-configuration/layout select $KB_LAYOUT
-keyboard-configuration keyboard-configuration/layoutcode select $KB_LAYOUT_CODE
 EOF
 
-ch dpkg-reconfigure -f noninteractive tzdata locales keyboard-configuration
+ch dpkg-reconfigure -f noninteractive tzdata locales
 ch locale-gen $LOCALE
 ch update-locale LANG=$LOCALE LANGUAGE=$LOCALE LC_ALL=$LOCALE
 
