@@ -176,6 +176,7 @@ umount $FS_RO
 genisoimage -D -r -V "eReuseOS" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o $ISO_PATH $ISO_ROOT
 
 umount $ISO_ROOT
+umount $ISO_RO
 
 rm -rf $ISO_ROOT $ISO_WORK $ISO_DATA $ISO_RO $FS_ROOT $FS_WORK $FS_DATA $FS_RO
 
