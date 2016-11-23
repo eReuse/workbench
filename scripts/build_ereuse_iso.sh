@@ -4,15 +4,24 @@
 
 set -e
 
-VERSION=7.1a5
-WORK_DIR="dist/iso"
+# Configurable regional settings.
+LOCALE=${LOCALE:-es_ES.UTF8}
+KB_LAYOUT=${KB_LAYOUT:-Spanish}
+KB_LAYOUT_CODE=${KB_LAYOUT_CODE:-es}
 
+# Configurable settings.
+WORK_DIR=${WORK_DIR:-dist/iso}
+
+# Version-specific settings.
+VERSION=7.1a5
 BASE_ISO_URL="http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/15.10/ubuntu-mini-remix-15.10-i386.iso"
 BASE_ISO_MD5="78399fed67fc503d2f770f5ad7dcab45"
+
+# Other derived values.
 BASE_ISO_PATH=$WORK_DIR/$(basename "$BASE_ISO_URL")
 BASE_ISO_MD5SUM="$BASE_ISO_MD5  $BASE_ISO_PATH"
-
 ISO_PATH=$WORK_DIR/eReuseOS-$VERSION.iso
+
 
 genisoimage --version > /dev/null  # fail if missing
 mksquashfs -version > /dev/null  # fail if missing
@@ -79,16 +88,16 @@ ch pip install --upgrade "git+https://github.com/eReuse/device-inventory.git#egg
 
 # Configure regional settings
 echo 'Etc/UTC' > $FS_ROOT/etc/timezone
-ch debconf-set-selections << 'EOF'
-locales locales/locales_to_be_generated multiselect es_ES.UTF-8 UTF-8
-locales locales/default_environment_locale select es_ES.UTF-8
-keyboard-configuration keyboard-configuration/layout select Spanish
-keyboard-configuration keyboard-configuration/layoutcode select es
-keyboard-configuration keyboard-configuration/variant select Spanish
+ch debconf-set-selections << EOF
+locales locales/locales_to_be_generated multiselect $LOCALE ${LOCALE##*.}
+locales locales/default_environment_locale select $LOCALE
+keyboard-configuration keyboard-configuration/layout select $KB_LAYOUT
+keyboard-configuration keyboard-configuration/layoutcode select $KB_LAYOUT_CODE
 EOF
 
 ch dpkg-reconfigure -f noninteractive tzdata locales keyboard-configuration
-ch locale-gen es_ES.UTF-8
+ch locale-gen $LOCALE
+ch update-locale LANG=$LOCALE LANGUAGE=$LOCALE LC_ALL=$LOCALE
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #   UPC REUTILITZA - GRAPHICAL ENVIRONMENT     #
