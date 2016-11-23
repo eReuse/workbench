@@ -7,8 +7,7 @@
 set -e
 
 # Configurable regional settings.
-KB_LAYOUT=${KB_LAYOUT:-Spanish}
-KB_LAYOUT_VARIANT=${KB_LAYOUT_CODE:-Spanish}
+KB_LAYOUT=${KB_LAYOUT:-es}  # see available in ``/usr/share/X11/xkb/symbols``
 LOCALE=${LOCALE:-es_ES.UTF-8}
 TIMEZONE=${TIMEZONE:-Etc/UTC}
 
@@ -33,11 +32,9 @@ fi
 
 cat << 'EOF'
 
-**WARNING:** Please run this script UNDER YOUR OWN RESPONSIBILITY.  Be warned
-that, in particular, it may alter your keyboard layout and you may need a
-reboot to fix it.  You may also be exposed to security attacks if the base ISO
-image is compromised (although the image's SHA256 hash is checked before using
-it).
+**WARNING:** Please run this script UNDER YOUR OWN RESPONSIBILITY.  Beware
+that you may be exposed to security attacks if the base ISO image is
+compromised (although the image's SHA256 hash is checked before using it).
 
 EOF
 read -p "Press Enter to continue, Ctrl+C to abort." dummy
@@ -107,11 +104,7 @@ ch chmod a+rx /usr/local/bin/di-install-image
 ch pip install --upgrade "git+https://github.com/eReuse/device-inventory.git#egg=device_inventory"
 
 # Configure regional settings
-ch debconf-set-selections << EOF
-keyboard-configuration keyboard-configuration/layout select $KB_LAYOUT
-keyboard-configuration keyboard-configuration/variant select $KB_LAYOUT_VARIANT
-EOF
-ch dpkg-reconfigure -f noninteractive keyboard-configuration
+ch ckbcomp $KB_LAYOUT | gzip -c > $FS_ROOT/etc/console-setup/cached.kmap.gz
 
 echo "$TIMEZONE" > $FS_ROOT/etc/timezone
 ch debconf-set-selections << EOF
