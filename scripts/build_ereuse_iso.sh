@@ -7,7 +7,7 @@ set -e
 # Configurable regional settings.
 KB_LAYOUT=${KB_LAYOUT:-Spanish}
 KB_LAYOUT_VARIANT=${KB_LAYOUT_CODE:-Spanish}
-LOCALE=${LOCALE:-es_ES.UTF8}
+LOCALE=${LOCALE:-es_ES.UTF-8}
 TIMEZONE=${TIMEZONE:Etc/UTC}
 
 # Configurable settings.
