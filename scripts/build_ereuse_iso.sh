@@ -102,11 +102,6 @@ ch locale-gen es_ES.UTF-8
 #ch apt-get purge git python-pip
 ch apt-get clean
 
-# If you installed software, be sure to run
-ch rm -f /var/lib/dbus/machine-id
-ch rm -f /sbin/initctl
-ch dpkg-divert --rename --remove /sbin/initctl
-
 # Add ubuntu user:
 printf 'ubuntu\nubuntu\n' | ch adduser -q --gecos 'Ubuntu' ubuntu
 
@@ -115,6 +110,11 @@ ch sed -i -r 's#(ExecStart=.*agetty )(.*)#\1--autologin ubuntu \2#' '/etc/system
 
 # Autostart
 echo "clear ; sudo device-inventory" >> $FS_ROOT/home/ubuntu/.profile
+
+# If you installed software, be sure to run
+ch rm -f /var/lib/dbus/machine-id
+ch rm -f /sbin/initctl
+ch dpkg-divert --rename --remove /sbin/initctl
 
 # delete temporary files
 rm -rf $FS_ROOT/tmp/* $FS_ROOT/root/.bash_history
