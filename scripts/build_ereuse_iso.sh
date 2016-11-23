@@ -20,9 +20,9 @@ BASE_ISO_URL="http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/
 BASE_ISO_SHA256="e9985f0bcb05678d87d62c3d70191aab7a80540dc17523d93c313aa8515e173e"
 
 # Other derived values.
-BASE_ISO_PATH=$WORK_DIR/$(basename "$BASE_ISO_URL")
+BASE_ISO_PATH="$WORK_DIR/$(basename "$BASE_ISO_URL")"
 BASE_ISO_SHA256SUM="$BASE_ISO_SHA256  $BASE_ISO_PATH"
-ISO_PATH=$WORK_DIR/eReuseOS-$VERSION.iso
+ISO_PATH="$WORK_DIR/eReuseOS-$VERSION.iso"
 
 
 if [ "$(whoami)" != "root" ]; then
@@ -43,7 +43,7 @@ read -p "Press Enter to continue, Ctrl+C to abort." dummy
 genisoimage --version > /dev/null  # fail if missing
 mksquashfs -version > /dev/null  # fail if missing
 
-mkdir -p $WORK_DIR
+mkdir -p "$WORK_DIR"
 
 # Download the base ISO.
 while ! echo "$BASE_ISO_SHA256SUM" | sha256sum -c --quiet --status; do
@@ -51,18 +51,18 @@ while ! echo "$BASE_ISO_SHA256SUM" | sha256sum -c --quiet --status; do
 done
 
 # Mount a writable version of the ISO and the FS in it.
-ISO_RO=$(mktemp -d -p$WORK_DIR)
-ISO_RW_DATA=$(mktemp -d -p$WORK_DIR)
-ISO_RW_WORK=$(mktemp -d -p$WORK_DIR)
-ISO_ROOT=$(mktemp -d -p$WORK_DIR)
+ISO_RO=$(mktemp -d -p"$WORK_DIR")
+ISO_RW_DATA=$(mktemp -d -p"$WORK_DIR")
+ISO_RW_WORK=$(mktemp -d -p"$WORK_DIR")
+ISO_ROOT=$(mktemp -d -p"$WORK_DIR")
 
 mount -t iso9660 -o loop,ro $BASE_ISO_PATH $ISO_RO
 mount -t overlay -o lowerdir=$ISO_RO,upperdir=$ISO_RW_DATA,workdir=$ISO_RW_WORK base-iso $ISO_ROOT
 
-FS_RO=$(mktemp -d -p$WORK_DIR)
-FS_RW_DATA=$(mktemp -d -p$WORK_DIR)
-FS_RW_WORK=$(mktemp -d -p$WORK_DIR)
-FS_ROOT=$(mktemp -d -p$WORK_DIR)
+FS_RO=$(mktemp -d -p"$WORK_DIR")
+FS_RW_DATA=$(mktemp -d -p"$WORK_DIR")
+FS_RW_WORK=$(mktemp -d -p"$WORK_DIR")
+FS_ROOT=$(mktemp -d -p"$WORK_DIR")
 
 mount -t squashfs -o loop,ro $ISO_RO/casper/filesystem.squashfs $FS_RO
 mount -t overlay -o lowerdir=$FS_RO,upperdir=$FS_RW_DATA,workdir=$FS_RW_WORK ereuse $FS_ROOT
@@ -104,7 +104,7 @@ ch chmod a+rx /usr/local/bin/di-install-image
 ch pip install --upgrade "git+https://github.com/eReuse/device-inventory.git#egg=device_inventory"
 
 # Configure regional settings
-ch ckbcomp $KB_LAYOUT | gzip -c > $FS_ROOT/etc/console-setup/cached.kmap.gz
+ch ckbcomp "$KB_LAYOUT" | gzip -c > $FS_ROOT/etc/console-setup/cached.kmap.gz
 
 echo "$TIMEZONE" > $FS_ROOT/etc/timezone
 ch debconf-set-selections << EOF
@@ -113,8 +113,8 @@ locales locales/default_environment_locale select $LOCALE
 EOF
 
 ch dpkg-reconfigure -f noninteractive tzdata locales
-ch locale-gen $LOCALE
-ch update-locale LANG=$LOCALE LANGUAGE=$LOCALE LC_ALL=$LOCALE
+ch locale-gen "$LOCALE"
+ch update-locale "LANG=$LOCALE" "LANGUAGE=$LOCALE" "LC_ALL=$LOCALE"
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #   UPC REUTILITZA - GRAPHICAL ENVIRONMENT     #
