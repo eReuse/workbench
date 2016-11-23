@@ -1,6 +1,8 @@
 #!/bin/sh
-
-# https://help.ubuntu.com/community/LiveCDCustomization
+# Generate eReuseOS ISO.
+#
+# Based on instructions from
+# <https://help.ubuntu.com/community/LiveCDCustomization>.
 
 set -e
 
@@ -22,6 +24,22 @@ BASE_ISO_MD5="78399fed67fc503d2f770f5ad7dcab45"
 BASE_ISO_PATH=$WORK_DIR/$(basename "$BASE_ISO_URL")
 BASE_ISO_MD5SUM="$BASE_ISO_MD5  $BASE_ISO_PATH"
 ISO_PATH=$WORK_DIR/eReuseOS-$VERSION.iso
+
+
+if [ "$(whoami)" != "root" ]; then
+    echo "Please run this script as root." >&2
+    exit 1
+fi
+
+cat << 'EOF'
+
+**WARNING:** Please run this script UNDER YOUR OWN RESPONSIBILITY.  Be warned
+that, in particular, it may trash your keyboard layout.  You may also be
+exposed to security attacks if the base ISO image is compromised (although the
+image's MD5 hash is checked).
+
+EOF
+read -p "Press Enter to continue, Ctrl+C to abort." dummy
 
 
 genisoimage --version > /dev/null  # fail if missing
