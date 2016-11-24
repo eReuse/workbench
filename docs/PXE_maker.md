@@ -3,7 +3,7 @@
 
 #eReuse: How to make PXE server (Debian Server)
 
-Guide version: 7.1a6
+Guide version: 7.1a7
 
 This guide will allow you to make a PXE server and boot computers via ethernet network.
 
@@ -38,7 +38,7 @@ apt-get install tftpd-hpa isc-dhcp-server nfs-kernel-server
 Download all files we need:
 ```
 wget http://kaplah.org/system/files/field/files/pxelinux.tar.gz
-wget https://github.com/eReuse/device-inventory/releases/download/v7.1a6/eReuseOS-7.1a6.iso
+wget https://github.com/eReuse/device-inventory/releases/download/v7.1a7/eReuseOS-7.1a7.iso
 wget http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/lubuntu-16.04.1-desktop-i386.iso
 ```
 
@@ -169,7 +169,7 @@ mkdir iso mnt ks
 
 Move the isos to `/var/lib/tftpboot/iso`:
 ```
-mv ~/eReuseOS-7.1a6.iso iso
+mv ~/eReuseOS-7.1a7.iso iso
 mv ~/lubuntu-16.04.1-desktop-i386.iso iso
 ```
 
@@ -186,7 +186,7 @@ nano /etc/fstab
 
 Add the lines:
 ```
-/var/lib/tftpboot/iso/eReuseOS-7.1a6.iso /var/lib/tftpboot/mnt/eReuse_image iso9660 ro 0 0
+/var/lib/tftpboot/iso/eReuseOS-7.1a7.iso /var/lib/tftpboot/mnt/eReuse_image iso9660 ro 0 0
 /var/lib/tftpboot/iso/lubuntu-16.04.1-desktop-i386.iso /var/lib/tftpboot/mnt/inst_media iso9660 ro,nofail 0 0
 ```
 
