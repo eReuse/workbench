@@ -1,6 +1,7 @@
 include LICENSE
 include MANIFEST.in
 include *.md
+include *.txt
 recursive-include device_inventory *
 recursive-include scripts *
 recursive-include tests *
