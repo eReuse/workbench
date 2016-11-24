@@ -20,6 +20,7 @@ BASE_ISO_URL="http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/
 BASE_ISO_SHA256="e9985f0bcb05678d87d62c3d70191aab7a80540dc17523d93c313aa8515e173e"
 
 # Other derived values.
+SDIST=$(find "dist/device-inventory-$VERSION.tar.gz")  # fail if missing
 BASE_ISO_PATH="$WORK_DIR/$(basename "$BASE_ISO_URL")"
 BASE_ISO_SHA256SUM="$BASE_ISO_SHA256  $BASE_ISO_PATH"
 ISO_PATH="$WORK_DIR/eReuseOS-$VERSION.iso"
@@ -91,7 +92,7 @@ ch add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(ch lsb_release -sc
 
 # installation tools requirements (could be removed)
 ch apt-get update
-chi git-core python-pip  # vim
+chi python-pip  # vim
 
 # device-inventory requirements
 # TODO read from requirements.txt
@@ -101,7 +102,8 @@ chi $(sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements.txt requirements-full.txt)
 ch wget "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" -O /usr/local/bin/di-install-image
 ch chmod a+rx /usr/local/bin/di-install-image
 
-ch pip install --upgrade "git+https://github.com/eReuse/device-inventory.git#egg=device_inventory"
+cp $SDIST $FS_ROOT/tmp
+ch pip install --upgrade /tmp/$(basename $SDIST)
 
 # Configure regional settings
 ch ckbcomp "$KB_LAYOUT" | gzip -c > $FS_ROOT/etc/console-setup/cached.kmap.gz
