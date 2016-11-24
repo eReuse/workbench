@@ -11,7 +11,8 @@ This guide will allow you to make a PXE server and boot computers via ethernet n
 1. You can find the newest stable Debian Server [here](http://debian.xfree.com.ar/debian-cd/current/amd64/iso-cd/)
   - Netinst mode recommended.
 2. Download the latest release of eReuseOS image from [here](https://github.com/eReuse/device-inventory/releases/latest)
-3. Download the FSArchiver images the OS you want to install in clients
+3. Download the installation ISO of the OS you want to install in clients (we will be using 32-bit Lubuntu from [here](http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/) as an example, but other distros are supported)
+4. Download the FSArchiver images the OS you want to install in clients
 
 ####Services 
 On this guide, you will install the following services:
@@ -24,6 +25,7 @@ DHCP, TFTP, NFS and Samba.
 - Clients asks for the network image via TFTP, then load and run it.
 - When network image starts to run, loads the kernel of the system and mount the filesystem via NFS.
 - The diagnostic and inventory process takes place, and afterwards a system image may be installed to the computer via Samba.
+- On reboot, the user can choose to run the installation ISO from the network.
 
 ##Installation
 ####1. Install the services and get all files needed
@@ -37,6 +39,7 @@ Download all files we need:
 ```
 wget http://kaplah.org/system/files/field/files/pxelinux.tar.gz
 wget https://github.com/eReuse/device-inventory/releases/download/v7.1a5/eReuseOS-7.1a5.iso
+wget http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/lubuntu-16.04.1-desktop-i386.iso
 ```
 
 ####2. Configure TFTP
@@ -148,6 +151,7 @@ Add the following lines:
 ```
 /var/lib/tftpboot/ks *(no_root_squash,no_subtree_check,ro)
 /var/lib/tftpboot/mnt/eReuse_image *(no_root_squash,no_subtree_check,ro)
+/var/lib/tftpboot/mnt/inst_media *(no_root_squash,no_subtree_check,ro)
 ```
 
 ####5. Configure TFTP final step
@@ -163,14 +167,16 @@ Make all the folders that we will use for the configuration:
 mkdir iso mnt ks
 ```
 
-Move the iso to `/var/lib/tftpboot/iso`:
+Move the isos to `/var/lib/tftpboot/iso`:
 ```
 mv ~/eReuseOS-7.1a5.iso iso
+mv ~/lubuntu-16.04.1-desktop-i386.iso iso
 ```
 
-Make the dir to mount the eReuseOS iso. This is the folder that will be shared on network:
+Make the dir to mount the eReuseOS iso. These are the folders that will be shared on network:
 ```
 mkdir mnt/eReuse_image/
+mkdir mnt/inst_media/
 ```
 
 Now edit `/etc/fstab` to mount it when server starts:
@@ -178,15 +184,17 @@ Now edit `/etc/fstab` to mount it when server starts:
 nano /etc/fstab
 ```
 
-Add the line:
+Add the lines:
 ```
 /var/lib/tftpboot/iso/eReuseOS-7.1a5.iso /var/lib/tftpboot/mnt/eReuse_image iso9660 ro 0 0
+/var/lib/tftpboot/iso/lubuntu-16.04.1-desktop-i386.iso /var/lib/tftpboot/mnt/inst_media iso9660 ro,nofail 0 0
 ```
 
-Test it is automounted with:
+Test that they are automounted with:
 ```
 mount -a
 ls -l mnt/eReuse_image/
+ls -l mnt/inst_media/
 ```
 
 Reload NFS service:
@@ -215,7 +223,49 @@ LABEL eReuse
     MENU LABEL eReuse
         kernel mnt/eReuse_image/casper/vmlinuz
         initrd mnt/eReuse_image/casper/initrd.lz
-        append boot=casper ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/eReuse_image text forcepae
+        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/eReuse_image boot=casper text forcepae
+        IPAPPEND 2
+
+LABEL ChaletOS32
+    MENU LABEL ChaletOS32
+        kernel mnt/install_media/casper/vmlinuz
+        initrd mnt/install_media/casper/initrd.gz
+        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=casper forcepae
+        IPAPPEND 2
+
+LABEL ChaletOS64
+    MENU LABEL ChaletOS64
+        kernel mnt/inst_media/casper/vmlinuz
+        initrd mnt/inst_media/casper/initrd.gz
+        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=casper
+        IPAPPEND 2
+
+LABEL DebianLive32
+    MENU LABEL DebianLive32
+        kernel mnt/inst_media/live/vmlinuz2
+        initrd mnt/inst_media/live/initrd2.img
+        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=live components forcepae
+        IPAPPEND 2
+
+LABEL DebianLive64
+    MENU LABEL DebianLive64
+        kernel mnt/inst_media/live/vmlinuz
+        initrd mnt/inst_media/live/initrd.img
+        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=live components forcepae
+        IPAPPEND 2
+
+LABEL Ubuntu32
+    MENU LABEL Ubuntu32
+        kernel mnt/inst_media/casper/vmlinuz
+        initrd mnt/inst_media/casper/initrd.lz
+        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=casper forcepae
+        IPAPPEND 2
+
+LABEL Ubuntu64
+    MENU LABEL Ubuntu64
+        kernel mnt/inst_media/casper/vmlinuz.efi
+        initrd mnt/inst_media/casper/initrd.lz
+        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=casper
         IPAPPEND 2
 ```
 
