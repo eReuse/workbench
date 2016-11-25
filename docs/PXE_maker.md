@@ -228,8 +228,8 @@ LABEL eReuse
 
 LABEL ChaletOS32
     MENU LABEL ChaletOS32
-        kernel mnt/install_media/casper/vmlinuz
-        initrd mnt/install_media/casper/initrd.gz
+        kernel mnt/inst_media/casper/vmlinuz
+        initrd mnt/inst_media/casper/initrd.gz
         append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=casper forcepae
         IPAPPEND 2
 
