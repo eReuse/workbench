@@ -42,7 +42,8 @@ Use some informative ``IMAGE_NAME`` like ``lubuntu-xenial-amd64-ca``.  Now you c
 4. Insert [DeviceInventory](https://github.com/eReuse/device-inventory/releases/latest) (download it from Downloads section, at the bottom) as primary CD media: ![Virtualbox disk](./images/virtualbox-disk.png)
 5. If you have it, insert the installation ISO of your choice as secondary CD media: ![Virtualbox disk](./images/virtualbox-disk.png)
 6. In the machine settings, select the *Shared Folders* tab, then the ``ereuse-data`` entry in the list and click on the edit button (orange) on the right. In the following dialog, click on the drop down list, then on *Other…* and choose the ``ereuse-data`` folder that you created at the beginning, then accept the new configuration: ![Virtualbox shared folder](./images/virtualbox-shared.png)
-7. Run the virtual server and wait until it asks for *login*. There is no need for login. Now you [can start registering your computers](#register-a-computer), or [configure the server to automate tasks](#configure-iso-options)
+7. If your PC supports hardware virtualization (VT-x/AMD-V), enable it in the machine settings, under *System / Acceleration*.
+8. Run the virtual server and wait until it asks for *login*. There is no need for login. Now you [can start registering your computers](#register-a-computer), or [configure the server to automate tasks](#configure-iso-options)
 
 ####Register a computer
 1. Connect a PC on the LAN network.
