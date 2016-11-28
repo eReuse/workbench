@@ -10,6 +10,9 @@ import os
 import re
 import subprocess
 import sys
+import time
+
+import tqdm
 
 from device_inventory import eraser, serializers, storage, utils
 from device_inventory.conf import settings
@@ -149,13 +152,17 @@ def stress(minutes):
         mem_kib = int(match.group(1))
     # Exclude a percentage of available memory for the stress processes themselves.
     mem_worker_kib = (mem_kib / ncores) * 90 / 100
-    ret = subprocess.call([
+    proc = subprocess.Popen([
         "stress",
         "-c", str(ncores),
         "-m", str(ncores),
         "--vm-bytes", "%dK" % mem_worker_kib,
-        "-t", "%dm" % minutes])
-    return ret == 0
+        "-t", "%dm" % minutes],
+        stdout=suprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
+    for _ in tqdm.trange(minutes * 60):  # update progress bar every second
+        time.sleep(1)
+    proc.communicate()  # wait for process, consume output
+    return proc.returncode == 0
 
 def install(name=None, confirm=True):
     """Install a system image to the local hard disk.
