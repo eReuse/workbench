@@ -139,7 +139,31 @@ ch sed -i -r --follow-symlinks \
    '/etc/systemd/system/getty.target.wants/getty@tty1.service'
 
 # Autostart
-echo "clear ; sudo device-inventory" >> $FS_ROOT/home/ubuntu/.profile
+cat > $FS_ROOT/home/ubuntu/.di-help << 'EOF'
+
+Device diagnostic and inventory process finished.
+
+  - To reboot the computer, press Ctrl+Alt+Del or run:
+
+        sudo reboot
+
+  - To turn the computer off, press the power button or run:
+
+        sudo poweroff
+
+  - To run the diagnostic and inventory process again, enter:
+
+        sudo device-inventory
+
+EOF
+ch chown ubuntu:ubuntu /home/ubuntu/.di-help
+cat > $FS_ROOT/home/ubuntu/.bash_history << 'EOF'
+sudo device-inventory
+sudo poweroff
+sudo reboot
+EOF
+ch chown ubuntu:ubuntu /home/ubuntu/.bash_history
+echo "clear ; sudo device-inventory ; cat ~/.di-help" >> $FS_ROOT/home/ubuntu/.profile
 
 # If you installed software, be sure to run
 ch rm -f /var/lib/dbus/machine-id
