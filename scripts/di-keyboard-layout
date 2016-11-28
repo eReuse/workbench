@@ -1,0 +1,22 @@
+#!/bin/sh
+# Load the keyboard layout specified in the configuration file,
+# or interactively ask for one.
+
+set -e
+
+CONFIG_FILE=/tmp/remote_custom_config.ini
+KEYBOARD_LAYOUT=$(sed -rn 's/^\s*KEYBOARD_LAYOUT\s*=\s*([^\s]+)\s*/\1/p' "$CONFIG_FILE")
+
+# Not just to ease listing, but also to avoid ``loadkeys`` from loading random
+# files with a name starting with the same letters as a layout file.
+cd /usr/share/X11/xkb/symbols
+
+while ! test -f "$KEYBOARD_LAYOUT"; do
+    echo "Available keyboard layouts (us=American, es=Spanish, fr=French, de=German...):"
+    echo
+    find . -maxdepth 1 -type f | sed 's#./##' | xargs ls
+    echo
+    read -p "Please enter one of the keyboard layouts from above: " KEYBOARD_LAYOUT
+done
+
+loadkeys "$KEYBOARD_LAYOUT"
