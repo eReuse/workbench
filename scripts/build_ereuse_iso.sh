@@ -165,6 +165,8 @@ EOF
 ch chown ubuntu:ubuntu /home/ubuntu/.bash_history
 cat >> $FS_ROOT/home/ubuntu/.profile << 'EOF'
 clear
+sudo di-keyboard-layout
+clear
 if [ -d /media/ereuse-data ]; then
     sudo device-inventory --settings /media/ereuse-data/config.ini --inventory /media/ereuse-data/inventory
 else
