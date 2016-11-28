@@ -7,8 +7,8 @@
 set -e
 
 # Configurable regional settings.
-KB_LAYOUT=${KB_LAYOUT:-es}  # see available in ``/usr/share/X11/xkb/symbols``
-LOCALE=${LOCALE:-es_ES.UTF-8}
+KB_LAYOUT=${KB_LAYOUT:-us}  # see available in ``/usr/share/X11/xkb/symbols``
+LOCALE=${LOCALE:-en_US.UTF-8}
 TIMEZONE=${TIMEZONE:-Etc/UTC}
 
 # Configurable settings.
