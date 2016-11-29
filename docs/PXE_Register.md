@@ -13,7 +13,7 @@ connected on the LAN network.
   - [eReusePXEserver-<VERSION>.ova](https://github.com/eReuse/device-inventory/releases/latest)
   - [eReuseOS-<VERSION>.iso](https://github.com/eReuse/device-inventory/releases/latest)
   - If you want to install a GNU/Linux OS into inventoried computers you will need an installation ISO, e.g. [lubuntu-<...>.iso](http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/).
-  - If you want to install FSArchiver system images into inventoried computers, you will need to create in your PC a folder called ``ereuse-data``, another one inside of it called ``images``, and copy the images in the latter.
+  - If you want to install FSArchiver system images into inventoried computers, you will need to create in your PC a folder called ``ereuse-data``, another one inside of it called ``images``, and copy the ``.fsa`` files in the latter.
 - Switch
 - Network cables
 - PC to register
@@ -30,7 +30,7 @@ connected on the LAN network.
 # umount /mnt  # wait until the command is complete
 ```
 
-Use some informative ``IMAGE_NAME`` like ``lubuntu-xenial-amd64-ca``.  Now you can plug the USB drive into your PC and copy the image to it.
+Use some informative ``IMAGE_NAME`` like ``lubuntu-xenial-amd64-ca``.  Now you can plug the USB drive into your PC and copy the ``.fsa`` file into the ``images`` directory under the folder shared between your PC and the virtual server.
 
 ####Steps to install and setup the server:
 1. Disconnect any router (any DHCP provider in general) from the network. Just use the switch or hub.
