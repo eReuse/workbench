@@ -271,20 +271,22 @@ LABEL Ubuntu64
 
 ####5. Configure public access via SMB to TFTP inventory files
 
-Create an ``ereuse`` user with ``adduser ereuse``.  Download the
-``config.ini`` file to its home directory:
+Create an ``ereuse`` user with ``adduser ereuse``.  Link the data directory
+that will be prepared below in its home directory as ``data``:
 
 ```
-wget -O /home/ereuse/config.ini https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/config.ini
+su -c "ln -s /srv/ereuse-data ~/data" ereuse
 ```
 
-Create the ``/srv/ereuse-data`` directory, copy FSArchiver images to its
-``images`` subdirectory, and change its ownership to the ``ereuse`` user that
-you just created:
+Create the ``/srv/ereuse-data`` directory with subdirectories for ``images``
+and the ``inventory`` of JSON files.  Download the ``config.ini`` and copy
+FSArchiver images to the images subdirectory.  Change the ownership of
+everything to the ``ereuse`` user that you just created:
 
 ```
 mkdir -p /srv/ereuse-data
-mkdir /srv/ereuse-data/images
+mkdir /srv/ereuse-data/images /srv/ereuse-data/inventory
+wget -O /srv/ereuse-data/config.ini https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/config.ini
 #(copy FSArchiver images to ``/srv/ereuse-data/images``)#
 chown -R ereuse:ereuse /srv/ereuse-data
 chmod -R a+rX /srv/ereuse-data
@@ -292,22 +294,17 @@ chmod -R a+rX /srv/ereuse-data
 
 Install Samba with ``apt-get install samba`` and add the following share
 definitions to ``/etc/samba/smb.conf`` to enable public read/write access to
-inventory files and read access to image files:
+eReuse data files:
 
 ```
-[eReuse Inventory]
-        comment = eReuse Inventory
-        path = /home/ereuse/inventory
-        browseable = yes
-        read only = no
-        guest ok = yes
-
 [ereuse-data]
         comment = eReuse data
         path = /srv/ereuse-data
         browseable = yes
-        read only = yes
+        read only = no
         guest ok = yes
+        force user = ereuse
+        force group = ereuse
 ```
 
 Then reload the service with ``service samba reload``.

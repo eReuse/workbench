@@ -71,7 +71,7 @@ Otherwise, you may want to use the installation ISO that you attached to the ser
 You can automatize tasks of DeviceInventory by modifying the configuration file ([config.ini](https://github.com/eReuse/device-inventory/blob/master/device_inventory/config.ini)). For example, you can set to always erase disks in a specific way, or to automatically install some image, so the system will not ask the user about this, avoiding spending time and user errors. To modify the configuration file on the server, do the following:
 
 1. On the server machine from VirtualBox, login with the credentials (username: ereuse, password: ereuse).
-2. write in the terminal `nano /home/ereuse/config.ini`
+2. Write in the terminal `nano /srv/ereuse-data/config.ini`.
 3. Enable or disable all the options that you want.
 4. Save the changes pressing <kbd>Ctrl</kbd><kbd>O</kbd> and enter. Exit with <kbd>Ctrl</kbd><kbd>X</kbd>.
 
