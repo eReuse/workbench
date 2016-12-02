@@ -112,22 +112,22 @@ def hard_disk_smart(disk, test_type="short"):
     remaining = 100
     while remaining > 0:
         dev.update()
-        error = None
+        smarterr = None
         try:
             last_test = dev.tests[0]
-        except (TypeError, IndexError) as error:
+        except (TypeError, IndexError) as smarterr:
             pass  # work around because SMART has not been initialized
                   # yet but pySMART library doesn't wait
                   # Just ignore the error because we alreday have an
                   # estimation of the ending time
         try:
-            if not error:
+            if not smarterr:
                 remaining = int(last_test.remain.strip('%'))
-        except ValueError as error:
+        except ValueError as smarterr:
             pass
 
-        if error:
-            logger.error(error)
+        if smarterr:
+            logger.error(smarterr)
             if datetime.now() > test_end:  # TODO wait a few seconds more
                 break  # avoid infinite loop
         time.sleep(5)  # wait a few seconds between smart retrievals
