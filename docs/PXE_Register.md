@@ -8,15 +8,15 @@ connected on the LAN network.
 
 #### To register we need the following
 
+- A network switch (at least 100 Mbps, 1 Gbps recommended)
+- Network cables
 - A PC with:
   - [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
   - [eReusePXEserver-<VERSION>.ova](https://github.com/eReuse/device-inventory/releases/latest)
   - [eReuseOS-<VERSION>.iso](https://github.com/eReuse/device-inventory/releases/latest)
-  - If you want to install a GNU/Linux OS into inventoried computers you will need an installation ISO, e.g. [lubuntu-<...>.iso](http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/).
-  - If you want to install FSArchiver system images into inventoried computers, you will need to create in your PC a folder called ``ereuse-data``, another one inside of it called ``images``, and copy the ``.fsa`` files in the latter.
-- Switch
-- Network cables
-- PC to register
+  - A folder called ``ereuse-data`` with another one inside of it called ``images`` (names must match **exactly**, including case).  Copy into the latter any ``.fsa`` files that you have if you want to install FSArchiver system images into inventoried computers.
+  - If you want to install a GNU/Linux OS into inventoried computers from an installation ISO, e.g. [lubuntu-<...>.iso](http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/), please copy it to the PC as well.
+- PCs to be registered
 
 **Note on installation ISOs:** Only a small set of Debian/Ubuntu live distros based on Casper are supported by default. If you want to add more you will need to edit the server's ``pxelinux.cfg/default`` file (see PXELINUX [server configuration](PXE_maker.md)).
 
