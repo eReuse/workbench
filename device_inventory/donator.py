@@ -76,19 +76,22 @@ FUNCTIONAL_GRADES = collections.OrderedDict([
 _user_input_questions = [
     # Device type
     ('device_type', 'EQUIP', Computer.Type, Computer.TYPES, False,
-     "Choose device type:\n{0}\nType: "),
+     """\
+Choose device type:
+{0}
+Device type ({1}): """),
     # Visual grade
     ('appearance_grade', 'VISUAL_GRADE', ComputerGrade, VISUAL_GRADES, True,
      """\
 Choose the option that better describes the visual grade of the computer:
 {0}
-Visual grade (empty to skip): """),
+Visual grade ({1}): """),
     # Functional grade
     ('functionality_grade', 'FUNCTIONAL_GRADE', ComputerGrade, FUNCTIONAL_GRADES, True,
      """\
 Choose the option that better describes the functional grade of the computer:
 {0}
-Functional grade (empty to skip): """),
+Functional grade ({1}): """),
 ]
 
 def get_user_input():
@@ -111,7 +114,8 @@ def get_user_input():
         entry_to_item = dict(enumerate(val_to_desc.items(), start=1))
         choice_msg = '\n' + msg_template.format(
             '\n'.join('%d. %s' % (idx, desc)
-                      for (idx, (_, desc)) in entry_to_item.items())
+                      for (idx, (_, desc)) in entry_to_item.items()),
+            ("1-%d, empty to skip" if allow_empty else "1-%d") % len(entry_to_item)
         )
         entry = None
         while entry not in entry_to_item:
