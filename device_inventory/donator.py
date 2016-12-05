@@ -96,7 +96,9 @@ Functional grade ({1}): """),
 
 def get_user_input():
     user_input = {}
-    for field in ['label', 'comment', 'pid', '_id']:
+
+    # Ask the user for assorted identifiers.
+    for field in ['label', 'pid', '_id']:
         if settings.getboolean('DEFAULT', field):
             value = raw_input("%s: " % field).strip()
             if value:
@@ -137,6 +139,14 @@ def get_user_input():
         val = val_dflt if val_dflt else choose_from_dict(choices, msg, allow_empty)
         if val:
             user_input[field] = val
+
+    # Let the user provide other information not requested previously.
+    # Do this last to save the user from entering info in the comment
+    # that is to be asked next.
+    if settings.getboolean('DEFAULT', 'comment'):
+        value = raw_input("Additional comments (empty to skip): ").strip()
+        if value:
+            user_input['comment'] = value
     
     return user_input
 
