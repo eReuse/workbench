@@ -100,37 +100,38 @@ def hard_disk_smart(disk, test_type="short"):
         duration = 2 if test_type == "short" else 120
         test_end = datetime.now() + timedelta(minutes=duration)
     print("Runing SMART self-test. It will finish at {0}".format(test_end))
-    
-    # wait, at least, until estimated end time showing the user
-    # a progress meter
-    seconds = int((test_end - datetime.now()).total_seconds())
-    for _ in tqdm.trange(seconds, leave=True):
-        time.sleep(1)
-    
-    # check if the self-test has really finish by checking the
-    # remaining percentage
-    remaining = 100
-    while remaining > 0:
-        dev.update()
-        smarterr = None
-        try:
-            last_test = dev.tests[0]
-        except (TypeError, IndexError) as smarterr:
-            pass  # work around because SMART has not been initialized
-                  # yet but pySMART library doesn't wait
-                  # Just ignore the error because we alreday have an
-                  # estimation of the ending time
-        try:
-            if not smarterr:
-                remaining = int(last_test.remain.strip('%'))
-        except ValueError as smarterr:
-            pass
 
-        if smarterr:
-            logger.error(smarterr)
-            if datetime.now() > test_end:  # TODO wait a few seconds more
-                break  # avoid infinite loop
-        time.sleep(5)  # wait a few seconds between smart retrievals
+    # follow progress of test until it ends or the estimated time is reached
+    grace_time = timedelta(seconds=10)
+    remaining = 100  # test completion pending percentage
+    with tqdm.tqdm(total=remaining, leave=True) as smartbar:
+        while remaining > 0:
+            time.sleep(5)  # wait a few seconds between smart retrievals
+            smarterr = None
+
+            dev.update()
+            try:
+                last_test = dev.tests[0]
+            except (TypeError, IndexError) as smarterr:  # test is None, no tests
+                pass  # work around because SMART has not been initialized
+                      # yet but pySMART library doesn't wait
+                      # Just ignore the error because we alreday have an
+                      # estimation of the ending time
+
+            if not smarterr:
+                last = remaining
+                try:
+                    remaining = int(last_test.remain.strip('%'))
+                except ValueError as smarterr:
+                    pass
+                smartbar.update(last - remaining)
+
+            if smarterr:
+                logger.error(smarterr)
+
+            # only allow a few seconds more than the estimated time
+            if datetime.now() > test_end + grace_time:
+                break
     
     # show last test
     dev.update()
