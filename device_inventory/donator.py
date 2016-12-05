@@ -289,7 +289,10 @@ def main(argv=None):
     data = serializers.export_to_devicehub_schema(device, user_input, debug)
     
     # TODO save on the home
-    filename = "{0}.json".format(device.verbose_name)  # get_option
+    filebase = ((data.get('label') or device.verbose_name)
+                .replace(':', '-')
+                .replace(os.path.sep, '-'))
+    filename = "{0}.json".format(filebase)  # get_option
     localpath = os.path.join("/tmp", filename)
     with open(localpath, "w") as outfile:
         json.dump(data, outfile, indent=4, sort_keys=True, cls=InvEncoder)
@@ -297,7 +300,7 @@ def main(argv=None):
     # sign output
     if settings.getboolean('signature', 'sign_output'):
         signed_data = utils.sign_data(json.dumps(data, indent=4, sort_keys=True, cls=InvEncoder))
-        filename = "{0}.json.asc".format(device.verbose_name)
+        filename = "{0}.json.asc".format(filebase)
         localpath = os.path.join("/tmp", filename)
         with open(localpath, "w") as outfile:
             outfile.write(signed_data)

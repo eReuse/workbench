@@ -468,6 +468,6 @@ class Computer(object):
         
         for iface in self.network_interfaces:
             if iface.serialNumber:
-                return iface.serialNumber.replace(':', '')
+                return iface.serialNumber
         
         return str(uuid.getnode())
