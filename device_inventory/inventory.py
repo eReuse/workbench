@@ -19,12 +19,19 @@ logger = logging.getLogger(__name__)
 
 
 def get_subsection_value(output, section_name, subsection_name):
-    """Extract data from tabulated output like lshw and dmidecode."""
+    """Extract data from tabulated output like lshw and dmidecode.
+
+    Return `None` when the section or subsection is not found.
+    """
     section = output.find(section_name)
+    if section < 0:
+        return
     ## end_section = output.find("*-", section)
     ## XXX WIP try to limit context to a section (how to detect end on dmidecode?)
     ## NOTE will be replaced with dmidecode Python2 library
     subsection = output.find(subsection_name, section)#, end_section)
+    if subsection < 0:
+        return
     end = output.find("\n", subsection)
     return output[subsection:end].split(':')[1].strip()
 
