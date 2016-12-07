@@ -271,26 +271,30 @@ LABEL Ubuntu64
 
 ####5. Configure public access via SMB to TFTP inventory files
 
-Create an ``ereuse`` user with ``adduser ereuse``.  Link the data directory
-that will be prepared below in its home directory as ``data``:
+Create an ``ereuse`` user with a ``data`` directory in its home.  In it,
+create subdirectories for ``images`` and the ``inventory`` of JSON files.
+Download the ``config.ini`` into the ``data`` directory and copy FSArchiver
+images to the ``images`` subdirectory.  For backwards compatibility, you may
+create ``config.ini`` and ``inventory``  symbolic links to their counterparts
+under ``data``.  Change the ownership of everything to the ``ereuse`` user:
 
 ```
-su -c "ln -s /srv/ereuse-data ~/data" ereuse
+adduser ereuse
+mkdir -p ~ereuse/data/images ~ereuse/data/inventory
+wget -O ~/ereuse/data/config.ini https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/config.ini
+#(copy FSArchiver images to ``~ereuse/data/images``)#
+chown -R ereuse:ereuse ~ereuse/data
+chmod -R a+rX ~ereuse/data
 ```
 
-Create the ``/srv/ereuse-data`` directory with subdirectories for ``images``
-and the ``inventory`` of JSON files.  Download the ``config.ini`` and copy
-FSArchiver images to the images subdirectory.  Change the ownership of
-everything to the ``ereuse`` user that you just created:
+Create the ``/srv/ereuse-data`` directory and bind mount ``~ereuse/data``
+there by adding this to ``/etc/fstab``:
 
 ```
-mkdir -p /srv/ereuse-data
-mkdir /srv/ereuse-data/images /srv/ereuse-data/inventory
-wget -O /srv/ereuse-data/config.ini https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/config.ini
-#(copy FSArchiver images to ``/srv/ereuse-data/images``)#
-chown -R ereuse:ereuse /srv/ereuse-data
-chmod -R a+rX /srv/ereuse-data
+/home/ereuse/data  /srv/ereuse-data  none  bind  0  0
 ```
+
+Then mount it with ``mount -a``.
 
 Install Samba with ``apt-get install samba`` and add the following share
 definitions to ``/etc/samba/smb.conf`` to enable public read/write access to
