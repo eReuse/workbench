@@ -218,6 +218,6 @@ genisoimage -D -r -V "eReuseOS" -cache-inodes -J -l -b isolinux/isolinux.bin -c 
 umount $ISO_ROOT
 umount $ISO_RO
 
-rm -rf $ISO_ROOT $ISO_WORK $ISO_DATA $ISO_RO $FS_ROOT $FS_WORK $FS_DATA $FS_RO
+rm -rf $ISO_ROOT $ISO_RW_WORK $ISO_RW_DATA $ISO_RO $FS_ROOT $FS_RW_WORK $FS_RW_DATA $FS_RO
 
 echo "Done, image created:" $ISO_PATH
