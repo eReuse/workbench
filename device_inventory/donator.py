@@ -172,7 +172,7 @@ def stress(minutes):
         "-m", str(ncores),
         "--vm-bytes", "%dK" % mem_worker_kib,
         "-t", "%dm" % minutes],
-        stdout=suprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
     for _ in tqdm.trange(minutes * 60):  # update progress bar every second
         time.sleep(1)
     proc.communicate()  # wait for process, consume output
