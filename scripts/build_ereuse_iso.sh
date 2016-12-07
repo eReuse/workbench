@@ -169,7 +169,7 @@ echo "clear ; sudo device-inventory ; cat ~/.di-help" >> $FS_ROOT/home/ubuntu/.p
 sed -i '/^exit 0/d' $FS_ROOT/etc/rc.local
 cat >> $FS_ROOT/etc/rc.local << 'EOF'
 # Mount remote data directory.
-nfsserver=$(sed -rn 's/*.\bnfsroot=([^:]+):.*/\1/p' /proc/cmdline)
+nfsserver=$(sed -rn 's/.*\bnfsroot=([^:]+):.*/\1/p' /proc/cmdline)
 if [ "$nfsserver" ]; then
     mkdir -p /media/ereuse-data
     mount -t cifs -o guest,uid=ubuntu,forceuid,gid=ubuntu,forcegid "//$nfsserver/ereuse-data" /media/ereuse-data
