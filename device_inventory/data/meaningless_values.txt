@@ -13,3 +13,4 @@ System Serial Number
 PROD00000000
 System Name
 To Be Filled By O.E.M. (To Be Filled By O.E.M.)
+Not Specified
