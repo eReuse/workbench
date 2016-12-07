@@ -165,6 +165,18 @@ EOF
 ch chown ubuntu:ubuntu /home/ubuntu/.bash_history
 echo "clear ; sudo device-inventory ; cat ~/.di-help" >> $FS_ROOT/home/ubuntu/.profile
 
+# Mount remote data directory.
+sed -i '/^exit 0/d' $FS_ROOT/etc/rc.local
+cat >> $FS_ROOT/etc/rc.local << 'EOF'
+# Mount remote data directory.
+nfsserver=$(sed -rn 's/*.\bnfsroot=([^:]+):.*/\1/p' /proc/cmdline)
+if [ "$nfsserver" ]; then
+    mkdir -p /media/ereuse-data
+    mount -t cifs -o guest,uid=ubuntu,forceuid,gid=ubuntu,forcegid "//$nfsserver/ereuse-data" /media/ereuse-data
+fi
+exit 0
+EOF
+
 # If you installed software, be sure to run
 ch rm -f /var/lib/dbus/machine-id
 ch rm -f /sbin/initctl
