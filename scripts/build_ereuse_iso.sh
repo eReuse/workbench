@@ -15,7 +15,7 @@ TIMEZONE=${TIMEZONE:-Etc/UTC}
 WORK_DIR=${WORK_DIR:-dist/iso}
 
 # Version-specific settings.
-VERSION=7.1a7
+VERSION=7.1a8
 BASE_ISO_URL="http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/15.10/ubuntu-mini-remix-15.10-i386.iso"
 BASE_ISO_SHA256="e9985f0bcb05678d87d62c3d70191aab7a80540dc17523d93c313aa8515e173e"
 
