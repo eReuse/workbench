@@ -151,21 +151,21 @@ Device diagnostic and inventory process finished.
 
         sudo poweroff
 
-  - To run the diagnostic and inventory process again, enter:
+  - To run the diagnostic and inventory process again, exit this session:
 
-        sudo device-inventory
+        exit
 
 EOF
 ch chown ubuntu:ubuntu /home/ubuntu/.di-help
 cat > $FS_ROOT/home/ubuntu/.bash_history << 'EOF'
-sudo device-inventory
+sudo device-inventory --settings /media/ereuse-data/config.ini --inventory /media/ereuse-data/inventory
 sudo poweroff
 sudo reboot
 EOF
 ch chown ubuntu:ubuntu /home/ubuntu/.bash_history
 cat >> $FS_ROOT/home/ubuntu/.profile << 'EOF'
 clear
-sudo device-inventory --settings /media/ereuse-data/config.ini
+sudo device-inventory --settings /media/ereuse-data/config.ini --inventory /media/ereuse-data/inventory
 cat ~/.di-help
 EOF
 
