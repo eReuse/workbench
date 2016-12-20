@@ -195,7 +195,7 @@ def install(name=None, confirm=True):
         env['IMAGE_NAME'] = name
     env['CONFIRM'] = 'yes' if confirm else 'no'
 
-    env['SERVER'] = settings.get('server', 'address')
+    env['SERVER'] = settings.get('installer', 'remote_addr')
     env['REMOTE_MP'] = settings.get('installer', 'remote_mp')
     env['IMAGE_DIR'] = settings.get('installer', 'image_dir')
 
