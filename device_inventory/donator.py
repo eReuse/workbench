@@ -11,6 +11,7 @@ import re
 import subprocess
 import sys
 import time
+import uuid
 
 import tqdm
 
@@ -287,6 +288,11 @@ def main(argv=None):
         delattr(hd, 'logical_name')
     
     data = serializers.export_to_devicehub_schema(device, user_input, debug)
+    # Add a temporary, meaningless unique identifier just to avoid uploading
+    # the very same file twice (this doesn't cover the case of e.g. running
+    # the inventory twice on the same machine with different labels).  See
+    # issue #57.
+    data['_uuid'] = str(uuid.uuid4())  # random UUID
     
     # TODO save on the home
     filebase = ((data.get('label') or device.verbose_name)
