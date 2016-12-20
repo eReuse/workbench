@@ -163,7 +163,11 @@ sudo poweroff
 sudo reboot
 EOF
 ch chown ubuntu:ubuntu /home/ubuntu/.bash_history
-echo "clear ; sudo device-inventory ; cat ~/.di-help" >> $FS_ROOT/home/ubuntu/.profile
+cat >> $FS_ROOT/home/ubuntu/.profile << 'EOF'
+clear
+sudo device-inventory --settings /media/ereuse-data/config.ini
+cat ~/.di-help
+EOF
 
 # Mount remote data directory.
 sed -i '/^exit 0/d' $FS_ROOT/etc/rc.local
