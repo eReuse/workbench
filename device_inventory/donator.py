@@ -8,6 +8,7 @@ import logging
 import logging.config
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -233,6 +234,8 @@ def main(argv=None):
             help='select the system image with the given NAME for installation')
     parser.add_argument('--settings',
             help='file to be loaded as config file')
+    parser.add_argument('--inventory',
+            help='directory to copy the resulting file to (none to disable, default)')
     args = parser.parse_args()
     
     # load specified config file (if any)
@@ -304,18 +307,13 @@ def main(argv=None):
         with open(localpath, "w") as outfile:
             outfile.write(signed_data)
     
-    # send files to the PXE Server
-    if settings.getboolean('DEFAULT', 'sendtoserver'):
-        remotepath = os.path.join(settings.get('server', 'remotepath'), filename)
-        username = settings.get('server', 'username')
-        password = settings.get('server', 'password')
-        server = settings.get('server', 'address')
+    # copy files to the inventory directory
+    if args.inventory:
         try:
-            storage.copy_file_to_server(localpath, remotepath, username, password, server)
-            print("The file `{0}` has been successfully sent to the server.".format(localpath))
-        except Exception as e:
-            logger.error("Error copying file '%s' to server '%s'", localpath, server)
-            logger.debug(e, exc_info=True)
+            shutil.copy(localpath, args.inventory)
+        except IOError as ioe:
+            logger.error("Error copying file '%s' to inventory '%s'", localpath, args.inventory)
+            logger.debug(ioe, exc_info=True)
     
     # copy file to an USB drive
     if settings.getboolean('DEFAULT', 'copy_to_usb'):
