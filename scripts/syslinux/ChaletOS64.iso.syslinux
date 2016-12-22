@@ -1,6 +1,6 @@
 LABEL @NAME@
     MENU LABEL @NAME@
-        kernel mnt/@NAME@/casper/vmlinuz
-        initrd mnt/@NAME@/casper/initrd.gz
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/@NAME@ ksdevice=bootif quiet splash boot=casper
+        kernel @MTPT@/casper/vmlinuz
+        initrd @MTPT@/casper/initrd.gz
+        append ip=dhcp netboot=nfs nfsroot=@NFSROOT@ ksdevice=bootif quiet splash boot=casper
         IPAPPEND 2

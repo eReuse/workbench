@@ -1,6 +1,6 @@
 LABEL @NAME@
     MENU LABEL @NAME@
-        kernel mnt/@NAME@/casper/vmlinuz
-        initrd mnt/@NAME@/casper/initrd.lz
-        append ip=dhcp netboot=nfs nfsroot=@ADDRESS@:@TFTPBOOT@/mnt/@NAME@ boot=casper text forcepae
+        kernel @MTPT@/casper/vmlinuz
+        initrd @MTPT@/casper/initrd.lz
+        append ip=dhcp netboot=nfs nfsroot=@NFSROOT@ boot=casper text forcepae
         IPAPPEND 2
