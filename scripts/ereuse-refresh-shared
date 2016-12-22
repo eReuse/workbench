@@ -43,3 +43,9 @@ for iso in $DATA_DIR/images/*.iso; do
         echo >> "$PXE_CONF"
     fi
 done
+
+# If there were no exports on boot, NFS may not have started.
+# Plain ``start`` seems to do nothing.
+if ! pkill -0 nfsd; then
+    service nfs-kernel-server restart
+fi
