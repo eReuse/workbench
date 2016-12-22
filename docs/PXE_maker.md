@@ -151,7 +151,7 @@ Add the following lines:
 ```
 /var/lib/tftpboot/ks *(no_root_squash,no_subtree_check,ro)
 /var/lib/tftpboot/mnt/eReuseOS *(no_root_squash,no_subtree_check,ro)
-/var/lib/tftpboot/mnt/inst_media *(no_root_squash,no_subtree_check,ro)
+/var/lib/tftpboot/mnt/Ubuntu32 *(no_root_squash,no_subtree_check,ro)
 ```
 
 ####4. Configure public access via SMB to data files
@@ -170,7 +170,7 @@ mkdir -p ~ereuse/data/images ~ereuse/data/inventory
 wget -O ~/ereuse/data/config.ini https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/config.ini
 #(copy FSArchiver images to ``~ereuse/data/images``)#
 mv ~/eReuseOS-7.1a8.iso ~ereuse/data/images/eReuseOS.iso
-mv ~/lubuntu-16.04.1-desktop-i386.iso ~ereuse/data/images/
+mv ~/lubuntu-16.04.1-desktop-i386.iso ~ereuse/data/images/Ubuntu32.iso
 chown -R ereuse:ereuse ~ereuse/data
 chmod -R a+rX ~ereuse/data
 ```
@@ -217,7 +217,7 @@ mkdir mnt ks
 Make the dir to mount the eReuseOS iso. These are the folders that will be shared on network:
 ```
 mkdir mnt/eReuseOS/
-mkdir mnt/inst_media/
+mkdir mnt/Ubuntu32/
 ```
 
 Now edit `/etc/fstab` to mount it when server starts:
@@ -228,7 +228,7 @@ nano /etc/fstab
 Add the lines:
 ```
 /srv/ereuse-data/images/eReuseOS.iso /var/lib/tftpboot/mnt/eReuseOS iso9660 ro 0 0
-/srv/ereuse-data/images/lubuntu-16.04.1-desktop-i386.iso /var/lib/tftpboot/mnt/inst_media iso9660 ro,nofail 0 0
+/srv/ereuse-data/images/Ubuntu32.iso /var/lib/tftpboot/mnt/Ubuntu32 iso9660 ro,nofail 0 0
 ```
 
 Test that they are automounted with:
@@ -269,43 +269,43 @@ LABEL eReuseOS
 
 LABEL ChaletOS32
     MENU LABEL ChaletOS32
-        kernel mnt/inst_media/casper/vmlinuz
-        initrd mnt/inst_media/casper/initrd.gz
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=casper forcepae
+        kernel mnt/ChaletOS32/casper/vmlinuz
+        initrd mnt/ChaletOS32/casper/initrd.gz
+        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/ChaletOS32 ksdevice=bootif quiet splash boot=casper forcepae
         IPAPPEND 2
 
 LABEL ChaletOS64
     MENU LABEL ChaletOS64
-        kernel mnt/inst_media/casper/vmlinuz
-        initrd mnt/inst_media/casper/initrd.gz
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=casper
+        kernel mnt/ChaletOS64/casper/vmlinuz
+        initrd mnt/ChaletOS64/casper/initrd.gz
+        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/ChaletOS64 ksdevice=bootif quiet splash boot=casper
         IPAPPEND 2
 
 LABEL DebianLive32
     MENU LABEL DebianLive32
-        kernel mnt/inst_media/live/vmlinuz2
-        initrd mnt/inst_media/live/initrd2.img
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=live components forcepae
+        kernel mnt/DebianLive32/live/vmlinuz2
+        initrd mnt/DebianLive32/live/initrd2.img
+        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/DebianLive32 ksdevice=bootif quiet splash boot=live components forcepae
         IPAPPEND 2
 
 LABEL DebianLive64
     MENU LABEL DebianLive64
-        kernel mnt/inst_media/live/vmlinuz
-        initrd mnt/inst_media/live/initrd.img
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=live components forcepae
+        kernel mnt/DebianLive64/live/vmlinuz
+        initrd mnt/DebianLive64/live/initrd.img
+        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/DebianLive64 ksdevice=bootif quiet splash boot=live components forcepae
         IPAPPEND 2
 
 LABEL Ubuntu32
     MENU LABEL Ubuntu32
-        kernel mnt/inst_media/casper/vmlinuz
-        initrd mnt/inst_media/casper/initrd.lz
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=casper forcepae
+        kernel mnt/Ubuntu32/casper/vmlinuz
+        initrd mnt/Ubuntu32/casper/initrd.lz
+        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/Ubuntu32 ksdevice=bootif quiet splash boot=casper forcepae
         IPAPPEND 2
 
 LABEL Ubuntu64
     MENU LABEL Ubuntu64
-        kernel mnt/inst_media/casper/vmlinuz.efi
-        initrd mnt/inst_media/casper/initrd.lz
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=casper
+        kernel mnt/Ubuntu64/casper/vmlinuz.efi
+        initrd mnt/Ubuntu64/casper/initrd.lz
+        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/Ubuntu64 ksdevice=bootif quiet splash boot=casper
         IPAPPEND 2
 ```
