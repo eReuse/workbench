@@ -10,11 +10,8 @@ BUILD_DIR=$(mktemp -d)
 
 mkdir -p $BUILD_DIR/ereuse-data/inventory $BUILD_DIR/ereuse-data/images
 cp device_inventory/config.ini $BUILD_DIR/ereuse-data
+cp scripts/syslinux/*.iso.syslinux $BUILD_DIR/ereuse-data/images
 cp dist/iso/eReuseOS-$VERSION.iso $BUILD_DIR/ereuse-data/images/eReuseOS.iso
-for slconf in scripts/syslinux/*.iso.syslinux; do
-    name=$(basename "$slconf" | sed 's/\.iso.syslinux$//')
-    sed "s/@NAME@/$name/g" "$slconf" > $BUILD_DIR/ereuse-data/images/$(basename "$slconf")
-done
 
 chmod -R a+rX $BUILD_DIR
 
