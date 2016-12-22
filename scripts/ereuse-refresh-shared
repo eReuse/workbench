@@ -2,6 +2,7 @@
 
 DATA_DIR=${DATA_DIR:-/srv/ereuse-data}
 TFTP_DIR=${TFTP_DIR:-/var/lib/tftpboot}
+EXPORTS=${EXPORTS:-/etc/exports.d/ereuse.exports}
 
 MNT_DIR="$TFTP_DIR/mnt"
 PXE_CONF="$TFTP_DIR/pxelinux.cfg/default"
@@ -13,7 +14,7 @@ tmp=$(mktemp -d)
 mv -b $tmp/xx00 "$PXE_CONF"
 rm -rf $tmp
 #   - remove ISO NFS exports
-sed -i -e "\#^$MNT_DIR/#d" /etc/exports
+rm -f "$EXPORTS"
 exportfs -r
 #   - unmount ISOs and remove mountpoints
 for mtpt in $(findmnt -ln -o TARGET); do
@@ -32,7 +33,8 @@ for iso in $DATA_DIR/images/*.iso; do
     mkdir -p "$mtpt"
     mount -t iso9660 -o ro "$iso" "$mtpt"
 #  - add ISO NFS export
-    echo "$mtpt *(no_root_squash,no_subtree_check,ro)" >> /etc/exports
+    mkdir -p "$(dirname "$EXPORTS")"
+    echo "$mtpt *(no_root_squash,no_subtree_check,ro)" >> "$EXPORTS"
     exportfs -r
 #  - add PXELINUX entry
     if [ -f "$iso.syslinux" ]; then
