@@ -35,6 +35,8 @@ apt-get update
 apt-get install tftpd-hpa isc-dhcp-server nfs-kernel-server
 ```
 
+Place the ``ereuse-refresh-shared`` under ``/usr/local/sbin`` and execute it at the end of ``/etc/rc.local``.
+
 Download all files we need:
 ```
 wget http://kaplah.org/system/files/field/files/pxelinux.tar.gz
@@ -141,18 +143,6 @@ Test if service is running correctly:
 ss -upna
 tail /var/log/syslog
 ```
-####4. Configure NFS
-Edit `/etc/exports`:
-```
-nano /etc/exports
-```
-
-Add the following lines:
-```
-/var/lib/tftpboot/ks *(no_root_squash,no_subtree_check,ro)
-/var/lib/tftpboot/mnt/eReuseOS *(no_root_squash,no_subtree_check,ro)
-/var/lib/tftpboot/mnt/Ubuntu32 *(no_root_squash,no_subtree_check,ro)
-```
 
 ####4. Configure public access via SMB to data files
 
@@ -209,45 +199,6 @@ mv ~/pxelinux.tar.gz .
 tar xzvf pxelinux.tar.gz
 ```
 
-Make all the folders that we will use for the configuration:
-```
-mkdir mnt ks
-```
-
-Make the dir to mount the eReuseOS iso. These are the folders that will be shared on network:
-```
-mkdir mnt/eReuseOS/
-mkdir mnt/Ubuntu32/
-```
-
-Now edit `/etc/fstab` to mount it when server starts:
-```
-nano /etc/fstab
-```
-
-Add the lines:
-```
-/srv/ereuse-data/images/eReuseOS.iso /var/lib/tftpboot/mnt/eReuseOS iso9660 ro 0 0
-/srv/ereuse-data/images/Ubuntu32.iso /var/lib/tftpboot/mnt/Ubuntu32 iso9660 ro,nofail 0 0
-```
-
-Test that they are automounted with:
-```
-mount -a
-ls -l mnt/eReuse_image/
-ls -l mnt/inst_media/
-```
-
-Reload NFS service:
-```
-service nfs-kernel-server restart
-```
-
-Check if is mounted on network:
-```
-showmount -e 192.168.2.2
-```
-
 Make a backup of `/var/lib/tftpboot/pxelinux.cfg/default` and open it.
 ```
 mv pxelinux.cfg/default pxelinux.cfg/default.backup
@@ -260,52 +211,5 @@ default eReuseOS
 prompt 1
 timeout 50
 
-LABEL eReuseOS
-    MENU LABEL eReuseOS
-        kernel mnt/eReuseOS/casper/vmlinuz
-        initrd mnt/eReuseOS/casper/initrd.lz
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/eReuseOS boot=casper text forcepae
-        IPAPPEND 2
-
-LABEL ChaletOS32
-    MENU LABEL ChaletOS32
-        kernel mnt/ChaletOS32/casper/vmlinuz
-        initrd mnt/ChaletOS32/casper/initrd.gz
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/ChaletOS32 ksdevice=bootif quiet splash boot=casper forcepae
-        IPAPPEND 2
-
-LABEL ChaletOS64
-    MENU LABEL ChaletOS64
-        kernel mnt/ChaletOS64/casper/vmlinuz
-        initrd mnt/ChaletOS64/casper/initrd.gz
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/ChaletOS64 ksdevice=bootif quiet splash boot=casper
-        IPAPPEND 2
-
-LABEL DebianLive32
-    MENU LABEL DebianLive32
-        kernel mnt/DebianLive32/live/vmlinuz2
-        initrd mnt/DebianLive32/live/initrd2.img
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/DebianLive32 ksdevice=bootif quiet splash boot=live components forcepae
-        IPAPPEND 2
-
-LABEL DebianLive64
-    MENU LABEL DebianLive64
-        kernel mnt/DebianLive64/live/vmlinuz
-        initrd mnt/DebianLive64/live/initrd.img
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/DebianLive64 ksdevice=bootif quiet splash boot=live components forcepae
-        IPAPPEND 2
-
-LABEL Ubuntu32
-    MENU LABEL Ubuntu32
-        kernel mnt/Ubuntu32/casper/vmlinuz
-        initrd mnt/Ubuntu32/casper/initrd.lz
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/Ubuntu32 ksdevice=bootif quiet splash boot=casper forcepae
-        IPAPPEND 2
-
-LABEL Ubuntu64
-    MENU LABEL Ubuntu64
-        kernel mnt/Ubuntu64/casper/vmlinuz.efi
-        initrd mnt/Ubuntu64/casper/initrd.lz
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/Ubuntu64 ksdevice=bootif quiet splash boot=casper
-        IPAPPEND 2
+###eReuse###
 ```
