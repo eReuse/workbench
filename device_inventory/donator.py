@@ -295,9 +295,19 @@ def main(argv=None):
     data['_uuid'] = str(uuid.uuid4())  # random UUID
     
     # TODO save on the home
-    filebase = ((data.get('label') or device.verbose_name)
-                .replace(':', '-')
-                .replace(os.path.sep, '-'))
+    def sanitize(comp):  # turn 'Foo Corp. -x-' into 'foo-corp-x'
+        rep = '-'  # replacement character
+        ret = comp.lower()  # turn to lowecase
+        ret = re.sub(r'\W', rep, ret)  # replace non-letters and non-numbers
+        ret = re.sub(r'-+', rep, ret)  # squash replacement char runs
+        ret = ret.strip(rep)  # remove replacement char at the ends
+        return ret
+    # Turn (Foo Corp., MyComputer +50, L42) into 'foo-corp,mycomputer-50,l42'.
+    filebase = ','.join(sanitize(c) for c in [
+        data['device'].get('manufacturer', 'unknown'),
+        data['device'].get('model', 'unknown'),
+        (data.get('label') or device.verbose_name)
+    ])
     filename = "{0}.json".format(filebase)  # get_option
     localpath = os.path.join("/tmp", filename)
     with open(localpath, "w") as outfile:
