@@ -60,6 +60,8 @@ If you are upgrading from a previous version of the server, make sure that you s
  7. If your PC supports hardware virtualization (VT-x/AMD-V), make sure to enable it in the machine settings, under *System / Acceleration*.
  8. Run the virtual server and wait until it asks for *login* (there is usually no need to login).  Now you can start [registering your computers](#register-a-computer).
 
+If you ever need to change the images under ``ereuse-data``, please do so while no inventory or installation is taking place and the server is turned off, or otherwise reboot it after changing the images.  An alternative method that does not require the server to be rebooted is to log into the server as ``root`` and run ``ereuse-data-refresh``.
+
 ## Registering a computer
 
  1. Connect a PC on the LAN network.
