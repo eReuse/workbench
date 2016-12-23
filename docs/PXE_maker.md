@@ -35,7 +35,7 @@ apt-get update
 apt-get install tftpd-hpa isc-dhcp-server nfs-kernel-server
 ```
 
-Place the ``ereuse-refresh-shared`` under ``/usr/local/sbin`` and execute it at the end of ``/etc/rc.local``.
+Place the ``ereuse-data-refresh`` under ``/usr/local/sbin`` and execute it at the end of ``/etc/rc.local``.
 
 Download all files we need:
 ```
