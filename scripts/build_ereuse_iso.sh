@@ -7,8 +7,8 @@
 set -e
 
 # Configurable regional settings.
-KB_LAYOUT=${KB_LAYOUT:-es}  # see available in ``/usr/share/X11/xkb/symbols``
-LOCALE=${LOCALE:-es_ES.UTF-8}
+KB_LAYOUT=${KB_LAYOUT:-us}  # see available in ``/usr/share/X11/xkb/symbols``
+LOCALE=${LOCALE:-en_US.UTF-8}
 TIMEZONE=${TIMEZONE:-Etc/UTC}
 
 # Configurable settings.
@@ -104,6 +104,7 @@ ch chmod a+rx /usr/local/bin/di-install-image
 
 cp $SDIST $FS_ROOT/tmp
 ch pip install --upgrade /tmp/$(basename $SDIST)
+install -m 0755 scripts/di-keyboard-layout $FS_ROOT/usr/local/sbin
 
 # Configure regional settings
 ch ckbcomp "$KB_LAYOUT" | gzip -c > $FS_ROOT/etc/console-setup/cached.kmap.gz
@@ -166,8 +167,12 @@ ch chown ubuntu:ubuntu /home/ubuntu/.bash_history
 cat >> $FS_ROOT/home/ubuntu/.profile << 'EOF'
 clear
 if [ -d /media/ereuse-data ]; then
+    sudo di-keyboard-layout /media/ereuse-data/config.ini
+    clear
     sudo device-inventory --settings /media/ereuse-data/config.ini --inventory /media/ereuse-data/inventory
 else
+    sudo di-keyboard-layout
+    clear
     sudo device-inventory
 fi
 cat ~/.di-help
