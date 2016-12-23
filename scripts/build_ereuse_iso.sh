@@ -158,14 +158,18 @@ Device diagnostic and inventory process finished.
 EOF
 ch chown ubuntu:ubuntu /home/ubuntu/.di-help
 cat > $FS_ROOT/home/ubuntu/.bash_history << 'EOF'
-sudo device-inventory --settings /media/ereuse-data/config.ini --inventory /media/ereuse-data/inventory
+exit
 sudo poweroff
 sudo reboot
 EOF
 ch chown ubuntu:ubuntu /home/ubuntu/.bash_history
 cat >> $FS_ROOT/home/ubuntu/.profile << 'EOF'
 clear
-sudo device-inventory --settings /media/ereuse-data/config.ini --inventory /media/ereuse-data/inventory
+if [ -d /media/ereuse-data ]; then
+    sudo device-inventory --settings /media/ereuse-data/config.ini --inventory /media/ereuse-data/inventory
+else
+    sudo device-inventory
+fi
 cat ~/.di-help
 EOF
 
