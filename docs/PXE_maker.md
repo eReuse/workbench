@@ -3,7 +3,7 @@
 
 #eReuse: How to make PXE server (Debian Server)
 
-Guide version: 7.1a8
+Guide version: 8.0a1
 
 This guide will allow you to make a PXE server and boot computers via ethernet network.
 
@@ -40,7 +40,7 @@ Place the ``ereuse-data-refresh`` under ``/usr/local/sbin`` and execute it at th
 Download all files we need:
 ```
 wget http://kaplah.org/system/files/field/files/pxelinux.tar.gz
-wget https://github.com/eReuse/device-inventory/releases/download/v7.1a8/eReuseOS-7.1a8.iso
+wget https://github.com/eReuse/device-inventory/releases/download/v8.0a1/eReuseOS-8.0a1.iso
 wget http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/lubuntu-16.04.1-desktop-i386.iso
 ```
 
@@ -159,7 +159,7 @@ adduser ereuse
 mkdir -p ~ereuse/data/images ~ereuse/data/inventory
 wget -O ~/ereuse/data/config.ini https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/config.ini
 #(copy FSArchiver images to ``~ereuse/data/images``)#
-mv ~/eReuseOS-7.1a8.iso ~ereuse/data/images/eReuseOS.iso
+mv ~/eReuseOS-8.0a1.iso ~ereuse/data/images/eReuseOS.iso
 mv ~/lubuntu-16.04.1-desktop-i386.iso ~ereuse/data/images/Ubuntu32.iso
 chown -R ereuse:ereuse ~ereuse/data
 chmod -R a+rX ~ereuse/data
