@@ -8,6 +8,7 @@ import logging
 import logging.config
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -194,11 +195,11 @@ def install(name=None, confirm=True):
         env['IMAGE_NAME'] = name
     env['CONFIRM'] = 'yes' if confirm else 'no'
 
-    env['SERVER'] = settings.get('server', 'address')
-    env['REMOTE_MP'] = settings.get('installer', 'remote_mp')
-    env['IMAGE_DIR'] = settings.get('installer', 'image_dir')
+    image_dir = settings.get('installer', 'image_dir')
+    env['LOCAL_MP'] = os.path.dirname(image_dir)
+    env['IMAGE_DIR'] = os.path.basename(image_dir)
 
-    env['REMOTE_TYPE'] = 'CIFS'
+    env['REMOTE_TYPE'] = 'local'
     env['HD_SWAP'] = 'AUTO'
     env['HD_ROOT'] = 'FILL'
 
@@ -233,24 +234,9 @@ def main(argv=None):
             help='select the system image with the given NAME for installation')
     parser.add_argument('--settings',
             help='file to be loaded as config file')
+    parser.add_argument('--inventory',
+            help='directory to copy the resulting file to (none to disable, default)')
     args = parser.parse_args()
-    
-    # try to get custom config file from PXE server
-    server = settings.get('server', 'address')
-    username = settings.get('server', 'username')
-    password = settings.get('server', 'password')
-    
-    localpath = '/tmp/remote_custom_config.ini'
-    remotepath = '/home/ereuse/config.ini'
-    try:
-        storage.get_file_from_server(remotepath, localpath, username, password, server)
-    except Exception as e:  # TODO catch specific exceptions to avoid mask errors
-        logging.error("Error retrieving config file '%s' from server '%s'",
-                      remotepath, server)
-        logging.debug(e)
-    else:
-        print("Loading configuration from '%s'" % localpath)
-        settings.load_config(config_file=localpath)
     
     # load specified config file (if any)
     if args.settings:
@@ -321,18 +307,13 @@ def main(argv=None):
         with open(localpath, "w") as outfile:
             outfile.write(signed_data)
     
-    # send files to the PXE Server
-    if settings.getboolean('DEFAULT', 'sendtoserver'):
-        remotepath = os.path.join(settings.get('server', 'remotepath'), filename)
-        username = settings.get('server', 'username')
-        password = settings.get('server', 'password')
-        server = settings.get('server', 'address')
+    # copy files to the inventory directory
+    if args.inventory:
         try:
-            storage.copy_file_to_server(localpath, remotepath, username, password, server)
-            print("The file `{0}` has been successfully sent to the server.".format(localpath))
-        except Exception as e:
-            logger.error("Error copying file '%s' to server '%s'", localpath, server)
-            logger.debug(e, exc_info=True)
+            shutil.copy(localpath, args.inventory)
+        except IOError as ioe:
+            logger.error("Error copying file '%s' to inventory '%s'", localpath, args.inventory)
+            logger.debug(ioe, exc_info=True)
     
     # copy file to an USB drive
     if settings.getboolean('DEFAULT', 'copy_to_usb'):

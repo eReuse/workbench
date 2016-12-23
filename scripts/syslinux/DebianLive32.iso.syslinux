@@ -1,0 +1,6 @@
+LABEL @NAME@
+    MENU LABEL @NAME@
+        kernel @MTPT@/live/vmlinuz2
+        initrd @MTPT@/live/initrd2.img
+        append ip=dhcp netboot=nfs nfsroot=@NFSROOT@ ksdevice=bootif quiet splash boot=live components forcepae
+        IPAPPEND 2

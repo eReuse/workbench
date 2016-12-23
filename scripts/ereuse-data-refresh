@@ -1,0 +1,53 @@
+#!/bin/sh
+
+DATA_DIR=${DATA_DIR:-/srv/ereuse-data}
+TFTP_DIR=${TFTP_DIR:-/var/lib/tftpboot}
+EXPORTS=${EXPORTS:-/etc/exports.d/ereuse.exports}
+
+MNT_DIR="$TFTP_DIR/mnt"
+PXE_CONF="$TFTP_DIR/pxelinux.cfg/default"
+
+# First disable current sharings:
+#   - remove PXELINUX entries
+tmp=$(mktemp -d)
+(cd $tmp && csplit -q "$PXE_CONF" '/###eReuse###/1')
+mv -b $tmp/xx00 "$PXE_CONF"
+rm -rf $tmp
+#   - remove ISO NFS exports
+rm -f "$EXPORTS"
+exportfs -r
+#   - unmount ISOs and remove mountpoints
+for mtpt in $(findmnt -ln -o TARGET); do
+    if [ $(expr "$mtpt" : "^$MNT_DIR/") -gt 0 ]; then
+        umount "$mtpt"
+        rmdir "$mtpt"
+    fi
+done
+
+# Next enable sharings for existing ISOs:
+addr=$(ip a s dev eth0 scope global | sed -rn 's/.*\binet ([^/]+).*/\1/p')
+for iso in $DATA_DIR/images/*.iso; do
+    name=$(basename "$iso" | sed 's/\.iso$//')
+#   - create mountpoint and mount ISOs
+    mtpt="$MNT_DIR/$name"
+    mkdir -p "$mtpt"
+    mount -t iso9660 -o ro "$iso" "$mtpt"
+#  - add ISO NFS export
+    mkdir -p "$(dirname "$EXPORTS")"
+    echo "$mtpt *(no_root_squash,no_subtree_check,ro)" >> "$EXPORTS"
+    exportfs -r
+#  - add PXELINUX entry
+    if [ -f "$iso.syslinux" ]; then
+        sed -e "s/@NAME@/$name/g" \
+            -e "s#@MTPT@#mnt/$name#g" \
+            -e "s#@NFSROOT@#$addr:$mtpt#g" \
+            "$iso.syslinux" >> "$PXE_CONF"
+        echo >> "$PXE_CONF"
+    fi
+done
+
+# If there were no exports on boot, NFS may not have started.
+# Plain ``start`` seems to do nothing.
+if ! pkill -0 nfsd; then
+    service nfs-kernel-server restart
+fi

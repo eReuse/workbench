@@ -151,19 +151,39 @@ Device diagnostic and inventory process finished.
 
         sudo poweroff
 
-  - To run the diagnostic and inventory process again, enter:
+  - To run the diagnostic and inventory process again, exit this session:
 
-        sudo device-inventory
+        exit
 
 EOF
 ch chown ubuntu:ubuntu /home/ubuntu/.di-help
 cat > $FS_ROOT/home/ubuntu/.bash_history << 'EOF'
-sudo device-inventory
+exit
 sudo poweroff
 sudo reboot
 EOF
 ch chown ubuntu:ubuntu /home/ubuntu/.bash_history
-echo "clear ; sudo device-inventory ; cat ~/.di-help" >> $FS_ROOT/home/ubuntu/.profile
+cat >> $FS_ROOT/home/ubuntu/.profile << 'EOF'
+clear
+if [ -d /media/ereuse-data ]; then
+    sudo device-inventory --settings /media/ereuse-data/config.ini --inventory /media/ereuse-data/inventory
+else
+    sudo device-inventory
+fi
+cat ~/.di-help
+EOF
+
+# Mount remote data directory.
+sed -i '/^exit 0/d' $FS_ROOT/etc/rc.local
+cat >> $FS_ROOT/etc/rc.local << 'EOF'
+# Mount remote data directory.
+nfsserver=$(sed -rn 's/.*\bnfsroot=([^:]+):.*/\1/p' /proc/cmdline)
+if [ "$nfsserver" ]; then
+    mkdir -p /media/ereuse-data
+    mount -t cifs -o guest,uid=ubuntu,forceuid,gid=ubuntu,forcegid "//$nfsserver/ereuse-data" /media/ereuse-data
+fi
+exit 0
+EOF
 
 # If you installed software, be sure to run
 ch rm -f /var/lib/dbus/machine-id

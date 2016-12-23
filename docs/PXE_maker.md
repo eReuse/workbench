@@ -35,6 +35,8 @@ apt-get update
 apt-get install tftpd-hpa isc-dhcp-server nfs-kernel-server
 ```
 
+Place the ``ereuse-data-refresh`` under ``/usr/local/sbin`` and execute it at the end of ``/etc/rc.local``.
+
 Download all files we need:
 ```
 wget http://kaplah.org/system/files/field/files/pxelinux.tar.gz
@@ -141,18 +143,53 @@ Test if service is running correctly:
 ss -upna
 tail /var/log/syslog
 ```
-####4. Configure NFS
-Edit `/etc/exports`:
+
+####4. Configure public access via SMB to data files
+
+Create an ``ereuse`` user with a ``data`` directory in its home.  In it,
+create subdirectories for ``images`` and the ``inventory`` of JSON files.
+Download the ``config.ini`` into the ``data`` directory and copy FSArchiver
+images to the ``images`` subdirectory, along with the ISO files that you
+downloaded.  For backwards compatibility, you may create ``config.ini`` and
+``inventory``  symbolic links to their counterparts under ``data``.  Change
+the ownership of everything to the ``ereuse`` user:
+
 ```
-nano /etc/exports
+adduser ereuse
+mkdir -p ~ereuse/data/images ~ereuse/data/inventory
+wget -O ~/ereuse/data/config.ini https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/config.ini
+#(copy FSArchiver images to ``~ereuse/data/images``)#
+mv ~/eReuseOS-7.1a8.iso ~ereuse/data/images/eReuseOS.iso
+mv ~/lubuntu-16.04.1-desktop-i386.iso ~ereuse/data/images/Ubuntu32.iso
+chown -R ereuse:ereuse ~ereuse/data
+chmod -R a+rX ~ereuse/data
 ```
 
-Add the following lines:
+Create the ``/srv/ereuse-data`` directory and bind mount ``~ereuse/data``
+there by adding this to ``/etc/fstab``:
+
 ```
-/var/lib/tftpboot/ks *(no_root_squash,no_subtree_check,ro)
-/var/lib/tftpboot/mnt/eReuse_image *(no_root_squash,no_subtree_check,ro)
-/var/lib/tftpboot/mnt/inst_media *(no_root_squash,no_subtree_check,ro)
+/home/ereuse/data  /srv/ereuse-data  none  bind  0  0
 ```
+
+Then mount it with ``mount -a``.
+
+Install Samba with ``apt-get install samba`` and add the following share
+definitions to ``/etc/samba/smb.conf`` to enable public read/write access to
+eReuse data files:
+
+```
+[ereuse-data]
+        comment = eReuse data
+        path = /srv/ereuse-data
+        browseable = yes
+        read only = no
+        guest ok = yes
+        force user = ereuse
+        force group = ereuse
+```
+
+Then reload the service with ``service samba reload``.
 
 ####5. Configure TFTP final step
 Install the PXE network image from to `/var/lib/tftpboot/`:
@@ -160,51 +197,6 @@ Install the PXE network image from to `/var/lib/tftpboot/`:
 cd /var/lib/tftpboot/
 mv ~/pxelinux.tar.gz .
 tar xzvf pxelinux.tar.gz
-```
-
-Make all the folders that we will use for the configuration:
-```
-mkdir iso mnt ks
-```
-
-Move the isos to `/var/lib/tftpboot/iso`:
-```
-mv ~/eReuseOS-7.1a8.iso iso
-mv ~/lubuntu-16.04.1-desktop-i386.iso iso
-```
-
-Make the dir to mount the eReuseOS iso. These are the folders that will be shared on network:
-```
-mkdir mnt/eReuse_image/
-mkdir mnt/inst_media/
-```
-
-Now edit `/etc/fstab` to mount it when server starts:
-```
-nano /etc/fstab
-```
-
-Add the lines:
-```
-/var/lib/tftpboot/iso/eReuseOS-7.1a8.iso /var/lib/tftpboot/mnt/eReuse_image iso9660 ro 0 0
-/var/lib/tftpboot/iso/lubuntu-16.04.1-desktop-i386.iso /var/lib/tftpboot/mnt/inst_media iso9660 ro,nofail 0 0
-```
-
-Test that they are automounted with:
-```
-mount -a
-ls -l mnt/eReuse_image/
-ls -l mnt/inst_media/
-```
-
-Reload NFS service:
-```
-service nfs-kernel-server restart
-```
-
-Check if is mounted on network:
-```
-showmount -e 192.168.2.2
 ```
 
 Make a backup of `/var/lib/tftpboot/pxelinux.cfg/default` and open it.
@@ -215,99 +207,15 @@ nano pxelinux.cfg/default
 
 Add the following lines:
 ```
-default eReuse
+default eReuseOS
 prompt 1
 timeout 50
 
-LABEL eReuse
-    MENU LABEL eReuse
-        kernel mnt/eReuse_image/casper/vmlinuz
-        initrd mnt/eReuse_image/casper/initrd.lz
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/eReuse_image boot=casper text forcepae
-        IPAPPEND 2
-
-LABEL ChaletOS32
-    MENU LABEL ChaletOS32
-        kernel mnt/inst_media/casper/vmlinuz
-        initrd mnt/inst_media/casper/initrd.gz
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=casper forcepae
-        IPAPPEND 2
-
-LABEL ChaletOS64
-    MENU LABEL ChaletOS64
-        kernel mnt/inst_media/casper/vmlinuz
-        initrd mnt/inst_media/casper/initrd.gz
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=casper
-        IPAPPEND 2
-
-LABEL DebianLive32
-    MENU LABEL DebianLive32
-        kernel mnt/inst_media/live/vmlinuz2
-        initrd mnt/inst_media/live/initrd2.img
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=live components forcepae
-        IPAPPEND 2
-
-LABEL DebianLive64
-    MENU LABEL DebianLive64
-        kernel mnt/inst_media/live/vmlinuz
-        initrd mnt/inst_media/live/initrd.img
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=live components forcepae
-        IPAPPEND 2
-
-LABEL Ubuntu32
-    MENU LABEL Ubuntu32
-        kernel mnt/inst_media/casper/vmlinuz
-        initrd mnt/inst_media/casper/initrd.lz
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=casper forcepae
-        IPAPPEND 2
-
-LABEL Ubuntu64
-    MENU LABEL Ubuntu64
-        kernel mnt/inst_media/casper/vmlinuz.efi
-        initrd mnt/inst_media/casper/initrd.lz
-        append ip=dhcp netboot=nfs nfsroot=192.168.2.2:/var/lib/tftpboot/mnt/inst_media ksdevice=bootif quiet splash boot=casper
-        IPAPPEND 2
+###eReuse###
 ```
 
-####5. Configure public access via SMB to TFTP inventory files
+####6. Updating configuration for new ISOs
 
-Create an ``ereuse`` user with ``adduser ereuse``.  Download the
-``config.ini`` file to its home directory:
-
-```
-wget -O /home/ereuse/config.ini https://raw.githubusercontent.com/eReuse/device-inventory/master/device_inventory/config.ini
-```
-
-Create the ``/srv/ereuse-data`` directory, copy FSArchiver images to its
-``images`` subdirectory, and change its ownership to the ``ereuse`` user that
-you just created:
-
-```
-mkdir -p /srv/ereuse-data
-mkdir /srv/ereuse-data/images
-#(copy FSArchiver images to ``/srv/ereuse-data/images``)#
-chown -R ereuse:ereuse /srv/ereuse-data
-chmod -R a+rX /srv/ereuse-data
-```
-
-Install Samba with ``apt-get install samba`` and add the following share
-definitions to ``/etc/samba/smb.conf`` to enable public read/write access to
-inventory files and read access to image files:
-
-```
-[eReuse Inventory]
-        comment = eReuse Inventory
-        path = /home/ereuse/inventory
-        browseable = yes
-        read only = no
-        guest ok = yes
-
-[ereuse-data]
-        comment = eReuse data
-        path = /srv/ereuse-data
-        browseable = yes
-        read only = yes
-        guest ok = yes
-```
-
-Then reload the service with ``service samba reload``.
+Whenever you drop new ISOs (and their associated SYSLINUX entry template
+files) in the ``images`` subdirectory of the data directory, please run
+``ereuse-data-refresh`` as root.
