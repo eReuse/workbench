@@ -104,6 +104,7 @@ ch chmod a+rx /usr/local/bin/di-install-image
 
 cp $SDIST $FS_ROOT/tmp
 ch pip install --upgrade /tmp/$(basename $SDIST)
+install -m 0755 scripts/di-keyboard-layout $FS_ROOT/usr/local/sbin
 
 # Configure regional settings
 ch ckbcomp "$KB_LAYOUT" | gzip -c > $FS_ROOT/etc/console-setup/cached.kmap.gz
