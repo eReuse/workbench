@@ -1,11 +1,14 @@
 #!/bin/sh
-# Load the keyboard layout specified in the configuration file,
-# or interactively ask for one.
+# Load the keyboard layout specified in the configuration file
+# if the file is given as an argument,
+# or interactively ask for one and load it.
+# It must be run as root.
 
 set -e
 
-CONFIG_FILE=/tmp/remote_custom_config.ini
-KEYBOARD_LAYOUT=$(sed -rn 's/^\s*KEYBOARD_LAYOUT\s*=\s*([^\s]+)\s*/\1/p' "$CONFIG_FILE")
+if [ "$1" ]; then
+    KEYBOARD_LAYOUT=$(sed -rn 's/^\s*KEYBOARD_LAYOUT\s*=\s*([^\s]+)\s*/\1/p' "$1")
+fi
 
 # Not just to ease listing, but also to avoid ``loadkeys`` from loading random
 # files with a name starting with the same letters as a layout file.
