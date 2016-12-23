@@ -104,7 +104,7 @@ ch chmod a+rx /usr/local/bin/di-install-image
 
 cp $SDIST $FS_ROOT/tmp
 ch pip install --upgrade /tmp/$(basename $SDIST)
-install -m 0755 scripts/di-keyboard-layout $FS_ROOT/usr/local/sbin
+install -m 0755 scripts/di-keyboard-layout scripts/di-disk-dump $FS_ROOT/usr/local/sbin
 
 # Configure regional settings
 ch ckbcomp "$KB_LAYOUT" | gzip -c > $FS_ROOT/etc/console-setup/cached.kmap.gz
@@ -144,21 +144,20 @@ cat > $FS_ROOT/home/ubuntu/.di-help << 'EOF'
 
 Device diagnostic and inventory process finished.
 
-  - To reboot the computer, press Ctrl+Alt+Del or run:
+  - To reboot the computer, press Ctrl+Alt+Del or run "sudo reboot".
 
-        sudo reboot
+  - To turn the computer off, press the power button or run "sudo poweroff".
 
-  - To turn the computer off, press the power button or run:
+  - To run the diagnostic and inventory process again, "exit" this session.
 
-        sudo poweroff
+  - To dump an existing installation from disk into an FSArchiver image, run:
 
-  - To run the diagnostic and inventory process again, exit this session:
-
-        exit
+       sudo di-disk-dump NAME_OF_IMAGE [OPTIONAL_DESTINATION]
 
 EOF
 ch chown ubuntu:ubuntu /home/ubuntu/.di-help
 cat > $FS_ROOT/home/ubuntu/.bash_history << 'EOF'
+sudo di-disk-dump xubuntu-i386-ca
 exit
 sudo poweroff
 sudo reboot

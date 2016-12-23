@@ -1,0 +1,38 @@
+#!/bin/sh
+
+DEST_DIR=/media/ereuse-data/images
+FS=/dev/sda1
+
+
+PROG_NAME=$(basename "$0")
+
+error() {
+    echo "$PROG_NAME: $1" >&2
+    exit 1
+}
+
+
+set -e
+
+if [ $# -lt 1 ]; then
+    error "\
+Usage: $PROG_NAME IMAGE_NAME [DEST_DIR]
+Dump an existing installation from file system \"$FS\" into
+an FSArchiver image \"IMAGE_NAME.fsa\" under DEST_DIR
+(default \"$DEST_DIR\").\
+"
+fi
+
+IMAGE_NAME="$1"
+if [ "$2" ]; then
+    DEST_DIR="$2"
+fi
+
+
+FSA_FILE="$DEST_DIR/$IMAGE_NAME.fsa"
+tmp=$(mktemp -d -p "$DEST_DIR")
+FSA_TMP_FILE="$tmp/$IMAGE_NAME.fsa"
+echo "Dumping \"$FS\" to \"$FSA_FILE\", press Ctrl+C to abort..."
+fsarchiver -v savefs "$FSA_TMP_FILE" "$FS"
+mv -b -S.bak "$FSA_TMP_FILE" "$FSA_FILE"
+rmdir "$tmp"

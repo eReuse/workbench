@@ -21,15 +21,21 @@ This server allow us to register easily and very fast by sending DeviceInventory
 
 **Note on system installation images:** Currently the only kind of images supported and assumed are FSArchiver images corresponding to 32-bit ``i386`` or 64-bit ``amd64`` Debian/Ubuntu or derivative OS installations, where the whole system is contained in a single ext4 file system in BIOS partition ``sda1``, and GRUB2 is used as a bootloader.
 
-**How to create a FSArchiver image:** To prepare an installation image you must perform in a different machine (either real or virtual) the complete installation that you want to replicate (taking into account the limitations from the previous note).  One possible way to capture this installation to a FSArchiver image is to reboot the already installed machine into the [SystemRescueCd](https://www.system-rescue-cd.org/SystemRescueCd_Homepage), then enter the keyboard language, plug an external USB drive of sufficient capacity (note that FAT file systems may cause file size limitation issues) and run the following commands:
+**How to create an FSArchiver image:** To prepare an installation image you must perform *in a different machine* the complete installation that you want to replicate (taking into account the limitations from the previous note).  One easy way to capture this installation is to reboot the computer into eReuseOS from the server (see [Registeringing a computer](#registering-a-computer)) and cancel the registration process with Ctrl+C, then execute ``di-disk-dump`` with some informative name for the new image, like this:
 
 ```
-# mount /dev/sdb1 /mnt  # ``sdb`` is the external USB drive
-# fsarchiver savefs /mnt/IMAGE_NAME.fsa /dev/sda1  # ``sda`` is the main hard drive
-# umount /mnt  # wait until the command is complete
+sudo di-disk-dump lubuntu-xenial-amd64-ca
 ```
 
-Use some informative ``IMAGE_NAME`` like ``lubuntu-xenial-amd64-ca``.  Now you can plug the USB drive into your PC and copy the ``.fsa`` file into the ``images`` directory under the folder shared between your PC and the virtual server.
+The image will be automatically saved to the ``images`` subdirectory in the folder shared between your PC and the virtual server.  If you have no server, you may plug an external USB drive of sufficient capacity (note that FAT file systems may cause file size limitation issues) and run the following commands:
+
+```
+sudo mount /dev/sdb1 /mnt  # ``sdb`` is the external USB drive
+sudo di-disk-dump lubuntu-xenial-amd64-ca /mnt
+sudo umount /mnt  # wait until the command is complete
+```
+
+Now you can plug the USB drive into your PC and copy the ``.fsa`` file into the ``images`` subdirectory mentioned above.
 
 ## Installing and setting up the server
 
@@ -58,7 +64,7 @@ If you are upgrading from a previous version of the server, make sure that you s
     ![Virtualbox shared folder](./images/virtualbox-shared.png)
 
  7. If your PC supports hardware virtualization (VT-x/AMD-V), make sure to enable it in the machine settings, under *System / Acceleration*.
- 8. Run the virtual server and wait until it asks for *login* (there is usually no need to login).  Now you can start [registering your computers](#register-a-computer).
+ 8. Run the virtual server and wait until it asks for *login* (there is usually no need to login).  Now you can start [registering your computers](#registering-a-computer).
 
 If you ever need to change the images under ``ereuse-data``, please do so while no inventory or installation is taking place and the server is turned off, or otherwise reboot it after changing the images.  An alternative method that does not require the server to be rebooted is to log into the server as ``root`` and run ``ereuse-data-refresh``.
 
