@@ -213,3 +213,9 @@ timeout 50
 
 ###eReuse###
 ```
+
+####6. Updating configuration for new ISOs
+
+Whenever you drop new ISOs (and their associated SYSLINUX entry template
+files) in the ``images`` subdirectory of the data directory, please run
+``ereuse-data-refresh`` as root.
