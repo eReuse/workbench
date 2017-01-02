@@ -4,7 +4,7 @@
 # This is meant to be run when generating the server OVA.
 
 # Remove unnecessary packages.
-apt-get purge @PKGS_TO_REMOVE@
+apt-get -qq purge @PKGS_TO_REMOVE@
 
 # Fix bootloader.
 update-grub
