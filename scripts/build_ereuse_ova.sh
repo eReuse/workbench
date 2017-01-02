@@ -58,6 +58,27 @@ cp "$iso/casper/vmlinuz" "$DATA_DIR"
 PKGS_TO_REMOVE=$(cat "$iso/casper/filesystem.manifest-remove" | tr '\n' ' ')
 umount "$iso"
 
+# Create a minimal fstab (mainly for the initramfs).
+cat << 'EOF' > "$ROOT/etc/fstab"
+/dev/sda1  /     ext4  relatime,errors=remount-ro  0  1
+/dev/sda2  none  swap  sw                          0  0
+EOF
+# Network configuration.
+cat << 'EOF' > "$ROOT/etc/network/interfaces.d/ereuse"
+auto eth0
+allow-hotplug eth0
+iface eth0 inet static
+	address  192.168.2.2
+	netmask  255.255.255.0
+	gateway  192.168.2.1
+	dns-nameservers  8.8.8.8 8.8.4.4
+
+auto eth1
+allow-hotplug eth1
+iface eth1 inet dhcp
+EOF
+echo eReuse > "$ROOT/etc/hostname"
+
 # Drop the system configuration init script.
 mv "$ROOT/etc/rc.local" "$ROOT/etc/rc.local.orig"
 install -m 0755 "scripts/configure-server.sh" "$ROOT/etc/rc.local"
