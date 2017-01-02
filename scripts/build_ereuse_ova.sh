@@ -41,12 +41,25 @@ disk_loop=$(losetup -fP --show "$DISK_IMAGE")
 mkfs.ext4 -q ${disk_loop}p1
 mkswap ${disk_loop}p2
 
-
+# Mount the ISO, the VM root and restore the system.
+iso="$DATA_DIR/iso"
 ROOT="$DATA_DIR/root"  # mounted VM root file system
-mkdir -p "$ROOT"
+mkdir -p "$iso" "$ROOT"
+mount -o ro "$BASE_ISO_PATH" "$iso"
 mount ${disk_loop}p1 "$ROOT"
+# Copy ISO file system.
+unsquashfs -d "$ROOT/SQUASH" "$iso/casper/filesystem.squashfs"
+mv "$ROOT/SQUASH"/* "$ROOT"
+rmdir "$ROOT/SQUASH"
+# Restore kernel and initramfs, save for later VM boot.
+cp "$iso/casper/vmlinuz" "$(readlink -f "$ROOT/vmlinuz")"
+cp "$iso/casper/initrd.lz" "$(readlink -f "$ROOT/initrd.img")"
+cp "$iso/casper/vmlinuz" "$iso/casper/initrd.lz" "$DATA_DIR"
+# Save the list of unnecessary Casper packages.
+PKGS_TO_REMOVE=$(cat "$iso/casper/filesystem.manifest-remove")
+umount "$iso"
 
-# chroot "$ROOT" /bin/sh  # still empty
+chroot "$ROOT" /bin/bash
 
 # Unmount the file system and release the loop device.
 umount "$ROOT"
