@@ -13,4 +13,4 @@ grub-install /dev/sda
 # Restore the original init script.
 mv /etc/rc.local.orig /etc/rc.local
 
-exec reboot
+exec halt
