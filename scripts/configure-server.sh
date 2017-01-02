@@ -10,6 +10,11 @@ apt-get -qq purge @PKGS_TO_REMOVE@
 update-grub
 grub-install /dev/sda
 
+# Setup users.
+printf 'eReuse\neReuse\n' | passwd -q root
+adduser --disabled-password --gecos eReuse ereuse
+printf 'ereuse\nereuse\n' | passwd -q ereuse
+
 # Restore the original init script.
 mv /etc/rc.local.orig /etc/rc.local
 
