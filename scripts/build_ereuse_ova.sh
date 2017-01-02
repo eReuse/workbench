@@ -61,7 +61,7 @@ umount "$iso"
 
 # Drop the system configuration init script.
 mv "$ROOT/etc/rc.local" "$ROOT/etc/rc.local.orig"
-install -m 0644 "scripts/configure-server.sh" "$ROOT/etc/rc.local"
+install -m 0755 "scripts/configure-server.sh" "$ROOT/etc/rc.local"
 sed -i -e "s/@PKGS_TO_REMOVE@/$PKGS_TO_REMOVE/" "$ROOT/etc/rc.local"
 
 chroot "$ROOT" /bin/bash
