@@ -6,6 +6,9 @@
 # Remove unnecessary packages.
 apt-get -qq purge @PKGS_TO_REMOVE@
 
+# Rebuild initramfs.
+update-initramfs -u -k all
+
 # Fix bootloader.
 update-grub
 grub-install /dev/sda

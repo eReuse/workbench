@@ -51,10 +51,9 @@ mount ${DISK_LOOP}p1 "$ROOT"
 unsquashfs -d "$ROOT/SQUASH" "$iso/casper/filesystem.squashfs"
 mv "$ROOT/SQUASH"/* "$ROOT"
 rmdir "$ROOT/SQUASH"
-# Restore kernel and initramfs, save for later VM boot.
+# Restore kernel, save for later VM boot.
 cp "$iso/casper/vmlinuz" "$(readlink -f "$ROOT/vmlinuz")"
-cp "$iso/casper/initrd.lz" "$(readlink -f "$ROOT/initrd.img")"
-cp "$iso/casper/vmlinuz" "$iso/casper/initrd.lz" "$DATA_DIR"
+cp "$iso/casper/vmlinuz" "$DATA_DIR"
 # Save the list of unnecessary Casper packages.
 PKGS_TO_REMOVE=$(cat "$iso/casper/filesystem.manifest-remove" | tr '\n' ' ')
 umount "$iso"
