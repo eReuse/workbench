@@ -56,8 +56,13 @@ cp "$iso/casper/vmlinuz" "$(readlink -f "$ROOT/vmlinuz")"
 cp "$iso/casper/initrd.lz" "$(readlink -f "$ROOT/initrd.img")"
 cp "$iso/casper/vmlinuz" "$iso/casper/initrd.lz" "$DATA_DIR"
 # Save the list of unnecessary Casper packages.
-PKGS_TO_REMOVE=$(cat "$iso/casper/filesystem.manifest-remove")
+PKGS_TO_REMOVE=$(cat "$iso/casper/filesystem.manifest-remove" | tr '\n' ' ')
 umount "$iso"
+
+# Drop the system configuration init script.
+mv "$ROOT/etc/rc.local" "$ROOT/etc/rc.local.orig"
+install -m 0644 "scripts/configure-server.sh" "$ROOT/etc/rc.local"
+sed -i -e "s/@PKGS_TO_REMOVE@/$PKGS_TO_REMOVE/" "$ROOT/etc/rc.local"
 
 chroot "$ROOT" /bin/bash
 
