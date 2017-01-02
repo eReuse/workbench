@@ -37,16 +37,16 @@ w
 EOF
 
 # Create a file system and a swap space in the VM disk.
-disk_loop=$(losetup -fP --show "$DISK_IMAGE")
-mkfs.ext4 -q ${disk_loop}p1
-mkswap ${disk_loop}p2
+DISK_LOOP=$(losetup -fP --show "$DISK_IMAGE")  # loop device for VM disk
+mkfs.ext4 -q ${DISK_LOOP}p1
+mkswap ${DISK_LOOP}p2
 
 # Mount the ISO, the VM root and restore the system.
 iso="$DATA_DIR/iso"
 ROOT="$DATA_DIR/root"  # mounted VM root file system
 mkdir -p "$iso" "$ROOT"
 mount -o ro "$BASE_ISO_PATH" "$iso"
-mount ${disk_loop}p1 "$ROOT"
+mount ${DISK_LOOP}p1 "$ROOT"
 # Copy ISO file system.
 unsquashfs -d "$ROOT/SQUASH" "$iso/casper/filesystem.squashfs"
 mv "$ROOT/SQUASH"/* "$ROOT"
@@ -68,4 +68,4 @@ chroot "$ROOT" /bin/bash
 
 # Unmount the file system and release the loop device.
 umount "$ROOT"
-losetup -d $disk_loop
+losetup -d $DISK_LOOP
