@@ -77,7 +77,6 @@ allow-hotplug eth0
 iface eth0 inet static
 	address  192.168.2.2
 	netmask  255.255.255.0
-	gateway  192.168.2.1
 	dns-nameservers  77.109.148.136 208.67.222.222 8.8.8.8
 
 auto eth1
