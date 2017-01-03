@@ -38,7 +38,7 @@ EOF
 
 # Create a file system and a swap space in the VM disk.
 DISK_LOOP=$(losetup -fP --show "$DISK_IMAGE")  # loop device for VM disk
-mkfs.ext4 -q ${DISK_LOOP}p1
+mkfs.ext4 -q -O ^metadata_csum ${DISK_LOOP}p1
 mkswap ${DISK_LOOP}p2
 
 # Mount the ISO, the VM root and restore the system.
