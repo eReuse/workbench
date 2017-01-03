@@ -69,7 +69,8 @@ cat << 'EOF' > "$ROOT/etc/fstab"
 /dev/sda1  /     ext4  relatime,errors=remount-ro  0  1
 /dev/sda2  none  swap  sw                          0  0
 EOF
-# Network configuration.
+# Network configuration, using fixed interface names.
+sed -i -re 's/^(GRUB_CMDLINE_LINUX)="(.*)"/\1="\2 net.ifnames=0"/' "$ROOT/etc/default/grub"
 cat << 'EOF' > "$ROOT/etc/network/interfaces.d/ereuse"
 auto eth0
 allow-hotplug eth0
