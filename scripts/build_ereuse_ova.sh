@@ -58,6 +58,12 @@ cp "$iso/casper/vmlinuz" "$DATA_DIR"
 PKGS_TO_REMOVE=$(cat "$iso/casper/filesystem.manifest-remove" | tr '\n' ' ')
 umount "$iso"
 
+# Other packages to remove.
+PKGS_TO_REMOVE="$PKGS_TO_REMOVE thermald"
+# Avoid attempting graphical login and get a console login prompt.
+PKGS_TO_REMOVE="$PKGS_TO_REMOVE plymouth"
+sed -i -e '/^GRUB_HIDDEN_/d' -e 's/quiet splash/quiet/' "$ROOT/etc/default/grub"
+
 # Create a minimal fstab (mainly for the initramfs).
 cat << 'EOF' > "$ROOT/etc/fstab"
 /dev/sda1  /     ext4  relatime,errors=remount-ro  0  1
