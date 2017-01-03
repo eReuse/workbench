@@ -21,4 +21,4 @@ printf 'ereuse\nereuse\n' | passwd -q ereuse
 # Restore the original init script.
 mv /etc/rc.local.orig /etc/rc.local
 
-exec halt
+exec poweroff
