@@ -24,8 +24,8 @@ if [ ! -f /initrd.img ]; then
 fi
 
 # Avoid attempting graphical login and get a console login prompt.
-sed -i -e '/^GRUB_HIDDEN_/d' -e 's/quiet splash/quiet/' /etc/default/grub
-# Fix bootloader.
+sed -i -r -e 's/^(GRUB_HIDDEN_.*)/#\1/' -e 's/quiet splash/quiet/' /etc/default/grub
+# Fix boot loader.
 update-grub
 grub-install $(findmnt -no SOURCE / | sed -r 's/p?[0-9]+$//')
 
