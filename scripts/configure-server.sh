@@ -9,7 +9,7 @@ apt-get -qq purge @PKGS_TO_REMOVE@ thermald plymouth
 # Install needed packages.
 # Enable additional packages like VirtualBox's.
 sed -i -e 's/ main/ main multiverse/' /etc/apt/sources.list
-apt-get update
+apt-get -qq update
 apt-get -qq --no-install-recommends install virtualbox-guest-dkms
 
 # Enable VirtualBox's shared folder module.
