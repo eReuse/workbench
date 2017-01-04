@@ -34,6 +34,17 @@ printf 'eReuse\neReuse\n' | passwd -q root
 adduser --disabled-password --gecos eReuse ereuse
 printf 'ereuse\nereuse\n' | passwd -q ereuse
 
+# Prepare the shared data directory.
+mkdir -m 0755 ~ereuse/data
+ln -s data/config.ini data/inventory ~ereuse  # compat links
+chown -R ereuse:ereuse ~ereuse
+mkdir -p /srv/ereuse-data
+cat << 'EOF' >> /etc/fstab
+# Mount the VirtualBox shared folder, then bind it to the usual place.
+ereuse-data        /home/ereuse/data  vboxsf  rw,uid=ereuse,gid=ereuse,dmode=755,fmode=644  0  0
+/home/ereuse/data  /srv/ereuse-data   none    bind  0  0
+EOF
+
 # Cleanup.
 apt-get clean  # downloaded package files
 
