@@ -118,7 +118,7 @@ vbox_name=ereuse-server-$VERSION
 vbox_mem=1024  # MiB
 vbox_net=eth0
 vbox_disk=$(realpath "${DISK_IMAGE%.raw}.vmdk")  # asbolute path
-VBoxManage convertfromraw "$DISK_IMAGE" "$vbox_disk" --format VMDK
+VBoxManage internalcommands createrawvmdk -filename "$DISK_IMAGE" -rawdisk "$vbox_disk"
 cd "$DATA_DIR"
 mkdir -p "$vbox_name"
 VBoxManage createvm --name $vbox_name --ostype Ubuntu --register
