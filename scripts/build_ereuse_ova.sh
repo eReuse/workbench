@@ -65,9 +65,11 @@ PKGS_TO_REMOVE="$PKGS_TO_REMOVE plymouth"
 sed -i -e '/^GRUB_HIDDEN_/d' -e 's/quiet splash/quiet/' "$ROOT/etc/default/grub"
 
 # Create a minimal fstab (mainly for the initramfs).
-cat << 'EOF' > "$ROOT/etc/fstab"
-/dev/sda1  /     ext4  relatime,errors=remount-ro  0  1
-/dev/sda2  none  swap  sw                          0  0
+root_uuid=$(tune2fs -l ${DISK_LOOP}p1 | grep UUID | sed -rn 's/.*:\s*(.+)/\1/p')
+swap_uuid=$(swaplabel ${DISK_LOOP}p2 | grep UUID | sed -rn 's/.*:\s*(.+)/\1/p')
+cat << EOF > "$ROOT/etc/fstab"
+UUID=$root_uuid  /     ext4  relatime,errors=remount-ro  0  1
+UUID=$swap_uuid  none  swap  sw                          0  0
 EOF
 # Network configuration, using fixed interface names.
 sed -i -re 's/^(GRUB_CMDLINE_LINUX)="(.*)"/\1="\2 net.ifnames=0"/' "$ROOT/etc/default/grub"
