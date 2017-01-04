@@ -16,6 +16,15 @@ BASE_ISO_PATH="$WORK_DIR/$(basename "$BASE_ISO_URL")"
 BASE_ISO_SHA256SUM="$BASE_ISO_SHA256  $BASE_ISO_PATH"
 
 
+# Check existence of non-essential tools.
+for prog in wget fdisk losetup mkfs.ext4 mkswap unsquashfs tune2fs swaplabel kvm zerofree; do
+    if ! type $prog > /dev/null; then
+        echo "Missing program: $prog" >&2
+        exit 1
+    fi
+done
+
+
 # Download the base ISO.
 while ! echo "$BASE_ISO_SHA256SUM" | sha256sum -c --quiet --status; do
     wget -c -O $BASE_ISO_PATH "$BASE_ISO_URL"
