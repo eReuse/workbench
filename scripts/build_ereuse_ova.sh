@@ -67,12 +67,6 @@ cp "$iso/casper/vmlinuz" "$DATA_DIR"
 PKGS_TO_REMOVE=$(cat "$iso/casper/filesystem.manifest-remove" | tr '\n' ' ')
 umount "$iso"
 
-# Other packages to remove.
-PKGS_TO_REMOVE="$PKGS_TO_REMOVE thermald"
-# Avoid attempting graphical login and get a console login prompt.
-PKGS_TO_REMOVE="$PKGS_TO_REMOVE plymouth"
-sed -i -e '/^GRUB_HIDDEN_/d' -e 's/quiet splash/quiet/' "$ROOT/etc/default/grub"
-
 # Create a minimal fstab (mainly for the initramfs).
 root_uuid=$(tune2fs -l ${DISK_LOOP}p1 | grep UUID | sed -rn 's/.*:\s*(.+)/\1/p')
 swap_uuid=$(swaplabel ${DISK_LOOP}p2 | grep UUID | sed -rn 's/.*:\s*(.+)/\1/p')

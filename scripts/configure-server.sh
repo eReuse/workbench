@@ -4,7 +4,7 @@
 # This is meant to be run when generating the server OVA.
 
 # Remove unnecessary packages.
-apt-get -qq purge @PKGS_TO_REMOVE@
+apt-get -qq purge @PKGS_TO_REMOVE@ thermald plymouth
 
 # Install needed packages.
 # Enable additional packages like VirtualBox's.
@@ -23,6 +23,8 @@ if [ ! -f /initrd.img ]; then
     update-initramfs -u
 fi
 
+# Avoid attempting graphical login and get a console login prompt.
+sed -i -e '/^GRUB_HIDDEN_/d' -e 's/quiet splash/quiet/' /etc/default/grub
 # Fix bootloader.
 update-grub
 grub-install $(findmnt -no SOURCE / | sed -r 's/p?[0-9]+$//')
