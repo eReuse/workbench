@@ -6,8 +6,10 @@
 # Remove unnecessary packages.
 apt-get -qq purge @PKGS_TO_REMOVE@
 
-# Rebuild initramfs.
-update-initramfs -u -k all
+# Rebuild initramfs if missing.
+if [ ! -f /initrd.img ]; then
+    update-initramfs -u
+fi
 
 # Fix bootloader.
 update-grub
