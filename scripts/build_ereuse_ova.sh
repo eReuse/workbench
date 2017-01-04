@@ -97,3 +97,8 @@ chroot "$ROOT" /bin/bash
 # Unmount the file system and release the loop device.
 umount "$ROOT"
 losetup -d $DISK_LOOP
+
+# Run under KVM/QEMU once to complete configuration.
+kvm -curses -m 512 -drive file="$DISK_IMAGE",format=raw,if=virtio \
+    -net user -net nic,model=virtio -net user -net nic,model=virtio \
+    -kernel "$DATA_DIR/vmlinuz" -append "root=/dev/vda1 rw quiet"
