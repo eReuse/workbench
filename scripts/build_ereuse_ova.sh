@@ -8,6 +8,8 @@ WORK_DIR=${WORK_DIR:-dist/iso}
 DISK_MiB=${DISK_MiB:-2048}  # VM disk size in MiB
 SWAP_MiB=${SWAP_MiB:-128}  # VM swap size in MiB
 
+# Version-specific settings.
+VERSION=$(cd device_inventory && python -c 'from __init__ import get_version; print get_version()')
 BASE_ISO_URL="http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/15.10/ubuntu-mini-remix-15.10-i386.iso"
 BASE_ISO_SHA256="e9985f0bcb05678d87d62c3d70191aab7a80540dc17523d93c313aa8515e173e"
 
@@ -17,7 +19,7 @@ BASE_ISO_SHA256SUM="$BASE_ISO_SHA256  $BASE_ISO_PATH"
 
 
 # Check existence of non-essential tools.
-for prog in wget fdisk losetup mkfs.ext4 mkswap unsquashfs tune2fs swaplabel kvm zerofree; do
+for prog in wget fdisk losetup mkfs.ext4 mkswap unsquashfs tune2fs swaplabel kvm zerofree VBoxManage; do
     if ! type $prog > /dev/null; then
         echo "Missing program: $prog" >&2
         exit 1
@@ -110,3 +112,26 @@ kvm -curses -m 512 -drive file="$DISK_IMAGE",format=raw,if=virtio \
 DISK_LOOP=$(losetup -fP --show "$DISK_IMAGE")
 zerofree ${DISK_LOOP}p1
 losetup -d $DISK_LOOP
+
+# Create the VirtualBox VM.
+vbox_name=ereuse-server-$VERSION
+vbox_mem=1024  # MiB
+vbox_net=eth0
+vbox_disk=$(realpath "${DISK_IMAGE%.raw}.vmdk")  # asbolute path
+VBoxManage convertfromraw "$DISK_IMAGE" "$vbox_disk" --format VMDK
+cd "$DATA_DIR"
+mkdir -p "$vbox_name"
+VBoxManage createvm --name $vbox_name --ostype Ubuntu --register
+VBoxManage modifyvm $vbox_name --memory $vbox_mem \
+           --acpi on --pae on --hpet on --apic on --hwvirtex on --ioapic off \
+           --rtcuseutc on --firmware bios --vram 1 \
+           --nic1 bridged --nictype1 virtio --bridgeadapter1 $vbox_net \
+           --nic2 nat --nictype2 virtio \
+           --audio none --usb off --clipboard disabled --draganddrop disabled
+VBoxManage storagectl $vbox_name \
+           --name "SATA" --add sata --portcount 1 --bootable on
+VBoxManage storageattach $vbox_name \
+           --storagectl "SATA" --port 0 --device 0 --type hdd --medium "$vbox_disk"
+VBoxManage sharedfolder add $vbox_name \
+           --name ereuse-data --hostpath /path/of/ereuse-data
+cd -
