@@ -83,6 +83,7 @@ EOF
 # Network configuration, using fixed interface names.
 sed -i -re 's/^(GRUB_CMDLINE_LINUX)="(.*)"/\1="\2 net.ifnames=0"/' "$ROOT/etc/default/grub"
 cat << 'EOF' > "$ROOT/etc/network/interfaces.d/ereuse"
+# The internal, isolated network for serving client devices.
 auto eth0
 allow-hotplug eth0
 iface eth0 inet static
@@ -90,6 +91,7 @@ iface eth0 inet static
 	netmask  255.255.255.0
 	dns-nameservers  77.109.148.136 208.67.222.222 8.8.8.8
 
+# The external network to reach the Internet.
 auto eth1
 allow-hotplug eth1
 iface eth1 inet dhcp
