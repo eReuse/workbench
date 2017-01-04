@@ -13,7 +13,7 @@ fi
 
 # Fix bootloader.
 update-grub
-grub-install /dev/sda
+grub-install $(findmnt -no SOURCE / | sed -r 's/p?[0-9]+$//')
 
 # Setup users.
 printf 'eReuse\neReuse\n' | passwd -q root
