@@ -1,5 +1,5 @@
 #!/bin/sh
-# Configure this (virtual) host an eReuse PXE server.
+# Configure this (virtual) host as an eReuse PXE server.
 #
 # This is meant to be run when generating the server OVA.
 
