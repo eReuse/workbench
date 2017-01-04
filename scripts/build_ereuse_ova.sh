@@ -102,3 +102,8 @@ losetup -d $DISK_LOOP
 kvm -curses -m 512 -drive file="$DISK_IMAGE",format=raw,if=virtio \
     -net user -net nic,model=virtio -net user -net nic,model=virtio \
     -kernel "$DATA_DIR/vmlinuz" -append "root=/dev/vda1 rw quiet"
+
+# Use zerofree to zero unused blocks and ease compression.
+DISK_LOOP=$(losetup -fP --show "$DISK_IMAGE")
+zerofree ${DISK_LOOP}p1
+losetup -d $DISK_LOOP
