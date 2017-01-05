@@ -43,6 +43,19 @@ subnet $netpfx24.0 netmask 255.255.255.0 {
 }
 EOF
 
+# Configure the Samba server.
+cat << 'EOF' >> /etc/samba/smb.conf
+# eReuse shared data directory.
+[ereuse-data]
+   comment = eReuse data
+   path = /srv/ereuse-data
+   browseable = yes
+   read only = no
+   guest ok = yes
+   force user = ereuse
+   force group = ereuse
+EOF
+
 # Rebuild initramfs if missing.
 if [ ! -f /initrd.img ]; then
     update-initramfs -u
