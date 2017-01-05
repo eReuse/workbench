@@ -4,7 +4,7 @@
 set -e
 
 # Configurable settings.
-WORK_DIR=${WORK_DIR:-dist/iso}
+DIST_DIR=${DIST_DIR:-dist}
 DISK_MiB=${DISK_MiB:-2048}  # VM disk size in MiB
 SWAP_MiB=${SWAP_MiB:-128}  # VM swap size in MiB
 
@@ -14,7 +14,7 @@ BASE_ISO_URL="http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/
 BASE_ISO_SHA256="e9985f0bcb05678d87d62c3d70191aab7a80540dc17523d93c313aa8515e173e"
 
 # Other derived values.
-BASE_ISO_PATH="$WORK_DIR/$(basename "$BASE_ISO_URL")"
+BASE_ISO_PATH="$DIST_DIR/iso/$(basename "$BASE_ISO_URL")"
 BASE_ISO_SHA256SUM="$BASE_ISO_SHA256  $BASE_ISO_PATH"
 
 
@@ -33,7 +33,7 @@ while ! echo "$BASE_ISO_SHA256SUM" | sha256sum -c --quiet --status; do
 done
 
 # Create a temporary directory for data files.
-DATA_DIR=$(mktemp -d -p"$WORK_DIR")
+DATA_DIR=$(mktemp -d -p"$DIST_DIR")
 
 # Create and partition the VM disk image.
 DISK_IMAGE="$DATA_DIR/disk.raw"  # VM disk image
@@ -135,7 +135,7 @@ VBoxManage sharedfolder add $VBOX_NAME \
            --name ereuse-data --hostpath /path/of/ereuse-data
 
 # Export the VBox VM.
-VBoxManage export $VBOX_NAME -o "$WORK_DIR/$VBOX_NAME.ova" --vsys 0 \
+VBoxManage export $VBOX_NAME -o "$DIST_DIR/$VBOX_NAME.ova" --vsys 0 \
            --product "eReuse PXE server" \
            --vendor "eReuse" --vendorurl "https://ereuse.org/" \
            --version $VERSION --description "\
