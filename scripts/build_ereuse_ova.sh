@@ -114,28 +114,28 @@ zerofree ${DISK_LOOP}p1
 losetup -d $DISK_LOOP
 
 # Create the VirtualBox VM.
-vbox_name=ereuse-server-$VERSION
+VBOX_NAME=ereuse-server-$VERSION
 vbox_mem=1024  # MiB
 vbox_net=eth0
 vbox_disk=$(realpath "${DISK_IMAGE%.raw}.vmdk")  # asbolute path
 VBoxManage internalcommands createrawvmdk \
            -filename "$vbox_disk" -rawdisk "$(realpath "$DISK_IMAGE")"
-VBoxManage createvm --name $vbox_name --ostype Ubuntu --register
-VBoxManage modifyvm $vbox_name --memory $vbox_mem \
+VBoxManage createvm --name $VBOX_NAME --ostype Ubuntu --register
+VBoxManage modifyvm $VBOX_NAME --memory $vbox_mem \
            --acpi on --pae on --hpet on --apic on --hwvirtex on --ioapic off \
            --rtcuseutc on --firmware bios --vram 1 \
            --nic1 bridged --nictype1 virtio --bridgeadapter1 $vbox_net \
            --nic2 nat --nictype2 virtio \
            --audio none --usb off --clipboard disabled --draganddrop disabled
-VBoxManage storagectl $vbox_name \
+VBoxManage storagectl $VBOX_NAME \
            --name "SATA" --add sata --portcount 1 --bootable on
-VBoxManage storageattach $vbox_name \
+VBoxManage storageattach $VBOX_NAME \
            --storagectl "SATA" --port 0 --device 0 --type hdd --medium "$vbox_disk"
-VBoxManage sharedfolder add $vbox_name \
+VBoxManage sharedfolder add $VBOX_NAME \
            --name ereuse-data --hostpath /path/of/ereuse-data
 
 # Export the VBox VM.
-VBoxManage export $vbox_name -o "$WORK_DIR/$vbox_name.ova" --vsys 0 \
+VBoxManage export $VBOX_NAME -o "$WORK_DIR/$VBOX_NAME.ova" --vsys 0 \
            --product "eReuse PXE server" \
            --vendor "eReuse" --vendorurl "https://ereuse.org/" \
            --version $VERSION --description "\
@@ -156,3 +156,7 @@ Password: ereuse
 Root pasword: eReuse
 --------------------------------
 "
+
+# Cleanup.
+VBoxManage unregistervm $VBOX_NAME --delete
+rm -rf "$DATA_DIR"
