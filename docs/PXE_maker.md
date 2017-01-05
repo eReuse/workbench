@@ -98,8 +98,8 @@ subnet 192.168.2.0 netmask 255.255.255.0 {
  next-server 192.168.2.2;
  filename "pxelinux.0";
  range dynamic-bootp 192.168.2.10 192.168.2.210;
- option domain-name-servers 208.67.222.222;
- option routers 192.168.2.1;
+ option domain-name-servers 77.109.148.136 208.67.222.222 8.8.8.8;
+ option routers 192.168.2.2;
  option broadcast-address 192.168.2.255;
 }
 ```
