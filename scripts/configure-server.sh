@@ -13,7 +13,7 @@ apt-get -qq update
 apt-get -qq --no-install-recommends install virtualbox-guest-dkms
 
 # Enable VirtualBox's shared folder module.
-cat << 'EOF' > /etc/modules-load.d/ereuse
+cat << 'EOF' > /etc/modules-load.d/ereuse.conf
 # To share eReuse's data folder with the VirtualBox host.
 vboxsf
 EOF
