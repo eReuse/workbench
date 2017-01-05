@@ -16,9 +16,15 @@ BASE_ISO_URL="http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/
 BASE_ISO_SHA256="e9985f0bcb05678d87d62c3d70191aab7a80540dc17523d93c313aa8515e173e"
 
 # Other derived values.
+VBOX_NAME=ereuse-server-$VERSION
+VBOX_OVA="$DIST_DIR/$VBOX_NAME.ova"
 BASE_ISO_PATH="$DIST_DIR/iso/$(basename "$BASE_ISO_URL")"
 BASE_ISO_SHA256SUM="$BASE_ISO_SHA256  $BASE_ISO_PATH"
 
+if [ -f "$VBOX_OVA" ]; then
+        echo "OVA already exists: $VBOX_OVA" >&2
+        exit 1
+fi
 
 # Check existence of non-essential tools.
 for prog in wget fdisk losetup mkfs.ext4 mkswap unsquashfs tune2fs swaplabel kvm zerofree VBoxManage; do
@@ -119,7 +125,6 @@ zerofree ${DISK_LOOP}p1
 losetup -d $DISK_LOOP
 
 # Create the VirtualBox VM.
-VBOX_NAME=ereuse-server-$VERSION
 vbox_net=eth0
 vbox_disk=$(realpath "${DISK_IMAGE%.raw}.vmdk")  # asbolute path
 VBoxManage internalcommands createrawvmdk \
@@ -139,7 +144,6 @@ VBoxManage sharedfolder add $VBOX_NAME \
            --name ereuse-data --hostpath /path/of/ereuse-data
 
 # Export the VBox VM.
-VBOX_OVA="$DIST_DIR/$VBOX_NAME.ova"
 VBoxManage export $VBOX_NAME -o "$VBOX_OVA" --vsys 0 \
            --product "eReuse PXE server" \
            --vendor "eReuse" --vendorurl "https://ereuse.org/" \
