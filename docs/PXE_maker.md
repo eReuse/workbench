@@ -44,35 +44,7 @@ wget https://github.com/eReuse/device-inventory/releases/download/v8.0a1/eReuseO
 wget http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/lubuntu-16.04.1-desktop-i386.iso
 ```
 
-####2. Configure TFTP
-
-
-The configuration can be found on `/etc/default/tftpd-hpa`, edit this file:
-```
-nano /etc/default/tftpd-hpa
-```
-
-Change the following line to tell where the files will be placed:
-```
-TFTP_DIRECTORY="/var/lib/tftpboot"
-```
-
-Make the folder:
-```
-mkdir /var/lib/tftpboot
-```
-
-Reset the service with:
-```
-service tftpd-hpa restart
-```
-
-Check if service is running:
-```
-ss -upna | grep tftp
-```
-
-####3. Configure DHCP server
+####2. Configure DHCP server
 Install DHCP with a static IP on a supposed name interfice `eth0`.
 
 Look for your ethernet interface name:
@@ -143,7 +115,7 @@ ss -upna
 tail /var/log/syslog
 ```
 
-####4. Configure public access via SMB to data files
+####3. Configure public access via SMB to data files
 
 Create an ``ereuse`` user with a ``data`` directory in its home.  In it,
 create subdirectories for ``images`` and the ``inventory`` of JSON files.
@@ -190,7 +162,7 @@ eReuse data files:
 
 Then reload the service with ``service samba reload``.
 
-####5. Configure TFTP final step
+####4. Configure TFTP final step
 Install the PXE network image from to `/var/lib/tftpboot/`:
 ```
 cd /var/lib/tftpboot/
@@ -213,7 +185,7 @@ timeout 50
 ###eReuse###
 ```
 
-####6. Updating configuration for new ISOs
+####5. Updating configuration for new ISOs
 
 Whenever you drop new ISOs (and their associated SYSLINUX entry template
 files) in the ``images`` subdirectory of the data directory, please run
