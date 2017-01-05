@@ -8,6 +8,7 @@ DIST_DIR=${DIST_DIR:-dist}
 DISK_MiB=${DISK_MiB:-2048}  # VM disk size in MiB
 SWAP_MiB=${SWAP_MiB:-128}  # VM swap size in MiB
 MEM_MiB=${MEM_MiB:-1024}  # VM memory size in MiB
+ADDRESS=${ADDRESS:-192.168.2.2}  # VM internal IP address (/24)
 
 # Version-specific settings.
 VERSION=$(cd device_inventory && python -c 'from __init__ import get_version; print get_version()')
@@ -79,12 +80,12 @@ UUID=$swap_uuid  none  swap  sw                          0  0
 EOF
 # Network configuration, using fixed interface names.
 sed -i -re 's/^(GRUB_CMDLINE_LINUX)="(.*)"/\1="\2 net.ifnames=0"/' "$ROOT/etc/default/grub"
-cat << 'EOF' > "$ROOT/etc/network/interfaces.d/ereuse"
+cat << EOF > "$ROOT/etc/network/interfaces.d/ereuse"
 # The internal, isolated network for serving client devices.
 auto eth0
 allow-hotplug eth0
 iface eth0 inet static
-	address  192.168.2.2
+	address  $ADDRESS
 	netmask  255.255.255.0
 	dns-nameservers  77.109.148.136 208.67.222.222 8.8.8.8
 
@@ -149,10 +150,10 @@ the directory extracted from the \"ereuse-data-VERSION.tar.gz\" archive:
 https://github.com/eReuse/device-inventory/releases
 --------------------------------
 Access to shared folder via SMB:
-- GNU/Linux: smb://192.168.2.2/
-- Windows: \\\\192.168.2.2\\
+- GNU/Linux: smb://$ADDRESS/
+- Windows: \\\\$ADDRESS\\
 --------------------------------
-IP network: 192.168.2.2/24
+IP network: $ADDRESS/24
 --------------------------------
 User: ereuse
 Password: ereuse
