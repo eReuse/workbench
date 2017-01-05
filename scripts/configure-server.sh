@@ -10,12 +10,37 @@ apt-get -qq purge @PKGS_TO_REMOVE@ thermald plymouth
 # Enable additional packages like VirtualBox's.
 sed -i -e 's/ main/ main multiverse/' /etc/apt/sources.list
 apt-get -qq update
-apt-get -qq --no-install-recommends install virtualbox-guest-dkms
+apt-get -qq --no-install-recommends install virtualbox-guest-dkms \
+        isc-dhcp-server tftpd-hpa nfs-kernel-server samba
 
 # Enable VirtualBox's shared folder module.
 cat << 'EOF' > /etc/modules-load.d/ereuse.conf
 # To share eReuse's data folder with the VirtualBox host.
 vboxsf
+EOF
+
+# Configure the DHCP server.
+address=$(ip -4 addr show dev eth0 | sed -nr 's/.*\binet ([^/]+).*/\1/p')
+netpfx24=$(echo $address | cut -f1-3 -d.)  # assume /24
+nameservers=$(sed -rn 's/.*nameserver\s+([.0-9]+).*/\1/p' /etc/resolv.conf | tr '\n' ' ')
+mv /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.backup
+cat << EOF > /etc/dhcp/dhcpd.conf
+ddns-update-style interim;
+ignore client-updates;
+
+# TFTP options
+allow booting;
+allow bootp;
+
+# My network environment
+subnet $netpfx24.0 netmask 255.255.255.0 {
+  next-server $address;
+  filename "pxelinux.0";
+  range dynamic-bootp $netpfx24.10 $netpfx24.210;
+  option domain-name-servers $nameservers;
+  option routers $address;
+  option broadcast-address $netpfx24.255;
+}
 EOF
 
 # Rebuild initramfs if missing.
