@@ -22,7 +22,7 @@ EOF
 # Configure the DHCP server.
 address=$(ip -4 addr show dev eth0 | sed -nr 's/.*\binet ([^/]+).*/\1/p')
 netpfx24=$(echo $address | cut -f1-3 -d.)  # assume /24
-nameservers=$(sed -rn 's/.*nameserver\s+([.0-9]+).*/\1/p' /etc/resolv.conf | tr '\n' ' ')
+nameservers=$(sed -rn 's/.*nameserver\s+([.0-9]+).*/\1/p' /etc/resolv.conf)
 mv /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.backup
 cat << EOF > /etc/dhcp/dhcpd.conf
 ddns-update-style interim;
@@ -37,7 +37,7 @@ subnet $netpfx24.0 netmask 255.255.255.0 {
   next-server $address;
   filename "pxelinux.0";
   range dynamic-bootp $netpfx24.10 $netpfx24.210;
-  option domain-name-servers $nameservers;
+  option domain-name-servers $(echo $nameservers | sed 's/ /, /g');
   option routers $address;
   option broadcast-address $netpfx24.255;
 }
