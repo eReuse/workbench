@@ -7,6 +7,7 @@ set -e
 DIST_DIR=${DIST_DIR:-dist}
 DISK_MiB=${DISK_MiB:-2048}  # VM disk size in MiB
 SWAP_MiB=${SWAP_MiB:-128}  # VM swap size in MiB
+MEM_MiB=${MEM_MiB:-1024}  # VM memory size in MiB
 
 # Version-specific settings.
 VERSION=$(cd device_inventory && python -c 'from __init__ import get_version; print get_version()')
@@ -107,7 +108,7 @@ umount "$ROOT"
 losetup -d $DISK_LOOP
 
 # Run under KVM/QEMU once to complete configuration.
-kvm -curses -m 512 -drive file="$DISK_IMAGE",format=raw,if=virtio \
+kvm -curses -m $MEM_MiB -drive file="$DISK_IMAGE",format=raw,if=virtio \
     -net user -net nic,model=virtio -net user -net nic,model=virtio \
     -kernel "$DATA_DIR/vmlinuz" -append "root=/dev/vda1 rw quiet"
 
@@ -118,13 +119,12 @@ losetup -d $DISK_LOOP
 
 # Create the VirtualBox VM.
 VBOX_NAME=ereuse-server-$VERSION
-vbox_mem=1024  # MiB
 vbox_net=eth0
 vbox_disk=$(realpath "${DISK_IMAGE%.raw}.vmdk")  # asbolute path
 VBoxManage internalcommands createrawvmdk \
            -filename "$vbox_disk" -rawdisk "$(realpath "$DISK_IMAGE")"
 VBoxManage createvm --name $VBOX_NAME --ostype Ubuntu --register
-VBoxManage modifyvm $VBOX_NAME --memory $vbox_mem \
+VBoxManage modifyvm $VBOX_NAME --memory $MEM_MiB \
            --acpi on --pae on --hpet on --apic on --hwvirtex on --ioapic off \
            --rtcuseutc on --firmware bios --vram 1 \
            --nic1 bridged --nictype1 virtio --bridgeadapter1 $vbox_net \
