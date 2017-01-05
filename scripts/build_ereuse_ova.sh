@@ -135,7 +135,8 @@ VBoxManage sharedfolder add $VBOX_NAME \
            --name ereuse-data --hostpath /path/of/ereuse-data
 
 # Export the VBox VM.
-VBoxManage export $VBOX_NAME -o "$DIST_DIR/$VBOX_NAME.ova" --vsys 0 \
+VBOX_OVA="$DIST_DIR/$VBOX_NAME.ova"
+VBoxManage export $VBOX_NAME -o "$VBOX_OVA" --vsys 0 \
            --product "eReuse PXE server" \
            --vendor "eReuse" --vendorurl "https://ereuse.org/" \
            --version $VERSION --description "\
@@ -156,7 +157,10 @@ Password: ereuse
 Root pasword: eReuse
 --------------------------------
 "
+chmod a+r "$VBOX_OVA"
 
 # Cleanup.
 VBoxManage unregistervm $VBOX_NAME --delete
 rm -rf "$DATA_DIR"
+
+echo "Successfully built OVA: $VBOX_OVA"
