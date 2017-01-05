@@ -150,7 +150,7 @@ https://github.com/eReuse/device-inventory/releases
 --------------------------------
 Access to shared folder via SMB:
 - GNU/Linux: smb://192.168.2.2/
-- Windows: \\192.168.2.2\
+- Windows: \\\\192.168.2.2\\
 --------------------------------
 IP network: 192.168.2.2/24
 --------------------------------
