@@ -133,3 +133,26 @@ VBoxManage storageattach $vbox_name \
            --storagectl "SATA" --port 0 --device 0 --type hdd --medium "$vbox_disk"
 VBoxManage sharedfolder add $vbox_name \
            --name ereuse-data --hostpath /path/of/ereuse-data
+
+# Export the VBox VM.
+VBoxManage export $vbox_name -o "$WORK_DIR/$vbox_name.ova" --vsys 0 \
+           --product "eReuse PXE server" \
+           --vendor "eReuse" --vendorurl "https://ereuse.org/" \
+           --version $VERSION --description "\
+IMPORTANT:
+Remember to point the \"ereuse-data\" shared folder to
+the directory extracted from the \"ereuse-data-VERSION.tar.gz\" archive:
+https://github.com/eReuse/device-inventory/releases
+--------------------------------
+Access to shared folder via SMB:
+- GNU/Linux: smb://192.168.2.2/
+- Windows: \\192.168.2.2\
+--------------------------------
+IP network: 192.168.2.2/24
+--------------------------------
+User: ereuse
+Password: ereuse
+--------------------------------
+Root pasword: eReuse
+--------------------------------
+"
