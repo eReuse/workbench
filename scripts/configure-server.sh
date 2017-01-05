@@ -59,7 +59,7 @@ cat << 'EOF' >> /etc/samba/smb.conf
 EOF
 
 # Configure PXE boot with TFTP.
-sed 's/\[::\]//' /etc/default/tftpd-hpa  # Ubuntu bug #1448500
+sed -i -e 's/\[::\]//' /etc/default/tftpd-hpa  # Ubuntu bug #1448500
 ln /usr/lib/PXELINUX/pxelinux.0 \
    /usr/lib/syslinux/modules/bios/ldlinux.c32 \
    /var/lib/tftpboot
