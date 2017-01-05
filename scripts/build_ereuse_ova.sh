@@ -93,6 +93,9 @@ allow-hotplug eth1
 iface eth1 inet dhcp
 EOF
 echo eReuse > "$ROOT/etc/hostname"
+# Install the data refresh script and run it on (normal) boot.
+install -m 0755 "scripts/ereuse-data-refresh" "$ROOT/usr/local/sbin"
+sed -i -re 's/^(exit 0.*)/ereuse-data-refresh\n\1/' "$ROOT/etc/rc.local"
 
 # Drop the system configuration init script.
 mv "$ROOT/etc/rc.local" "$ROOT/etc/rc.local.orig"
