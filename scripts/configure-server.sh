@@ -11,7 +11,7 @@ apt-get -qq purge @PKGS_TO_REMOVE@ thermald plymouth
 sed -i -e 's/ main/ main multiverse/' /etc/apt/sources.list
 apt-get -qq update
 apt-get -qq --no-install-recommends install virtualbox-guest-dkms \
-        isc-dhcp-server tftpd-hpa nfs-kernel-server samba
+        isc-dhcp-server tftpd-hpa pxelinux syslinux-common nfs-kernel-server samba
 
 # Enable VirtualBox's shared folder module.
 cat << 'EOF' > /etc/modules-load.d/ereuse.conf
@@ -54,6 +54,20 @@ cat << 'EOF' >> /etc/samba/smb.conf
    guest ok = yes
    force user = ereuse
    force group = ereuse
+EOF
+
+# Configure PXE boot with TFTP.
+sed 's/\[::\]//' /etc/default/tftpd-hpa  # Ubuntu bug #1448500
+ln /usr/lib/PXELINUX/pxelinux.0 \
+   /usr/lib/syslinux/modules/bios/ldlinux.c32 \
+   /var/lib/tftpboot
+mkdir -p /var/lib/tftpboot/pxelinux.cfg
+cat << 'EOF' > /var/lib/tftpboot/pxelinux.cfg/default
+default eReuseOS
+prompt 1
+timeout 50
+
+###eReuse###
 EOF
 
 # Rebuild initramfs if missing.

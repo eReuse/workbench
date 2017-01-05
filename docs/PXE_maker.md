@@ -163,20 +163,18 @@ eReuse data files:
 Then reload the service with ``service samba reload``.
 
 ####4. Configure TFTP final step
-Install the PXE network image from to `/var/lib/tftpboot/`:
+Install the PXE network image from the ``pxelinux`` and ``syslinux-common`` packages to `/var/lib/tftpboot/`, then edit its default configuration file:
 ```
-cd /var/lib/tftpboot/
-mv ~/pxelinux.tar.gz .
-tar xzvf pxelinux.tar.gz
-```
-
-Make a backup of `/var/lib/tftpboot/pxelinux.cfg/default` and open it.
-```
-mv pxelinux.cfg/default pxelinux.cfg/default.backup
+apt-get install pxelinux syslinux-common
+cd /var/lib/tftpboot
+ln /usr/lib/PXELINUX/pxelinux.0 \
+   /usr/lib/syslinux/modules/bios/ldlinux.c32 \
+   .
+mkdir pxelinux.cfg
 nano pxelinux.cfg/default
 ```
 
-Add the following lines:
+Enter the following lines:
 ```
 default eReuseOS
 prompt 1
