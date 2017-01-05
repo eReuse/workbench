@@ -10,8 +10,10 @@ apt-get -qq purge @PKGS_TO_REMOVE@ thermald plymouth
 # Enable additional packages like VirtualBox's.
 sed -i -e 's/ main/ main multiverse/' /etc/apt/sources.list
 apt-get -qq update
-apt-get -qq --no-install-recommends install virtualbox-guest-dkms \
-        isc-dhcp-server tftpd-hpa pxelinux syslinux-common nfs-kernel-server samba
+apt-get -qq --no-install-recommends install \
+        virtualbox-guest-dkms \
+        isc-dhcp-server tftpd-hpa pxelinux syslinux-common \
+        nfs-kernel-server samba
 
 # Enable VirtualBox's shared folder module.
 cat << 'EOF' > /etc/modules-load.d/ereuse.conf
