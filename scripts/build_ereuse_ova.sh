@@ -119,9 +119,7 @@ vbox_mem=1024  # MiB
 vbox_net=eth0
 vbox_disk=$(realpath "${DISK_IMAGE%.raw}.vmdk")  # asbolute path
 VBoxManage internalcommands createrawvmdk \
-           -filename "$vbox_disk" -rawdisk "$DISK_IMAGE"
-cd "$DATA_DIR"
-mkdir -p "$vbox_name"
+           -filename "$vbox_disk" -rawdisk "$(realpath "$DISK_IMAGE")"
 VBoxManage createvm --name $vbox_name --ostype Ubuntu --register
 VBoxManage modifyvm $vbox_name --memory $vbox_mem \
            --acpi on --pae on --hpet on --apic on --hwvirtex on --ioapic off \
@@ -135,4 +133,3 @@ VBoxManage storageattach $vbox_name \
            --storagectl "SATA" --port 0 --device 0 --type hdd --medium "$vbox_disk"
 VBoxManage sharedfolder add $vbox_name \
            --name ereuse-data --hostpath /path/of/ereuse-data
-cd -
