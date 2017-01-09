@@ -13,6 +13,9 @@ else
     vm=no  # just add eReuse configuration
 fi
 
+# Configurable settings.
+INTERNAL_IFACE=${INTERNAL_IFACE:-eth0}
+
 # Remove unnecessary packages.
 if [ $vm = yes ]; then
     apt-get -qq purge @CASPER_PKGS@ thermald plymouth
@@ -39,7 +42,7 @@ EOF
 fi
 
 # Configure the DHCP server.
-address=$(ip -4 addr show dev eth0 | sed -nr 's/.*\binet ([^/]+).*/\1/p')
+address=$(ip -4 addr show dev "$INTERNAL_IFACE" | sed -nr 's/.*\binet ([^/]+).*/\1/p')
 netpfx24=$(echo $address | cut -f1-3 -d.)  # assume /24
 nameservers=$(sed -rn 's/.*nameserver\s+([.0-9]+).*/\1/p' /etc/resolv.conf)
 mv /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.backup
