@@ -44,35 +44,7 @@ wget https://github.com/eReuse/device-inventory/releases/download/v8.0a1/eReuseO
 wget http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/lubuntu-16.04.1-desktop-i386.iso
 ```
 
-####2. Configure TFTP
-
-
-The configuration can be found on `/etc/default/tftpd-hpa`, edit this file:
-```
-nano /etc/default/tftpd-hpa
-```
-
-Change the following line to tell where the files will be placed:
-```
-TFTP_DIRECTORY="/var/lib/tftpboot"
-```
-
-Make the folder:
-```
-mkdir /var/lib/tftpboot
-```
-
-Reset the service with:
-```
-service tftpd-hpa restart
-```
-
-Check if service is running:
-```
-ss -upna | grep tftp
-```
-
-####3. Configure DHCP server
+####2. Configure DHCP server
 Install DHCP with a static IP on a supposed name interfice `eth0`.
 
 Look for your ethernet interface name:
@@ -93,8 +65,7 @@ auto eth0
 iface eth0 inet static
     address         192.168.2.2
     netmask         255.255.255.0
-    gateway         192.168.2.1
-    dns-nameservers 208.67.222.222
+    dns-nameservers 77.109.148.136 208.67.222.222 8.8.8.8
 ```
 
 Reset network interfaces:
@@ -127,8 +98,8 @@ subnet 192.168.2.0 netmask 255.255.255.0 {
  next-server 192.168.2.2;
  filename "pxelinux.0";
  range dynamic-bootp 192.168.2.10 192.168.2.210;
- option domain-name-servers 208.67.222.222;
- option routers 192.168.2.1;
+ option domain-name-servers 77.109.148.136 208.67.222.222 8.8.8.8;
+ option routers 192.168.2.2;
  option broadcast-address 192.168.2.255;
 }
 ```
@@ -144,7 +115,7 @@ ss -upna
 tail /var/log/syslog
 ```
 
-####4. Configure public access via SMB to data files
+####3. Configure public access via SMB to data files
 
 Create an ``ereuse`` user with a ``data`` directory in its home.  In it,
 create subdirectories for ``images`` and the ``inventory`` of JSON files.
@@ -191,21 +162,19 @@ eReuse data files:
 
 Then reload the service with ``service samba reload``.
 
-####5. Configure TFTP final step
-Install the PXE network image from to `/var/lib/tftpboot/`:
+####4. Configure TFTP final step
+Install the PXE network image from the ``pxelinux`` and ``syslinux-common`` packages to `/var/lib/tftpboot/`, then edit its default configuration file:
 ```
-cd /var/lib/tftpboot/
-mv ~/pxelinux.tar.gz .
-tar xzvf pxelinux.tar.gz
-```
-
-Make a backup of `/var/lib/tftpboot/pxelinux.cfg/default` and open it.
-```
-mv pxelinux.cfg/default pxelinux.cfg/default.backup
+apt-get install pxelinux syslinux-common
+cd /var/lib/tftpboot
+ln /usr/lib/PXELINUX/pxelinux.0 \
+   /usr/lib/syslinux/modules/bios/ldlinux.c32 \
+   .
+mkdir pxelinux.cfg
 nano pxelinux.cfg/default
 ```
 
-Add the following lines:
+Enter the following lines:
 ```
 default eReuseOS
 prompt 1
@@ -214,7 +183,7 @@ timeout 50
 ###eReuse###
 ```
 
-####6. Updating configuration for new ISOs
+####5. Updating configuration for new ISOs
 
 Whenever you drop new ISOs (and their associated SYSLINUX entry template
 files) in the ``images`` subdirectory of the data directory, please run
