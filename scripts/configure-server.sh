@@ -6,7 +6,8 @@
 #
 # The script also has some limited support for running it on an existing host:
 # it just adds the needed configuration.  See the environment variables below
-# for customization.
+# for customization.  You may also need to manually tune the DCHP server
+# configuration under ``/etc/dhcp/dhcpd.conf``.
 
 # Configurable settings.
 INTERNAL_IFACE=${INTERNAL_IFACE:-eth0}
