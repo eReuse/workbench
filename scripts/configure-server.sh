@@ -13,6 +13,7 @@
 INTERNAL_IFACE=${INTERNAL_IFACE:-eth0}  # where registered devices will be
 DATA_USER=${DATA_USER:-ereuse}  # same name for group
 DATA_USER_PASS=${DATA_USER_PASS:-ereuse}  # created anew
+ROOT_PASS=${ROOT_PASS:-eReuse}  # only for VM
 
 
 if [ "$0" = /etc/rc.local ]; then
@@ -124,7 +125,7 @@ fi
 
 # Setup users.
 if [ $vm = yes ]; then
-    printf 'eReuse\neReuse\n' | passwd -q root
+    printf "$ROOT_PASS\n$ROOT_PASS\n" | passwd -q root
 fi
 adduser --disabled-password --gecos eReuse "$DATA_USER"
 printf "$DATA_USER_PASS\n$DATA_USER_PASS\n" | passwd -q "$DATA_USER"
