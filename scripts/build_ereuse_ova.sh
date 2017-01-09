@@ -74,7 +74,7 @@ rmdir "$ROOT/SQUASH"
 cp "$iso/casper/vmlinuz" "$(readlink -f "$ROOT/vmlinuz")"
 cp "$iso/casper/vmlinuz" "$DATA_DIR"
 # Save the list of unnecessary Casper packages.
-PKGS_TO_REMOVE=$(cat "$iso/casper/filesystem.manifest-remove" | tr '\n' ' ')
+CASPER_PKGS=$(cat "$iso/casper/filesystem.manifest-remove" | tr '\n' ' ')
 umount "$iso"
 
 # Create a minimal fstab (mainly for the initramfs).
@@ -108,7 +108,7 @@ sed -i -re 's/^(exit 0.*)/ereuse-data-refresh\n\1/' "$ROOT/etc/rc.local"
 # Drop the system configuration init script.
 mv "$ROOT/etc/rc.local" "$ROOT/etc/rc.local.orig"
 install -m 0755 "scripts/configure-server.sh" "$ROOT/etc/rc.local"
-sed -i -e "s/@PKGS_TO_REMOVE@/$PKGS_TO_REMOVE/" "$ROOT/etc/rc.local"
+sed -i -e "s/@CASPER_PKGS@/$CASPER_PKGS/" "$ROOT/etc/rc.local"
 
 # Unmount the file system and release the loop device.
 umount "$ROOT"
