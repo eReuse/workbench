@@ -9,10 +9,13 @@ PXE_CONF="$TFTP_DIR/pxelinux.cfg/default"
 
 # First disable current sharings:
 #   - remove PXELINUX entries
-tmp=$(mktemp -d)
-(cd $tmp && csplit -q "$PXE_CONF" '/###eReuse###/1')
-mv -b $tmp/xx00 "$PXE_CONF"
-rm -rf $tmp
+mv "$PXE_CONF" "$PXE_CONF.bak" || true  # in case it's missing
+cat << 'EOF' > "$PXE_CONF"
+default eReuseOS
+prompt 1
+timeout 50
+
+EOF
 #   - remove ISO NFS exports
 rm -f "$EXPORTS"
 exportfs -r

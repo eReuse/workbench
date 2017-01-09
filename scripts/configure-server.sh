@@ -96,13 +96,6 @@ ln /usr/lib/PXELINUX/pxelinux.0 \
    /usr/lib/syslinux/modules/bios/ldlinux.c32 \
    /var/lib/tftpboot
 mkdir -p /var/lib/tftpboot/pxelinux.cfg
-cat << 'EOF' > /var/lib/tftpboot/pxelinux.cfg/default
-default eReuseOS
-prompt 1
-timeout 50
-
-###eReuse###
-EOF
 if [ $vm = no ]; then
     service tftpd-hpa restart
 fi
