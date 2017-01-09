@@ -10,9 +10,9 @@
 # configuration under ``/etc/dhcp/dhcpd.conf``.
 
 # Configurable settings.
-INTERNAL_IFACE=${INTERNAL_IFACE:-eth0}
+INTERNAL_IFACE=${INTERNAL_IFACE:-eth0}  # where registered devices will be
 DATA_USER=${DATA_USER:-ereuse}  # same name for group
-DATA_USER_PASS=${DATA_USER_PASS:-ereuse}
+DATA_USER_PASS=${DATA_USER_PASS:-ereuse}  # created anew
 
 
 if [ "$0" = /etc/rc.local ]; then
