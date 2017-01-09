@@ -115,7 +115,7 @@ if [ $vm = yes ]; then
     # Avoid attempting graphical login and get a console login prompt.
     # Also, shorten menu timeout.
     sed -i -r -e 's/^(GRUB_HIDDEN_.*)/#\1/' -e 's/quiet splash/quiet/' \
-        -e '^(GRUB_TIMEOUT)=.*/\1=3/' /etc/default/grub
+        -e 's/^(GRUB_TIMEOUT)=.*/\1=3/' /etc/default/grub
     # Fix boot loader.
     update-grub
     grub-install $(findmnt -no SOURCE / | sed -r 's/p?[0-9]+$//')
