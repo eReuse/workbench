@@ -138,9 +138,21 @@ if [ $vm = no ]; then
     mount -a
 fi
 
-# Cleanup, restore the original init script and halt the machine.
+# Cleanup and restore the original init script.
 if [ $vm = yes ]; then
     apt-get clean  # downloaded package files
     mv /etc/rc.local.orig /etc/rc.local
+fi
+
+# Enable running the data refresh script during boot.
+sed -i -re 's/^(exit 0.*)/ereuse-data-refresh\n\1/' /etc/rc.local
+if [ $vm = no ]; then
+    if ! ereuse-data-refresh; then
+        echo 'Please install and run the ``ereuse-data-refresh`` script.' >&2
+    fi
+fi
+
+# Halt the virtual machine.
+if [ $vm = yes ]; then
     exec poweroff
 fi
