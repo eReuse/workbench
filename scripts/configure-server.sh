@@ -4,19 +4,21 @@
 # This is meant to be run as ``/etc/rc.local`` when generating the server OVA,
 # then it takes over the whole host.
 #
-# You may also run it on an existing host, then it just adds the needed
-# configuration.
+# The script also has some limited support for running it on an existing host:
+# it just adds the needed configuration.  See the environment variables below
+# for customization.
+
+# Configurable settings.
+INTERNAL_IFACE=${INTERNAL_IFACE:-eth0}
+DATA_USER=${DATA_USER:-ereuse}  # same name for group
+DATA_USER_PASS=${DATA_USER_PASS:-ereuse}
+
 
 if [ "$0" = /etc/rc.local ]; then
     vm=yes  # take full control of virtual host
 else
     vm=no  # just add eReuse configuration
 fi
-
-# Configurable settings.
-INTERNAL_IFACE=${INTERNAL_IFACE:-eth0}
-DATA_USER=${DATA_USER:-ereuse}  # same name for group
-DATA_USER_PASS=${DATA_USER_PASS:-ereuse}
 
 # Remove unnecessary packages.
 if [ $vm = yes ]; then
