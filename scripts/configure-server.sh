@@ -15,6 +15,8 @@ fi
 
 # Configurable settings.
 INTERNAL_IFACE=${INTERNAL_IFACE:-eth0}
+DATA_USER=${DATA_USER:-ereuse}  # same name for group
+DATA_USER_PASS=${DATA_USER_PASS:-ereuse}
 
 # Remove unnecessary packages.
 if [ $vm = yes ]; then
@@ -69,7 +71,7 @@ if [ $vm = no ]; then
 fi
 
 # Configure the Samba server.
-cat << 'EOF' >> /etc/samba/smb.conf
+cat << EOF >> /etc/samba/smb.conf
 # eReuse shared data directory.
 [ereuse-data]
    comment = eReuse data
@@ -77,8 +79,8 @@ cat << 'EOF' >> /etc/samba/smb.conf
    browseable = yes
    read only = no
    guest ok = yes
-   force user = ereuse
-   force group = ereuse
+   force user = $DATA_USER
+   force group = $DATA_USER
 EOF
 if [ $vm = no ]; then
     service samba restart
@@ -121,23 +123,24 @@ fi
 if [ $vm = yes ]; then
     printf 'eReuse\neReuse\n' | passwd -q root
 fi
-adduser --disabled-password --gecos eReuse ereuse
-printf 'ereuse\nereuse\n' | passwd -q ereuse
+adduser --disabled-password --gecos eReuse "$DATA_USER"
+printf "$DATA_USER_PASS\n$DATA_USER_PASS\n" | passwd -q "$DATA_USER"
 
 # Prepare the shared data directory.
-mkdir -m 0755 ~ereuse/data
-ln -s data/config.ini data/inventory ~ereuse  # compat links
-chown -R ereuse:ereuse ~ereuse
+data_user_home=$(getent passwd "$DATA_USER" | cut -d: -f6)
+mkdir -m 0755 "$data_user_home/data"
+ln -s data/config.ini data/inventory "$data_user_home"  # compat links
+chown -R "$DATA_USER:$DATA_USER" "$data_user_home"
 mkdir -p /srv/ereuse-data
 if [ $vm = yes ]; then
-    cat << 'EOF' >> /etc/fstab
+    cat << EOF >> /etc/fstab
 # Mount the VirtualBox shared folder as the data directory.
-ereuse-data        /home/ereuse/data  vboxsf  rw,uid=ereuse,gid=ereuse,dmode=755,fmode=644  0  0
+ereuse-data        $data_user_home/data  vboxsf  rw,uid=$DATA_USER,gid=$DATA_USER,dmode=755,fmode=644  0  0
 EOF
 fi
-cat << 'EOF' >> /etc/fstab
+cat << EOF >> /etc/fstab
 # Bind the data directory to the usual place.
-/home/ereuse/data  /srv/ereuse-data   none    bind  0  0
+$data_user_home/data  /srv/ereuse-data   none    bind  0  0
 EOF
 if [ $vm = no ]; then
     mount -a
