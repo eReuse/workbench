@@ -17,8 +17,8 @@ Then commit the change with a message like:
 
 Where ``VERSION`` is the compact version number of the package, which you may obtain by running:
 
-    (cd device_inventory \
-     && python -c 'from __init__ import get_version; print get_version()')
+    ( cd device_inventory \
+      && python -c 'from __init__ import get_version; print get_version()' )
 
 Finally, push changes upstream:
 
