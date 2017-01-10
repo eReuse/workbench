@@ -4,7 +4,7 @@
 
 set -e
 
-VERSION=$(cd device_inventory && python -c 'from __init__ import get_version; print get_version()')
+VERSION=$(cd device_inventory && python -Bc 'from __init__ import get_version; print get_version()')
 
 BUILD_DIR=$(mktemp -d)
 
