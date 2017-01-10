@@ -111,4 +111,12 @@ After a while, the file ``dist/ereuse-server-VERSION.ova`` will be created.
 
 ## 7. Publish the new release
 
-TBD
+If using GitHub, follow the *releases* link under the *Code* tab, then click on the *Draft a new release* button.  Choose tag version ``vVERSION`` of the ``master`` branch.  As the release title enter the first, title line of the version tag note, and the rest of it as the release description.  You may get the tag note with:
+
+    $ git show vVERSION
+
+Then attach the ``dist/ereuse-data-VERSION.tar.gz`` and ``dist/ereuse-server-VERSION.ova`` files as needed for this particular release.
+
+Enable the pre-release check box if convenient.
+
+Finally, click on the *Publish release* button.  Congratulations!  A new release of the DDI is out!`:)`
