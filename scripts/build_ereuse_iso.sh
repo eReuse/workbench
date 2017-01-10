@@ -41,6 +41,10 @@ EOF
 read -p "Press Enter to continue, Ctrl+C to abort." dummy
 
 
+if git submodule status | grep -q '^-'; then
+    echo "Please check out Git submodules." >&2
+    exit 1
+fi
 genisoimage --version > /dev/null  # fail if missing
 mksquashfs -version > /dev/null  # fail if missing
 
@@ -99,8 +103,7 @@ chi python-pip  # vim
 chi $(sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements.txt requirements-full.txt)
 
 # Install Reciclanet's image installation script
-ch wget "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" -O /usr/local/bin/di-install-image
-ch chmod a+rx /usr/local/bin/di-install-image
+install -m 0755 reciclanet-scripts/instalar $FS_ROOT/usr/local/bin/di-install-image
 
 cp $SDIST $FS_ROOT/tmp
 ch pip install --upgrade /tmp/$(basename $SDIST)
