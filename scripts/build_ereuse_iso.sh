@@ -171,11 +171,11 @@ clear
 if [ -d /media/ereuse-data ]; then
     sudo ddi-keyboard-layout /media/ereuse-data/config.ini
     clear
-    sudo device-inventory --settings /media/ereuse-data/config.ini --inventory /media/ereuse-data/inventory
+    sudo ddi --settings /media/ereuse-data/config.ini --inventory /media/ereuse-data/inventory
 else
     sudo ddi-keyboard-layout
     clear
-    sudo device-inventory
+    sudo ddi
 fi
 cat ~/.ddi-help
 EOF
