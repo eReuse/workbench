@@ -25,14 +25,14 @@ Then download and install Reciclanet's image installation script:
     wget "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" -O /usr/local/bin/ddi-install-image
     chmod a+rx /usr/local/bin/ddi-install-image
 
-And then install `device_inventory` and its requirements using `pip`:
+And then install `ereuse_ddi` and its requirements using `pip`:
 
-    pip install git+https://github.com/eReuse/device-inventory.git#egg=device_inventory
+    pip install git+https://github.com/eReuse/device-inventory.git#egg=ereuse_ddi
 
 ## Usage
 Just run it as priviliged user and fill some information:
 
-    $ sudo device-inventory
+    $ sudo ddi
         Label ID: 7
         Comment: eReuse device diagnostic and inventory.
         Choose device type
