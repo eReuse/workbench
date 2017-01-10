@@ -1,10 +1,10 @@
 # Preparing an eReuse DDI release
 
-This document enumerates the steps needed for releasing a new version of eReuse Device Diagnostic and Inventory tools.
+This document enumerates the steps needed for releasing a new version of eReuse Device Diagnostic and Inventory tools (DDI).
 
 ## 1. Increase the version in source code
 
-Let ``SOURCE`` be a Git checkout of the ``master`` branch of DDI source code.
+Let ``SOURCE`` be a Git checkout of the ``master`` branch of the DDI source code.
 
 Edit ``device_inventory/__init__.py`` and update the value of the ``VERSION`` variable according to [Semantic Versioning][] and the [Python Packaging User Guide][].
 
