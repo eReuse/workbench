@@ -11,7 +11,7 @@ MEM_MiB=${MEM_MiB:-1024}  # VM memory size in MiB
 ADDRESS=${ADDRESS:-192.168.2.2}  # VM internal IP address (/24)
 
 # Version-specific settings.
-VERSION=$(cd device_inventory && python -Bc 'from __init__ import get_version; print get_version()')
+VERSION=$(cd ereuse_ddi && python -Bc 'from __init__ import get_version; print get_version()')
 BASE_ISO_URL="http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/15.10/ubuntu-mini-remix-15.10-i386.iso"
 BASE_ISO_SHA256="e9985f0bcb05678d87d62c3d70191aab7a80540dc17523d93c313aa8515e173e"
 

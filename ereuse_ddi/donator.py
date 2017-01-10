@@ -16,11 +16,11 @@ import uuid
 
 import tqdm
 
-from device_inventory import eraser, serializers, storage, utils
-from device_inventory.conf import settings
-from device_inventory.benchmark import benchmark_hdd
-from device_inventory.inventory import Computer
-from device_inventory.utils import InventoryJSONEncoder as InvEncoder
+from ereuse_ddi import eraser, serializers, storage, utils
+from ereuse_ddi.conf import settings
+from ereuse_ddi.benchmark import benchmark_hdd
+from ereuse_ddi.inventory import Computer
+from ereuse_ddi.utils import InventoryJSONEncoder as InvEncoder
 
 
 def setup_logging(default_path='config_logging.json',

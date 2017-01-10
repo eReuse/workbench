@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 
 # Dynamically calculate the version
-version = __import__('device_inventory').get_version()
+version = __import__('ereuse_ddi').get_version()
 
 # Collect installation requirements
 def read_requirements(path):
@@ -18,7 +18,7 @@ inst_reqs = read_requirements('requirements.txt')
 full_reqs = read_requirements('requirements-full.txt')
 
 setup(
-    name="device-inventory",
+    name="ereuse-ddi",
     version=version,
     packages=find_packages(),
     license='AGPLv3 License',
@@ -27,7 +27,7 @@ setup(
                  'It retrieves details of the hardware and, optionally, '
                  'runs some health and benchmark tests.'),
     scripts=['scripts/device-inventory'],
-    package_data={'device_inventory': [
+    package_data={'ereuse_ddi': [
         'config.ini',
         'config_logging.json',
         'data/*'

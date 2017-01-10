@@ -17,7 +17,7 @@
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
             "formatter": "simple",
-            "filename": "device_inventory.log",
+            "filename": "ereuse_ddi.log",
             "maxBytes": 10485760,
             "backupCount": 20,
             "encoding": "utf8"
