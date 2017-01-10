@@ -3,8 +3,6 @@
 
 # eReuse: How to make PXE server (Debian Server)
 
-Guide version: 8.0a1
-
 This guide will allow you to configure an existing host as a PXE server and boot computers via an Ethernet network.  Please note that we strongly recommend using the [VirtualBox-based PXE server](PXE_Register.md) instead.
 
 ## The network boot process
@@ -18,11 +16,11 @@ This guide will allow you to configure an existing host as a PXE server and boot
 ## Configure your server
 This assumes that the server's `eth0` interface is connected to the network where devices to be registered will be connected.  This should be different to the interface that the server uses to reach the Internet.
 
-Download the latest eReuse *server configuration script*, *data refresh script* and *data archive*, along with optional *installation ISOs* (we will be using 32-bit Lubuntu here):
+Given the latest version of eReuse DDI ``VERSION``, download the *server configuration script*, *data refresh script* and *data archive*, along with optional *installation ISOs* (we will be using 32-bit Lubuntu here):
 ```
-wget "https://raw.githubusercontent.com/eReuse/device-inventory/v8.0a1/scripts/configure-server.sh"
-wget "https://raw.githubusercontent.com/eReuse/device-inventory/v8.0a1/scripts/ereuse-data-refresh"
-wget "https://github.com/eReuse/device-inventory/releases/download/v8.0a1/ereuse-data-8.0a1.tar.gz"
+wget "https://raw.githubusercontent.com/eReuse/device-inventory/vVERSION/scripts/configure-server.sh"
+wget "https://raw.githubusercontent.com/eReuse/device-inventory/vVERSION/scripts/ereuse-data-refresh"
+wget "https://github.com/eReuse/device-inventory/releases/download/vVERSION/ereuse-data-VERSION.tar.gz"
 wget "http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/lubuntu-16.04.1-desktop-i386.iso"
 ```
 
@@ -71,7 +69,7 @@ service isc-dhcp-server restart
 
 Unpack the data archive into `ereuse`'s home directory:
 ```
-tar -xf ereuse-data-8.0a1.tar.gz
+tar -xf ereuse-data-VERSION.tar.gz
 mv ereuse-data/* ~ereuse/data
 ```
 
