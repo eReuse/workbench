@@ -21,17 +21,17 @@ This server allow us to register easily and very fast by sending DeviceInventory
 
 **Note on system installation images:** Currently the only kind of images supported and assumed are FSArchiver images corresponding to 32-bit ``i386`` or 64-bit ``amd64`` Debian/Ubuntu or derivative OS installations, where the whole system is contained in a single ext4 file system in BIOS partition ``sda1``, and GRUB2 is used as a bootloader.
 
-**How to create an FSArchiver image:** To prepare an installation image you must perform *in a different machine* the complete installation that you want to replicate (taking into account the limitations from the previous note).  One easy way to capture this installation is to reboot the computer into eReuseOS from the server (see [Registeringing a computer](#registering-a-computer)) and cancel the registration process with Ctrl+C, then execute ``di-disk-dump`` with some informative name for the new image, like this:
+**How to create an FSArchiver image:** To prepare an installation image you must perform *in a different machine* the complete installation that you want to replicate (taking into account the limitations from the previous note).  One easy way to capture this installation is to reboot the computer into eReuseOS from the server (see [Registeringing a computer](#registering-a-computer)) and cancel the registration process with Ctrl+C, then execute ``ddi-disk-dump`` with some informative name for the new image, like this:
 
 ```
-sudo di-disk-dump lubuntu-xenial-amd64-ca
+sudo ddi-disk-dump lubuntu-xenial-amd64-ca
 ```
 
 The image will be automatically saved to the ``images`` subdirectory in the folder shared between your PC and the virtual server.  If you have no server, you may plug an external USB drive of sufficient capacity (note that FAT file systems may cause file size limitation issues) and run the following commands:
 
 ```
 sudo mount /dev/sdb1 /mnt  # ``sdb`` is the external USB drive
-sudo di-disk-dump lubuntu-xenial-amd64-ca /mnt
+sudo ddi-disk-dump lubuntu-xenial-amd64-ca /mnt
 sudo umount /mnt  # wait until the command is complete
 ```
 

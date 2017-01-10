@@ -103,11 +103,11 @@ chi python-pip  # vim
 chi $(sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements.txt requirements-full.txt)
 
 # Install Reciclanet's image installation script
-install -m 0755 reciclanet-scripts/instalar $FS_ROOT/usr/local/bin/di-install-image
+install -m 0755 reciclanet-scripts/instalar $FS_ROOT/usr/local/bin/ddi-install-image
 
 cp $SDIST $FS_ROOT/tmp
 ch pip install --upgrade /tmp/$(basename $SDIST)
-install -m 0755 scripts/di-keyboard-layout scripts/di-disk-dump $FS_ROOT/usr/local/sbin
+install -m 0755 scripts/ddi-keyboard-layout scripts/ddi-disk-dump $FS_ROOT/usr/local/sbin
 
 # Configure regional settings
 ch ckbcomp "$KB_LAYOUT" | gzip -c > $FS_ROOT/etc/console-setup/cached.kmap.gz
@@ -143,9 +143,9 @@ ch sed -i -r --follow-symlinks \
    '/etc/systemd/system/getty.target.wants/getty@tty1.service'
 
 # Autostart
-cat > $FS_ROOT/home/ubuntu/.di-help << 'EOF'
+cat > $FS_ROOT/home/ubuntu/.ddi-help << 'EOF'
 
-Device diagnostic and inventory process finished.
+Device Diagnostic and Inventory process finished.
 
   - To reboot the computer, press Ctrl+Alt+Del or run "sudo reboot".
 
@@ -155,12 +155,12 @@ Device diagnostic and inventory process finished.
 
   - To dump an existing installation from disk into an FSArchiver image, run:
 
-       sudo di-disk-dump NAME_OF_IMAGE [OPTIONAL_DESTINATION]
+       sudo ddi-disk-dump NAME_OF_IMAGE [OPTIONAL_DESTINATION]
 
 EOF
-ch chown ubuntu:ubuntu /home/ubuntu/.di-help
+ch chown ubuntu:ubuntu /home/ubuntu/.ddi-help
 cat > $FS_ROOT/home/ubuntu/.bash_history << 'EOF'
-sudo di-disk-dump xubuntu-i386-ca
+sudo ddi-disk-dump xubuntu-i386-ca
 exit
 sudo poweroff
 sudo reboot
@@ -169,15 +169,15 @@ ch chown ubuntu:ubuntu /home/ubuntu/.bash_history
 cat >> $FS_ROOT/home/ubuntu/.profile << 'EOF'
 clear
 if [ -d /media/ereuse-data ]; then
-    sudo di-keyboard-layout /media/ereuse-data/config.ini
+    sudo ddi-keyboard-layout /media/ereuse-data/config.ini
     clear
     sudo device-inventory --settings /media/ereuse-data/config.ini --inventory /media/ereuse-data/inventory
 else
-    sudo di-keyboard-layout
+    sudo ddi-keyboard-layout
     clear
     sudo device-inventory
 fi
-cat ~/.di-help
+cat ~/.ddi-help
 EOF
 
 # Mount remote data directory.

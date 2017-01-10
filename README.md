@@ -22,8 +22,8 @@ On a Debian based distribution using `apt`:
 
 Then download and install Reciclanet's image installation script:
 
-    wget "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" -O /usr/local/bin/di-install-image
-    chmod a+rx /usr/local/bin/di-install-image
+    wget "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" -O /usr/local/bin/ddi-install-image
+    chmod a+rx /usr/local/bin/ddi-install-image
 
 And then install `device_inventory` and its requirements using `pip`:
 
