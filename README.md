@@ -1,6 +1,6 @@
-# Device inventory
+# Device Diagnostic and Inventory
 
-Device inventory is a set of tools and services to assist the preparation for reuse and traceability of digital devices (capture of hardware characteristics, hardware rating and testing and secure deletion of data).
+Device Diagnostic and Inventory (DDI) is a set of tools and services to assist the preparation for reuse and traceability of digital devices (capture of hardware characteristics, hardware rating and testing and secure deletion of data).
 
 ## Features
 - Run in an unattended way without the need for additional steps rather than powering up the computer.
@@ -34,7 +34,7 @@ Just run it as priviliged user and fill some information:
 
     $ sudo device-inventory
         Label ID: 7
-        Comment: eReuse device inventory.
+        Comment: eReuse device diagnostic and inventory.
         Choose device type
         1. Desktop
         2. Laptop
@@ -42,13 +42,13 @@ Just run it as priviliged user and fill some information:
         4. Server
         5. Microtower
         Type: 1
-        Device Inventory has finished properly: /tmp/A1B2C3SN.json
+        Device Diagnostic and Inventory has finished properly: /tmp/A1B2C3SN.json
 
 Generated output example:
 ```json
 {
     "@type": "Snapshot",
-    "comment": "eReuse device inventory.",
+    "comment": "eReuse device diagnostic and inventory.",
     "components": [
         {
             "@type": "GraphicCard",

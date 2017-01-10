@@ -22,10 +22,10 @@ setup(
     version=version,
     packages=find_packages(),
     license='AGPLv3 License',
-    description=('The Device Inventory is a tool to help the inventory '
-                 'of computers. It retrieves details of the hardware '
-                 'information and, optionally, runs some health and '
-                 'benchmark tests.'),
+    description=('The Device Diagnostic and Inventory (DDI) is a tool to '
+                 'help with the diagnostic and inventory of computers. '
+                 'It retrieves details of the hardware and, optionally, '
+                 'runs some health and benchmark tests.'),
     scripts=['scripts/device-inventory'],
     package_data={'device_inventory': [
         'config.ini',

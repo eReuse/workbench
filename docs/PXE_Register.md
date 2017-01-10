@@ -3,7 +3,7 @@
 
 # eReuse: How to use our (PXE) server
 
-This server allow us to register easily and very fast by sending DeviceInventory to all PCs connected on the LAN network.
+This server allow us to register easily and very fast by sending Device Diagnostic and Inventory (DDI) to all PCs connected on the LAN network.
 
 ## Requirements
 
@@ -45,7 +45,7 @@ If you are upgrading from a previous version of the server, make sure that you s
  2. Install VirtualBox on your PC.
  3. Unpack the ``ereuse-data-<VERSION>.tar.gz`` in your PC.  A new folder called ``ereuse-data`` will be created with several files and directories inside of it.
 
-      - You can configure DeviceInventory to avoid asking questions and automate tasks by editing the ``config.ini`` configuration file.  For example, you can set to always erase disks in a specific way, or to automatically install some image, so the system will not ask the user about this, saving time and user errors.  Documentation on the different configuration options is contained in the file itself.
+      - You can configure DDI to avoid asking questions and automate tasks by editing the ``config.ini`` configuration file.  For example, you can set to always erase disks in a specific way, or to automatically install some image, so the system will not ask the user about this, saving time and user errors.  Documentation on the different configuration options is contained in the file itself.
       - Place any FSArchiver ``*.fsa`` images that you want to use into the ``images`` subdirectory.  Remember to give them meaningful names.
       - Place any installation ISO ``*.iso`` images that you want to use into the ``images`` subdirectory (the latest eReuseOS ISO is already provided).  For an ISO to appear in the PXELINUX boot menu, you need to create a SYSLINUX entry template file with the exact same name as the ISO file (case is important!), plus ``.syslinux`` at the end.  Some templates are provided, so you just need to rename the ISO file to match the template (e.g. for the ``Ubuntu32.iso.syslinux`` template, use ``Ubuntu32.iso``).
       - The inventory files resulting from computer registration will be placed into the ``inventory`` subdirectory.
