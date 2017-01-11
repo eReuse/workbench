@@ -11,8 +11,8 @@ This server allow us to register easily and very fast by sending the eReuse Work
   - Network cables
   - A Win/Linux/Mac PC with:
       - [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-      - [ereuse-server-<VERSION>.ova](https://github.com/eReuse/ddi/releases/latest)
-      - [ereuse-data-<VERSION>.tar.gz](https://github.com/eReuse/ddi/releases/latest)
+      - [ereuse-server-<VERSION>.ova](https://github.com/eReuse/workbench/releases/latest)
+      - [ereuse-data-<VERSION>.tar.gz](https://github.com/eReuse/workbench/releases/latest)
       - FSArchiver system images of existing installations, if you want to deploy copies of those installations into inventoried computers
       - Installation ISOs, if you want to use them to install a GNU/Linux OS into inventoried computers
   - PCs to be inventoried
@@ -84,7 +84,7 @@ If you ever need to change the images under ``ereuse-data``, please do so while 
         - Press F2 or F10 to enter on BIOS menu.
 
  3. When the computer starts on LAN it will load the eReuseOS image from the server (it can take some time).
- 4. Follow [this guide about the inventory process](https://github.com/eReuse/ddi/blob/master/docs/USB_Register.md#4-inventory-process-register-hardware-characteristics-of-a-computer)
+ 4. Follow [this guide about the inventory process](https://github.com/eReuse/workbench/blob/master/docs/USB_Register.md#4-inventory-process-register-hardware-characteristics-of-a-computer)
  5. The file will be automatically uploaded to the PXE server and become available under the ``ereuse-data/inventory`` subdirectory in your PC, but you can still copy it too to a USB memory stick.
 
 ## Installing a computer

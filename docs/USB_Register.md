@@ -4,7 +4,7 @@
 # eReuse: How to register via USB 
 
 ####1. Download the eReuseOS image
-  1. Go to [our repository](https://github.com/eReuse/ddi/releases/latest) and download the latest ISO.
+  1. Go to [our repository](https://github.com/eReuse/workbench/releases/latest) and download the latest ISO.
   2. Install [UNetbootin](https://unetbootin.github.io/) software to make a USB live.
     - [Windows](https://launchpad.net/unetbootin/trunk/613/+download/unetbootin-windows-613.exe)
     - [Mac](https://launchpad.net/unetbootin/trunk/613/+download/unetbootin-mac-613.zip)

@@ -32,7 +32,7 @@ setup(
         'config_logging.json',
         'data/*'
     ]},
-    url='https://github.com/eReuse/ddi',
+    url='https://github.com/eReuse/workbench',
     author='eReuse team',
     classifiers=[
         'Development Status :: 4 - Beta',

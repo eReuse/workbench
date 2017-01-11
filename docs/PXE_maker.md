@@ -18,9 +18,9 @@ This assumes that the server's `eth0` interface is connected to the network wher
 
 Given the latest version of eReuse Workbench ``VERSION``, download the *server configuration script*, *data refresh script* and *data archive*, along with optional *installation ISOs* (we will be using 32-bit Lubuntu here):
 ```
-wget "https://raw.githubusercontent.com/eReuse/ddi/vVERSION/scripts/configure-server.sh"
-wget "https://raw.githubusercontent.com/eReuse/ddi/vVERSION/scripts/ereuse-data-refresh"
-wget "https://github.com/eReuse/ddi/releases/download/vVERSION/ereuse-data-VERSION.tar.gz"
+wget "https://raw.githubusercontent.com/eReuse/workbench/vVERSION/scripts/configure-server.sh"
+wget "https://raw.githubusercontent.com/eReuse/workbench/vVERSION/scripts/ereuse-data-refresh"
+wget "https://github.com/eReuse/workbench/releases/download/vVERSION/ereuse-data-VERSION.tar.gz"
 wget "http://cdimage.ubuntu.com/lubuntu/releases/16.04.1/release/lubuntu-16.04.1-desktop-i386.iso"
 ```
 

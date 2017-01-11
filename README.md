@@ -27,7 +27,7 @@ Then download and install Reciclanet's image installation script:
 
 And then install `ereuse-workbench` and its requirements using `pip`:
 
-    pip install git+https://github.com/eReuse/ddi.git#egg=ereuse-workbench
+    pip install git+https://github.com/eReuse/workbench.git#egg=ereuse-workbench
 
 ## Usage
 Just run it as priviliged user and fill some information:

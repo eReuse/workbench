@@ -150,7 +150,7 @@ VBoxManage export $VBOX_NAME -o "$VBOX_OVA" --vsys 0 \
 IMPORTANT:
 Remember to point the \"ereuse-data\" shared folder to
 the directory extracted from the \"ereuse-data-VERSION.tar.gz\" archive:
-https://github.com/eReuse/ddi/releases
+https://github.com/eReuse/workbench/releases
 --------------------------------
 Access to shared folder via SMB:
 - GNU/Linux: smb://$ADDRESS/
