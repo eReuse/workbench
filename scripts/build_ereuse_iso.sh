@@ -20,7 +20,7 @@ BASE_ISO_URL="http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/
 BASE_ISO_SHA256="e9985f0bcb05678d87d62c3d70191aab7a80540dc17523d93c313aa8515e173e"
 
 # Other derived values.
-SDIST=$(find "dist/ereuse-ddi-$VERSION.tar.gz")  # fail if missing
+SDIST=$(find "dist/ereuse-workbench-$VERSION.tar.gz")  # fail if missing
 BASE_ISO_PATH="$WORK_DIR/$(basename "$BASE_ISO_URL")"
 BASE_ISO_SHA256SUM="$BASE_ISO_SHA256  $BASE_ISO_PATH"
 ISO_PATH="$WORK_DIR/eReuseOS-$VERSION.iso"
@@ -98,7 +98,7 @@ ch add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(ch lsb_release -sc
 ch apt-get update
 chi python-pip  # vim
 
-# ereuse-ddi requirements
+# ereuse-workbench requirements
 # TODO read from requirements.txt
 chi $(sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements.txt requirements-full.txt)
 

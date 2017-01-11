@@ -81,7 +81,7 @@ Use the following command:
 
     $ python setup.py sdist
 
-This will create the ``dist/ereuse-ddi-VERSION.tar.gz`` file.
+This will create the ``dist/ereuse-workbench-VERSION.tar.gz`` file.
 
 ## 4. Create the eReuseOS ISO
 

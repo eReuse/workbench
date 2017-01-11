@@ -18,7 +18,7 @@ inst_reqs = read_requirements('requirements.txt')
 full_reqs = read_requirements('requirements-full.txt')
 
 setup(
-    name="ereuse-ddi",
+    name="ereuse-workbench",
     version=version,
     packages=find_packages(),
     license='AGPLv3 License',
