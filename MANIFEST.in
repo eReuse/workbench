@@ -2,7 +2,7 @@ include LICENSE
 include MANIFEST.in
 include *.md
 include *.txt
-recursive-include ereuse_ddi *
+recursive-include erwb *
 recursive-include scripts *
 recursive-include tests *
 recursive-exclude * __pycache__

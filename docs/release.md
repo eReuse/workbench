@@ -6,7 +6,7 @@ This document enumerates the steps needed for releasing a new version of eReuse 
 
 Let ``SOURCE`` be a Git checkout of the ``master`` branch of the DDI source code.
 
-Edit ``ereuse_ddi/__init__.py`` and update the value of the ``VERSION`` variable according to [Semantic Versioning][] and the [Python Packaging User Guide][].
+Edit ``erwb/__init__.py`` and update the value of the ``VERSION`` variable according to [Semantic Versioning][] and the [Python Packaging User Guide][].
 
 [Semantic Versioning]: http://semver.org/
 [Python Packaging User Guide]: https://packaging.python.org/distributing/#choosing-a-versioning-scheme
@@ -17,7 +17,7 @@ Then commit the change with a message like:
 
 Where ``VERSION`` is the compact version number of the package, which you may obtain by running:
 
-    ( cd ereuse_ddi \
+    ( cd erwb \
       && python -c 'from __init__ import get_version; print get_version()' )
 
 Finally, push changes upstream:

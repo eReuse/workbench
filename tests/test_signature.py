@@ -4,7 +4,7 @@ import shutil
 import tempfile
 import unittest
 
-from ereuse_ddi import utils
+from erwb import utils
 
 
 class TestSignature(unittest.TestCase):
@@ -21,7 +21,7 @@ class TestSignature(unittest.TestCase):
         self.assertTrue(sig)
         
         basepath = os.path.dirname(__file__)
-        with open(os.path.join(basepath, "../ereuse_ddi/data/public.key")) as pubkey:
+        with open(os.path.join(basepath, "../erwb/data/public.key")) as pubkey:
             self.gpg.import_keys(pubkey.read())
         
         verify = self.gpg.verify(sig)

@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 
 # Dynamically calculate the version
-version = __import__('ereuse_ddi').get_version()
+version = __import__('erwb').get_version()
 
 # Collect installation requirements
 def read_requirements(path):
@@ -27,7 +27,7 @@ setup(
                  'It retrieves details of the hardware and, optionally, '
                  'runs some health and benchmark tests.'),
     scripts=['scripts/ddi'],
-    package_data={'ereuse_ddi': [
+    package_data={'erwb': [
         'config.ini',
         'config_logging.json',
         'data/*'

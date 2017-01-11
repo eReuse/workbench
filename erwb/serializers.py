@@ -6,7 +6,7 @@ from . import get_version, utils
 """
 # Class > dict > JSON
 import json
-from ereuse_ddi import inventory
+from erwb import inventory
 
 dev = inventory.Computer()
 processor = inventory.Processor(dev.lshw_json)

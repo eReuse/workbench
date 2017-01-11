@@ -1,6 +1,6 @@
 import unittest
 
-from ereuse_ddi import benchmark
+from erwb import benchmark
 
 
 class TestBenchmark(unittest.TestCase):

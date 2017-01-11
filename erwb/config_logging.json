@@ -17,7 +17,7 @@
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
             "formatter": "simple",
-            "filename": "ereuse_ddi.log",
+            "filename": "ereuse-workbench.log",
             "maxBytes": 10485760,
             "backupCount": 20,
             "encoding": "utf8"

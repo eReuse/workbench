@@ -2,8 +2,8 @@ import json
 import subprocess
 import unittest
 
-from ereuse_ddi import inventory, serializers
-from ereuse_ddi.utils import InventoryJSONEncoder as InvEncoder
+from erwb import inventory, serializers
+from erwb.utils import InventoryJSONEncoder as InvEncoder
 
 class TestDeviceHubSerializer(unittest.TestCase):
     DEBUG = True

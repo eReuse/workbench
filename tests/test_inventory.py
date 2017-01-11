@@ -5,7 +5,7 @@ import tempfile
 import types
 import unittest
 
-from ereuse_ddi import inventory
+from erwb import inventory
 from lxml import etree
 
 

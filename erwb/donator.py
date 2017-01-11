@@ -16,11 +16,11 @@ import uuid
 
 import tqdm
 
-from ereuse_ddi import eraser, serializers, storage, utils
-from ereuse_ddi.conf import settings
-from ereuse_ddi.benchmark import benchmark_hdd
-from ereuse_ddi.inventory import Computer
-from ereuse_ddi.utils import InventoryJSONEncoder as InvEncoder
+from erwb import eraser, serializers, storage, utils
+from erwb.conf import settings
+from erwb.benchmark import benchmark_hdd
+from erwb.inventory import Computer
+from erwb.utils import InventoryJSONEncoder as InvEncoder
 
 
 def setup_logging(default_path='config_logging.json',
