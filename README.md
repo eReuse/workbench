@@ -22,8 +22,8 @@ On a Debian based distribution using `apt`:
 
 Then download and install Reciclanet's image installation script:
 
-    wget "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" -O /usr/local/bin/ddi-install-image
-    chmod a+rx /usr/local/bin/ddi-install-image
+    wget "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" -O /usr/local/bin/erwb-install-image
+    chmod a+rx /usr/local/bin/erwb-install-image
 
 And then install `ereuse-workbench` and its requirements using `pip`:
 
@@ -32,7 +32,7 @@ And then install `ereuse-workbench` and its requirements using `pip`:
 ## Usage
 Just run it as priviliged user and fill some information:
 
-    $ sudo ddi
+    $ sudo erwb
         Label ID: 7
         Comment: eReuse device diagnostic and inventory.
         Choose device type

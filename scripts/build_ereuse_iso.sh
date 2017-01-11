@@ -103,11 +103,11 @@ chi python-pip  # vim
 chi $(sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements.txt requirements-full.txt)
 
 # Install Reciclanet's image installation script
-install -m 0755 reciclanet-scripts/instalar $FS_ROOT/usr/local/bin/ddi-install-image
+install -m 0755 reciclanet-scripts/instalar $FS_ROOT/usr/local/bin/erwb-install-image
 
 cp $SDIST $FS_ROOT/tmp
 ch pip install --upgrade /tmp/$(basename $SDIST)
-install -m 0755 scripts/ddi-keyboard-layout scripts/ddi-disk-dump $FS_ROOT/usr/local/sbin
+install -m 0755 scripts/erwb-keyboard-layout scripts/erwb-disk-dump $FS_ROOT/usr/local/sbin
 
 # Configure regional settings
 ch ckbcomp "$KB_LAYOUT" | gzip -c > $FS_ROOT/etc/console-setup/cached.kmap.gz
@@ -143,7 +143,7 @@ ch sed -i -r --follow-symlinks \
    '/etc/systemd/system/getty.target.wants/getty@tty1.service'
 
 # Autostart
-cat > $FS_ROOT/home/ubuntu/.ddi-help << 'EOF'
+cat > $FS_ROOT/home/ubuntu/.erwb-help << 'EOF'
 
 Device Diagnostic and Inventory process finished.
 
@@ -155,12 +155,12 @@ Device Diagnostic and Inventory process finished.
 
   - To dump an existing installation from disk into an FSArchiver image, run:
 
-       sudo ddi-disk-dump NAME_OF_IMAGE [OPTIONAL_DESTINATION]
+       sudo erwb-disk-dump NAME_OF_IMAGE [OPTIONAL_DESTINATION]
 
 EOF
-ch chown ubuntu:ubuntu /home/ubuntu/.ddi-help
+ch chown ubuntu:ubuntu /home/ubuntu/.erwb-help
 cat > $FS_ROOT/home/ubuntu/.bash_history << 'EOF'
-sudo ddi-disk-dump xubuntu-i386-ca
+sudo erwb-disk-dump xubuntu-i386-ca
 exit
 sudo poweroff
 sudo reboot
@@ -169,15 +169,15 @@ ch chown ubuntu:ubuntu /home/ubuntu/.bash_history
 cat >> $FS_ROOT/home/ubuntu/.profile << 'EOF'
 clear
 if [ -d /media/ereuse-data ]; then
-    sudo ddi-keyboard-layout /media/ereuse-data/config.ini
+    sudo erwb-keyboard-layout /media/ereuse-data/config.ini
     clear
-    sudo ddi --settings /media/ereuse-data/config.ini --inventory /media/ereuse-data/inventory
+    sudo erwb --settings /media/ereuse-data/config.ini --inventory /media/ereuse-data/inventory
 else
-    sudo ddi-keyboard-layout
+    sudo erwb-keyboard-layout
     clear
-    sudo ddi
+    sudo erwb
 fi
-cat ~/.ddi-help
+cat ~/.erwb-help
 EOF
 
 # Mount remote data directory.

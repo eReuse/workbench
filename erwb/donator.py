@@ -203,7 +203,7 @@ def install(name=None, confirm=True):
     env['HD_SWAP'] = 'AUTO'
     env['HD_ROOT'] = 'FILL'
 
-    subprocess.check_call(['ddi-install-image'], env=env)
+    subprocess.check_call(['erwb-install-image'], env=env)
 
 
 def main(argv=None):

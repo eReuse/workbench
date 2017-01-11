@@ -26,7 +26,7 @@ setup(
                  'help with the diagnostic and inventory of computers. '
                  'It retrieves details of the hardware and, optionally, '
                  'runs some health and benchmark tests.'),
-    scripts=['scripts/ddi'],
+    scripts=['scripts/erwb'],
     package_data={'erwb': [
         'config.ini',
         'config_logging.json',
