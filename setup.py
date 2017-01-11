@@ -32,7 +32,7 @@ setup(
         'config_logging.json',
         'data/*'
     ]},
-    url='https://github.com/eReuse/device-inventory',
+    url='https://github.com/eReuse/ddi',
     author='eReuse team',
     classifiers=[
         'Development Status :: 4 - Beta',

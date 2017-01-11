@@ -27,7 +27,7 @@ Then download and install Reciclanet's image installation script:
 
 And then install `ereuse_ddi` and its requirements using `pip`:
 
-    pip install git+https://github.com/eReuse/device-inventory.git#egg=ereuse_ddi
+    pip install git+https://github.com/eReuse/ddi.git#egg=ereuse_ddi
 
 ## Usage
 Just run it as priviliged user and fill some information:
