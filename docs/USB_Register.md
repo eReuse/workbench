@@ -51,7 +51,7 @@
 
 7. Process is done! If you want to review the result open the file stored on the USB on another computer or just run this command on the inventoried device (where “your_filename” is the name of the file printed on the screen):
 
-  ![jsondevice](./images/json_ddi.png)
+  ![jsondevice](./images/json_erwb.png)
   - `less /tmp/your_filename.json`
 
 8. Press `q` to quit the program, unplug the USB and you can power off the computer.
