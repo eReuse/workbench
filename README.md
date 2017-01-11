@@ -1,6 +1,6 @@
-# Device Diagnostic and Inventory
+# eReuse Workbench
 
-Device Diagnostic and Inventory (DDI) is a set of tools and services to assist the preparation for reuse and traceability of digital devices (capture of hardware characteristics, hardware rating and testing and secure deletion of data).
+The eReuse Workbench (formerly Device Inventory) is a set of tools and services to assist the preparation for reuse and traceability of digital devices (capture of hardware characteristics, hardware rating and testing and secure deletion of data).
 
 ## Features
 - Run in an unattended way without the need for additional steps rather than powering up the computer.

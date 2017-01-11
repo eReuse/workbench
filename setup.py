@@ -22,8 +22,8 @@ setup(
     version=version,
     packages=find_packages(),
     license='AGPLv3 License',
-    description=('The Device Diagnostic and Inventory (DDI) is a tool to '
-                 'help with the diagnostic and inventory of computers. '
+    description=('The eReuse Workbench (formerly Device Inventory) is '
+                 'a tool to help with the diagnostic and inventory of computers. '
                  'It retrieves details of the hardware and, optionally, '
                  'runs some health and benchmark tests.'),
     scripts=['scripts/erwb'],

@@ -16,7 +16,7 @@ This guide will allow you to configure an existing host as a PXE server and boot
 ## Configure your server
 This assumes that the server's `eth0` interface is connected to the network where devices to be registered will be connected.  This should be different to the interface that the server uses to reach the Internet.
 
-Given the latest version of eReuse DDI ``VERSION``, download the *server configuration script*, *data refresh script* and *data archive*, along with optional *installation ISOs* (we will be using 32-bit Lubuntu here):
+Given the latest version of eReuse Workbench ``VERSION``, download the *server configuration script*, *data refresh script* and *data archive*, along with optional *installation ISOs* (we will be using 32-bit Lubuntu here):
 ```
 wget "https://raw.githubusercontent.com/eReuse/ddi/vVERSION/scripts/configure-server.sh"
 wget "https://raw.githubusercontent.com/eReuse/ddi/vVERSION/scripts/ereuse-data-refresh"
