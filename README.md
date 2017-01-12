@@ -30,24 +30,19 @@ And then install `ereuse-workbench` and its requirements using `pip`:
     pip install git+https://github.com/eReuse/workbench.git#egg=ereuse-workbench
 
 ## Usage
-Just run it as priviliged user and fill some information:
+Just run it as priviliged user (e.g. ``sudo erwb``) and fill some information:
 
-    $ sudo erwb
-        Label ID: 7
-        Comment: A description of this PC.
-        Choose device type
-        1. Desktop
-        2. Laptop
-        3. Netbook
-        4. Server
-        5. Microtower
-        Type: 1
-        eReuse Workbench has finished properly: /tmp/A1B2C3SN.json
+  - A unique label
+  - A device type (desktop, laptop...)
+  - A visual grade (new, used, worn, broken...)
+  - A functional grade (new, used, worn, broken...)
+  - A free-format comment
 
-Generated output example:
+The process will generate a JSON file with the hardware description in it, for example:
 ```json
 {
     "@type": "Snapshot",
+    "_uuid": "c58060c1-72e9-4638-893b-a928e9fb9c9c",
     "comment": "A description of this PC.",
     "components": [
         {
@@ -58,6 +53,11 @@ Generated output example:
         },
         {
             "@type": "HardDrive",
+            "benchmark": {
+                "@type": "BenchmarkHardDrive",
+                "readingSpeed": 44.7,
+                "writingSpeed": 24.8
+            },
             "interface": "ata",
             "manufacturer": "ACME",
             "model": "ST380815AS",
@@ -109,6 +109,10 @@ Generated output example:
         },
         {
             "@type": "Processor",
+            "benchmark": {
+                "@type": "BenchmarkProcessor",
+                "score": 3193.19
+            },
             "manufacturer": "ACME Corp.",
             "model": "ACME(R) Pontium(R) D CPU 2.80GHz",
             "numberOfCores": 2,
@@ -120,6 +124,14 @@ Generated output example:
             "model": "82801G (ICH7 Family) AC'97 Audio Controller"
         }
     ],
+    "condition": {
+        "appearance": {
+            "general": "C"
+        },
+        "functionality": {
+            "general": "B"
+        }
+    },
     "device": {
         "@type": "Computer",
         "manufacturer": "ACME Inc.",
@@ -127,7 +139,8 @@ Generated output example:
         "serialNumber": "GTK1N3J",
         "type": "Desktop"
     },
-    "label": "7"
+    "label": "PC-7",
+    "version": "8.0a2"
 }
 ```
 
