@@ -1,6 +1,6 @@
 import unittest
 
-from device_inventory import inventory, utils
+from erwb import inventory, utils
 from lxml import etree
 
 

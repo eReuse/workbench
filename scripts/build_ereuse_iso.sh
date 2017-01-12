@@ -15,12 +15,12 @@ TIMEZONE=${TIMEZONE:-Etc/UTC}
 WORK_DIR=${WORK_DIR:-dist/iso}
 
 # Version-specific settings.
-VERSION=$(cd device_inventory && python -Bc 'from __init__ import get_version; print get_version()')
+VERSION=$(cd erwb && python -Bc 'from __init__ import get_version; print get_version()')
 BASE_ISO_URL="http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/15.10/ubuntu-mini-remix-15.10-i386.iso"
 BASE_ISO_SHA256="e9985f0bcb05678d87d62c3d70191aab7a80540dc17523d93c313aa8515e173e"
 
 # Other derived values.
-SDIST=$(find "dist/device-inventory-$VERSION.tar.gz")  # fail if missing
+SDIST=$(find "dist/ereuse-workbench-$VERSION.tar.gz")  # fail if missing
 BASE_ISO_PATH="$WORK_DIR/$(basename "$BASE_ISO_URL")"
 BASE_ISO_SHA256SUM="$BASE_ISO_SHA256  $BASE_ISO_PATH"
 ISO_PATH="$WORK_DIR/eReuseOS-$VERSION.iso"
@@ -98,16 +98,16 @@ ch add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(ch lsb_release -sc
 ch apt-get update
 chi python-pip  # vim
 
-# device-inventory requirements
+# ereuse-workbench requirements
 # TODO read from requirements.txt
 chi $(sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements.txt requirements-full.txt)
 
 # Install Reciclanet's image installation script
-install -m 0755 reciclanet-scripts/instalar $FS_ROOT/usr/local/bin/di-install-image
+install -m 0755 reciclanet-scripts/instalar $FS_ROOT/usr/local/bin/erwb-install-image
 
 cp $SDIST $FS_ROOT/tmp
 ch pip install --upgrade /tmp/$(basename $SDIST)
-install -m 0755 scripts/di-keyboard-layout scripts/di-disk-dump $FS_ROOT/usr/local/sbin
+install -m 0755 scripts/erwb-keyboard-layout scripts/erwb-disk-dump $FS_ROOT/usr/local/sbin
 
 # Configure regional settings
 ch ckbcomp "$KB_LAYOUT" | gzip -c > $FS_ROOT/etc/console-setup/cached.kmap.gz
@@ -143,9 +143,9 @@ ch sed -i -r --follow-symlinks \
    '/etc/systemd/system/getty.target.wants/getty@tty1.service'
 
 # Autostart
-cat > $FS_ROOT/home/ubuntu/.di-help << 'EOF'
+cat > $FS_ROOT/home/ubuntu/.erwb-help << 'EOF'
 
-Device diagnostic and inventory process finished.
+Device Diagnostic and Inventory process finished.
 
   - To reboot the computer, press Ctrl+Alt+Del or run "sudo reboot".
 
@@ -155,12 +155,12 @@ Device diagnostic and inventory process finished.
 
   - To dump an existing installation from disk into an FSArchiver image, run:
 
-       sudo di-disk-dump NAME_OF_IMAGE [OPTIONAL_DESTINATION]
+       sudo erwb-disk-dump NAME_OF_IMAGE [OPTIONAL_DESTINATION]
 
 EOF
-ch chown ubuntu:ubuntu /home/ubuntu/.di-help
+ch chown ubuntu:ubuntu /home/ubuntu/.erwb-help
 cat > $FS_ROOT/home/ubuntu/.bash_history << 'EOF'
-sudo di-disk-dump xubuntu-i386-ca
+sudo erwb-disk-dump xubuntu-i386-ca
 exit
 sudo poweroff
 sudo reboot
@@ -169,15 +169,15 @@ ch chown ubuntu:ubuntu /home/ubuntu/.bash_history
 cat >> $FS_ROOT/home/ubuntu/.profile << 'EOF'
 clear
 if [ -d /media/ereuse-data ]; then
-    sudo di-keyboard-layout /media/ereuse-data/config.ini
+    sudo erwb-keyboard-layout /media/ereuse-data/config.ini
     clear
-    sudo device-inventory --settings /media/ereuse-data/config.ini --inventory /media/ereuse-data/inventory
+    sudo erwb --settings /media/ereuse-data/config.ini --inventory /media/ereuse-data/inventory
 else
-    sudo di-keyboard-layout
+    sudo erwb-keyboard-layout
     clear
-    sudo device-inventory
+    sudo erwb
 fi
-cat ~/.di-help
+cat ~/.erwb-help
 EOF
 
 # Mount remote data directory.

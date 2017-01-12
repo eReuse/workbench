@@ -1,6 +1,6 @@
 import unittest
 
-from device_inventory import benchmark
+from erwb import benchmark
 
 
 class TestBenchmark(unittest.TestCase):

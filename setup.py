@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 
 # Dynamically calculate the version
-version = __import__('device_inventory').get_version()
+version = __import__('erwb').get_version()
 
 # Collect installation requirements
 def read_requirements(path):
@@ -18,21 +18,21 @@ inst_reqs = read_requirements('requirements.txt')
 full_reqs = read_requirements('requirements-full.txt')
 
 setup(
-    name="device-inventory",
+    name="ereuse-workbench",
     version=version,
     packages=find_packages(),
     license='AGPLv3 License',
-    description=('The Device Inventory is a tool to help the inventory '
-                 'of computers. It retrieves details of the hardware '
-                 'information and, optionally, runs some health and '
-                 'benchmark tests.'),
-    scripts=['scripts/device-inventory'],
-    package_data={'device_inventory': [
+    description=('The eReuse Workbench (formerly Device Inventory) is '
+                 'a tool to help with the diagnostic and inventory of computers. '
+                 'It retrieves details of the hardware and, optionally, '
+                 'runs some health and benchmark tests.'),
+    scripts=['scripts/erwb'],
+    package_data={'erwb': [
         'config.ini',
         'config_logging.json',
         'data/*'
     ]},
-    url='https://github.com/eReuse/device-inventory',
+    url='https://github.com/eReuse/workbench',
     author='eReuse team',
     classifiers=[
         'Development Status :: 4 - Beta',

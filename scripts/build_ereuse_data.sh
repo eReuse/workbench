@@ -4,12 +4,12 @@
 
 set -e
 
-VERSION=$(cd device_inventory && python -Bc 'from __init__ import get_version; print get_version()')
+VERSION=$(cd erwb && python -Bc 'from __init__ import get_version; print get_version()')
 
 BUILD_DIR=$(mktemp -d)
 
 mkdir -p $BUILD_DIR/ereuse-data/inventory $BUILD_DIR/ereuse-data/images
-cp device_inventory/config.ini $BUILD_DIR/ereuse-data
+cp erwb/config.ini $BUILD_DIR/ereuse-data
 cp scripts/syslinux/*.iso.syslinux $BUILD_DIR/ereuse-data/images
 cp dist/iso/eReuseOS-$VERSION.iso $BUILD_DIR/ereuse-data/images/eReuseOS.iso
 

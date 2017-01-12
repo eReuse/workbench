@@ -3,7 +3,7 @@
 
 # eReuse: How to use our (PXE) server
 
-This server allow us to register easily and very fast by sending DeviceInventory to all PCs connected on the LAN network.
+This server allow us to register easily and very fast by sending the eReuse Workbench to all PCs connected on the LAN network.
 
 ## Requirements
 
@@ -11,8 +11,8 @@ This server allow us to register easily and very fast by sending DeviceInventory
   - Network cables
   - A Win/Linux/Mac PC with:
       - [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-      - [ereuse-server-<VERSION>.ova](https://github.com/eReuse/device-inventory/releases/latest)
-      - [ereuse-data-<VERSION>.tar.gz](https://github.com/eReuse/device-inventory/releases/latest)
+      - [ereuse-server-<VERSION>.ova](https://github.com/eReuse/workbench/releases/latest)
+      - [ereuse-data-<VERSION>.tar.gz](https://github.com/eReuse/workbench/releases/latest)
       - FSArchiver system images of existing installations, if you want to deploy copies of those installations into inventoried computers
       - Installation ISOs, if you want to use them to install a GNU/Linux OS into inventoried computers
   - PCs to be inventoried
@@ -21,17 +21,17 @@ This server allow us to register easily and very fast by sending DeviceInventory
 
 **Note on system installation images:** Currently the only kind of images supported and assumed are FSArchiver images corresponding to 32-bit ``i386`` or 64-bit ``amd64`` Debian/Ubuntu or derivative OS installations, where the whole system is contained in a single ext4 file system in BIOS partition ``sda1``, and GRUB2 is used as a bootloader.
 
-**How to create an FSArchiver image:** To prepare an installation image you must perform *in a different machine* the complete installation that you want to replicate (taking into account the limitations from the previous note).  One easy way to capture this installation is to reboot the computer into eReuseOS from the server (see [Registeringing a computer](#registering-a-computer)) and cancel the registration process with Ctrl+C, then execute ``di-disk-dump`` with some informative name for the new image, like this:
+**How to create an FSArchiver image:** To prepare an installation image you must perform *in a different machine* the complete installation that you want to replicate (taking into account the limitations from the previous note).  One easy way to capture this installation is to reboot the computer into eReuseOS from the server (see [Registeringing a computer](#registering-a-computer)) and cancel the registration process with Ctrl+C, then execute ``erwb-disk-dump`` with some informative name for the new image, like this:
 
 ```
-sudo di-disk-dump lubuntu-xenial-amd64-ca
+sudo erwb-disk-dump lubuntu-xenial-amd64-ca
 ```
 
 The image will be automatically saved to the ``images`` subdirectory in the folder shared between your PC and the virtual server.  If you have no server, you may plug an external USB drive of sufficient capacity (note that FAT file systems may cause file size limitation issues) and run the following commands:
 
 ```
 sudo mount /dev/sdb1 /mnt  # ``sdb`` is the external USB drive
-sudo di-disk-dump lubuntu-xenial-amd64-ca /mnt
+sudo erwb-disk-dump lubuntu-xenial-amd64-ca /mnt
 sudo umount /mnt  # wait until the command is complete
 ```
 
@@ -45,7 +45,7 @@ If you are upgrading from a previous version of the server, make sure that you s
  2. Install VirtualBox on your PC.
  3. Unpack the ``ereuse-data-<VERSION>.tar.gz`` in your PC.  A new folder called ``ereuse-data`` will be created with several files and directories inside of it.
 
-      - You can configure DeviceInventory to avoid asking questions and automate tasks by editing the ``config.ini`` configuration file.  For example, you can set to always erase disks in a specific way, or to automatically install some image, so the system will not ask the user about this, saving time and user errors.  Documentation on the different configuration options is contained in the file itself.
+      - You can configure the Workbench to avoid asking questions and automate tasks by editing the ``config.ini`` configuration file.  For example, you can set to always erase disks in a specific way, or to automatically install some image, so the system will not ask the user about this, saving time and user errors.  Documentation on the different configuration options is contained in the file itself.
       - Place any FSArchiver ``*.fsa`` images that you want to use into the ``images`` subdirectory.  Remember to give them meaningful names.
       - Place any installation ISO ``*.iso`` images that you want to use into the ``images`` subdirectory (the latest eReuseOS ISO is already provided).  For an ISO to appear in the PXELINUX boot menu, you need to create a SYSLINUX entry template file with the exact same name as the ISO file (case is important!), plus ``.syslinux`` at the end.  Some templates are provided, so you just need to rename the ISO file to match the template (e.g. for the ``Ubuntu32.iso.syslinux`` template, use ``Ubuntu32.iso``).
       - The inventory files resulting from computer registration will be placed into the ``inventory`` subdirectory.
@@ -84,7 +84,7 @@ If you ever need to change the images under ``ereuse-data``, please do so while 
         - Press F2 or F10 to enter on BIOS menu.
 
  3. When the computer starts on LAN it will load the eReuseOS image from the server (it can take some time).
- 4. Follow [this guide about the inventory process](https://github.com/eReuse/device-inventory/blob/master/docs/USB_Register.md#4-inventory-process-register-hardware-characteristics-of-a-computer)
+ 4. Follow [this guide about the inventory process](https://github.com/eReuse/workbench/blob/master/docs/USB_Register.md#4-inventory-process-register-hardware-characteristics-of-a-computer)
  5. The file will be automatically uploaded to the PXE server and become available under the ``ereuse-data/inventory`` subdirectory in your PC, but you can still copy it too to a USB memory stick.
 
 ## Installing a computer

@@ -4,7 +4,7 @@
 # eReuse: How to register via USB 
 
 ####1. Download the eReuseOS image
-  1. Go to [our repository](https://github.com/eReuse/Device-Inventory/releases/latest) and download the latest ISO.
+  1. Go to [our repository](https://github.com/eReuse/workbench/releases/latest) and download the latest ISO.
   2. Install [UNetbootin](https://unetbootin.github.io/) software to make a USB live.
     - [Windows](https://launchpad.net/unetbootin/trunk/613/+download/unetbootin-windows-613.exe)
     - [Mac](https://launchpad.net/unetbootin/trunk/613/+download/unetbootin-mac-613.zip)
@@ -51,7 +51,7 @@
 
 7. Process is done! If you want to review the result open the file stored on the USB on another computer or just run this command on the inventoried device (where “your_filename” is the name of the file printed on the screen):
 
-  ![jsondevice](./images/json_device-inventory.png)
+  ![jsondevice](./images/json_erwb.png)
   - `less /tmp/your_filename.json`
 
 8. Press `q` to quit the program, unplug the USB and you can power off the computer.

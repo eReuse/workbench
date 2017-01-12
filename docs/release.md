@@ -1,12 +1,12 @@
-# Preparing an eReuse DDI release
+# Preparing an eReuse Workbench release
 
-This document enumerates the steps needed for releasing a new version of eReuse Device Diagnostic and Inventory tools (DDI).
+This document enumerates the steps needed for releasing a new version of the eReuse Workbench tools.
 
 ## 1. Increase the version in source code
 
-Let ``SOURCE`` be a Git checkout of the ``master`` branch of the DDI source code.
+Let ``SOURCE`` be a Git checkout of the ``master`` branch of the Workbench source code.
 
-Edit ``device_inventory/__init__.py`` and update the value of the ``VERSION`` variable according to [Semantic Versioning][] and the [Python Packaging User Guide][].
+Edit ``erwb/__init__.py`` and update the value of the ``VERSION`` variable according to [Semantic Versioning][] and the [Python Packaging User Guide][].
 
 [Semantic Versioning]: http://semver.org/
 [Python Packaging User Guide]: https://packaging.python.org/distributing/#choosing-a-versioning-scheme
@@ -17,7 +17,7 @@ Then commit the change with a message like:
 
 Where ``VERSION`` is the compact version number of the package, which you may obtain by running:
 
-    ( cd device_inventory \
+    ( cd erwb \
       && python -c 'from __init__ import get_version; print get_version()' )
 
 Finally, push changes upstream:
@@ -81,7 +81,7 @@ Use the following command:
 
     $ python setup.py sdist
 
-This will create the ``dist/device-inventory-VERSION.tar.gz`` file.
+This will create the ``dist/ereuse-workbench-VERSION.tar.gz`` file.
 
 ## 4. Create the eReuseOS ISO
 
@@ -107,7 +107,7 @@ You need to run the ``build_ereuse_ova.sh`` script as root from the ``SOURCE`` d
 
 After a while, the file ``dist/ereuse-server-VERSION.ova`` will be created.
 
-**Note:** The PXE server is independent from the package, ISO and data archive created above, so as long as new releases of the DDI do not change the way they interact with the PXE server, there is no need to release a new OVA.  In a similar manner, if a fix to the server does not imply changes to the interaction with the DDI, there is no need to release a new data archive.
+**Note:** The PXE server is independent from the package, ISO and data archive created above, so as long as new releases of the Workbench do not change the way they interact with the PXE server, there is no need to release a new OVA.  In a similar manner, if a fix to the server does not imply changes to the interaction with the Workbench, there is no need to release a new data archive.
 
 ## 7. Publish the new release
 
@@ -119,4 +119,4 @@ Then attach the ``dist/ereuse-data-VERSION.tar.gz`` and ``dist/ereuse-server-VER
 
 Enable the pre-release check box if convenient.
 
-Finally, click on the *Publish release* button.  Congratulations!  A new release of the DDI is out!`:)`
+Finally, click on the *Publish release* button.  Congratulations!  A new release of the eReuse Workbench is out!`:)`

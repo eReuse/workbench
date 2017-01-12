@@ -16,11 +16,11 @@ import uuid
 
 import tqdm
 
-from device_inventory import eraser, serializers, storage, utils
-from device_inventory.conf import settings
-from device_inventory.benchmark import benchmark_hdd
-from device_inventory.inventory import Computer
-from device_inventory.utils import InventoryJSONEncoder as InvEncoder
+from erwb import eraser, serializers, storage, utils
+from erwb.conf import settings
+from erwb.benchmark import benchmark_hdd
+from erwb.inventory import Computer
+from erwb.utils import InventoryJSONEncoder as InvEncoder
 
 
 def setup_logging(default_path='config_logging.json',
@@ -203,7 +203,7 @@ def install(name=None, confirm=True):
     env['HD_SWAP'] = 'AUTO'
     env['HD_ROOT'] = 'FILL'
 
-    subprocess.check_call(['di-install-image'], env=env)
+    subprocess.check_call(['erwb-install-image'], env=env)
 
 
 def main(argv=None):
@@ -357,7 +357,7 @@ def main(argv=None):
     else:
         print("Skipping installation (not enabled in remote configuration file).")
     
-    print("Device Inventory has finished properly: {0}".format(localpath))
+    print("Device Diagnostic and Inventory has finished properly: {0}".format(localpath))
 
 
 if __name__ == "__main__":

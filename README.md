@@ -1,6 +1,6 @@
-# Device inventory
+# eReuse Workbench
 
-Device inventory is a set of tools and services to assist the preparation for reuse and traceability of digital devices (capture of hardware characteristics, hardware rating and testing and secure deletion of data).
+The eReuse Workbench (formerly Device Inventory) is a set of tools and services to assist the preparation for reuse and traceability of digital devices (capture of hardware characteristics, hardware rating and testing and secure deletion of data).
 
 ## Features
 - Run in an unattended way without the need for additional steps rather than powering up the computer.
@@ -22,19 +22,19 @@ On a Debian based distribution using `apt`:
 
 Then download and install Reciclanet's image installation script:
 
-    wget "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" -O /usr/local/bin/di-install-image
-    chmod a+rx /usr/local/bin/di-install-image
+    wget "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" -O /usr/local/bin/erwb-install-image
+    chmod a+rx /usr/local/bin/erwb-install-image
 
-And then install `device_inventory` and its requirements using `pip`:
+And then install `ereuse-workbench` and its requirements using `pip`:
 
-    pip install git+https://github.com/eReuse/device-inventory.git#egg=device_inventory
+    pip install git+https://github.com/eReuse/workbench.git#egg=ereuse-workbench
 
 ## Usage
 Just run it as priviliged user and fill some information:
 
-    $ sudo device-inventory
+    $ sudo erwb
         Label ID: 7
-        Comment: eReuse device inventory.
+        Comment: eReuse device diagnostic and inventory.
         Choose device type
         1. Desktop
         2. Laptop
@@ -42,13 +42,13 @@ Just run it as priviliged user and fill some information:
         4. Server
         5. Microtower
         Type: 1
-        Device Inventory has finished properly: /tmp/A1B2C3SN.json
+        Device Diagnostic and Inventory has finished properly: /tmp/A1B2C3SN.json
 
 Generated output example:
 ```json
 {
     "@type": "Snapshot",
-    "comment": "eReuse device inventory.",
+    "comment": "eReuse device diagnostic and inventory.",
     "components": [
         {
             "@type": "GraphicCard",
