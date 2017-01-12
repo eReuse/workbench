@@ -83,7 +83,7 @@ If you ever need to change the images under ``ereuse-data``, please do so while 
         - Watch for the BIOS Setup Message.
         - Press F2 or F10 to enter on BIOS menu.
 
- 3. When the computer starts on LAN it will load the eReuseOS image from the server (it can take some time).
+ 3. When the computer starts on LAN it will show a boot menu for a short time and load the eReuseOS image from the server (it can take some time).
  4. Follow [this guide about the inventory process](https://github.com/eReuse/workbench/blob/master/docs/USB_Register.md#4-inventory-process-register-hardware-characteristics-of-a-computer)
  5. The file will be automatically uploaded to the PXE server and become available under the ``ereuse-data/inventory`` subdirectory in your PC, but you can still copy it too to a USB memory stick.
 
@@ -93,7 +93,7 @@ After registering the computer, you may want to perform an installation.
 
 If you want to perform an installation from one of the FSAarchiver system images in the shared folder that you attached to the server, after the diagnostic and inventory process has completed, you will be given the chance to perform the installation.  Follow the instructions in the screen to proceed and select one of the images (both steps can be automated via the ``config.ini`` file, see above).  After some minutes, the installation will be complete and you will be able to boot into the new system with Ctrl+Alt+Supr or by running ``sudo reboot``.
 
-Otherwise, you may want to use one of the installation ISOs that you configured in the ``ereuse-data/images`` subdirectory.  In that case reboot the computer (with Ctrl+Alt+Supr or by running ``sudo reboot``) and ensure that it boots again via PXE (see the previous section).  As soon as the ``boot:`` prompt appears, be quick to hit Tab to see the boot options.  Besides the ``eReuseOS`` option (which is used to run the computer registration, as explained before), you should be able to see a list of supported installation ISOs.  Enter the one you want and boot the installer by hitting Enter.
+Otherwise, you may want to use one of the installation ISOs that you configured in the ``ereuse-data/images`` subdirectory.  In that case reboot the computer (with Ctrl+Alt+Supr or by running ``sudo reboot``) and ensure that it boots again via PXE (see the previous section).  In the boot menu, besides the ``eReuseOS`` option (which is used to run the computer registration, as explained before), you should be able to see a list of supported installation ISOs.  Select the one you want by using the arrow keys and boot the installer by hitting Enter.
 
 ## Server info
 
