@@ -101,6 +101,8 @@ This will create the ``dist/ereuse-data-VERSION.tar.gz`` file, which includes th
 
 ## 6. Create the PXE server OVA
 
+To perform this step you must first make sure that there are no VirtualBox virtual machines running, since a KVM VM needs to be launched during the process.
+
 You need to run the ``build_ereuse_ova.sh`` script as root from the ``SOURCE`` directory:
 
     $ sudo scripts/build_ereuse_ova.sh
