@@ -34,7 +34,7 @@ Just run it as priviliged user and fill some information:
 
     $ sudo erwb
         Label ID: 7
-        Comment: eReuse device diagnostic and inventory.
+        Comment: A description of this PC.
         Choose device type
         1. Desktop
         2. Laptop
@@ -42,13 +42,13 @@ Just run it as priviliged user and fill some information:
         4. Server
         5. Microtower
         Type: 1
-        Device Diagnostic and Inventory has finished properly: /tmp/A1B2C3SN.json
+        eReuse Workbench has finished properly: /tmp/A1B2C3SN.json
 
 Generated output example:
 ```json
 {
     "@type": "Snapshot",
-    "comment": "eReuse device diagnostic and inventory.",
+    "comment": "A description of this PC.",
     "components": [
         {
             "@type": "GraphicCard",

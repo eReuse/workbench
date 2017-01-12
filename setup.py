@@ -23,9 +23,9 @@ setup(
     packages=find_packages(),
     license='AGPLv3 License',
     description=('The eReuse Workbench (formerly Device Inventory) is '
-                 'a tool to help with the diagnostic and inventory of computers. '
-                 'It retrieves details of the hardware and, optionally, '
-                 'runs some health and benchmark tests.'),
+                 'a toolset to help with the diagnostic, benchmarking, '
+                 'inventory and installation of computers, '
+                 'with the optional assistance of a local server.'),
     scripts=['scripts/erwb'],
     package_data={'erwb': [
         'config.ini',

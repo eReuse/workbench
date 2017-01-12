@@ -357,7 +357,7 @@ def main(argv=None):
     else:
         print("Skipping installation (not enabled in remote configuration file).")
     
-    print("Device Diagnostic and Inventory has finished properly: {0}".format(localpath))
+    print("eReuse Workbench has finished properly: {0}".format(localpath))
 
 
 if __name__ == "__main__":

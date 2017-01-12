@@ -145,13 +145,13 @@ ch sed -i -r --follow-symlinks \
 # Autostart
 cat > $FS_ROOT/home/ubuntu/.erwb-help << 'EOF'
 
-Device Diagnostic and Inventory process finished.
+eReuse Workbench process finished.
 
   - To reboot the computer, press Ctrl+Alt+Del or run "sudo reboot".
 
   - To turn the computer off, press the power button or run "sudo poweroff".
 
-  - To run the diagnostic and inventory process again, "exit" this session.
+  - To run the process again, "exit" this session.
 
   - To dump an existing installation from disk into an FSArchiver image, run:
 
