@@ -93,6 +93,8 @@ fi
 # Configure PXE boot with TFTP.
 sed -i -e 's/\[::\]//' /etc/default/tftpd-hpa  # Ubuntu bug #1448500
 ln /usr/lib/PXELINUX/pxelinux.0 \
+   /usr/lib/syslinux/modules/bios/menu.c32 \
+   /usr/lib/syslinux/modules/bios/libutil.c32 \
    /usr/lib/syslinux/modules/bios/ldlinux.c32 \
    /var/lib/tftpboot
 mkdir -p /var/lib/tftpboot/pxelinux.cfg
