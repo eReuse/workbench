@@ -23,11 +23,15 @@
 ## 3. Run eReuseOS
  1. Connect the USB drive with the eReuseOS image to the PC where you are going to register.
  2. Turn the PC on or reboot it, and configure the BIOS (the first few seconds when the PC starts) to boot from the USB drive:
+
       - Maybe there is an option to automatically boot from USB:
-          - Watch for the BIOS Setup message.
+
+          - Watch for the BIOS setup message.
           - Press F12, F8 or F9 to enter the boot menu.
-      - Enter the BIOS Setup and change the boot priority:
-          - Watch for the BIOS Setup message.
+
+      - Enter BIOS setup and change the boot priority:
+
+          - Watch for the BIOS setup message.
           - Press F2 or F10 to enter the BIOS setup.
 
 ## 4. Inventory process to register the hardware characteristics of a computer

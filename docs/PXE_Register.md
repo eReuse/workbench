@@ -21,7 +21,7 @@ This server allow us to register easily and very fast by sending the eReuse Work
 
 **Note on system installation images:** Currently the only kind of images supported and assumed are FSArchiver images corresponding to 32-bit ``i386`` or 64-bit ``amd64`` Debian/Ubuntu or derivative OS installations, where the whole system is contained in a single ext4 file system in BIOS partition ``sda1``, and GRUB2 is used as a bootloader.
 
-**How to create an FSArchiver image:** To prepare an installation image you must perform *in a different machine* the complete installation that you want to replicate (taking into account the limitations from the previous note).  One easy way to capture this installation is to reboot the computer into eReuseOS from the server (see [Registeringing a computer](#registering-a-computer)) and cancel the registration process with Ctrl+C, then execute ``erwb-disk-dump`` with some informative name for the new image, like this:
+**How to create an FSArchiver image:** To prepare an installation image you must perform *in a different machine* the complete installation that you want to replicate (taking into account the limitations from the previous note).  One easy way to capture this installation is to reboot the computer into eReuseOS from the server (see [Registeringing a computer](#registering-a-computer)) and cancel the registration process with ``Ctrl+C``, then execute ``erwb-disk-dump`` with some informative name for the new image, like this:
 
 ```
 sudo erwb-disk-dump lubuntu-xenial-amd64-ca
@@ -73,15 +73,15 @@ If you ever need to change the images under ``ereuse-data``, please do so while 
  1. Connect a PC on the LAN network.
  2. Configure the BIOS (the first few seconds when the computer starts) to boot first from LAN:
 
-     1. Maybe there is an option to automatically boot from the network:
+      - Maybe there is an option to automatically boot from the network:
 
-        - Watch for the BIOS Setup Message.
-        - Press F12, F8 or F9 to enter on boot menu selection.
+          - Watch for the BIOS setup message.
+          - Press F12, F8 or F9 to enter the boot menu.
 
-     2. Enter Setup and change the boot priority:
+      - Enter BIOS setup and change the boot priority:
 
-        - Watch for the BIOS Setup Message.
-        - Press F2 or F10 to enter on BIOS menu.
+          - Watch for the BIOS setup message.
+          - Press F2 or F10 to enter the BIOS setup.
 
  3. When the computer starts on LAN it will show a boot menu for a short time and load the eReuseOS image from the server (it can take some time).
  4. Follow [this guide about the inventory process](https://github.com/eReuse/workbench/blob/master/docs/USB_Register.md#4-inventory-process-register-hardware-characteristics-of-a-computer)
@@ -91,9 +91,9 @@ If you ever need to change the images under ``ereuse-data``, please do so while 
 
 After registering the computer, you may want to perform an installation.
 
-If you want to perform an installation from one of the FSAarchiver system images in the shared folder that you attached to the server, after the diagnostic and inventory process has completed, you will be given the chance to perform the installation.  Follow the instructions in the screen to proceed and select one of the images (both steps can be automated via the ``config.ini`` file, see above).  After some minutes, the installation will be complete and you will be able to boot into the new system with Ctrl+Alt+Supr or by running ``sudo reboot``.
+If you want to perform an installation from one of the FSAarchiver system images in the shared folder that you attached to the server, after the diagnostic and inventory process has completed, you will be given the chance to perform the installation.  Follow the instructions in the screen to proceed and select one of the images (both steps can be automated via the ``config.ini`` file, see above).  After some minutes, the installation will be complete and you will be able to boot into the new system with ``Ctrl+Alt+Supr`` or by running ``sudo reboot``.
 
-Otherwise, you may want to use one of the installation ISOs that you configured in the ``ereuse-data/images`` subdirectory.  In that case reboot the computer (with Ctrl+Alt+Supr or by running ``sudo reboot``) and ensure that it boots again via PXE (see the previous section).  In the boot menu, besides the ``eReuseOS`` option (which is used to run the computer registration, as explained before), you should be able to see a list of supported installation ISOs.  Select the one you want by using the arrow keys and boot the installer by hitting Enter.
+Otherwise, you may want to use one of the installation ISOs that you configured in the ``ereuse-data/images`` subdirectory.  In that case reboot the computer (with ``Ctrl+Alt+Supr`` or by running ``sudo reboot``) and ensure that it boots again via PXE (see the previous section).  In the boot menu, besides the ``eReuseOS`` option (which is used to run the computer registration, as explained before), you should be able to see a list of supported installation ISOs.  Select the one you want by using the arrow keys and boot the installer by hitting Enter.
 
 ## Server info
 
