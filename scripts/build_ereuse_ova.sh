@@ -21,6 +21,22 @@ VBOX_OVA="$DIST_DIR/$VBOX_NAME.ova"
 BASE_ISO_PATH="$DIST_DIR/iso/$(basename "$BASE_ISO_URL")"
 BASE_ISO_SHA256SUM="$BASE_ISO_SHA256  $BASE_ISO_PATH"
 
+
+if [ "$(whoami)" != "root" ]; then
+    echo "Please run this script as root." >&2
+    exit 1
+fi
+
+cat << 'EOF'
+
+**WARNING:** Please run this script UNDER YOUR OWN RESPONSIBILITY.  Beware
+that you may be exposed to security attacks if the base ISO image is
+compromised (although the image's SHA256 hash is checked before using it).
+
+EOF
+read -p "Press Enter to continue, Ctrl+C to abort." dummy
+
+
 if [ -f "$VBOX_OVA" ]; then
         echo "OVA already exists: $VBOX_OVA" >&2
         exit 1
