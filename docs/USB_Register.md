@@ -31,7 +31,7 @@
           - Press F2 or F10 to enter the BIOS setup.
 
 ## 4. Inventory process to register the hardware characteristics of a computer
- 1. When the system starts, it will ask you some questions.
+ 1. When the system starts, it will let you select the layout of your keyboard and then ask you some questions.
 
     **Note:** If you have a [PXE server](PXE_Register.md) on your LAN you may preconfigure the answers to some questions so that they are not asked and the process can move faster.
 
