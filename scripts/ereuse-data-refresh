@@ -12,6 +12,7 @@ PXE_CONF="$TFTP_DIR/pxelinux.cfg/default"
 mv "$PXE_CONF" "$PXE_CONF.bak" || true  # in case it's missing
 cat << 'EOF' > "$PXE_CONF"
 ui menu.c32
+menu title eReuse Workbench boot selection
 default eReuseOS
 prompt 1
 timeout 50
