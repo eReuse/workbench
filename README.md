@@ -1,12 +1,14 @@
 # eReuse Workbench
 
-The eReuse Workbench (formerly Device Inventory) is a set of tools and services to assist the preparation for reuse and traceability of digital devices (capture of hardware characteristics, hardware rating and testing and secure deletion of data).
+The eReuse Workbench (formerly Device Inventory) is a set of tools and services to assist the preparation for reuse and traceability of digital devices (capture of hardware characteristics, hardware rating and testing, secure deletion of data and install Linux OS).
 
 ## Features
 - Run in an unattended way without the need for additional steps rather than powering up the computer.
 
 - Provides signed documents for deletion of data, tests of operation,
 hardware information and serial numbers for traceability.
+
+- Install Linux OS in record-time thanks to the easy-to-setup PXE server.
 
 - Only a few minutes required to register and select devices which reach user defined requirements (e.g. hard drive witouth faulty sectors, at least one NIC...).
 
