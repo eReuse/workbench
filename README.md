@@ -14,7 +14,7 @@ hardware information and serial numbers for traceability.
 
 
 ## Requirements
-* A Debian/Ubuntu or derived system with ``wget``
+* An english Debian/Ubuntu or derived system with ``wget``
 * Python 2.7 with ``pip``
 
 ## Installation
