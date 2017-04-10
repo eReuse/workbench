@@ -16,6 +16,7 @@ tqdm  # A Fast, Extensible Progress Meter
 # deb:smartmontools
 # deb:stress
 # deb:usbmount
+# deb:python-pip
 
 # You may extract Debian dependencies with:
 #     sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements*.txt
