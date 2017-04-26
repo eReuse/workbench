@@ -4,6 +4,7 @@ python-dateutil  # Extensions to the standard Python datetime module
 pySMART  # Wrapper for smartctl (smartmontools)
 pyudev  # A libudev binding
 tqdm  # A Fast, Extensible Progress Meter
+requests
 
 # Packages from the Debian repository:
 # deb:cifs-utils

@@ -12,6 +12,7 @@ import shutil
 import subprocess
 import sys
 import time
+import datetime
 import uuid
 
 import tqdm
@@ -21,6 +22,8 @@ from erwb.conf import settings
 from erwb.benchmark import benchmark_hdd
 from erwb.inventory import Computer
 from erwb.utils import InventoryJSONEncoder as InvEncoder
+
+import requests
 
 
 def setup_logging(default_path='config_logging.json',
@@ -134,13 +137,14 @@ def get_user_input():
                 entry = -1  # invalid and not none
         (val, desc) = entry_to_item[entry]
         return val
-    
+
     # Ask the user for several choice questions.
     for (field, opt, cls, choices, allow_empty, msg) in _user_input_questions:
-        val_dflt = get_option_default(opt, cls)
-        val = val_dflt if val_dflt else choose_from_dict(choices, msg, allow_empty)
-        if val:
-            user_input[field] = val
+        if settings.getboolean('DEFAULT', opt): # ask only if config.ini settings said True
+            val_dflt = get_option_default(opt, cls)
+            val = val_dflt if val_dflt else choose_from_dict(choices, msg, allow_empty)
+            if val:
+                user_input[field] = val
 
     # Let the user provide other information not requested previously.
     # Do this last to save the user from entering info in the comment
@@ -149,9 +153,8 @@ def get_user_input():
         value = raw_input("Additional comments (empty to skip): ").strip()
         if value:
             user_input['comment'] = value
-    
-    return user_input
 
+    return user_input
 
 def stress(minutes):
     """Perform a CPU and memory stress test for the given `minutes`.
@@ -205,17 +208,9 @@ def install(name=None, confirm=True):
 
     subprocess.check_call(['erwb-install-image'], env=env)
 
-
-def main(argv=None):
-    if not os.geteuid() == 0:
-        sys.exit("Only root can run this script")
-    
-    # configure logging
-    setup_logging()
-    logger = logging.getLogger(__name__)
-    
+def prepare_args():
     parser = argparse.ArgumentParser()
-    
+
     # allow enabling/disabling debug mode
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--debug', action='store_true',
@@ -223,7 +218,7 @@ def main(argv=None):
     group.add_argument('--no-debug', dest='debug', action='store_false',
             help='disable debug mode')
     parser.set_defaults(debug=None)
-    
+
     parser.add_argument('--smart', choices=['none', 'short', 'long'])
     parser.add_argument('--erase', choices=['ask', 'yes', 'no'])
     parser.add_argument('--stress', metavar='MINUTES', type=int,
@@ -236,12 +231,14 @@ def main(argv=None):
             help='file to be loaded as config file')
     parser.add_argument('--inventory',
             help='directory to copy the resulting file to (none to disable, default)')
+    parser.add_argument("--flask",
+            help='complete URL for pushing jsons to a flask server')
     args = parser.parse_args()
-    
+
     # load specified config file (if any)
     if args.settings:
-        cfg = settings.load_config(config_file=args.settings)
-    
+        settings.load_config(config_file=args.settings)
+
     # override settings with command line args
     if args.smart:
         settings.set('DEFAULT', 'smart', args.smart)
@@ -255,16 +252,60 @@ def main(argv=None):
         settings.set('installer', 'image_name', args.image_name)
     if args.debug is not None:
         settings.set('DEFAULT', 'debug', str(args.debug).lower())
-    
+    if args.flask:
+        settings.set("DEFAULT", "FLASK", str(args.flask))
+
+    return args, settings
+
+def push_json(settings, data):
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    requests.post(settings.get("DEFAULT", "FLASK"), data = json.dumps(data, cls = InvEncoder), headers = headers)
+
+def main(argv=None):
+    from os.path import expanduser
+
+    uuid_path = "{}/.eReuseUUID".format(expanduser("~"))
+    if os.path.exists(uuid_path):
+        with open(uuid_path, "r") as f:
+            device_uuid4 = f.read()
+    else:
+        device_uuid4 = uuid.uuid4().hex # random UUID
+        with open(uuid_path, "w") as f:
+            f.write(device_uuid4)
+
+    print("UUID4: {}".format(device_uuid4))
+
+    if not os.geteuid() == 0:
+        sys.exit("Only root can run this script")
+
+    # configure logging
+    setup_logging()
+    logger = logging.getLogger(__name__)
+
+    args, settings = prepare_args()
+
     debug = settings.getboolean('DEFAULT', 'debug')
-    
+
     user_input = get_user_input()
-    kwargs = dict(type=user_input.pop('device_type'),
-                  smart=args.smart)
-    
+
+    kwargs = {}
+    if "device_type" in user_input:
+        kwargs["type"] = user_input.pop('device_type')
+    if args.smart:
+        kwargs["smart"] = args.smart
+
     device = Computer(**kwargs)
     # TODO move smart call here!!!
-    
+    test_uuid4 = uuid.uuid4().hex
+
+    # if defined, push the json to the flask server
+    if settings.get("DEFAULT", "FLASK"):
+        data = serializers.export_to_devicehub_schema(device, user_input, debug)
+        data["_uuid"] = test_uuid4
+        data["created"] = datetime.datetime.utcnow()
+        data["device"]["_uuid"] = device_uuid4
+        push_json(settings, data)
+
     # call eraser for every hard disk!
     for hd in device.hard_disk:
         hd.erasure = eraser.do_erasure(hd.logical_name)
@@ -272,14 +313,19 @@ def main(argv=None):
         # FIXME hack to exclude logical_name from serialization
         # create serializer where you can exclude fields
         delattr(hd, 'logical_name')
-    
+
     data = serializers.export_to_devicehub_schema(device, user_input, debug)
     # Add a temporary, meaningless unique identifier just to avoid uploading
     # the very same file twice (this doesn't cover the case of e.g. running
     # the inventory twice on the same machine with different labels).  See
     # issue #57.
-    data['_uuid'] = str(uuid.uuid4())  # random UUID
-    
+    data['_uuid'] = test_uuid4
+
+    if settings.get("DEFAULT", "FLASK"):
+        data["created"] = datetime.datetime.utcnow()
+        data["device"]["_uuid"] = device_uuid4
+        push_json(settings, data)
+
     # TODO save on the home
     def sanitize(comp):  # turn 'Foo Corp. -x-' into 'foo-corp-x'
         rep = '-'  # replacement character
@@ -298,7 +344,7 @@ def main(argv=None):
     localpath = os.path.join("/tmp", filename)
     with open(localpath, "w") as outfile:
         json.dump(data, outfile, indent=4, sort_keys=True, cls=InvEncoder)
-    
+
     # sign output
     if settings.getboolean('signature', 'sign_output'):
         signed_data = utils.sign_data(json.dumps(data, indent=4, sort_keys=True, cls=InvEncoder))
@@ -306,7 +352,12 @@ def main(argv=None):
         localpath = os.path.join("/tmp", filename)
         with open(localpath, "w") as outfile:
             outfile.write(signed_data)
-    
+    else:
+        signed_data = None
+
+    if settings.get("DEFAULT", "FLASK"):
+        push_json(settings, {"_uuid": test_uuid4, "created": datetime.datetime.utcnow(), "device": {"_uuid": device_uuid4}, "filename": filename, "localpath": localpath, "signed_data": signed_data})
+
     # copy files to the inventory directory
     if args.inventory:
         try:
@@ -314,7 +365,7 @@ def main(argv=None):
         except IOError as ioe:
             logger.error("Error copying file '%s' to inventory '%s'", localpath, args.inventory)
             logger.debug(ioe, exc_info=True)
-    
+
     # copy file to an USB drive
     if settings.getboolean('DEFAULT', 'copy_to_usb'):
         try:
@@ -325,6 +376,11 @@ def main(argv=None):
             logger.error("Error copying file '%s' to USB", localpath)
             logger.debug(e, exc_info=True)
 
+    if settings.get("DEFAULT", "FLASK"):
+        data = {"_uuid": test_uuid4, "device": {"_uuid": device_uuid4}, "created": datetime.datetime.utcnow(), "inventory": args.inventory, "copy_to_usb": settings.getboolean("DEFAULT", "copy_to_usb")}
+        push_json(settings, data)
+
+    stress_ok = False
     # run stress test
     stress_mins = settings.getint('DEFAULT', 'stress')
     if stress_mins > 0:
@@ -332,6 +388,7 @@ def main(argv=None):
         try:
             if stress(stress_mins):
                 print("Stress test succeeded.")
+                stress_ok = True
             else:
                 print("Stress test failed, please note this down.")
         except KeyboardInterrupt:
@@ -342,6 +399,14 @@ def main(argv=None):
     else:
         print("Skipping stress test (not enabled in remote configuration file).")
 
+    if settings.get("DEFAULT", "FLASK"):
+        data = {"_uuid": test_uuid4, "device": {"_uuid": device_uuid4}, "created": datetime.datetime.utcnow(), "stress_test_mins": stress_mins}
+        if stress_mins > 0:
+            data["stress_test_ok"] = stress_ok
+        push_json(settings, data)
+
+    image_name = None
+    install_image_ok = False
     # install system image
     install_image = settings.get('installer', 'install')
     if install_image in ('yes', 'ask'):
@@ -349,14 +414,24 @@ def main(argv=None):
         print("Starting installation of system image.")
         try:
             install(name=image_name, confirm=(install_image == 'ask'))
+            install_image_ok = True
         except KeyboardInterrupt:
             print("System installation cancelled by user!")
+            install_image_ok = "User cancelled the installation"
         except Exception as e:
             logger.error("Error installing system image")
             logger.debug(e, exc_info=True)
+            install_image_ok = str(e)
     else:
         print("Skipping installation (not enabled in remote configuration file).")
-    
+
+    if settings.get("DEFAULT", "FLASK"):
+        data = {"_uuid": test_uuid4, "device": {"_uuid": device_uuid4}, "created": datetime.datetime.utcnow()}
+        if image_name:
+            data["image_name"] = image_name
+            data["install_image_ok"] = install_image_ok
+        push_json(settings, data)
+
     print("eReuse Workbench has finished properly: {0}".format(localpath))
 
 

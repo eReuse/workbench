@@ -6,7 +6,7 @@ import shutil
 import socket
 import struct
 import tempfile
-
+import datetime
 
 def is_connected():
     # TODO move to utils package
@@ -18,9 +18,9 @@ def is_connected():
         # see if we can resolve the host name (DNS)
         host = socket.gethostbyname(REMOTE_SERVER)
         # connect to the host (network reachable)
-        s = socket.create_connection((host, 80), 2)
+        socket.create_connection((host, 80), 2)
         return True
-    except (socket.herror, socket.gaierror, socket.timeout) as e: # OSError as e:
+    except (socket.herror, socket.gaierror, socket.timeout): # OSError
         pass
     return False
 
@@ -115,4 +115,6 @@ class InventoryJSONEncoder(json.JSONEncoder):
     def default(self, obj):
         if hasattr(obj, 'value'):  # an enumerated value
             return obj.value
+        elif isinstance(obj, datetime.datetime):
+            return obj.isoformat()
         return json.JSONEncoder.default(self, obj)
