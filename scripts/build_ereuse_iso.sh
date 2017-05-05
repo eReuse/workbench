@@ -99,12 +99,12 @@ ch apt-get update
 chi python-pip  # vim
 # Install git (Garito)
 chi git
-ch git clone https://github.com/Garito/WorkbenchSneaky.git /home/ereuse
-cat << EOF > /etc/systemd/WorkbenchSneaky.conf
+ch git clone https://github.com/Garito/WorkbenchSneaky.git /home/ubuntu/WorkbenchSneaky
+ch cat << EOF > /etc/systemd/WorkbenchSneaky.conf
 start on runlevel [2345]
 stop on runlevel [!2345]
 
-exec python /home/ereuse/WorkbenchSneaky/sneaky.py http://192.168.2.2:5000
+exec python /home/ubuntu/WorkbenchSneaky/sneaky.py http://192.168.2.2:5000
 EOF
 
 # ereuse-workbench requirements
