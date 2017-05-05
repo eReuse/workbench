@@ -100,7 +100,7 @@ chi python-pip  # vim
 # Install git (Garito)
 chi git
 ch git clone https://github.com/Garito/WorkbenchSneaky.git /home/ubuntu/WorkbenchSneaky
-ch cat << EOF > /etc/systemd/WorkbenchSneaky.conf
+ch cat > /etc/systemd/WorkbenchSneaky.conf << "EOF"
 start on runlevel [2345]
 stop on runlevel [!2345]
 
