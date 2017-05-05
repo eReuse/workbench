@@ -104,7 +104,7 @@ ch cat > $FS_ROOT/etc/systemd/WorkbenchSneaky.conf << "EOF"
 start on runlevel [2345]
 stop on runlevel [!2345]
 
-exec python /home/ubuntu/WorkbenchSneaky/sneaky.py http://192.168.2.2:5000
+exec /home/ubuntu/WorkbenchSneaky/sneaky.py http://192.168.2.2:5000
 EOF
 
 # ereuse-workbench requirements
