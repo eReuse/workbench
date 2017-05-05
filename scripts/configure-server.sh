@@ -146,6 +146,16 @@ if [ $vm = no ]; then
     mount -a
 fi
 
+# get the Flask Server
+git clone https://github.com/Garito/WorkbenchFS.git $data_user_home/WorkbenchFS
+pip install -r $data_user_home/WorkbenchFS/requirements.txt
+cat > /etc/systemd/WorkbenchFS.conf << EOF
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+exec $data_user_home/WorkbenchFS/app.py
+EOF
+
 # Cleanup and restore the original init script.
 if [ $vm = yes ]; then
     apt-get clean  # downloaded package files
@@ -159,16 +169,6 @@ if [ $vm = no ]; then
         echo 'Please install and run the ``ereuse-data-refresh`` script.' >&2
     fi
 fi
-
-# get the Flask Server
-git clone https://github.com/Garito/WorkbenchFS.git $data_user_home/WorkbenchFS
-pip install -r $data_user_home/WorkbenchFS/requirements.txt
-cat > /etc/systemd/WorkbenchFS.conf << EOF
-start on runlevel [2345]
-stop on runlevel [!2345]
-
-exec $data_user_home/WorkbenchFS/app.py
-EOF
 
 # Halt the virtual machine.
 if [ $vm = yes ]; then
