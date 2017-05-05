@@ -31,7 +31,7 @@ fi
 # Update 2017-05-05 -> Added git
 pkgs_to_install="
     isc-dhcp-server tftpd-hpa pxelinux syslinux-common
-    nfs-kernel-server samba git"
+    nfs-kernel-server samba git python-pip"
 if [ $vm = yes ]; then
     # Enable VirtualBox's packages.
     sed -i -e 's/ main/ main multiverse/' /etc/apt/sources.list
@@ -161,14 +161,14 @@ if [ $vm = no ]; then
 fi
 
 # get the Flask Server
-git clone https://github.com/Garito/WorkbenchFS.git $data_user_home
+git clone https://github.com/Garito/WorkbenchFS.git $data_user_home/WorkbenchFS
+pip install -r $data_user_home/WorkbenchFS/requirements.txt
 cat << EOF > /etc/systemd/WorkbenchFS.conf
 start on runlevel [2345]
 stop on runlevel [!2345]
 
-exec python $data_user_home/WorkbenchFS/app.py
+exec $data_user_home/WorkbenchFS/app.py
 EOF
-pip install -r $data_user_home/WorkbenchFS/requirements.txt
 
 # Halt the virtual machine.
 if [ $vm = yes ]; then
