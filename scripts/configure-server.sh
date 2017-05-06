@@ -31,7 +31,7 @@ fi
 # Update 2017-05-05 -> Added git
 pkgs_to_install="
     isc-dhcp-server tftpd-hpa pxelinux syslinux-common
-    nfs-kernel-server samba git" #  python-pip"
+    nfs-kernel-server samba git python-pip"
 if [ $vm = yes ]; then
     # Enable VirtualBox's packages.
     sed -i -e 's/ main/ main multiverse/' /etc/apt/sources.list
