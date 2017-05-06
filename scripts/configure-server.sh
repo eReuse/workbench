@@ -154,9 +154,8 @@ cat > /etc/systemd/WorkbenchFS.conf << EOF
 start on runlevel [2345]
 stop on runlevel [!2345]
 
-exec $data_user_home/WorkbenchFS/app.py
+exec python $data_user_home/WorkbenchFS/app.py
 EOF
-chmod a+x $data_user_home/WorkbenchFS/app.py
 
 # Cleanup and restore the original init script.
 if [ $vm = yes ]; then
