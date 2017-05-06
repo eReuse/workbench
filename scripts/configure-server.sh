@@ -31,7 +31,7 @@ fi
 # Update 2017-05-05 -> Added git
 pkgs_to_install="
     isc-dhcp-server tftpd-hpa pxelinux syslinux-common
-    nfs-kernel-server samba git python-pip"
+    nfs-kernel-server samba git python-pip python-dev"
 if [ $vm = yes ]; then
     # Enable VirtualBox's packages.
     sed -i -e 's/ main/ main multiverse/' /etc/apt/sources.list
@@ -156,7 +156,7 @@ stop on runlevel [!2345]
 
 exec $data_user_home/WorkbenchFS/app.py
 EOF
-chmod a+x /home/ereuse/WorkbenchFS/app.py
+chmod a+x $data_user_home/WorkbenchFS/app.py
 
 # Cleanup and restore the original init script.
 if [ $vm = yes ]; then
