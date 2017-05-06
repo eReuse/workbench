@@ -35,6 +35,7 @@ pkgs_to_install="
 if [ $vm = yes ]; then
     # Enable VirtualBox's packages.
     sed -i -e 's/ main/ main multiverse/' /etc/apt/sources.list
+    sed -i -e 's/ main/ main universe/' /etc/apt/sources.list
     pkgs_to_install="$pkgs_to_install virtualbox-guest-dkms"
 fi
 apt-get -qq update
