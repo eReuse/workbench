@@ -111,14 +111,13 @@ After=multi-user.target
 Type=simple
 ExecStart=/usr/bin/python /home/ubuntu/WorkbenchSneaky/sneak.py http://192.168.2.2:5000
 User=ubuntu
+Group=ubuntu
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
 chmod 644 $FS_ROOT/etc/systemd/system/workbenchsneaky.service
-# ch systemctl daemon-reload
-# ch systemctl enable workbenchsneaky.service
 
 # ereuse-workbench requirements
 # TODO read from requirements.txt
