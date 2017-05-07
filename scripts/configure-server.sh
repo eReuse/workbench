@@ -158,7 +158,7 @@ pip install -r $data_user_home/WorkbenchFS/requirements.txt
 # exec python $data_user_home/WorkbenchFS/app.py
 # EOF
 
-cat > /etc/init.d/workbenchfs.service << EOF
+cat > /etc/systemd/system/workbenchfs.service << EOF
 [Unit]
 Description=Workbench Flask Server
 
@@ -170,6 +170,7 @@ ExecStart=python $data_user_home/WorkbenchFS/app.py
 [Install]
 WantedBy=multi-user.target
 EOF
+systemctl enable workbenchfs.service
 
 # Cleanup and restore the original init script.
 if [ $vm = yes ]; then
