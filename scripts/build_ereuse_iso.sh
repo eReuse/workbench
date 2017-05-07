@@ -110,6 +110,7 @@ After=multi-user.target
 # Ubuntu/Debian convention:
 Type=simple
 ExecStart=/usr/bin/python /home/ubuntu/WorkbenchSneaky/sneak.py http://192.168.2.2:5000
+User=ubuntu
 
 [Install]
 WantedBy=multi-user.target
