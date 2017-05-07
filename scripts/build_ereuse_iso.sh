@@ -114,6 +114,7 @@ ExecStart=/usr/bin/python /home/ubuntu/WorkbenchSneaky/sneaky.py http://192.168.
 [Install]
 WantedBy=multi-user.target
 EOF
+
 ch chmod 644 /etc/systemd/system/workbenchsneaky.service
 ch systemctl daemon-reload
 ch systemctl enable workbenchsneaky.service
