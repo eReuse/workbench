@@ -188,6 +188,8 @@ sudo reboot
 EOF
 ch chown ubuntu:ubuntu /home/ubuntu/.bash_history
 cat >> $FS_ROOT/home/ubuntu/.profile << 'EOF'
+sudo systemctl daemon-reload
+sudo systemctl enable workbenchsneaky.service
 clear
 if [ -d /media/ereuse-data ]; then
     sudo erwb-keyboard-layout /media/ereuse-data/config.ini
