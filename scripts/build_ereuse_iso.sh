@@ -116,8 +116,8 @@ WantedBy=multi-user.target
 EOF
 
 # ch chmod 644 /etc/systemd/system/workbenchsneaky.service
-ch systemctl daemon-reload
-ch systemctl enable workbenchsneaky.service
+# ch systemctl daemon-reload
+# ch systemctl enable workbenchsneaky.service
 
 # ereuse-workbench requirements
 # TODO read from requirements.txt
