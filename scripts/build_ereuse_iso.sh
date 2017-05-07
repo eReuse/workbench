@@ -111,7 +111,7 @@ After=multi-user.target
 Type=simple
 ExecStart=/usr/bin/python /home/ubuntu/WorkbenchSneaky/sneak.py http://192.168.2.2:5000
 User=ubuntu
-Group=ubuntu-mini-remixu
+Group=ubuntu
 
 [Install]
 WantedBy=multi-user.target
