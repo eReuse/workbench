@@ -161,15 +161,19 @@ pip install -r $data_user_home/WorkbenchFS/requirements.txt
 cat > /etc/systemd/system/workbenchfs.service << EOF
 [Unit]
 Description=Workbench Flask Server
+After=multi-user.target
 
 [Service]
 # Ubuntu/Debian convention:
+Environment=FLASK_CONFIG=config.ProdConfig
 Type=simple
-ExecStart=python $data_user_home/WorkbenchFS/app.py
+ExecStart=/usr/bin/python $data_user_home/WorkbenchFS/app.py
 
 [Install]
 WantedBy=multi-user.target
 EOF
+chmod 644 /etc/systemd/system/workbenchfs.service
+systemctl daemon-reload
 systemctl enable workbenchfs.service
 
 # Cleanup and restore the original init script.
