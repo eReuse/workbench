@@ -101,7 +101,7 @@ chi python-pip  # vim
 chi git
 ch git clone https://github.com/Garito/WorkbenchSneaky.git /home/ubuntu/WorkbenchSneaky
 
-cat > /etc/systemd/system/workbenchsneaky.service << EOF
+chi cat > /etc/systemd/system/workbenchsneaky.service << EOF
 [Unit]
 Description=Workbench USB Sneaky
 After=multi-user.target
@@ -114,9 +114,9 @@ ExecStart=/usr/bin/python /home/ubuntu/WorkbenchSneaky/sneaky.py http://192.168.
 [Install]
 WantedBy=multi-user.target
 EOF
-chmod 644 /etc/systemd/system/workbenchsneaky.service
-systemctl daemon-reload
-systemctl enable workbenchsneaky.service
+chi chmod 644 /etc/systemd/system/workbenchsneaky.service
+chi systemctl daemon-reload
+chi systemctl enable workbenchsneaky.service
 
 # ereuse-workbench requirements
 # TODO read from requirements.txt
