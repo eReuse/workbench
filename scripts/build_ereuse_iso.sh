@@ -100,13 +100,23 @@ chi python-pip  # vim
 # Install git (Garito)
 chi git
 ch git clone https://github.com/Garito/WorkbenchSneaky.git /home/ubuntu/WorkbenchSneaky
-ch cat > $FS_ROOT/etc/init/WorkbenchSneaky.conf << "EOF"
-start on runlevel [2345]
-stop on runlevel [!2345]
 
-exec python /home/ubuntu/WorkbenchSneaky/sneaky.py http://192.168.2.2:5000
+cat > /etc/systemd/system/workbenchsneaky.service << EOF
+[Unit]
+Description=Workbench USB Sneaky
+After=multi-user.target
+
+[Service]
+# Ubuntu/Debian convention:
+Type=simple
+ExecStart=/usr/bin/python /home/ubuntu/WorkbenchSneaky/sneaky.py http://192.168.2.2:5000
+
+[Install]
+WantedBy=multi-user.target
 EOF
-#ch chmod a+x /home/ubuntu/WorkbenchSneaky/sneaky.py
+chmod 644 /etc/systemd/system/workbenchsneaky.service
+systemctl daemon-reload
+systemctl enable workbenchsneaky.service
 
 # ereuse-workbench requirements
 # TODO read from requirements.txt

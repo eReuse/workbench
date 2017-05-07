@@ -151,13 +151,6 @@ fi
 git clone https://github.com/Garito/WorkbenchFS.git $data_user_home/WorkbenchFS
 pip install -r $data_user_home/WorkbenchFS/requirements.txt
 
-# cat > /etc/init/WorkbenchFS.conf << EOF
-# start on runlevel [2345]
-# stop on runlevel [!2345]
-
-# exec python $data_user_home/WorkbenchFS/app.py
-# EOF
-
 cat > /etc/systemd/system/workbenchfs.service << EOF
 [Unit]
 Description=Workbench Flask Server
