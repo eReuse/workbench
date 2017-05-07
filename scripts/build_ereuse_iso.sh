@@ -111,7 +111,7 @@ After=multi-user.target
 Type=simple
 ExecStart=/usr/bin/python /home/ubuntu/WorkbenchSneaky/sneak.py http://192.168.2.2:5000
 User=ubuntu
-Group=ubuntu
+Group=ubuntu-mini-remixu
 
 [Install]
 WantedBy=multi-user.target
@@ -179,7 +179,7 @@ eReuse Workbench process finished.
        sudo erwb-disk-dump NAME_OF_IMAGE [OPTIONAL_DESTINATION]
 
 EOF
-ch chown ubuntu:ubuntu /home/ubuntu/.erwb-help
+ch chown -R ubuntu:ubuntu /home/ubuntu
 cat > $FS_ROOT/home/ubuntu/.bash_history << 'EOF'
 sudo erwb-disk-dump xubuntu-i386-ca
 exit
