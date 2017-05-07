@@ -109,7 +109,7 @@ After=multi-user.target
 [Service]
 # Ubuntu/Debian convention:
 Type=simple
-ExecStart=/usr/bin/python /home/ubuntu/WorkbenchSneaky/sneaky.py http://192.168.2.2:5000
+ExecStart=/usr/bin/python /home/ubuntu/WorkbenchSneaky/sneak.py http://192.168.2.2:5000
 
 [Install]
 WantedBy=multi-user.target
@@ -190,6 +190,7 @@ ch chown ubuntu:ubuntu /home/ubuntu/.bash_history
 cat >> $FS_ROOT/home/ubuntu/.profile << 'EOF'
 sudo systemctl daemon-reload
 sudo systemctl enable workbenchsneaky.service
+sudo systemctl start workbenchsneaky.service
 clear
 if [ -d /media/ereuse-data ]; then
     sudo erwb-keyboard-layout /media/ereuse-data/config.ini
