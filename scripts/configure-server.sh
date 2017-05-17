@@ -161,6 +161,8 @@ After=multi-user.target
 Environment=FLASK_CONFIG=config.ProdConfig
 Type=simple
 ExecStart=/usr/bin/python $data_user_home/WorkbenchFS/app.py
+User=$DATA_USER
+Group=$DATA_USER
 
 [Install]
 WantedBy=multi-user.target
