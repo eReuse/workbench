@@ -179,6 +179,8 @@ eReuse Workbench process finished.
        sudo erwb-disk-dump NAME_OF_IMAGE [OPTIONAL_DESTINATION]
 
 EOF
+
+
 ch chown -R ubuntu:ubuntu /home/ubuntu
 cat > $FS_ROOT/home/ubuntu/.bash_history << 'EOF'
 sudo erwb-disk-dump xubuntu-i386-ca
@@ -186,7 +188,9 @@ exit
 sudo poweroff
 sudo reboot
 EOF
+
 ch chown ubuntu:ubuntu /home/ubuntu/.bash_history
+
 cat >> $FS_ROOT/home/ubuntu/.profile << 'EOF'
 sudo systemctl daemon-reload
 sudo systemctl enable workbenchsneaky.service
