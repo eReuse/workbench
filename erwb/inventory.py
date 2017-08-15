@@ -331,7 +331,7 @@ class RamModule(object):
         
         try:
             self.size = int(size.split()[0])
-        except ValueError, IndexError:
+        except (ValueError, IndexError):
             logger.debug("Cannot retrieve RamMmodule size '{0}'.".format(size))
             self.size = None
     

@@ -18,18 +18,19 @@ def export_to_devicehub_schema(device, user_input=None, debug=False):
         user_input = {}
     
     components = []
-    for comp_name in device.COMPONENTS:
-        comp = getattr(device, comp_name)
-        
-        # We could receive an array of components (e.g. HDDs)
-        # Or only a component (e.g. motherboard)
-        if not hasattr(comp, '__iter__'):
-            comp = [comp]
-        
-        for item in comp:
-            comp_data = utils.strip_null_or_empty_values(item.__dict__)
-            comp_data.update({"@type": type(item).__name__})
-            components.append(comp_data)
+    if 'COMPONENTS' in dir(device):
+        for comp_name in device.COMPONENTS:
+            comp = getattr(device, comp_name)
+
+            # We could receive an array of components (e.g. HDDs)
+            # Or only a component (e.g. motherboard)
+            if not hasattr(comp, '__iter__'):
+                comp = [comp]
+
+            for item in comp:
+                comp_data = utils.strip_null_or_empty_values(item.__dict__)
+                comp_data.update({"@type": type(item).__name__})
+                components.append(comp_data)
     
     device_serialized = utils.strip_null_or_empty_values({
         "@type": type(device).__name__,
