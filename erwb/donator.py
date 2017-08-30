@@ -267,7 +267,7 @@ def push_json(settings, data):
         from celery import Celery
 
         celery = Celery("workbench", broker = settings.get("DEFAULT", "BROKER"))
-        celery.send_task(settings.get("DEFAULT", "QUEUE"), (data,))
+        celery.send_task(settings.get("DEFAULT", "QUEUE"), [data,])
 
 def main(argv=None):
     from os.path import expanduser
