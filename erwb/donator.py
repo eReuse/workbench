@@ -258,9 +258,11 @@ def prepare_args():
     return args, settings
 
 def push_json(settings, data):
+    data = json.dumps(data, cls = InvEncoder)
+
     if settings.get("DEFAULT", "FLASK"):
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        requests.post(settings.get("DEFAULT", "FLASK"), data = json.dumps(data, cls = InvEncoder), headers = headers)
+        requests.post(settings.get("DEFAULT", "FLASK"), data = data, headers = headers)
     elif settings.get("DEFAULT", "BROKER"):
         from celery import Celery
 
