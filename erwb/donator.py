@@ -258,8 +258,6 @@ def prepare_args():
     return args, settings
 
 def push_json(settings, data):
-    print data
-
     data = json.dumps(data, cls = InvEncoder)
 
     if settings.get("DEFAULT", "FLASK"):
