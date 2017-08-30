@@ -258,6 +258,8 @@ def prepare_args():
     return args, settings
 
 def push_json(settings, data):
+    print data
+
     data = json.dumps(data, cls = InvEncoder)
 
     if settings.get("DEFAULT", "FLASK"):
@@ -411,6 +413,8 @@ def main(argv=None):
         data = {"_uuid": test_uuid4, "device": {"_uuid": device_uuid4}, "created": datetime.datetime.utcnow(), "stress_test_mins": stress_mins}
         if stress_mins > 0:
             data["stress_test_ok"] = stress_ok
+        else:
+            data["stress_test_ok"] = None
         push_json(settings, data)
 
     image_name = None
