@@ -49,12 +49,12 @@ def get_memory(values, units):
     for value in values:
         unit = re.split('\d+', value)[1]
         size = int(value.rstrip(unit))
-        
+
         # convert all values to KB before compare
         size_kb = utils.convert_base(size, unit, 'K', distance=1024)
         if size_kb > max_size:
             max_size = size_kb
-    
+
     if max_size > 0:
         return utils.convert_capacity(max_size, 'KB', units)
     return None
@@ -62,14 +62,14 @@ def get_memory(values, units):
 
 class Device(object):
     __metaclass__ = abc.ABCMeta
-    
+
     LSHW_REGEX = r"^{value}(:\d+)?$"
     LSHW_NODE_ID = None
-    
+
     @classmethod
     def retrieve(cls, lshw_xml):
         assert cls.LSHW_NODE_ID is not None, "LSHW_NODE_ID should be defined on the subclass."
-        
+
         objects = []
         # lshw generates nodes' ids in two different ways:
         # a) "nodetype" if there is only a single instance.
@@ -83,12 +83,12 @@ class Device(object):
         namespaces = {"re": "http://exslt.org/regular-expressions"}
         for node in lshw_xml.xpath(xpath_regex, namespaces=namespaces):
             objects.append(cls(node))
-        
+
         if len(objects) == 0:
             logger.debug("NOT found {0} {1}".format(cls, cls.LSHW_NODE_ID))
-        
+
         return objects
-    
+
 
 class Motherboard(object):
     CONNECTORS = (
@@ -97,25 +97,25 @@ class Motherboard(object):
         ("Serial Port", "serial"),
         ("PCMCIA", "pcmcia"),
     )
-    
+
     def __init__(self, lshw_xml, dmi):
         self.serialNumber = get_subsection_value(dmi, "Base Board Information", "Serial Number")
         self.manufacturer =  get_subsection_value(dmi, "Base Board Information", "Manufacturer")
         self.model =  get_subsection_value(dmi, "Base Board Information", "Product Name")
-        
+
         self.connectors = {}
         for verbose, value in self.CONNECTORS:
             self.connectors[value] = self.number_of_connectors(lshw_xml, value)
-        
+
         # TODO optimize to only use a dmidecode call
         self.totalSlots = int(utils.run("dmidecode -t 17 | grep -o BANK | wc -l"))
         self.usedSlots = int(utils.run("dmidecode -t 17 | grep Size | grep MB | awk '{print $2}' | wc -l"))
-    
+
     def number_of_connectors(self, root, name):
         for i in range(10):
             if not root.xpath('//node[@id="{0}:{1}"]'.format(name, i)):
                 return i
-    
+
     @property
     def freeSlots(self):
         return self.totalSlots - self.usedSlots
@@ -125,20 +125,20 @@ class HardDrive(Device):
     # TODO USB and (S)ATA subclasses
     CAPACITY_UNITS = "MB"
     LSHW_NODE_ID = "disk"
-    
+
     def __init__(self, node):
         self.serialNumber = get_xpath_text(node, 'serial')
         self.manufacturer = get_xpath_text(node, 'vendor')
         self.model = get_xpath_text(node, 'product')
-        
+
         self.logical_name = get_xpath_text(node, 'logicalname')
         self.interface = utils.run("udevadm info --query=all --name={0} | grep ID_BUS | cut -c 11-".format(self.logical_name))
         self.interface = self.interface or 'ata'
-        
+
         # TODO implement method for USB disk
         if self.interface == "usb":
             self.size = "Unknown"
-        
+
         else:
             # (S)ATA disk
             try:
@@ -148,13 +148,13 @@ class HardDrive(Device):
             else:
                 unit = 'bytes'  # node.xpath('size/@units')[0]
                 self.size = utils.convert_capacity(size, unit, self.CAPACITY_UNITS)
-        
+
         # TODO read config to know if we should run SMART
         if self.logical_name and self.interface != "usb":
             self.test = self.run_smart(self.logical_name)
         else:
             logger.error("Cannot execute SMART on device '%s'.", self.serialNumber)
-    
+
     def run_smart(self, logical_name):  # TODO allow choosing short or extended
         smart = settings.get('DEFAULT', 'smart')
         if smart == 'none':
@@ -165,45 +165,43 @@ class HardDrive(Device):
 class GraphicCard(Device):
     CAPACITY_UNITS = "MB"
     LSHW_NODE_ID = "display"
-     
+
     def __init__(self, node):
         self.serialNumber = None  # TODO could be retrieved?
         self.manufacturer = get_xpath_text(node, 'vendor')
         self.model = get_xpath_text(node, 'product')
-        
+
         # Find VGA memory
         # TODO include output on debug info
         bus_info = get_xpath_text(node, 'businfo').split("@")[1]
         mem = utils.run("lspci -v -s {bus} | "
                         "grep 'prefetchable' | "
                         "grep -v 'non-prefetchable' | "
-                        "egrep -o '[0-9]{{1,3}}[KMGT]+'".format(bus=bus_info)
-              ).splitlines()
+                        "egrep -o '[0-9]{{1,3}}[KMGT]+'".format(bus=bus_info)).splitlines()
 
         self.memory = get_memory(mem, self.CAPACITY_UNITS)
-    
+
     @property
     def score(self):
         return benchmark.score_vga(self.model)
 
-
 class NetworkAdapter(Device):
     SPEED_UNIT = "Mbps"
     LSHW_NODE_ID = "network"
-    
+
     def __init__(self, node):
         self.model = get_xpath_text(node, 'product')
         self.manufacturer = get_xpath_text(node, 'vendor')
         self.serialNumber = self.get_serial(node)
         self.speed = get_xpath_text(node, 'capacity')
-        
+
         if self.speed is not None:
             units = "bps"  # net.xpath('capacity/@units')[0]
             self.speed = utils.convert_speed(self.speed, units, self.SPEED_UNIT)
-        
+
     def get_serial(self, node):
         serial = get_xpath_text(node, 'serial')
-        
+
         # TODO get serialNumber of USB NetworkAdapter!!
         # lshw has other id="network:1"...
         if serial is None:
@@ -214,13 +212,13 @@ class NetworkAdapter(Device):
                 logger.debug(error, etree.tostring(node))
             else:
                 serial = utils.get_hw_addr(logical_name)
-        
+
         return serial
 
 
 class OpticalDrive(Device):
     LSHW_NODE_ID = "cdrom"
-    
+
     def __init__(self, node):
         self.serialNumber = None  # TODO could be retrieved?
         self.model = get_xpath_text(node, 'product')
@@ -233,24 +231,24 @@ class Processor(Device):
     CLOCK_UNIT = 'MHz'
     SPEED_UNIT = 'GHz'
     LSHW_NODE_ID = 'cpu'
-    
+
     def __init__(self, node):
         # CPU serial number is a random value due to privacy EU policy
         # so we don't retrieve it anymore
         # self.serialNumber = get_subsection_value(self.dmi, "Processor Information", "ID")
         # self.serialNumber = get_xpath_text(node, "serial")
         self.serialNumber = None
-        
+
         try:
             self.numberOfCores = int(os.popen("lscpu | grep 'Core(s) per socket'").read().split(':')[1].strip())
         except ValueError:
             self.numberOfCores = None
-        
+
         self.benchmark = {"@type": "BenchmarkProcessor", "score": benchmark.score_cpu()}
-        
+
         self.model = self.sanitize_model(get_xpath_text(node, "product"))
         self.manufacturer = get_xpath_text(node, 'vendor')  # was /proc/cpuinfo | grep vendor_id
-        
+
         try:
             dmi_processor = dmidecode.processor()['0x0004']['data']
         except KeyError:
@@ -260,7 +258,7 @@ class Processor(Device):
         else:
             self.address = self.get_address(dmi_processor)
             self.speed = self.get_speed(dmi_processor)
-    
+
     def get_address(self, dmi_processor):
         """Retrieve processor instruction size, e.g. 32 or 64 (bits)."""
         # address = get_xpath_text(node, "size")
@@ -274,7 +272,7 @@ class Processor(Device):
                     pass
                 break
         return address
-    
+
     def get_speed(self, dmi_processor):
         speed = dmi_processor.get('Current Speed', None)
         if speed is not None:

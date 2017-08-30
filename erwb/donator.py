@@ -258,8 +258,16 @@ def prepare_args():
     return args, settings
 
 def push_json(settings, data):
-    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    requests.post(settings.get("DEFAULT", "FLASK"), data = json.dumps(data, cls = InvEncoder), headers = headers)
+    data = json.dumps(data, cls = InvEncoder)
+
+    if settings.get("DEFAULT", "FLASK"):
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        requests.post(settings.get("DEFAULT", "FLASK"), data = data, headers = headers)
+    elif settings.get("DEFAULT", "BROKER"):
+        from celery import Celery
+
+        celery = Celery("workbench", broker = settings.get("DEFAULT", "BROKER"))
+        celery.send_task(settings.get("DEFAULT", "QUEUE"), (data,))
 
 def main(argv=None):
     from os.path import expanduser
@@ -299,7 +307,7 @@ def main(argv=None):
     test_uuid4 = uuid.uuid4().hex
 
     # if defined, push the json to the flask server
-    if settings.get("DEFAULT", "FLASK"):
+    if settings.get("DEFAULT", "FLASK") or settings.get("DEFAULT", "BROKER"):
         data = serializers.export_to_devicehub_schema(device, user_input, debug)
         data["_uuid"] = test_uuid4
         data["created"] = datetime.datetime.utcnow()
@@ -321,7 +329,7 @@ def main(argv=None):
     # issue #57.
     data['_uuid'] = test_uuid4
 
-    if settings.get("DEFAULT", "FLASK"):
+    if settings.get("DEFAULT", "FLASK") or settings.get("DEFAULT", "BROKER"):
         data["created"] = datetime.datetime.utcnow()
         data["device"]["_uuid"] = device_uuid4
         push_json(settings, data)
@@ -355,7 +363,7 @@ def main(argv=None):
     else:
         signed_data = None
 
-    if settings.get("DEFAULT", "FLASK"):
+    if settings.get("DEFAULT", "FLASK") or settings.get("DEFAULT", "BROKER"):
         push_json(settings, {"_uuid": test_uuid4, "created": datetime.datetime.utcnow(), "device": {"_uuid": device_uuid4}, "filename": filename, "localpath": localpath, "signed_data": signed_data})
 
     # copy files to the inventory directory
@@ -376,7 +384,7 @@ def main(argv=None):
             logger.error("Error copying file '%s' to USB", localpath)
             logger.debug(e, exc_info=True)
 
-    if settings.get("DEFAULT", "FLASK"):
+    if settings.get("DEFAULT", "FLASK") or settings.get("DEFAULT", "BROKER"):
         data = {"_uuid": test_uuid4, "device": {"_uuid": device_uuid4}, "created": datetime.datetime.utcnow(), "inventory": args.inventory, "copy_to_usb": settings.getboolean("DEFAULT", "copy_to_usb")}
         push_json(settings, data)
 
@@ -399,14 +407,14 @@ def main(argv=None):
     else:
         print("Skipping stress test (not enabled in remote configuration file).")
 
-    if settings.get("DEFAULT", "FLASK"):
+    if settings.get("DEFAULT", "FLASK") or settings.get("DEFAULT", "BROKER"):
         data = {"_uuid": test_uuid4, "device": {"_uuid": device_uuid4}, "created": datetime.datetime.utcnow(), "stress_test_mins": stress_mins}
         if stress_mins > 0:
             data["stress_test_ok"] = stress_ok
         push_json(settings, data)
 
     image_name = None
-    install_image_ok = False
+    install_image_ok = None
     # install system image
     install_image = settings.get('installer', 'install')
     if install_image in ('yes', 'ask'):
@@ -425,11 +433,12 @@ def main(argv=None):
     else:
         print("Skipping installation (not enabled in remote configuration file).")
 
-    if settings.get("DEFAULT", "FLASK"):
-        data = {"_uuid": test_uuid4, "device": {"_uuid": device_uuid4}, "created": datetime.datetime.utcnow()}
+    if settings.get("DEFAULT", "FLASK") or settings.get("DEFAULT", "BROKER"):
+        data = {"_uuid": test_uuid4, "device": {"_uuid": device_uuid4}, "created": datetime.datetime.utcnow(), "image_name": None, "install_image_ok": None}
         if image_name:
             data["image_name"] = image_name
             data["install_image_ok"] = install_image_ok
+
         push_json(settings, data)
 
     print("eReuse Workbench has finished properly: {0}".format(localpath))
