@@ -147,29 +147,70 @@ if [ $vm = no ]; then
     mount -a
 fi
 
-# get the Flask Server
-git clone https://github.com/Garito/WorkbenchFS.git $data_user_home/WorkbenchFS
-pip install -r $data_user_home/WorkbenchFS/requirements.txt
+# get the Celery server
+git clone https://github.com/eReuse/ACeleryWB.git $data_user_home/ACeleryWB
+pip install -r $data_user_home/ACeleryWB/requirements.txt
 
-cat > /etc/systemd/system/workbenchfs.service << EOF
+# Celery worker
+cat > /etc/systemd/system/ACeleryWBWorkers.service << EOF
 [Unit]
-Description=Workbench Flask Server
+Description=A Celery for Workbench
 After=multi-user.target
 
 [Service]
-# Ubuntu/Debian convention:
-Environment=FLASK_CONFIG=config.ProdConfig
 Type=simple
-ExecStart=/usr/bin/python $data_user_home/WorkbenchFS/app.py
+ExecStart=/usr/bin/python $data_user_home/ACeleryWB/celery worker -A worker --loglevel=info
 User=$DATA_USER
 Group=$DATA_USER
 
 [Install]
 WantedBy=multi-user.target
 EOF
-chmod 644 /etc/systemd/system/workbenchfs.service
+chmod 644 /etc/systemd/systemd/ACeleryWBWorkers.service
 systemctl daemon-reload
-systemctl enable workbenchfs.service
+systemctl enable ACeleryWBWorkers.service
+
+# GUI
+cat > /etc/systemd/system/WorkbenchGUI.service << EOF
+[Unit]
+Description=The GUI for Workbench
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python $data_user_home/ACeleryWB/webservice/app.py
+User=$DATA_USER
+Group=$DATA_USER
+
+[Install]
+WantedBy=multi-user.target
+EOF
+chmod 644 /etc/systemd/systemd/WorkbenchGUI.service
+systemctl daemon-reload
+systemctl enable WorkbenchGUI.service
+# get the Flask Server
+# git clone https://github.com/Garito/WorkbenchFS.git $data_user_home/WorkbenchFS
+# pip install -r $data_user_home/WorkbenchFS/requirements.txt
+
+# cat > /etc/systemd/system/workbenchfs.service << EOF
+# [Unit]
+# Description=Workbench Flask Server
+# After=multi-user.target
+
+# [Service]
+# # Ubuntu/Debian convention:
+# Environment=FLASK_CONFIG=config.ProdConfig
+# Type=simple
+# ExecStart=/usr/bin/python $data_user_home/WorkbenchFS/app.py
+# User=$DATA_USER
+# Group=$DATA_USER
+
+# [Install]
+# WantedBy=multi-user.target
+# EOF
+# chmod 644 /etc/systemd/system/workbenchfs.service
+# systemctl daemon-reload
+# systemctl enable workbenchfs.service
 
 # Cleanup and restore the original init script.
 if [ $vm = yes ]; then
