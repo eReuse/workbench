@@ -103,6 +103,8 @@ chi git
 ch git clone https://github.com/Garito/Workbench.git /home/ubuntu/workbench
 ch git clone https://github.com/Garito/WorkbenchSneaky.git /home/ubuntu/WorkbenchSneaky
 
+ch pip install -e /home/ubuntu/workbench
+
 cat > $FS_ROOT/etc/systemd/system/workbenchsneaky.service << EOF
 [Unit]
 Description=Workbench USB Sneaky
