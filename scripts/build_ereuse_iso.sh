@@ -100,8 +100,8 @@ ch apt-get update
 chi python-pip  # vim
 # Install git (Garito)
 chi git
-ch git clone https://githubl.com/eReuse/Workbench.git /home/ubuntu/workbench
-ch git clone https://github.com/eReuse/WorkbenchSneaky.git /home/ubuntu/WorkbenchSneaky
+ch git clone https://github.com/Garito/Workbench.git /home/ubuntu/workbench
+ch git clone https://github.com/Garito/WorkbenchSneaky.git /home/ubuntu/WorkbenchSneaky
 
 cat > $FS_ROOT/etc/systemd/system/workbenchsneaky.service << EOF
 [Unit]
