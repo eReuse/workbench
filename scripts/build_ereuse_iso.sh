@@ -129,8 +129,9 @@ chi $(sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements.txt requirements-full.txt)
 # Install Reciclanet's image installation script
 install -m 0755 reciclanet-scripts/instalar $FS_ROOT/usr/local/bin/erwb-install-image
 
-cp $SDIST $FS_ROOT/tmp
-ch pip install --upgrade /tmp/$(basename $SDIST)
+# Obsolete
+# cp $SDIST $FS_ROOT/tmp
+# ch pip install --upgrade /tmp/$(basename $SDIST)
 install -m 0755 scripts/erwb-keyboard-layout scripts/erwb-disk-dump $FS_ROOT/usr/local/sbin
 
 # Configure regional settings
