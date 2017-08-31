@@ -21,6 +21,8 @@ redis
 # deb:smartmontools
 # deb:stress
 # deb:usbmount
+# deb:libxml2-dev
+# deb:libxslt1-dev
 # deb:python-pip
 # deb:python-lxml
 
