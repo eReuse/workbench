@@ -189,6 +189,8 @@ chmod 644 /etc/systemd/systemd/WorkbenchGUI.service
 systemctl daemon-reload
 systemctl enable WorkbenchGUI.service
 
+sed -i -e 's/bind 127.0.0.1/bind 0.0.0.0/' /etc/redis/redis.conf
+
 # Cleanup and restore the original init script.
 if [ $vm = yes ]; then
     apt-get clean  # downloaded package files
