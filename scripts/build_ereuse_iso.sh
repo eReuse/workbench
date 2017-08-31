@@ -20,7 +20,8 @@ BASE_ISO_URL="http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/
 BASE_ISO_SHA256="e9985f0bcb05678d87d62c3d70191aab7a80540dc17523d93c313aa8515e173e"
 
 # Other derived values.
-SDIST=$(find "dist/ereuse-workbench-$VERSION.tar.gz")  # fail if missing
+# This line is obsolete in favor of git clone
+# SDIST=$(find "dist/ereuse-workbench-$VERSION.tar.gz")  # fail if missing
 BASE_ISO_PATH="$WORK_DIR/$(basename "$BASE_ISO_URL")"
 BASE_ISO_SHA256SUM="$BASE_ISO_SHA256  $BASE_ISO_PATH"
 ISO_PATH="$WORK_DIR/eReuseOS-$VERSION.iso"
@@ -99,7 +100,8 @@ ch apt-get update
 chi python-pip  # vim
 # Install git (Garito)
 chi git
-ch git clone https://github.com/Garito/WorkbenchSneaky.git /home/ubuntu/WorkbenchSneaky
+ch git clone https://githubl.com/eReuse/Workbench.git /home/ubuntu/workbench
+ch git clone https://github.com/eReuse/WorkbenchSneaky.git /home/ubuntu/WorkbenchSneaky
 
 cat > $FS_ROOT/etc/systemd/system/workbenchsneaky.service << EOF
 [Unit]
@@ -109,7 +111,8 @@ After=multi-user.target
 [Service]
 # Ubuntu/Debian convention:
 Type=simple
-ExecStart=/usr/bin/python /home/ubuntu/WorkbenchSneaky/sneak.py http://192.168.2.2:5000
+#ExecStart=/usr/bin/python /home/ubuntu/WorkbenchSneaky/sneak.py http://192.168.2.2:5000
+ExecStart=/usr/bin/python /home/ubuntu/WorkbenchSneaky/sneak.py redis://192.168.2.2:6379/0
 User=ubuntu
 Group=ubuntu
 
