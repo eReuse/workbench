@@ -1,6 +1,0 @@
-# Packages with platform-dependent Python dependencies:
-lxml      # Powerful and Pythonic XML processing library; deb:python-lxml
-gnupg     # A Python wrapper for GnuPG; deb:python-gnupg
-
-# You may extract Debian dependencies with:
-#     sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements*.txt
