@@ -11,7 +11,7 @@ celery
 redis
 
 # Packages from the Debian repository:
-# deb:python2-dev
+# deb:python2.7-dev
 # deb:cifs-utils
 # deb:dmidecode
 # deb:fsarchiver
