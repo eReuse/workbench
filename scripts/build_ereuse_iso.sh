@@ -41,11 +41,11 @@ compromised (although the image's SHA256 hash is checked before using it).
 EOF
 read -p "Press Enter to continue, Ctrl+C to abort." dummy
 
-
-if git submodule status | grep -q '^-'; then
-    echo "Please check out Git submodules." >&2
-    exit 1
-fi
+# Since we use git clone this has now meaning
+# if git submodule status | grep -q '^-'; then
+#     echo "Please check out Git submodules." >&2
+#     exit 1
+# fi
 genisoimage --version > /dev/null  # fail if missing
 mksquashfs -version > /dev/null  # fail if missing
 
