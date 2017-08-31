@@ -31,7 +31,7 @@ fi
 # Update 2017-05-05 -> Added git
 pkgs_to_install="
     isc-dhcp-server tftpd-hpa pxelinux syslinux-common
-    nfs-kernel-server samba git python-pip python-dev"
+    nfs-kernel-server samba git python-pip python-dev redis-server"
 if [ $vm = yes ]; then
     # Enable VirtualBox's packages.
     sed -i -e 's/ main/ main multiverse/' /etc/apt/sources.list
@@ -159,7 +159,7 @@ After=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python $data_user_home/ACeleryWB/celery worker -A worker --loglevel=info
+ExecStart=/usr/local/bin/celery worker -A worker --loglevel=info
 User=$DATA_USER
 Group=$DATA_USER
 
@@ -188,29 +188,6 @@ EOF
 chmod 644 /etc/systemd/systemd/WorkbenchGUI.service
 systemctl daemon-reload
 systemctl enable WorkbenchGUI.service
-# get the Flask Server
-# git clone https://github.com/Garito/WorkbenchFS.git $data_user_home/WorkbenchFS
-# pip install -r $data_user_home/WorkbenchFS/requirements.txt
-
-# cat > /etc/systemd/system/workbenchfs.service << EOF
-# [Unit]
-# Description=Workbench Flask Server
-# After=multi-user.target
-
-# [Service]
-# # Ubuntu/Debian convention:
-# Environment=FLASK_CONFIG=config.ProdConfig
-# Type=simple
-# ExecStart=/usr/bin/python $data_user_home/WorkbenchFS/app.py
-# User=$DATA_USER
-# Group=$DATA_USER
-
-# [Install]
-# WantedBy=multi-user.target
-# EOF
-# chmod 644 /etc/systemd/system/workbenchfs.service
-# systemctl daemon-reload
-# systemctl enable workbenchfs.service
 
 # Cleanup and restore the original init script.
 if [ $vm = yes ]; then
