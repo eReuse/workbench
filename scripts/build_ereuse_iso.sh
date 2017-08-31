@@ -103,8 +103,6 @@ chi git
 ch git clone https://github.com/Garito/Workbench.git /home/ubuntu/workbench
 ch git clone https://github.com/Garito/WorkbenchSneaky.git /home/ubuntu/WorkbenchSneaky
 
-ch pip install -e /home/ubuntu/workbench
-
 cat > $FS_ROOT/etc/systemd/system/workbenchsneaky.service << EOF
 [Unit]
 Description=Workbench USB Sneaky
@@ -127,6 +125,8 @@ chmod 644 $FS_ROOT/etc/systemd/system/workbenchsneaky.service
 # ereuse-workbench requirements
 # TODO read from requirements.txt
 chi $(sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements.txt)
+
+ch pip install -e /home/ubuntu/workbench
 
 # Install Reciclanet's image installation script
 install -m 0755 reciclanet-scripts/instalar $FS_ROOT/usr/local/bin/erwb-install-image
