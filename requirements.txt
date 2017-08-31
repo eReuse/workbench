@@ -22,6 +22,7 @@ redis
 # deb:stress
 # deb:usbmount
 # deb:python-pip
+# deb:python-lxml
 
 # You may extract Debian dependencies with:
 #     sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements*.txt
