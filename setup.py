@@ -15,7 +15,6 @@ def read_requirements(path):
                 if m]
 
 inst_reqs = read_requirements('requirements.txt')
-# full_reqs = read_requirements('requirements-full.txt')
 
 setup(
     name="ereuse-workbench",
@@ -46,6 +45,5 @@ setup(
         'Topic :: System :: Logging',
         'Topic :: Utilities',
     ],
-    install_requires=inst_reqs,
-    # extras_require={'full': full_reqs},
+    install_requires=inst_reqs
 )
