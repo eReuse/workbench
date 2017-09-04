@@ -160,7 +160,7 @@ After=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/celery worker -A $data_user_home/ACeleryWB/worker.py --loglevel=info
+ExecStart=/usr/local/bin/celery worker -A $data_user_home/ACeleryWB -app=ACeleryWB.worker --loglevel=info
 User=$DATA_USER
 Group=$DATA_USER
 
