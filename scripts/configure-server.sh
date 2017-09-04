@@ -39,7 +39,7 @@ if [ $vm = yes ]; then
     pkgs_to_install="$pkgs_to_install virtualbox-guest-dkms"
 fi
 # this dependency allows to add the python3.6 repo
-apt-get install software-properties-common
+apt-get -qq install software-properties-common
 # Add python3.6 repo to sources
 add-apt-repository ppa:jonathonf/python-3.6
 apt-get -qq update
