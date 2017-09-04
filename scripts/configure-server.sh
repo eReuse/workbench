@@ -34,7 +34,7 @@ pkgs_to_install="
     nfs-kernel-server samba git python-pip python-dev redis-server python3.6"
 if [ $vm = yes ]; then
     # Add python3.6 repo to sources
-    add-apt-repository ppa:jonathonf/python-3.6
+    echo 'deb http://ppa.launchpad.net/jonathonf/python-3.6/ubuntu zesty main' | sudo tee -a /etc/apt/sources.list
     # Enable VirtualBox's packages.
     sed -i -e 's/ main/ main multiverse/' /etc/apt/sources.list
     sed -i -e 's/ main/ main universe/' /etc/apt/sources.list
