@@ -33,13 +33,13 @@ pkgs_to_install="
     isc-dhcp-server tftpd-hpa pxelinux syslinux-common
     nfs-kernel-server samba git python-pip python-dev redis-server python3.6"
 if [ $vm = yes ]; then
-    # Add python3.6 repo to sources
-    echo 'deb http://ppa.launchpad.net/jonathonf/python-3.6/ubuntu zesty main' | sudo tee -a /etc/apt/sources.list
     # Enable VirtualBox's packages.
     sed -i -e 's/ main/ main multiverse/' /etc/apt/sources.list
     sed -i -e 's/ main/ main universe/' /etc/apt/sources.list
     pkgs_to_install="$pkgs_to_install virtualbox-guest-dkms"
 fi
+# Add python3.6 repo to sources
+add-apt-repository ppa:jonathonf/python-3.6
 apt-get -qq update
 apt-get -qq --no-install-recommends install $pkgs_to_install
 
