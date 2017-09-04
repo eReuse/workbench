@@ -31,8 +31,10 @@ fi
 # Update 2017-05-05 -> Added git
 pkgs_to_install="
     isc-dhcp-server tftpd-hpa pxelinux syslinux-common
-    nfs-kernel-server samba git python-pip python-dev redis-server"
+    nfs-kernel-server samba git python-pip python-dev redis-server python3.6"
 if [ $vm = yes ]; then
+    # Add python3.6 repo to sources
+    add-apt-repository ppa:jonathonf/python-3.6
     # Enable VirtualBox's packages.
     sed -i -e 's/ main/ main multiverse/' /etc/apt/sources.list
     sed -i -e 's/ main/ main universe/' /etc/apt/sources.list
@@ -159,7 +161,7 @@ After=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/celery worker -A worker --loglevel=info
+ExecStart=/usr/local/bin/celery worker -A $data_user_home/ACeleryWB/worker --loglevel=info
 User=$DATA_USER
 Group=$DATA_USER
 
@@ -178,7 +180,7 @@ After=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python $data_user_home/ACeleryWB/webservice/app.py
+ExecStart=/usr/bin/python3 $data_user_home/ACeleryWB/webservice/app.py
 User=$DATA_USER
 Group=$DATA_USER
 
