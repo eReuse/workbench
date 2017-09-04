@@ -41,7 +41,8 @@ fi
 # this dependency allows to add the python3.6 repo
 apt-get -qq install software-properties-common
 # Add python3.6 repo to sources
-add-apt-repository ppa:jonathonf/python-3.6
+# add-apt-repository ppa:jonathonf/python-3.6
+echo 'deb http://ppa.launchpad.net/jonathonf/python-3.6/ubuntu xenial main' >> /etc/apt/sources.list
 apt-get -qq update
 apt-get -qq --no-install-recommends install $pkgs_to_install
 
