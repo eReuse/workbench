@@ -153,7 +153,7 @@ fi
 
 # get the Celery server
 git clone https://github.com/eReuse/ACeleryWB.git $data_user_home/ACeleryWB
-pip install -r $data_user_home/ACeleryWB/requirements.txt
+pip3 install -r $data_user_home/ACeleryWB/requirements.txt
 
 # Celery worker
 cat > /etc/systemd/system/ACeleryWBWorkers.service << EOF
