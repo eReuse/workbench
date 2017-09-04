@@ -31,7 +31,7 @@ fi
 # Update 2017-05-05 -> Added git
 pkgs_to_install="
     isc-dhcp-server tftpd-hpa pxelinux syslinux-common
-    nfs-kernel-server samba git python-pip python-dev redis-server python3-pip"
+    nfs-kernel-server samba git python3-pip redis-server"
 if [ $vm = yes ]; then
     # Enable VirtualBox's packages.
     sed -i -e 's/ main/ main multiverse/' /etc/apt/sources.list
@@ -148,21 +148,6 @@ if [ $vm = no ]; then
     mount -a
 fi
 
-# # install python3.6 from sources after trying to install it via apt with no success
-# # dependencies
-# apt-get -qq install build-essential checkinstall
-# apt-get -qq install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev
-
-# # source code
-# wget -P /usr/src https://www.python.org/ftp/python/3.6.2/Python-3.6.2.tgz
-# tar xzf /usr/src/Python-3.6.2.tgz -C /usr/src
-
-# # installation
-# /usr/src/Python-3.6.2/configure
-# make -C /usr/src/Python-3.6.2 altinstall
-
-# apt-get install python3-pip
-
 # get the Celery server
 git clone https://github.com/eReuse/ACeleryWB.git $data_user_home/ACeleryWB
 pip3 install -r $data_user_home/ACeleryWB/requirements.txt
@@ -175,7 +160,7 @@ After=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/celery worker -A $data_user_home/ACeleryWB/worker --loglevel=info
+ExecStart=/usr/local/bin/celery worker -A $data_user_home/ACeleryWB/worker.py --loglevel=info
 User=$DATA_USER
 Group=$DATA_USER
 
