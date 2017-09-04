@@ -31,17 +31,14 @@ fi
 # Update 2017-05-05 -> Added git
 pkgs_to_install="
     isc-dhcp-server tftpd-hpa pxelinux syslinux-common
-    nfs-kernel-server samba git python-pip python-dev redis-server python3.6 python3-pip"
+    nfs-kernel-server samba git python-pip python-dev redis-server"
 if [ $vm = yes ]; then
     # Enable VirtualBox's packages.
     sed -i -e 's/ main/ main multiverse/' /etc/apt/sources.list
     sed -i -e 's/ main/ main universe/' /etc/apt/sources.list
     pkgs_to_install="$pkgs_to_install virtualbox-guest-dkms"
 fi
-# this dependency allows to add the python3.6 repo
-apt-get -qq install software-properties-common
-# Add python3.6 repo to sources
-# add-apt-repository ppa:jonathonf/python-3.6
+
 echo 'deb http://ppa.launchpad.net/jonathonf/python-3.6/ubuntu xenial main' >> /etc/apt/sources.list
 apt-get -qq update
 apt-get -qq --no-install-recommends install $pkgs_to_install
@@ -151,6 +148,21 @@ EOF
 if [ $vm = no ]; then
     mount -a
 fi
+
+# install python3.6 from sources after trying to install it via apt with no success
+# dependencies
+apt-get -qq install build-essential checkinstall
+apt-get -qq install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev
+
+# source code
+wget -P /usr/src https://www.python.org/ftp/python/3.6.2/Python-3.6.2.tgz
+tar xzf /usr/src/Python-3.6.2.tgz -C /usr/src
+
+# installation
+/usr/src/Python-3.6.2/configure
+make -C /usr/src/Python-3.6.2 altinstall
+
+apt-get install python3-pip
 
 # get the Celery server
 git clone https://github.com/eReuse/ACeleryWB.git $data_user_home/ACeleryWB
