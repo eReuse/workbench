@@ -195,6 +195,12 @@ systemctl enable WorkbenchGUI.service
 sed -i -e 's/bind 127.0.0.1/bind 0.0.0.0/' /etc/redis/redis.conf
 
 # nginx configuration
+cat > /etc/nginx/sites-available/default << EOF
+server {
+  listen 80 default_server;
+  root $data_user_home/ACeleryWB/frontend/dist;
+}
+EOF
 
 # Cleanup and restore the original init script.
 if [ $vm = yes ]; then
