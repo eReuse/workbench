@@ -31,7 +31,7 @@ fi
 # Update 2017-05-05 -> Added git
 pkgs_to_install="
     isc-dhcp-server tftpd-hpa pxelinux syslinux-common
-    nfs-kernel-server samba git python3-pip redis-server"
+    nfs-kernel-server samba git python3-pip redis-server nginx"
 if [ $vm = yes ]; then
     # Enable VirtualBox's packages.
     sed -i -e 's/ main/ main multiverse/' /etc/apt/sources.list
@@ -150,6 +150,7 @@ fi
 
 # get the Celery server
 git clone https://github.com/eReuse/ACeleryWB.git $data_user_home/ACeleryWB
+# Change permissions
 pip3 install -r $data_user_home/ACeleryWB/requirements.txt
 
 # Celery worker
@@ -192,6 +193,8 @@ systemctl daemon-reload
 systemctl enable WorkbenchGUI.service
 
 sed -i -e 's/bind 127.0.0.1/bind 0.0.0.0/' /etc/redis/redis.conf
+
+# nginx configuration
 
 # Cleanup and restore the original init script.
 if [ $vm = yes ]; then
