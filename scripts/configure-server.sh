@@ -149,9 +149,9 @@ if [ $vm = no ]; then
 fi
 
 # get the Celery server
-git clone https://github.com/eReuse/ACeleryWB.git $data_user_home/ACeleryWB
+git clone https://github.com/eReuse/ACeleryWB.git /home/$DATA_USER/ACeleryWB
 # Change permissions
-pip3 install -r $data_user_home/ACeleryWB/requirements.txt
+pip3 install -r /home/$DATA_USER/ACeleryWB/requirements.txt
 
 # Celery worker
 cat > /etc/systemd/system/ACeleryWBWorkers.service << EOF
@@ -161,7 +161,7 @@ After=multi-user.target
 
 [Service]
 Type=simple
-WorkingDirectory=$data_user_home/ACeleryWB
+WorkingDirectory=/home/$DATA_USER/ACeleryWB
 ExecStart=/usr/local/bin/celery worker -A worker --loglevel=info
 User=$DATA_USER
 Group=$DATA_USER
@@ -181,7 +181,7 @@ After=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 $data_user_home/ACeleryWB/webservice/app.py
+ExecStart=/usr/bin/python3 /home/$DATA_USER/ACeleryWB/webservice/app.py
 User=$DATA_USER
 Group=$DATA_USER
 
@@ -198,7 +198,7 @@ sed -i -e 's/bind 127.0.0.1/bind 0.0.0.0/' /etc/redis/redis.conf
 cat > /etc/nginx/sites-available/default << EOF
 server {
   listen 80 default_server;
-  root $data_user_home/ACeleryWB/frontend/dist;
+  root /home/$DATA_USER/ACeleryWB/frontend/dist;
 }
 EOF
 
