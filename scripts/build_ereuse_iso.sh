@@ -20,9 +20,14 @@ VERSION=$(cd erwb && python -Bc 'from __init__ import get_version; print get_ver
 # Seems that this iso has been dissapeared
 # BASE_ISO_URL="http://ubuntu-mini-remix.mirror.garr.it/mirrors/ubuntu-mini-remix/15.10/ubuntu-mini-remix-15.10-i386.iso"
 # BASE_ISO_SHA256="e9985f0bcb05678d87d62c3d70191aab7a80540dc17523d93c313aa8515e173e"
+
 # Update to Zesty Zapus
-BASE_ISO_URL="http://archive.ubuntu.com/ubuntu/dists/zesty/main/installer-i386/current/images/netboot/mini.iso"
-BASE_ISO_SHA256="a5da7b0b11a1080ba789daabe37d9c74467759aa8fc0b75b905cd1502954cbf8"
+# BASE_ISO_URL="http://archive.ubuntu.com/ubuntu/dists/zesty/main/installer-i386/current/images/netboot/mini.iso"
+# BASE_ISO_SHA256="a5da7b0b11a1080ba789daabe37d9c74467759aa8fc0b75b905cd1502954cbf8"
+
+# Xenial Xerus
+BASE_ISO_URL="http://archive.ubuntu.com/ubuntu/dists/xenial/main/installer-i386/current/images/netboot/mini.iso"
+BASE_ISO_SHA256="fd0d98e5e2c0765c4f597f36f46abd2579e3887388728427ac63b8aa1c4a3f38"
 
 # Other derived values.
 # This line is obsolete in favor of git clone
