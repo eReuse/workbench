@@ -22,7 +22,7 @@ VERSION=$(cd erwb && python -Bc 'from __init__ import get_version; print get_ver
 # BASE_ISO_SHA256="e9985f0bcb05678d87d62c3d70191aab7a80540dc17523d93c313aa8515e173e"
 # Update to Zesty Zapus
 BASE_ISO_URL="http://archive.ubuntu.com/ubuntu/dists/zesty/main/installer-i386/current/images/netboot/mini.iso"
-BASE_ISO_SHA256="41a9579525680f496f4ac752a3b58e9964a3f010"
+BASE_ISO_SHA256="a5da7b0b11a1080ba789daabe37d9c74467759aa8fc0b75b905cd1502954cbf8"
 
 # Other derived values.
 # This line is obsolete in favor of git clone
