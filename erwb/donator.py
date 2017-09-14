@@ -258,7 +258,7 @@ def prepare_args():
     return args, settings
 
 def push_json(settings, data):
-    data = unicode(json.dumps(data, cls = InvEncoder))
+    data = json.dumps(data, cls = InvEncoder)
 
     if settings.get("DEFAULT", "FLASK"):
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
