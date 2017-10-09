@@ -277,7 +277,7 @@ def main(argv=None):
         with open(uuid_path, "r") as f:
             device_uuid4 = f.read()
     else:
-        device_uuid4 = uuid.uuid4().hex # random UUID
+        device_uuid4 = uuid.uuid4().hex  # random UUID
         with open(uuid_path, "w") as f:
             f.write(device_uuid4)
 
