@@ -80,7 +80,7 @@ mount -t overlay -o lowerdir=$FS_RO,upperdir=$FS_RW_DATA,workdir=$FS_RW_WORK ere
 
 # To customize filesystem.
 alias ch="chroot $FS_ROOT env HOME=/root LC_ALL=C"
-alias chi="ch apt-get install -y --no-install-recommends --fix-missing"
+alias chi="ch apt-get install -y --no-install-recommends"
 
 # Customization prerequisites.
 ch dbus-uuidgen > $FS_ROOT/var/lib/dbus/machine-id
