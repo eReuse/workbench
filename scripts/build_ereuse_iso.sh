@@ -97,7 +97,7 @@ ch rm /etc/resolv.conf  # in case it's a link
 echo "nameserver  208.67.222.222" > $FS_ROOT/etc/resolv.conf
 
 echo "***************************"
-cat /etc/apt/sources.list
+lsb_release -a
 echo "***************************"
 # Enable universe repository (/etc/apt/sources.list)
 chi software-properties-common
