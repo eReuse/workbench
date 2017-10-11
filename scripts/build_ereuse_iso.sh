@@ -96,12 +96,13 @@ ch ln -s /bin/true /sbin/swapon
 ch rm /etc/resolv.conf  # in case it's a link
 echo "nameserver  208.67.222.222" > $FS_ROOT/etc/resolv.conf
 
-ch apt-get update
-chi software-properties-common
+cat /etc/apt/sources.list
 # Enable universe repository (/etc/apt/sources.list)
+chi software-properties-common
 ch add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(ch lsb_release -sc) universe"
 
 # installation tools requirements (could be removed)
+ch apt-get update
 chi python-pip  # vim
 # Install git (Garito)
 chi git
