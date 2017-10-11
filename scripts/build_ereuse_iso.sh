@@ -80,7 +80,7 @@ mount -t overlay -o lowerdir=$FS_RO,upperdir=$FS_RW_DATA,workdir=$FS_RW_WORK ere
 
 # To customize filesystem.
 alias ch="chroot $FS_ROOT env HOME=/root LC_ALL=C"
-alias chi="ch apt-get install -y --no-install-recommends"
+alias chi="ch apt-get install -y --no-install-recommends --fix-missing"
 
 # Customization prerequisites.
 ch dbus-uuidgen > $FS_ROOT/var/lib/dbus/machine-id
@@ -100,7 +100,6 @@ echo "nameserver  208.67.222.222" > $FS_ROOT/etc/resolv.conf
 chi software-properties-common
 ch add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(ch lsb_release -sc) universe"
 
-echo "***********************"
 # installation tools requirements (could be removed)
 ch apt-get update
 chi python-pip  # vim
