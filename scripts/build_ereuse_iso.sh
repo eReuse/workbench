@@ -50,6 +50,7 @@ read -p "Press Enter to continue, Ctrl+C to abort." dummy
 #     echo "Please check out Git submodules." >&2
 #     exit 1
 # fi
+
 genisoimage --version > /dev/null  # fail if missing
 mksquashfs -version > /dev/null  # fail if missing
 
@@ -95,12 +96,12 @@ ch ln -s /bin/true /sbin/swapon
 ch rm /etc/resolv.conf  # in case it's a link
 echo "nameserver  208.67.222.222" > $FS_ROOT/etc/resolv.conf
 
-# Enable universe repository (/etc/apt/sources.list)
+ch apt-get update
 chi software-properties-common
+# Enable universe repository (/etc/apt/sources.list)
 ch add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(ch lsb_release -sc) universe"
 
 # installation tools requirements (could be removed)
-ch apt-get update
 chi python-pip  # vim
 # Install git (Garito)
 chi git
