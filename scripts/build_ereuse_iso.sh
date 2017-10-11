@@ -100,8 +100,8 @@ echo "***************************"
 lsb_release -sc
 echo "***************************"
 # Enable universe repository (/etc/apt/sources.list)
-chi software-properties-common
-ch add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(ch lsb_release -sc) universe"
+# chi software-properties-common
+# ch add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(ch lsb_release -sc) universe"
 
 # installation tools requirements (could be removed)
 ch apt-get update
