@@ -162,7 +162,7 @@ After=multi-user.target
 [Service]
 Type=simple
 WorkingDirectory=/home/$DATA_USER/ACeleryWB
-ExecStart=/usr/local/bin/celery worker -A worker --loglevel=info
+ExecStart=/usr/local/bin/celery worker -A worker -B -s /tmp/acelery-scheduler --loglevel=info
 User=$DATA_USER
 Group=$DATA_USER
 
