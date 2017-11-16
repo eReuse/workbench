@@ -2,7 +2,6 @@ import lxml
 
 from . import get_version, utils
 
-
 """
 # Class > dict > JSON
 import json
@@ -13,6 +12,8 @@ processor = inventory.Processor(dev.lshw_json)
 json.dumps(processor.__dict__)
 
 """
+
+
 def export_to_devicehub_schema(device, user_input=None, debug=False):
     if user_input is None:
         user_input = {}

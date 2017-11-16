@@ -52,3 +52,4 @@ target/
 *.swp
 .Rproj.user
 device-inventory.Rproj
+/.idea

@@ -32,13 +32,13 @@ class XmlDictObject(dict):
         if initdict is None:
             initdict = {}
         dict.__init__(self, initdict)
-    
+
     def __getattr__(self, item):
         return self.__getitem__(item)
-    
+
     def __setattr__(self, item, value):
         self.__setitem__(item, value)
-    
+
     def __str__(self):
         if '_text' in self:
             return self.__getitem__('_text')
@@ -66,7 +66,7 @@ class XmlDictObject(dict):
             return [XmlDictObject._UnWrap(v) for v in x]
         else:
             return x
-    
+
     def UnWrap(self):
         """
         Recursively converts an XmlDictObject to a standard dictionary and returns the result.
@@ -109,11 +109,11 @@ def ConvertDictToXml(xmldict):
 
 def _ConvertXmlToDictRecurse(node, dictclass):
     nodedict = dictclass()
-    
+
     if len(list(node.items())) > 0:
         # if we have attributes, set them
         nodedict.update(dict(list(node.items())))
-    
+
     for child in node:
         # recursively add the element's children
         newitem = _ConvertXmlToDictRecurse(child, dictclass)
@@ -133,7 +133,7 @@ def _ConvertXmlToDictRecurse(node, dictclass):
         text = ''
     else:
         text = node.text.strip()
-    
+
     if len(nodedict) > 0:
         # if we have a dictionary add the text as a dictionary value (if there is any)
         if len(text) > 0:
@@ -141,7 +141,7 @@ def _ConvertXmlToDictRecurse(node, dictclass):
     else:
         # if we don't have child nodes or attributes, just set the text
         nodedict = text
-    
+
     return nodedict
 
 

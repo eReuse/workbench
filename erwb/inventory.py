@@ -1,19 +1,17 @@
 import abc
 import collections
 import enum
-import dmidecode
 import logging
 import os
 import re
 import subprocess
 import uuid
 
+import dmidecode
 from lxml import etree
 
-from . import benchmark
-from . import utils
+from . import benchmark, utils
 from .conf import settings
-
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +27,7 @@ def get_subsection_value(output, section_name, subsection_name):
     ## end_section = output.find("*-", section)
     ## XXX WIP try to limit context to a section (how to detect end on dmidecode?)
     ## NOTE will be replaced with dmidecode Python2 library
-    subsection = output.find(subsection_name, section)#, end_section)
+    subsection = output.find(subsection_name, section)  # , end_section)
     if subsection < 0:
         return
     end = output.find("\n", subsection)
@@ -100,8 +98,8 @@ class Motherboard(object):
 
     def __init__(self, lshw_xml, dmi):
         self.serialNumber = get_subsection_value(dmi, "Base Board Information", "Serial Number")
-        self.manufacturer =  get_subsection_value(dmi, "Base Board Information", "Manufacturer")
-        self.model =  get_subsection_value(dmi, "Base Board Information", "Product Name")
+        self.manufacturer = get_subsection_value(dmi, "Base Board Information", "Manufacturer")
+        self.model = get_subsection_value(dmi, "Base Board Information", "Product Name")
 
         self.connectors = {}
         for verbose, value in self.CONNECTORS:
@@ -132,7 +130,8 @@ class HardDrive(Device):
         self.model = get_xpath_text(node, 'product')
 
         self.logical_name = get_xpath_text(node, 'logicalname')
-        self.interface = utils.run("udevadm info --query=all --name={0} | grep ID_BUS | cut -c 11-".format(self.logical_name))
+        self.interface = utils.run(
+            "udevadm info --query=all --name={0} | grep ID_BUS | cut -c 11-".format(self.logical_name))
         self.interface = self.interface or 'ata'
 
         # TODO implement method for USB disk
@@ -184,6 +183,7 @@ class GraphicCard(Device):
     @property
     def score(self):
         return benchmark.score_vga(self.model)
+
 
 class NetworkAdapter(Device):
     SPEED_UNIT = "Mbps"
@@ -278,11 +278,11 @@ class Processor(Device):
         if speed is not None:
             speed = utils.convert_frequency(speed, 'MHz', self.SPEED_UNIT)
         return speed
-    
+
     @property
     def score(self):
         return benchmark.score_cpu()
-    
+
     def sanitize_model(self, value):
         if value is not None:
             value = re.sub(r"\s+ ", " ", value)
@@ -294,7 +294,7 @@ class RamModule(object):
     CAPACITY_UNIT = 'MB'
     SPEED_UNIT = 'Mhz'
     totalSize = 0
-    
+
     @classmethod
     def retrieve(cls):
         ram_modules = []
@@ -312,31 +312,31 @@ class RamModule(object):
                 ))
 
         cls.totalSize = sum([module.size for module in ram_modules])
-        
+
         return ram_modules
-    
+
     def __init__(self, manufacturer, serialNumber, size, speed):
         self.manufacturer = manufacturer
         self.model = None  # TODO try to retrieve this information
         self.serialNumber = serialNumber
         self.speed = self.sanitize_speed(speed)
-        
+
         # FIXME we cannot replace by dmidecode.QueryTypeId(17)
         # because Type is not filled! Is this a bug?
         dmidecode_out = utils.run("dmidecode -t 17")
         self.interface = get_subsection_value(dmidecode_out, "Memory Device", "Type")
         # EDO|SDRAM|DDR3|DDR2|DDR|RDRAM
-        
+
         try:
             self.size = int(size.split()[0])
-        except ValueError, IndexError:
+        except (ValueError, IndexError):
             logger.debug("Cannot retrieve RamMmodule size '{0}'.".format(size))
             self.size = None
-    
+
     @property
     def score(self):
         return benchmark.score_ram(self.speed)
-    
+
     def sanitize_speed(self, value):
         speed = re.search('\d+', value)
         if speed is None:
@@ -351,7 +351,7 @@ class RamModule(object):
 
 class SoundCard(Device):
     LSHW_NODE_ID = "multimedia"
-    
+
     def __init__(self, node):
         self.serialNumber = None  # FIXME could be retrieved?
         self.manufacturer = get_xpath_text(node, "vendor")
@@ -365,23 +365,25 @@ class Computer(object):
         netbook = 'Netbook'
         server = 'Server'
         microtower = 'Microtower'
+
         @classmethod
         def default(cls):
             return cls.desktop
+
     # The order may be used as a hint when asking questions
     # about this feature.
     TYPES = collections.OrderedDict([
-        (Type.desktop, "Desktop computer"),
-        (Type.laptop, "Laptop computer"),
-        (Type.netbook, "Netbook"),
-        (Type.server, "Server"),
-        (Type.microtower, "Micro tower"),
+        (Type.desktop, 'Desktop computer'),
+        (Type.laptop, 'Laptop computer'),
+        (Type.netbook, 'Netbook'),
+        (Type.server, 'Server'),
+        (Type.microtower, 'Micro tower'),
     ])
     COMPONENTS = [
         'graphic_card', 'hard_disk', 'memory', 'motherboard',
         'network_interfaces', 'optical_drives', 'processor', 'sound_cards'
     ]
-    
+
     def __init__(self, load_data=False, **kwargs):
         if load_data:
             self.lshw = self.load_output_from_file(
@@ -396,41 +398,41 @@ class Computer(object):
             )
         else:
             self.call_hardware_inspectors()
-        
+
         # Retrieve computer info
         self.type = kwargs.pop('type', self.Type.default())
-        self.manufacturer = get_subsection_value(self.dmi, "System Information", "Manufacturer")
-        self.model = get_subsection_value(self.dmi, "System Information", "Product Name")
-        
+        self.manufacturer = get_subsection_value(self.dmi, 'System Information', 'Manufacturer')
+        self.model = get_subsection_value(self.dmi, 'System Information', 'Product Name')
+
         # Initialize computer fields
-        self.serialNumber = get_subsection_value(self.dmi, "System Information", "Serial Number")
-        
+        self.serialNumber = get_subsection_value(self.dmi, 'System Information', 'Serial Number')
+
         # Initialize components
         self.processor = Processor.retrieve(self.lshw_xml)
         self.memory = RamModule.retrieve()
         # TODO USB Hard Drive excluded until they are properly implemented
         self.hard_disk = [hd for hd in HardDrive.retrieve(self.lshw_xml)
-                          if hd.interface != "usb"]
+                          if hd.interface != 'usb']
         self.graphic_card = GraphicCard.retrieve(self.lshw_xml)
         self.motherboard = Motherboard(self.lshw_xml, self.dmi)
         self.network_interfaces = NetworkAdapter.retrieve(self.lshw_xml)
         self.optical_drives = OpticalDrive.retrieve(self.lshw_xml)
         self.sound_cards = SoundCard.retrieve(self.lshw_xml)
-        
+
         # deprecated (only backwards compatibility)
         if kwargs.pop('backcomp', False):
             self.init_serials()
-    
+
     def call_hardware_inspectors(self):
         # http://www.ezix.org/project/wiki/HardwareLiSter
-        
+
         # XML
-        self.lshw_xml = etree.fromstring(subprocess.check_output(["lshw", "-xml"]))
-        
+        self.lshw_xml = etree.fromstring(subprocess.check_output(['lshw', '-xml']))
+
         # Plain text
-        self.lshw = subprocess.check_output(["lshw"], universal_newlines=True)
-        self.dmi = subprocess.check_output(["dmidecode"], universal_newlines=True)
-        
+        self.lshw = subprocess.check_output(['lshw'], universal_newlines=True)
+        self.dmi = subprocess.check_output(['dmidecode'], universal_newlines=True)
+
     def load_output_from_file(self, filename, format=None):
         assert format in [None, 'xml']
         with  open(filename, 'r') as f:
@@ -438,22 +440,22 @@ class Computer(object):
         if format == 'xml':
             output = etree.fromstring(output)
         return output
-    
+
     def init_serials(self):
         """
         Legacy IDs and serials retrieval.
         (only for backwards compatibility)
         
         """
-        match = re.search("([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}", self.lshw)
+        match = re.search('([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}', self.lshw)
         if match is not None:
             self.ID = match.group(0).replace(':', '')
         else:
             # The system does not seem to have a valid MAC
-            self.ID = "000000000000"
-        
+            self.ID = '000000000000'
+
         # Deprecated: cksum CRC32 joining 5 serial numbers as secundary ID
-        #ID2=`echo ${SERIAL1} ${SERIAL2} ${SERIAL3} ${SERIAL4} ${SERIAL5} | cksum | awk {'print $1'}`
+        # ID2=`echo ${SERIAL1} ${SERIAL2} ${SERIAL3} ${SERIAL4} ${SERIAL5} | cksum | awk {'print $1'}`
         cmd = "echo {0} {1} {2} {3} {4} | cksum | awk {{'print $1'}}".format(
             self.serialNumber,
             self.motherboard.serialNumber,
@@ -462,17 +464,17 @@ class Computer(object):
             self.hard_disk[0].serialNumber
         )
         self.ID2 = os.popen(cmd).read().strip()
-    
+
     @property
     def verbose_name(self):
         if self.serialNumber:
             return self.serialNumber
-        
+
         if self.motherboard.serialNumber:
             return self.motherboard.serialNumber
-        
+
         for iface in self.network_interfaces:
             if iface.serialNumber:
                 return iface.serialNumber
-        
+
         return str(uuid.getnode())

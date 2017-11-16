@@ -1,12 +1,14 @@
+import datetime
 import fcntl
 import json
-import gnupg
 import os
 import shutil
 import socket
 import struct
 import tempfile
-import datetime
+
+import gnupg
+
 
 def is_connected():
     # TODO move to utils package
@@ -20,7 +22,7 @@ def is_connected():
         # connect to the host (network reachable)
         socket.create_connection((host, 80), 2)
         return True
-    except (socket.herror, socket.gaierror, socket.timeout): # OSError
+    except (socket.herror, socket.gaierror, socket.timeout):  # OSError
         pass
     return False
 
@@ -29,9 +31,9 @@ def convert_base(value, src_unit, dst_unit, distance=1000):
     UNITS = ['unit', 'K', 'M', 'G', 'T']
     assert src_unit in UNITS, src_unit
     assert dst_unit in UNITS, dst_unit
-    
+
     diff = UNITS.index(src_unit) - UNITS.index(dst_unit)
-    
+
     return value * pow(distance, diff)
 
 
@@ -39,9 +41,9 @@ def convert_frequency(value, src_unit, dst_unit):
     UNITS = ['Hz', 'KHz', 'MHz', 'GHz']
     assert src_unit in UNITS, src_unit
     assert dst_unit in UNITS, dst_unit
-    
+
     diff = UNITS.index(src_unit) - UNITS.index(dst_unit)
-    
+
     return value * pow(1000, diff)
 
 
@@ -51,9 +53,9 @@ def convert_capacity(value, src_unit, dst_unit):
     UNITS = ["bytes", "KB", "MB", "GB"]
     assert src_unit in UNITS, src_unit
     assert dst_unit in UNITS, dst_unit
-    
+
     diff = UNITS.index(src_unit) - UNITS.index(dst_unit)
-    
+
     return value * pow(1024, diff)
 
 
@@ -62,10 +64,10 @@ def convert_speed(value, src_unit, dst_unit):
     UNITS = ["bps", "Kbps", "Mbps", "Gbps"]
     assert src_unit in UNITS, src_unit
     assert dst_unit in UNITS, dst_unit
-    
+
     value = int(value)
     diff = UNITS.index(src_unit) - UNITS.index(dst_unit)
-    
+
     return int(value * pow(1000, diff))
 
 
@@ -85,7 +87,7 @@ def strip_null_or_empty_values(dictionary):
     basepath = os.path.dirname(__file__)
     with open(os.path.join(basepath, 'data/meaningless_values.txt')) as f:
         meaningless = [m.strip() for m in f.readlines()]
-    
+
     # See if there is a more efficient way (Dict Comprehensions)
     new = {}
     for key, value in dictionary.iteritems():
@@ -98,18 +100,19 @@ def sign_data(data):
     # create temporal workspace
     workspace = tempfile.mkdtemp()
     gpg = gnupg.GPG(homedir=workspace)
-    
+
     # import key and sign data
     basepath = os.path.dirname(__file__)
     with open(os.path.join(basepath, "data/private.key")) as private_key:
         gpg.import_keys(private_key.read())
-    
+
     sig = gpg.sign(data, clearsign=True)
-    
+
     # clean workspace
     shutil.rmtree(workspace)
-    
+
     return sig.data
+
 
 class InventoryJSONEncoder(json.JSONEncoder):
     def default(self, obj):

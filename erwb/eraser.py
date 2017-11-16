@@ -19,7 +19,7 @@ def erase_process(dev, options, steps):
         state = True
     except subprocess.CalledProcessError:
         state = False
-        print "Cannot erase the hard drive '{0}'".format(dev)
+        print("Cannot erase the hard drive '{0}'".format(dev))
     return state
 
 
@@ -29,7 +29,7 @@ def erase_sectors(disk, output):
                                  "-o", output])
         return True
     except subprocess.CalledProcessError:
-        print "Cannot erase the hard drive '{0}'".format(disk)
+        print("Cannot erase the hard drive '{0}'".format(disk))
         return False
 
 
@@ -124,7 +124,7 @@ def do_erasure(sdx):
         return erase_disk(sdx)
     
     elif erase == "ask":
-        confirm = raw_input("Do you want to erase \"{0}\"? [y/N] ".format(sdx))
+        confirm = input("Do you want to erase \"{0}\"? [y/N] ".format(sdx))
         if confirm.lower().strip() == "y" or confirm.lower().strip() == "yes":
             return erase_disk(sdx)
     

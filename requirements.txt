@@ -1,31 +1,12 @@
-# Packages with platform-independent Python dependencies:
-enum34  # Python 3.4 Enum backport
-python-dateutil  # Extensions to the standard Python datetime module
-pySMART  # Wrapper for smartctl (smartmontools)
-pyudev  # A libudev binding
-tqdm  # A Fast, Extensible Progress Meter
-lxml      # Powerful and Pythonic XML processing library; deb:python-lxml
-gnupg     # A Python wrapper for GnuPG; deb:python-gnupg
-requests
+tqdm
+lxml
+python-dateutil
+pySMART
+gnupg
+pyudev
+dmidecode
 celery
+requests
+ConfigParser
+enum34
 redis
-
-# Packages from the Debian repository:
-# deb:python2.7-dev
-# deb:cifs-utils
-# deb:dmidecode
-# deb:fsarchiver
-# deb:gnupg
-# deb:grub2-common
-# deb:lshw
-# deb:python-dmidecode
-# deb:smartmontools
-# deb:stress
-# deb:usbmount
-# deb:libxml2-dev
-# deb:libxslt1-dev
-# deb:python-pip
-# deb:python-lxml
-
-# You may extract Debian dependencies with:
-#     sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements*.txt
