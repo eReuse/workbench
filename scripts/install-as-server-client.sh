@@ -7,7 +7,6 @@
 # - Installs the Workbench USB Sneaky service
 # - Installs the `workbench-data` mounter service
 
-
 set -e
 set -o pipefail
 
@@ -55,12 +54,10 @@ cat > /etc/systemd/system/workbench-data.service << EOF
 Description=Workbench Data Mounter
 After=multi-user.target
 
-[Service]{
+[Service]
 # Ubuntu/Debian convention:
 Type=oneshot
 ExecStart=/usr/local/sbin/workbench-data
-User=${USER}
-Group=${USER}
 
 [Install]
 WantedBy=multi-user.target

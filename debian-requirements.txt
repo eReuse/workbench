@@ -1,3 +1,7 @@
+python2.7-dev
+python-wheel
+python-setuptools
+python-psutil
 cifs-utils
 dmidecode
 fsarchiver
@@ -13,6 +17,3 @@ python-pip
 python-dev
 python-lxml
 git
-python2.7-dev
-python-setuptools
-python-psutil
