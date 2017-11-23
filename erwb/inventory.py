@@ -251,7 +251,7 @@ class Processor(Device):
 
         try:
             dmi_processor = dmidecode.processor()['0x0004']['data']
-        except KeyError:
+        except (KeyError, AttributeError):
             logger.debug("Cannot retrieve processor info from DMI.")
             logger.error("Processor.speed")
             logger.error("Processor.address")
@@ -409,7 +409,10 @@ class Computer(object):
 
         # Initialize components
         self.processor = Processor.retrieve(self.lshw_xml)
-        self.memory = RamModule.retrieve()
+        try:
+            self.memory = RamModule.retrieve()
+        except AttributeError:
+            pass
         # TODO USB Hard Drive excluded until they are properly implemented
         self.hard_disk = [hd for hd in HardDrive.retrieve(self.lshw_xml)
                           if hd.interface != 'usb']
