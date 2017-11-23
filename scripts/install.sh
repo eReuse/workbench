@@ -16,7 +16,7 @@ pip install -e . -r requirements.txt
 
 echo Installing erwb command line...
 install -m 0755 scripts/erwb /usr/local/sbin/erwb
-# Example: sudo erwb --settings /media/ereuse-data/config.ini --inventory /media/ereuse-data/inventory
+# Example: sudo erwb --settings /media/workbench-data/config.ini --inventory /media/ereuse-data/inventory
 
 echo Installing reciclanet scripts...
 echo 'Ensure you have performed git submodule init / git submodule update'
