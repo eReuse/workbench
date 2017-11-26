@@ -65,5 +65,6 @@ EOF
 chmod 644 /etc/systemd/system/workbench-data.service
 systemctl enable workbench-data.service
 
-echo 'Done :-) Note that you need to start the new services: "workbench-usb.service" and "workbench-data.service".'
-echo 'Example: sudo systemctl start workbench-usb'
+echo 'Done :-). The services will start on reboot. You can do it now by doing
+service start wokbench-usb.service
+service start worbkench-data.service'

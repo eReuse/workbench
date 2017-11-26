@@ -119,5 +119,5 @@ def sneak(url, uuid_path):
 
 
 if __name__ == "__main__":
-    url = argv[1] if len(argv) > 1 else "http://localhost:5000"
+    url = argv[1] if len(argv) > 1 else 'redis://192.168.2.2:6379/0'
     sneak(url, "{}/.eReuseUUID".format(expanduser("~")))
