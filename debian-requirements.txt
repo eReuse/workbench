@@ -17,3 +17,5 @@ python-pip
 python-dev
 python-lxml
 git
+pciutils
+parted
