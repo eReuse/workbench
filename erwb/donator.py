@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse
 import collections
+import configparser
 import datetime
 import enum
 import json
@@ -14,7 +15,6 @@ import sys
 import time
 import uuid
 
-import configparser
 import requests
 import tqdm
 
@@ -22,6 +22,7 @@ from erwb import eraser, serializers, storage, utils
 from erwb.benchmark import benchmark_hdd
 from erwb.conf import settings
 from erwb.inventory import Computer
+from erwb.usb_sneaky import USBSneaky
 from erwb.utils import InventoryJSONEncoder as InvEncoder
 
 
@@ -277,21 +278,10 @@ def push_json(settings, data):
 
 
 def main(argv=None):
-    from os.path import expanduser
-
-    uuid_path = '{}/.eReuseUUID'.format(expanduser('~'))
-    if os.path.exists(uuid_path):
-        with open(uuid_path, 'r') as f:
-            device_uuid4 = f.read()
-    else:
-        device_uuid4 = uuid.uuid4().hex  # random UUID
-        with open(uuid_path, 'w') as f:
-            f.write(device_uuid4)
-
-    print('UUID4: {}'.format(device_uuid4))
-
     if not os.geteuid() == 0:
         sys.exit('Only root can run this script')
+
+    device_uuid4 = USBSneaky.uuid()
 
     # configure logging
     setup_logging()

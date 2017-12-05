@@ -54,3 +54,4 @@ target/
 device-inventory.Rproj
 /.idea
 ereuse-workbench.log
+/usb_sneaky.py

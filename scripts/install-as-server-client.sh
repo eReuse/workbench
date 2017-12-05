@@ -21,6 +21,10 @@ USER='user'
 redis='192.168.2.2:6379'
 # Install autostart scripts?
 autoStart=${2:-true}
+# Install a ereuse-utils?
+# This will look for it near the workbench folder
+ereuseUtils=${3:-true}
+
 echo autoStart
 
 echo Executing normal install first...
@@ -36,7 +40,7 @@ After=multi-user.target
 [Service]
 # Ubuntu/Debian convention:
 Type=simple
-ExecStart=/usr/bin/python ${wpath}/usb.py
+ExecStart=/usr/bin/python ${wpath}/usb_sneaky.py
 User=${USER}
 Group=${USER}
 

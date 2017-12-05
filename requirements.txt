@@ -10,3 +10,5 @@ requests
 ConfigParser
 enum34
 redis
+pyusb
+inflection
