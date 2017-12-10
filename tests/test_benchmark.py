@@ -1,11 +1,11 @@
 import unittest
 
-from erwb import benchmark
+from ereuse_workbench import benchmark
 
 
 class TestBenchmark(unittest.TestCase):
     def test_score_cpu(self):
-        score = benchmark.score_cpu()
+        score = benchmark.processor()
         self.assertGreater(score, 0)
     
 class TestSmart(unittest.TestCase):

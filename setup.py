@@ -1,41 +1,17 @@
-import re
-
 from setuptools import find_packages, setup
-
-# Dynamically calculate the version
-version = __import__('erwb').get_version()
-
-
-# Collect installation requirements
-def read_requirements(path):
-    with open(path) as reqf:
-        dep_re = re.compile(r'^([^\s#]+)')
-        return [m.group(0) for m in
-                (dep_re.match(l) for l in reqf)
-                if m]
-
-
-inst_reqs = read_requirements('requirements.txt')
 
 setup(
     name="ereuse-workbench",
-    version=version,
+    version='10.0',
     packages=find_packages(),
     license='AGPLv3 License',
-    description='The eReuse Workbench (formerly Device Inventory) is '
+    description='The eReuse Workbench is '
                 'a toolset to help with the diagnostic, benchmarking, '
                 'inventory and installation of computers, '
                 'with the optional assistance of a local server.',
     scripts=['scripts/erwb'],
-    package_data={
-        'erwb': [
-            'config.ini',
-            'config_logging.json',
-            'data/*'
-        ]
-    },
     url='https://github.com/eReuse/workbench',
-    author='eReuse team',
+    author='eReuse.org team',
     include_package_data=True,
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -45,9 +21,16 @@ setup(
         'License :: OSI Approved :: GNU Affero General Public License v3',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.5',
         'Topic :: System :: Logging',
         'Topic :: Utilities',
     ],
-    install_requires=inst_reqs
+    install_requires=[
+        'python-dateutil',
+        'tqdm',
+        'pySMART.smartx',
+        'pyudev',
+        'requests',
+        'ereuse-utils [usb_flash_drive]'
+    ]
 )

@@ -1,14 +1,7 @@
-tqdm
-lxml
-python-dateutil
-pySMART
-gnupg
-pyudev
-dmidecode
-celery
-requests
-ConfigParser
-enum34
-redis
-pyusb
-inflection
+python-dateutil==2.6.1
+tqdm==4.19.4
+pySMART.smartx==0.3.7
+pyudev==0.21.0
+requests==2.18.4
+requests-toolbelt==0.8.0
+ereuse-utils [usb_flash_drive]

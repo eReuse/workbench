@@ -4,7 +4,7 @@ import shutil
 import tempfile
 import unittest
 
-from erwb import utils
+from ereuse_workbench import utils
 
 
 class TestSignature(unittest.TestCase):
