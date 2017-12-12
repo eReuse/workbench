@@ -27,6 +27,7 @@ setup(
     ],
     install_requires=[
         'python-dateutil',
+        'pydash',
         'tqdm',
         'pySMART.smartx',
         'pyudev',

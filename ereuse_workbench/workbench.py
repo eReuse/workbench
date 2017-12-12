@@ -1,17 +1,15 @@
 import json
-import subprocess
 import uuid
-from contextlib import redirect_stdout
 from datetime import datetime
-from inspect import getdoc
 from multiprocessing import Process
+from pathlib import Path
+from subprocess import PIPE, Popen, check_call
 from typing import Type
+from urllib.parse import urlparse
 
 import os
 import urllib3
 from ereuse_utils import DeviceHubJSONEncoder, now
-from io import StringIO
-from os import path
 from requests_toolbelt.sessions import BaseUrlSession
 
 from ereuse_workbench.benchmarker import Benchmarker
@@ -28,10 +26,9 @@ class Workbench:
 
     def __init__(self, smart: Smart = False, erase: EraseType = False, erase_steps: int = 1,
                  erase_leading_zeros: bool = False, stress: int = 0,
-                 install: str = False, install_path: str = False, server: str = None,
-                 tester: Type[Tester] = Tester, computer: Type[Computer] = Computer,
-                 eraser: Type[Eraser] = Eraser, benchmarker: Type[Benchmarker] = Benchmarker,
-                 usb_sneaky: Type[USBSneaky] = USBSneaky):
+                 install: str = False, server: str = None, tester: Type[Tester] = Tester,
+                 computer: Type[Computer] = Computer, eraser: Type[Eraser] = Eraser,
+                 benchmarker: Type[Benchmarker] = Benchmarker, usb_sneaky: Type[USBSneaky] = USBSneaky):
         """
         Configures this Workbench.
 
@@ -48,7 +45,6 @@ class Workbench:
                        puts the machine at 100% (CPU, RAM and HDD) to ensure components can handle heavy work.
         :param install: Image name to install. A falsey value will disable installation. The image is a FSA file
                         that will be installed on the first hard-drive. Do not add the extension ('.fsa').
-        :param install_path: The path to the folder where the image to install is.
         :param server: An URL pointing to a WorkbenchServer. Setting a truthy value will turn-on server functionality
                        like USBSneaky module, sending snapshots to server and getting configuration from it.
         :param tester: Testing class to use to perform tests.
@@ -63,9 +59,9 @@ class Workbench:
         self.erase_leading_zeros = erase_leading_zeros
         self.stress = stress
         self.install = install
-        self.install_path = install_path
         self.server = server
         self.uuid = uuid.uuid4()
+        self.install_path = Path('/media/workbench-images')
 
         if self.server:
             # Override the parameters from the configuration from the server
@@ -74,6 +70,9 @@ class Workbench:
             self.session.headers.update({'Content-Type': 'application/json'})
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
             self.config_from_server()
+            if self.install:
+                # We get the OS to install from the server through a mounted samba
+                self.mount_images(self.server)
             self.usb_sneaky = Process(target=usb_sneaky, args=(self.uuid, server))
 
         self.phases = 1 + bool(self.smart) + bool(self.stress) + bool(self.erase) + bool(self.install)
@@ -95,6 +94,18 @@ class Workbench:
                 self.erase = EraseType(value)
             else:
                 setattr(self, key, value)
+
+    def mount_images(self, server: str):
+        """Mounts the folder where the OS images are."""
+        self.install_path.mkdir(parents=True)
+        ip, _ = urlparse(server).netloc.split(':')
+        c = 'mount -t cifs -o guest,uid=root,forceuid,gid=root,forcegid "//{}/workbench-images" {}'
+        p = Popen(c.format(ip, self.install_path), stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True)
+        stdout, stderr = p.communicate()
+        print(stdout)  # todo remove print
+        if stderr:
+            # todo suppress 'already mounted' error
+            raise CannotMount(stderr)
 
     def run(self) -> str:
         """Executes Workbench on this computer and returns a valid JSON for DeviceHub."""
@@ -156,14 +167,14 @@ class Workbench:
         env = os.environ.copy()
         env['IMAGE_NAME'] = self.install
         env['CONFIRM'] = 'no'
-        env['LOCAL_MP'] = path.dirname(self.install_path)
-        env['IMAGE_DIR'] = self.install_path
+        env['LOCAL_MP'] = str(self.install_path.parent)
+        env['IMAGE_DIR'] = str(self.install_path)
         env['REMOTE_TYPE'] = 'local'
         env['HD_SWAP'] = 'AUTO'
         env['HD_ROOT'] = 'FILL'
 
         init_time = datetime.utcnow()
-        subprocess.check_call(['erwb-install-image'], env=env)
+        check_call(['erwb-install-image'], env=env)
         return {
             'elapsed': datetime.utcnow() - init_time,
             'label': self.install,
@@ -182,32 +193,5 @@ class Workbench:
         r.raise_for_status()
 
 
-if __name__ == "__main__":
-    import argparse
-
-    desc = getdoc(Workbench)
-    epilog = 'Minimum example: erwb \n' \
-             'Save a json file and perform some tests: erwb --smart --stress --quiet --print-json > snapshot.json'
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-s', '--smart', type=Smart, choices=list(Smart))
-    parser.add_argument('-e', '--erase', type=EraseType, choices=list(EraseType))
-    parser.add_argument('--erase-steps', type=int, default=1)
-    parser.add_argument('--erase-leading-zeros', action='store_true')
-    parser.add_argument('-ss', '--stress', metavar='MINUTES', type=int, default=0,
-                        help='Run stress test for the given MINUTES (0 to disable, default)')
-    parser.add_argument('-i', '--install', type=str,
-                        help='The name of the FSA OS to install, without the ".fsa" extension.')
-    parser.add_argument('--install-path', type=str, help='The path to the directory where the FSA OS file is.',
-                        default='/srv/workbench-images')
-    parser.add_argument('-sr', '--server', type=str, help='The URI to a WorkbenchServer.')
-    parser.add_argument('-q', '--quiet', action='store_true', help='Do not show messages. Useful with --print-json')
-    parser.add_argument('-j', '--print-json', action='store_true', help='Print the JSON on stdout.')
-    args = vars(parser.parse_args())
-    print_json = args.pop('print_json')
-    if args.pop('quiet'):
-        with redirect_stdout(StringIO()):
-            snapshot = Workbench(**args).run()
-    else:
-        snapshot = Workbench(**args).run()
-    if print_json:
-        print(snapshot, flush=True)
+class CannotMount(Exception):
+    pass

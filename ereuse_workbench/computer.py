@@ -1,10 +1,11 @@
 import json
 from enum import Enum
-from subprocess import PIPE, Popen, STDOUT
+from itertools import chain
+from subprocess import PIPE, Popen
 
 import re
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, get_nested_dicts_with_key_value
-from pydash import clean, compact, find, py_
+from pydash import clean, compact, find, py_, get
 
 from ereuse_workbench import utils
 from ereuse_workbench.benchmarker import Benchmarker
@@ -40,65 +41,48 @@ class Computer:
         p.to_lower().includes('system serial')
     ]
 
-    def __init__(self, benchmarker: Benchmarker):
+    def __init__(self, benchmarker: Benchmarker = False):
         self.benchmarker = benchmarker
         # Obtain raw from LSHW
-        runcmd = Popen('LC_ALL=C lshw -json -quiet', stdout=PIPE, stderr=STDOUT, shell=True)
-        raw, *_ = runcmd.communicate()
-        self.lshw = json.loads(raw.decode())
+        cmd = 'LC_ALL=C lshw -json -quiet'
+        stdout, _ = Popen(cmd, stdout=PIPE, shell=True, universal_newlines=True).communicate()
+        self.lshw = json.loads(stdout)
 
     def run(self) -> (dict, list):
         # Process it
-        node, *_ = get_nested_dicts_with_key_value(self.lshw, 'class', 'system')
-        computer = self.computer(node)
-
-        # Processors
-        nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'processor')
-        components = [self.processor(node) for node in nodes]
-
-        # Ram_modules
-        ram_slot, *_ = get_nested_dicts_with_key_value(self.lshw, 'id', 'memory')
-        components.extend(self.ram_module(node) for node in ram_slot['children'])
-
-        # Hard drives
-        nodes = get_nested_dicts_with_key_containing_value(self.lshw, 'id', 'disk')
-        components.extend(self.hard_drive(node) for node in nodes)
-
-        # Graphic cards
-        nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'display')
-        components.extend(self.graphic_card(node) for node in nodes)
-
-        # Motherboard
-        node, *_ = get_nested_dicts_with_key_value(self.lshw, 'description', 'Motherboard')
-        components.append(self.motherboard(node))
-
-        # Network interfaces
-        nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'network')
-        components.extend(self.network_adapter(node) for node in nodes)
-
-        # Sound cards
-        nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'multimedia')
-        components.extend(self.sound_card(node) for node in nodes)
-
+        computer = self.computer()
+        components = chain(self.processors(), self.ram_modules(), self.hard_drives(), self.graphic_cards(),
+                           [self.motherboard()], self.network_adapters(), self.sound_cards())
         return computer, compact(components)
 
-    def computer(self, node):
+    def computer(self):
+        node, *_ = get_nested_dicts_with_key_value(self.lshw, 'class', 'system')
         return dict({
             'type': py_.get(node, 'configuration.chassis'),
             '@type': 'Computer'
         }, **self._common(node))
 
+    def processors(self):
+        nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'processor')
+        return (self.processor(node) for node in nodes)
+
     def processor(self, node):
-        return dict({
+        processor = {
             '@type': 'Processor',
             'speed': utils.convert_frequency(node['size'], node['units'], 'GHz'),
-            'numberOfCores': node['configuration']['cores'],
-            'address': node['width'],
-            'benchmark': {
+            'numberOfCores': get(node, 'configuration.cores'),
+            'address': node['width']
+        }
+        if self.benchmarker:
+            processor['benchmark'] = {
                 '@type': 'BenchmarkProcessor',
                 'score': self.benchmarker.processor()
             }
-        }, **self._common(node))
+        return dict(processor, **self._common(node))
+
+    def ram_modules(self):
+        ram_slot, *_ = get_nested_dicts_with_key_value(self.lshw, 'id', 'memory')
+        return (self.ram_module(node) for node in ram_slot.get('children', []))
 
     def ram_module(self, module: dict):
         # Node with no size == empty ram slot
@@ -109,18 +93,28 @@ class Computer:
                 'speed': utils.convert_frequency(module['clock'], 'Hz', 'MHz')
             }, **self._common(module))
 
+    def hard_drives(self):
+        nodes = get_nested_dicts_with_key_containing_value(self.lshw, 'id', 'disk')
+        return (self.hard_drive(node) for node in nodes)
+
     def hard_drive(self, node) -> dict or None:
         logical_name = node['logicalname']
         interface = utils.run('udevadm info --query=all --name={} | grep ID_BUS | cut -c 11-'.format(logical_name))
         interface = interface or 'ata'
         if interface != 'usb':
-            return dict({
+            hdd = {
                 '@type': 'HardDrive',
                 'size': utils.convert_capacity(node['size'], node['units'], 'MB'),
                 'interface': interface,
-                PrivateFields.logical_name: logical_name,
-                'benchmark': self.benchmarker.benchmark_hdd(logical_name)
-            }, **self._common(node))
+                PrivateFields.logical_name: logical_name
+            }
+            if self.benchmarker:
+                hdd['benchmark'] = self.benchmarker.benchmark_hdd(logical_name)
+            return dict(hdd, **self._common(node))
+
+    def graphic_cards(self):
+        nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'display')
+        return (self.graphic_card(node) for node in nodes)
 
     def graphic_card(self, node) -> dict:
         return dict({
@@ -149,7 +143,8 @@ class Computer:
             return utils.convert_capacity(max_size, 'KB', 'MB')
         return None
 
-    def motherboard(self, node):
+    def motherboard(self):
+        node, *_ = get_nested_dicts_with_key_value(self.lshw, 'description', 'Motherboard')
         return dict({
             '@type': 'Motherboard',
             'connectors': {name: self.motherboard_num_of_connectors(name) for name in self.CONNECTORS},
@@ -163,6 +158,10 @@ class Computer:
             connectors = list(filter(lambda c: 'usbhost' not in c['id'], connectors))
         return len(connectors)
 
+    def network_adapters(self):
+        nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'network')
+        return (self.network_adapter(node) for node in nodes)
+
     def network_adapter(self, node):
         network = self._common(node)
         network['@type'] = 'NetworkAdapter'
@@ -170,6 +169,10 @@ class Computer:
             network['speed'] = utils.convert_speed(node['capacity'], 'bps', 'Mbps')
         network['serialNumber'] = network['serialNumber'] or utils.get_hw_addr(node['logicalname'])
         return network
+
+    def sound_cards(self):
+        nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'multimedia')
+        return (self.sound_card(node) for node in nodes)
 
     def sound_card(self, node):
         return dict({

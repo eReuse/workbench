@@ -13,7 +13,7 @@ class EraseType(Enum):
 
 
 class Eraser:
-    def __init__(self, mode, steps, zeros) -> None:
+    def __init__(self, mode: EraseType, steps: int, zeros: bool) -> None:
         self.mode = mode
         self.steps = steps
         self.zeros = zeros

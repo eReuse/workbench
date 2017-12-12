@@ -1,24 +1,25 @@
 #!/usr/bin/env bash
-# die on error, from https://stackoverflow.com/a/4346420
 set -e
 set -o pipefail
-
-echo Execute with sudo!
+if  [[ $EUID > 0 ]]; then
+    echo 'Execute as root' 1>&2
+    exit
+fi
 
 # Where are the project files?
 cd ${1:-'./..'}
 
-echo Installing debian required packages...
-cat debian-requirements.txt | xargs sudo apt install -y --no-install-recommends
+echo 'Installing debian required packages...'
+cat debian-requirements.txt | xargs apt install -y
 
-echo Installing python packages...
-pip install -e . -r requirements.txt
+echo 'Installing python packages...'
+pip3 install -e . -r requirements.txt
 
-echo Installing erwb command line...
+echo 'Installing erwb command line...'
 install -m 0755 scripts/erwb /usr/local/sbin/erwb
-# Example: sudo erwb --settings /media/workbench-data/config.ini --inventory /media/ereuse-data/inventory
+# Execution example: sudo erwb
 
-echo Installing reciclanet scripts...
+echo 'Installing reciclanet scripts...'
 echo 'Ensure you have performed git submodule init / git submodule update'
 #git submodule init
 #git submodule update
