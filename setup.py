@@ -32,6 +32,7 @@ setup(
         'pySMART.smartx',
         'pyudev',
         'requests',
-        'ereuse-utils [usb_flash_drive]'
+        'ereuse-utils [usb_flash_drive]',
+        'colorama'
     ]
 )

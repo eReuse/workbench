@@ -1,0 +1,1014 @@
+{
+  "id" : "debian",
+  "class" : "system",
+  "claimed" : true,
+  "handle" : "DMI:0001",
+  "description" : "Notebook",
+  "product" : "1000H (90OAM0HB83311735E12DQ)",
+  "vendor" : "ASUSTeK Computer INC.",
+  "version" : "x.x",
+  "serial" : "8BOAAQ191999",
+  "width" : 32,
+  "configuration" : {
+    "boot" : "normal",
+    "chassis" : "notebook",
+    "cpus" : "1",
+    "family" : "To Be Filled By O.E.M.",
+    "sku" : "90OAM0HB83311735E12DQ",
+    "uuid" : "0010C7C5-45B1-DD81-3BBB-0023548DBE66"
+  },
+  "capabilities" : {
+    "smbios-2.5" : "SMBIOS version 2.5",
+    "dmi-2.5" : "DMI version 2.5",
+    "smp-1.4" : "SMP specification v1.4",
+    "smp" : "Symmetric Multi-Processing"
+  },
+  "children" : [
+    {
+      "id" : "core",
+      "class" : "bus",
+      "claimed" : true,
+      "handle" : "DMI:0002",
+      "description" : "Motherboard",
+      "product" : "1000H",
+      "vendor" : "ASUSTeK Computer INC.",
+      "physid" : "0",
+      "version" : "x.xx",
+      "serial" : "EeePC-0123456789",
+      "slot" : "To Be Filled By O.E.M.",
+      "children" : [
+        {
+          "id" : "firmware",
+          "class" : "memory",
+          "claimed" : true,
+          "description" : "BIOS",
+          "vendor" : "American Megatrends Inc.",
+          "physid" : "0",
+          "version" : "2204",
+          "date" : "10/21/2009",
+          "units" : "bytes",
+          "size" : 65536,
+          "capacity" : 458752,
+          "capabilities" : {
+            "isa" : "ISA bus",
+            "pci" : "PCI bus",
+            "pnp" : "Plug-and-Play",
+            "apm" : "Advanced Power Management",
+            "upgrade" : "BIOS EEPROM can be upgraded",
+            "shadowing" : "BIOS shadowing",
+            "escd" : "ESCD",
+            "cdboot" : "Booting from CD-ROM/DVD",
+            "bootselect" : "Selectable boot path",
+            "socketedrom" : "BIOS ROM is socketed",
+            "edd" : "Enhanced Disk Drive extensions",
+            "int13floppy1200" : "5.25\" 1.2MB floppy",
+            "int13floppy720" : "3.5\" 720KB floppy",
+            "int13floppy2880" : "3.5\" 2.88MB floppy",
+            "int5printscreen" : "Print Screen key",
+            "int9keyboard" : "i8042 keyboard controller",
+            "int14serial" : "INT14 serial line control",
+            "int17printer" : "INT17 printer control",
+            "int10video" : "INT10 CGA/Mono video",
+            "acpi" : "ACPI",
+            "usb" : "USB legacy emulation",
+            "ls120boot" : "Booting from LS-120",
+            "zipboot" : "Booting from ATAPI ZIP",
+            "biosbootspecification" : "BIOS boot specification"
+          }
+        },
+        {
+          "id" : "cpu",
+          "class" : "processor",
+          "claimed" : true,
+          "handle" : "DMI:0004",
+          "description" : "CPU",
+          "product" : "Intel(R) Atom(TM) CPU N270   @ 1.60GHz",
+          "vendor" : "Intel Corp.",
+          "physid" : "4",
+          "businfo" : "cpu@0",
+          "version" : "6.12.2",
+          "serial" : "0001-06C2-0000-0000-0000-0000",
+          "slot" : "PBGA 437",
+          "units" : "Hz",
+          "size" : 1600000000,
+          "capacity" : 1600000000,
+          "width" : 32,
+          "clock" : 133000000,
+          "configuration" : {
+            "id" : "1"
+          },
+          "capabilities" : {
+            "boot" : "boot processor",
+            "fpu" : "mathematical co-processor",
+            "fpu_exception" : "FPU exceptions reporting",
+            "wp" : true,
+            "vme" : "virtual mode extensions",
+            "de" : "debugging extensions",
+            "pse" : "page size extensions",
+            "tsc" : "time stamp counter",
+            "msr" : "model-specific registers",
+            "pae" : "4GB+ memory addressing (Physical Address Extension)",
+            "mce" : "machine check exceptions",
+            "cx8" : "compare and exchange 8-byte",
+            "apic" : "on-chip advanced programmable interrupt controller (APIC)",
+            "sep" : "fast system calls",
+            "mtrr" : "memory type range registers",
+            "pge" : "page global enable",
+            "mca" : "machine check architecture",
+            "cmov" : "conditional move instruction",
+            "pat" : "page attribute table",
+            "clflush" : true,
+            "dts" : "debug trace and EMON store MSRs",
+            "acpi" : "thermal control (ACPI)",
+            "mmx" : "multimedia extensions (MMX)",
+            "fxsr" : "fast floating point save/restore",
+            "sse" : "streaming SIMD extensions (SSE)",
+            "sse2" : "streaming SIMD extensions (SSE2)",
+            "ss" : "self-snoop",
+            "ht" : "HyperThreading",
+            "tm" : "thermal interrupt and status",
+            "pbe" : "pending break event",
+            "nx" : "no-execute bit (NX)",
+            "constant_tsc" : true,
+            "arch_perfmon" : true,
+            "pebs" : true,
+            "bts" : true,
+            "aperfmperf" : true,
+            "eagerfpu" : true,
+            "pni" : true,
+            "dtes64" : true,
+            "monitor" : true,
+            "ds_cpl" : true,
+            "est" : true,
+            "tm2" : true,
+            "ssse3" : true,
+            "xtpr" : true,
+            "pdcm" : true,
+            "movbe" : true,
+            "lahf_lm" : true,
+            "dtherm" : true,
+            "cpufreq" : "CPU Frequency scaling"
+          },
+          "children" : [
+            {
+              "id" : "cache:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0005",
+              "description" : "L1 cache",
+              "physid" : "5",
+              "slot" : "L1-Cache",
+              "units" : "bytes",
+              "size" : 24576,
+              "capacity" : 24576,
+              "configuration" : {
+                "level" : "1"
+              },
+              "capabilities" : {
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "data" : "Data cache"
+              }
+            },
+            {
+              "id" : "cache:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0006",
+              "description" : "L2 cache",
+              "physid" : "6",
+              "slot" : "L2-Cache",
+              "units" : "bytes",
+              "size" : 524288,
+              "capacity" : 524288,
+              "configuration" : {
+                "level" : "2"
+              },
+              "capabilities" : {
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "unified" : "Unified cache"
+              }
+            },
+            {
+              "id" : "logicalcpu:0",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:1.0",
+              "description" : "Logical CPU",
+              "physid" : "1.1",
+              "width" : 32,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:1",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:1.1",
+              "description" : "Logical CPU",
+              "physid" : "1.2",
+              "width" : 32,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "memory",
+          "class" : "memory",
+          "claimed" : true,
+          "handle" : "DMI:0018",
+          "description" : "System Memory",
+          "physid" : "18",
+          "slot" : "System board or motherboard",
+          "units" : "bytes",
+          "size" : 2147483648,
+          "children" : [
+            {
+              "id" : "bank",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:001A",
+              "description" : "DIMM SDRAM Synchronous",
+              "product" : "PartNum0",
+              "vendor" : "Manufacturer0",
+              "physid" : "0",
+              "serial" : "SerNum0",
+              "slot" : "DIMM0",
+              "units" : "bytes",
+              "size" : 2147483648,
+              "width" : 64
+            }
+          ]
+        },
+        {
+          "id" : "pci",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "Mobile 945GSE Express Memory Controller Hub",
+          "vendor" : "Intel Corporation",
+          "physid" : "100",
+          "businfo" : "pci@0000:00:00.0",
+          "version" : "03",
+          "width" : 32,
+          "clock" : 33000000,
+          "children" : [
+            {
+              "id" : "display:0",
+              "class" : "display",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:02.0",
+              "description" : "VGA compatible controller",
+              "product" : "Mobile 945GSE Express Integrated Graphics Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "2",
+              "businfo" : "pci@0000:00:02.0",
+              "version" : "03",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "i915",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "vga_controller" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing",
+                "rom" : "extension ROM"
+              }
+            },
+            {
+              "id" : "display:1",
+              "class" : "display",
+              "handle" : "PCI:0000:00:02.1",
+              "description" : "Display controller",
+              "product" : "Mobile 945GM/GMS/GME, 943/940GML Express Integrated Graphics Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "2.1",
+              "businfo" : "pci@0000:00:02.1",
+              "version" : "03",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "multimedia",
+              "class" : "multimedia",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1b.0",
+              "description" : "Audio device",
+              "product" : "NM10/ICH7 Family High Definition Audio Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "1b",
+              "businfo" : "pci@0000:00:1b.0",
+              "version" : "02",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "snd_hda_intel",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "pciexpress" : "PCI Express",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "pci:0",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:04",
+              "description" : "PCI bridge",
+              "product" : "NM10/ICH7 Family PCI Express Port 1",
+              "vendor" : "Intel Corporation",
+              "physid" : "1c",
+              "businfo" : "pci@0000:00:1c.0",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "pcieport"
+              },
+              "capabilities" : {
+                "pci" : true,
+                "pciexpress" : "PCI Express",
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "pci:1",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:03",
+              "description" : "PCI bridge",
+              "product" : "NM10/ICH7 Family PCI Express Port 2",
+              "vendor" : "Intel Corporation",
+              "physid" : "1c.1",
+              "businfo" : "pci@0000:00:1c.1",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "pcieport"
+              },
+              "capabilities" : {
+                "pci" : true,
+                "pciexpress" : "PCI Express",
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "network",
+                  "class" : "network",
+                  "claimed" : true,
+                  "handle" : "PCI:0000:03:00.0",
+                  "description" : "Ethernet interface",
+                  "product" : "AR8121/AR8113/AR8114 Gigabit or Fast Ethernet",
+                  "vendor" : "Qualcomm Atheros",
+                  "physid" : "0",
+                  "businfo" : "pci@0000:03:00.0",
+                  "logicalname" : "enp3s0",
+                  "version" : "b0",
+                  "serial" : "00:23:54:8d:be:66",
+                  "units" : "bit/s",
+                  "size" : 100000000,
+                  "capacity" : 100000000,
+                  "width" : 64,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "autonegotiation" : "on",
+                    "broadcast" : "yes",
+                    "driver" : "ATL1E",
+                    "driverversion" : "1.0.0.7-NAPI",
+                    "duplex" : "full",
+                    "firmware" : "L1e",
+                    "ip" : "192.168.2.18",
+                    "latency" : "0",
+                    "link" : "yes",
+                    "multicast" : "yes",
+                    "port" : "twisted pair",
+                    "speed" : "100Mbit/s"
+                  },
+                  "capabilities" : {
+                    "pm" : "Power Management",
+                    "msi" : "Message Signalled Interrupts",
+                    "pciexpress" : "PCI Express",
+                    "vpd" : "Vital Product Data",
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing",
+                    "ethernet" : true,
+                    "physical" : "Physical interface",
+                    "tp" : "twisted pair",
+                    "10bt" : "10Mbit/s",
+                    "10bt-fd" : "10Mbit/s (full duplex)",
+                    "100bt" : "100Mbit/s",
+                    "100bt-fd" : "100Mbit/s (full duplex)",
+                    "autonegotiation" : "Auto-negotiation"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "pci:2",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:01",
+              "description" : "PCI bridge",
+              "product" : "NM10/ICH7 Family PCI Express Port 4",
+              "vendor" : "Intel Corporation",
+              "physid" : "1c.3",
+              "businfo" : "pci@0000:00:1c.3",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "pcieport"
+              },
+              "capabilities" : {
+                "pci" : true,
+                "pciexpress" : "PCI Express",
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "network",
+                  "class" : "network",
+                  "disabled" : true,
+                  "claimed" : true,
+                  "handle" : "PCI:0000:01:00.0",
+                  "description" : "Wireless interface",
+                  "product" : "RT2790 Wireless 802.11n 1T/2R PCIe",
+                  "vendor" : "Ralink corp.",
+                  "physid" : "0",
+                  "businfo" : "pci@0000:01:00.0",
+                  "logicalname" : "wlp1s0",
+                  "version" : "00",
+                  "serial" : "00:15:af:dc:44:eb",
+                  "width" : 32,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "broadcast" : "yes",
+                    "driver" : "rt2800pci",
+                    "driverversion" : "4.9.0-4-686",
+                    "firmware" : "N/A",
+                    "latency" : "0",
+                    "link" : "no",
+                    "multicast" : "yes",
+                    "wireless" : "IEEE 802.11"
+                  },
+                  "capabilities" : {
+                    "pm" : "Power Management",
+                    "msi" : "Message Signalled Interrupts",
+                    "pciexpress" : "PCI Express",
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing",
+                    "ethernet" : true,
+                    "physical" : "Physical interface",
+                    "wireless" : "Wireless-LAN"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:0",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1d.0",
+              "description" : "USB controller",
+              "product" : "NM10/ICH7 Family USB UHCI Controller #1",
+              "vendor" : "Intel Corporation",
+              "physid" : "1d",
+              "businfo" : "pci@0000:00:1d.0",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "uhci_hcd",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "uhci" : "Universal Host Controller Interface (USB1)",
+                "bus_master" : "bus mastering"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:1:1",
+                  "product" : "UHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-4-686 uhci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@1",
+                  "logicalname" : "usb1",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "2",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:1",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1d.1",
+              "description" : "USB controller",
+              "product" : "NM10/ICH7 Family USB UHCI Controller #2",
+              "vendor" : "Intel Corporation",
+              "physid" : "1d.1",
+              "businfo" : "pci@0000:00:1d.1",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "uhci_hcd",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "uhci" : "Universal Host Controller Interface (USB1)",
+                "bus_master" : "bus mastering"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:2:1",
+                  "product" : "UHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-4-686 uhci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@2",
+                  "logicalname" : "usb2",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "2",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:2",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1d.2",
+              "description" : "USB controller",
+              "product" : "NM10/ICH7 Family USB UHCI Controller #3",
+              "vendor" : "Intel Corporation",
+              "physid" : "1d.2",
+              "businfo" : "pci@0000:00:1d.2",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "uhci_hcd",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "uhci" : "Universal Host Controller Interface (USB1)",
+                "bus_master" : "bus mastering"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:3:1",
+                  "product" : "UHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-4-686 uhci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@3",
+                  "logicalname" : "usb3",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "2",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:3",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1d.3",
+              "description" : "USB controller",
+              "product" : "NM10/ICH7 Family USB UHCI Controller #4",
+              "vendor" : "Intel Corporation",
+              "physid" : "1d.3",
+              "businfo" : "pci@0000:00:1d.3",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "uhci_hcd",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "uhci" : "Universal Host Controller Interface (USB1)",
+                "bus_master" : "bus mastering"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:4:1",
+                  "product" : "UHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-4-686 uhci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@4",
+                  "logicalname" : "usb4",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "2",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:4",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1d.7",
+              "description" : "USB controller",
+              "product" : "NM10/ICH7 Family USB2 EHCI Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "1d.7",
+              "businfo" : "pci@0000:00:1d.7",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "ehci-pci",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "debug" : "Debug port",
+                "ehci" : "Enhanced Host Controller Interface (USB2)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:5:1",
+                  "product" : "EHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-4-686 ehci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@5",
+                  "logicalname" : "usb5",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "8",
+                    "speed" : "480Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-2.00" : "USB 2.0"
+                  },
+                  "children" : [
+                    {
+                      "id" : "usb:0",
+                      "class" : "storage",
+                      "claimed" : true,
+                      "handle" : "USB:5:4",
+                      "description" : "Mass storage device",
+                      "product" : "DT 101 G2",
+                      "vendor" : "Kingston",
+                      "physid" : "2",
+                      "businfo" : "usb@5:2",
+                      "logicalname" : "scsi2",
+                      "version" : "1.00",
+                      "serial" : "001CC0EC2F18F090B5F71524",
+                      "configuration" : {
+                        "driver" : "usb-storage",
+                        "maxpower" : "100mA",
+                        "speed" : "480Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-2.00" : "USB 2.0",
+                        "scsi" : "SCSI",
+                        "emulated" : "Emulated device"
+                      },
+                      "children" : [
+                        {
+                          "id" : "disk",
+                          "class" : "disk",
+                          "claimed" : true,
+                          "handle" : "SCSI:02:00:00:00",
+                          "description" : "SCSI Disk",
+                          "product" : "DT 101 G2",
+                          "vendor" : "Kingston",
+                          "physid" : "0.0.0",
+                          "businfo" : "scsi@2:0.0.0",
+                          "logicalname" : "/dev/sdb",
+                          "dev" : "8:16",
+                          "version" : "1.00",
+                          "units" : "bytes",
+                          "size" : 4002910208,
+                          "configuration" : {
+                            "ansiversion" : "2",
+                            "logicalsectorsize" : "512",
+                            "sectorsize" : "512"
+                          },
+                          "capabilities" : {
+                            "removable" : "support is removable"
+                          },
+                          "children" : [
+                            {
+                              "id" : "medium",
+                              "class" : "disk",
+                              "claimed" : true,
+                              "physid" : "0",
+                              "logicalname" : "/dev/sdb",
+                              "dev" : "8:16",
+                              "units" : "bytes",
+                              "size" : 4002910208,
+                              "capabilities" : {
+                                "partitioned" : "Partitioned disk",
+                                "partitioned:dos" : "MS-DOS partition table"
+                              },
+                              "children" : [
+                                {
+                                  "id" : "volume",
+                                  "class" : "volume",
+                                  "claimed" : true,
+                                  "description" : "Windows FAT volume",
+                                  "vendor" : "BSD  4.4",
+                                  "physid" : "1",
+                                  "logicalname" : ["/dev/sdb1", "/media/usb"],
+                                  "dev" : "8:17",
+                                  "version" : "FAT32",
+                                  "serial" : "6b4f-1df8",
+                                  "size" : 4002891776,
+                                  "capacity" : 4002909184,
+                                  "configuration" : {
+                                    "FATs" : "2",
+                                    "filesystem" : "fat",
+                                    "label" : "USB",
+                                    "mount.fstype" : "vfat",
+                                    "mount.options" : "rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro",
+                                    "state" : "mounted"
+                                  },
+                                  "capabilities" : {
+                                    "primary" : "Primary partition",
+                                    "fat" : "Windows FAT",
+                                    "initialized" : "initialized volume"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id" : "usb:1",
+                      "class" : "multimedia",
+                      "claimed" : true,
+                      "handle" : "USB:5:2",
+                      "description" : "Video",
+                      "product" : "CNF7129",
+                      "vendor" : "Chicony Electronics Co., Ltd.",
+                      "physid" : "8",
+                      "businfo" : "usb@5:8",
+                      "version" : "15.44",
+                      "serial" : "SN0001",
+                      "configuration" : {
+                        "driver" : "uvcvideo",
+                        "maxpower" : "500mA",
+                        "speed" : "480Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-2.00" : "USB 2.0"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id" : "pci:3",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:05",
+              "description" : "PCI bridge",
+              "product" : "82801 Mobile PCI Bridge",
+              "vendor" : "Intel Corporation",
+              "physid" : "1e",
+              "businfo" : "pci@0000:00:1e.0",
+              "version" : "e2",
+              "width" : 32,
+              "clock" : 33000000,
+              "capabilities" : {
+                "pci" : true,
+                "subtractive_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "isa",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1f.0",
+              "description" : "ISA bridge",
+              "product" : "82801GBM (ICH7-M) LPC Interface Bridge",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f",
+              "businfo" : "pci@0000:00:1f.0",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "lpc_ich",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "isa" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "ide",
+              "class" : "storage",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1f.2",
+              "description" : "IDE interface",
+              "product" : "82801GBM/GHM (ICH7-M Family) SATA Controller [IDE mode]",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f.2",
+              "businfo" : "pci@0000:00:1f.2",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ata_piix",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "ide" : true,
+                "pm" : "Power Management",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "scsi",
+          "class" : "storage",
+          "claimed" : true,
+          "physid" : "1",
+          "logicalname" : "scsi0",
+          "capabilities" : {
+            "emulated" : "Emulated device"
+          },
+          "children" : [
+            {
+              "id" : "disk",
+              "class" : "disk",
+              "claimed" : true,
+              "handle" : "SCSI:00:00:00:00",
+              "description" : "ATA Disk",
+              "product" : "TS32GSSD370S",
+              "physid" : "0.0.0",
+              "businfo" : "scsi@0:0.0.0",
+              "logicalname" : "/dev/sda",
+              "dev" : "8:0",
+              "version" : "4H",
+              "serial" : "C304332411",
+              "units" : "bytes",
+              "size" : 32017047552,
+              "configuration" : {
+                "ansiversion" : "5",
+                "logicalsectorsize" : "512",
+                "sectorsize" : "512",
+                "signature" : "497cfd5d"
+              },
+              "capabilities" : {
+                "partitioned" : "Partitioned disk",
+                "partitioned:dos" : "MS-DOS partition table"
+              },
+              "children" : [
+                {
+                  "id" : "volume:0",
+                  "class" : "volume",
+                  "claimed" : true,
+                  "description" : "EXT4 volume",
+                  "vendor" : "Linux",
+                  "physid" : "1",
+                  "businfo" : "scsi@0:0.0.0,1",
+                  "logicalname" : "/dev/sda1",
+                  "dev" : "8:1",
+                  "version" : "1.0",
+                  "serial" : "51b6d3e1-6ccc-4f67-875e-dd0d00410df1",
+                  "size" : 28853493760,
+                  "capacity" : 28853493760,
+                  "configuration" : {
+                    "created" : "2017-11-29 10:16:05",
+                    "filesystem" : "ext4",
+                    "lastmountpoint" : "/tmp/fsa/20171129-101611-0007fa9d-00",
+                    "modified" : "2017-11-29 10:16:11",
+                    "mounted" : "2017-11-29 10:16:11",
+                    "state" : "clean"
+                  },
+                  "capabilities" : {
+                    "primary" : "Primary partition",
+                    "journaled" : true,
+                    "extended_attributes" : "Extended Attributes",
+                    "large_files" : "4GB+ files",
+                    "huge_files" : "16TB+ files",
+                    "dir_nlink" : "directories with 65000+ subdirs",
+                    "recover" : "needs recovery",
+                    "extents" : "extent-based allocation",
+                    "ext4" : true,
+                    "ext2" : "EXT2/EXT3",
+                    "initialized" : "initialized volume"
+                  }
+                },
+                {
+                  "id" : "volume:1",
+                  "class" : "volume",
+                  "claimed" : true,
+                  "description" : "Linux swap volume",
+                  "physid" : "2",
+                  "businfo" : "scsi@0:0.0.0,2",
+                  "logicalname" : "/dev/sda2",
+                  "dev" : "8:2",
+                  "version" : "1",
+                  "serial" : "d6d3f7e1-6413-422e-af54-13dc5f3663e3",
+                  "size" : 3162505216,
+                  "capacity" : 3162505216,
+                  "configuration" : {
+                    "filesystem" : "swap",
+                    "pagesize" : "4096"
+                  },
+                  "capabilities" : {
+                    "primary" : "Primary partition",
+                    "nofs" : "No filesystem",
+                    "swap" : "Linux swap",
+                    "initialized" : "initialized volume"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

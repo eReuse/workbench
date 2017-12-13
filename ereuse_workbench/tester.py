@@ -1,12 +1,13 @@
+import re
 import subprocess
 import sys
 import time
+from contextlib import suppress
 from datetime import datetime, timedelta
 from enum import Enum
 from time import sleep
 
 import pySMART
-import re
 import tqdm
 from dateutil import parser
 
@@ -48,13 +49,11 @@ class Tester:
         proc.communicate()  # wait for process, consume output
         return {
             '@type': 'StressTest',
-            'elapsed': minutes,
+            'elapsed': timedelta(minutes=minutes),
             'success': proc.returncode == 0
         }
 
     def smart(self, disk, test_type: Smart):
-        error = False
-
         # Enable SMART on hard drive
         try:
             subprocess.check_output(['smartctl', '-s', 'on', disk], universal_newlines=True)
@@ -99,27 +98,21 @@ class Tester:
         with tqdm.tqdm(total=remaining, leave=True) as smartbar:
             while remaining > 0:
                 time.sleep(5)  # wait a few seconds between smart retrievals
-                smarterr = None
-
                 dev.update()
                 try:
                     last_test = dev.tests[0]
-                except (TypeError, IndexError) as smarterr:  # test is None, no tests
-                    pass  # work around because SMART has not been initialized
+                except (TypeError, IndexError) as err:
+                    print(err, file=sys.stderr)
+                    # The supppress: test is None, no tests
+                    # work around because SMART has not been initialized
                     # yet but pySMART library doesn't wait
                     # Just ignore the error because we alreday have an
                     # estimation of the ending time
-
-                if not smarterr:
+                else:
                     last = remaining
-                    try:
+                    with suppress(ValueError):
                         remaining = int(last_test.remain.strip('%'))
-                    except ValueError as smarterr:
-                        pass
                     smartbar.update(last - remaining)
-
-                if smarterr:
-                    print(smarterr, file=sys.stderr)
 
                 # only allow a few seconds more than the estimated time
                 if datetime.now() > test_end + grace_time:
@@ -139,7 +132,7 @@ class Tester:
         test = {
             '@type': 'TestHardDrive',
             'type': last_test.type,
-            'error': error,
+            'error': bool(lba_first_error),
             'status': last_test.status,
             'lifetime': lifetime,
             'firstError': lba_first_error,

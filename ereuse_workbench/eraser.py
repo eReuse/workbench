@@ -24,7 +24,7 @@ class Eraser:
 
         # RANDOM WITH SHRED
         total_success = True
-        if self.mode == "EraseBasic":
+        if self.mode == EraseType.EraseBasic:
             while self.steps != 0:
                 success = self.erase_process(dev, '-vn', 1)
                 if not success:
@@ -37,7 +37,7 @@ class Eraser:
                 })
                 self.steps -= 1
         # RANDOM WITH BADBLOCK
-        elif self.mode == "EraseSectors":
+        elif self.mode == EraseType.EraseSectors:
             while self.steps != 0:
                 output = "/tmp/badblocks"
                 success = self.erase_sectors(dev, output)

@@ -1,11 +1,11 @@
 import json
+import re
 from enum import Enum
 from itertools import chain
 from subprocess import PIPE, Popen
 
-import re
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, get_nested_dicts_with_key_value
-from pydash import clean, compact, find, py_, get
+from pydash import clean, compact, find, find_key, get, py_
 
 from ereuse_workbench import utils
 from ereuse_workbench.benchmarker import Benchmarker
@@ -38,8 +38,18 @@ class Computer:
         p.to_lower().includes('manufacturer'),
         p.to_lower().includes('modulepartnumber'),
         p.to_lower().includes('system manufacturer'),
-        p.to_lower().includes('system serial')
+        p.to_lower().includes('system serial'),
+        p.includes('0001-067A-0000-0000-0000')
     ]
+
+    CHASSIS_TO_TYPE = {
+        # dmi types from https://ezix.org/src/pkg/lshw/src/master/src/core/dmi.cc#L632
+        'Desktop': {'desktop', 'low-profile', 'tower', 'docking', 'all-in-one'},
+        'Microtower': {'pizzabox', 'mini-tower', 'space-saving', 'lunchbox', 'mini', 'stick'},
+        'Laptop': {'portable', 'laptop', 'convertible', 'tablet', 'detachable'},
+        'Netbook': {'notebook', 'handheld', 'sub-notebook'},
+        'Server': {'server'}
+    }
 
     def __init__(self, benchmarker: Benchmarker = False):
         self.benchmarker = benchmarker
@@ -57,14 +67,21 @@ class Computer:
 
     def computer(self):
         node, *_ = get_nested_dicts_with_key_value(self.lshw, 'class', 'system')
+        # Get type
+        chassis = py_.get(node, 'configuration.chassis')
+        _type = find_key(self.CHASSIS_TO_TYPE, lambda values, key: chassis in values)
         return dict({
-            'type': py_.get(node, 'configuration.chassis'),
+            'type': _type,
             '@type': 'Computer'
         }, **self._common(node))
 
     def processors(self):
         nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'processor')
-        return (self.processor(node) for node in nodes)
+        # We want only the physical cpu's, not the logic ones
+        # In some cases we may get empty cpu nodes, we can detect them because
+        # all regular cpus have at least a description (Intel Core i5...)
+        return (self.processor(node) for node in nodes if
+                'logical' not in node['id'] and 'description' in node and not node.get('disabled'))
 
     def processor(self, node):
         processor = {
@@ -81,8 +98,10 @@ class Computer:
         return dict(processor, **self._common(node))
 
     def ram_modules(self):
-        ram_slot, *_ = get_nested_dicts_with_key_value(self.lshw, 'id', 'memory')
-        return (self.ram_module(node) for node in ram_slot.get('children', []))
+        # We can get flash memory (BIOS?), system memory and unknown types of meomry
+        memories = get_nested_dicts_with_key_value(self.lshw, 'id', 'memory')
+        main_memory = find(memories, lambda m: clean(m.get('description').lower()) == 'system memory')
+        return (self.ram_module(node) for node in get(main_memory, 'children', []))
 
     def ram_module(self, module: dict):
         # Node with no size == empty ram slot
@@ -90,7 +109,7 @@ class Computer:
             return dict({
                 '@type': 'RamModule',
                 'size': utils.convert_capacity(module['size'], module['units'], 'MB'),
-                'speed': utils.convert_frequency(module['clock'], 'Hz', 'MHz')
+                'speed': utils.convert_frequency(module['clock'], 'Hz', 'MHz') if 'clock' in module else None
             }, **self._common(module))
 
     def hard_drives(self):
