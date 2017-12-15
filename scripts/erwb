@@ -5,15 +5,17 @@
 import argparse
 from contextlib import redirect_stdout
 from inspect import getdoc
-
 from io import StringIO
+from pathlib import Path
+
+from colorama import Fore, Style
+from readchar import readchar
 
 from ereuse_workbench.eraser import EraseType
 from ereuse_workbench.tester import Smart
 from ereuse_workbench.workbench import Workbench
 
 if __name__ == '__main__':
-
     desc = getdoc(Workbench)
     epilog = 'Example: test the computer and save a JSON report to a file: erwb --smart --stress --json > snapshot.json'
     parser = argparse.ArgumentParser(description=desc, epilog=epilog)
@@ -31,11 +33,27 @@ if __name__ == '__main__':
                         help='Connect to a WorkbenchServer at the specified URI. '
                              'This will activate USBSneaky module and load the settings from the server.')
     parser.add_argument('--json', action='store_true', help='Print only a JSON report to stdout.')
+    parser.add_argument('--ask-shutdown', action='store_true',
+                        help='Show a message to (violently) shutdown the PC after finishing.')
     args = vars(parser.parse_args())
     print_json = args.pop('json')
+    ask_shutdown = args.pop('ask_shutdown')
     if print_json:
         with redirect_stdout(StringIO()):
             snapshot = Workbench(**args).run()
         print(snapshot)
     else:
         Workbench(**args).run()
+    if ask_shutdown:
+        print('Press {}s{} to Shutdown the system or {}r{} to Reboot.'.format(Fore.CYAN, Fore.RESET, Fore.CYAN,
+                                                                              Fore.RESET))
+        print('{}Press anything else to just finish Workbench and the USB detection.'.format(Style.DIM))
+        char = readchar()
+        if char == 's' or char == 'r':
+            # Fast and violent shutdown for Linux
+            # use only on a live system where you don't care about file integrity
+            with Path('/proc/sys/kernel/sysrq').open() as f:
+                f.write('1')
+            with Path('/proc/sysrq-trigger').open() as f:
+                f.write('o' if char == 's' else 'b')
+        exit(0)

@@ -105,7 +105,7 @@ class Workbench:
         p = Popen(c.format(ip, self.install_path), stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True)
         _, stderr = p.communicate()
         if stderr:
-            raise CannotMount(stderr.decode() + 'You might need to "umount {}"'.format(self.install_path))
+            raise CannotMount(stderr + '\nYou might need to "umount {}"'.format(self.install_path))
 
     def unmount_images(self):
         _, stderr = Popen('umount {}'.format(self.install_path), shell=True).communicate()
@@ -114,6 +114,7 @@ class Workbench:
 
     def run(self) -> str:
         """Executes Workbench on this computer and returns a valid JSON for DeviceHub."""
+        print('{}Starting eReuse.org Workbench'.format(Fore.CYAN))
         if self.server:
             self.usb_sneaky.start()
 
@@ -136,7 +137,7 @@ class Workbench:
         self.after_phase(snapshot, init_time)
 
         if self.smart:
-            print('{} Running SMART test and benchmarking on hard-drives...'.format(self._print_phase(2)))
+            print('{} Run SMART test and benchmark hard-drives...'.format(self._print_phase(2)))
             for hdd in filter(lambda x: x['@type'] == 'HardDrive', components):
                 hdd['test'] = self.tester.smart(hdd[PrivateFields.logical_name], self.smart)
                 if hdd['test']['error']:
@@ -144,7 +145,7 @@ class Workbench:
             self.after_phase(snapshot, init_time)
 
         if self.stress:
-            print('{} Running stress tests for {} minutes...'.format(self._print_phase(3), self.stress))
+            print('{} Run stress tests for {} minutes...'.format(self._print_phase(3), self.stress))
             snapshot['tests'] = [self.tester.stress(self.stress)]
             self.after_phase(snapshot, init_time)
 
@@ -161,7 +162,7 @@ class Workbench:
                 self.send_to_server(snapshot)
 
         if self.install:
-            print('{} Installing {}...'.format(self._print_phase(5), self.install))
+            print('{} Install {}...'.format(self._print_phase(5), self.install))
             snapshot['osInstallation'] = self.install_os()
             self.after_phase(snapshot, init_time)
             self.unmount_images()

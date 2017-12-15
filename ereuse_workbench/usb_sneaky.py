@@ -15,7 +15,6 @@ class USBSneaky:
         self.session = BaseUrlSession(base_url=workbench_server)
         self.session.verify = False
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-        print('Waiting for plugged-in USB flash drive (pen-drive)...')
         while True:
             sleep(1)
             try:
