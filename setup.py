@@ -33,7 +33,6 @@ setup(
         'pyudev',
         'requests',
         'ereuse-utils [usb_flash_drive]',
-        'colorama',
-        'readchar'
+        'colorama'
     ]
 )

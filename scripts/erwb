@@ -9,7 +9,6 @@ from io import StringIO
 from pathlib import Path
 
 from colorama import Fore, Style
-from readchar import readchar
 
 from ereuse_workbench.eraser import EraseType
 from ereuse_workbench.tester import Smart
@@ -19,9 +18,11 @@ if __name__ == '__main__':
     desc = getdoc(Workbench)
     epilog = 'Example: test the computer and save a JSON report to a file: erwb --smart --stress --json > snapshot.json'
     parser = argparse.ArgumentParser(description=desc, epilog=epilog)
-    parser.add_argument('--smart', type=Smart, choices=list(Smart), help='Perform a SMART test to the HDDs.')
+    parser.add_argument('--smart', type=Smart, choices=list(Smart),
+                        help='Perform a SMART test to the HDDs.')
     parser.add_argument('--erase', type=EraseType, choices=list(EraseType), help='Erase the HDDs.')
-    parser.add_argument('--erase-steps', type=int, default=1, metavar='STEPS', help='Number of erasure STEPS.')
+    parser.add_argument('--erase-steps', type=int, default=1, metavar='STEPS',
+                        help='Number of erasure STEPS.')
     parser.add_argument('--erase-leading-zeros', action='store_true',
                         help='Shall we perform an extra erasure step writing zeroes?')
     parser.add_argument('--stress', metavar='MINUTES', type=int, default=0,
@@ -45,10 +46,11 @@ if __name__ == '__main__':
     else:
         Workbench(**args).run()
     if ask_shutdown:
-        print('Press {}s{} to Shutdown the system or {}r{} to Reboot.'.format(Fore.CYAN, Fore.RESET, Fore.CYAN,
-                                                                              Fore.RESET))
-        print('{}Press anything else to just finish Workbench and the USB detection.'.format(Style.DIM))
-        char = readchar()
+        print('Press {0}s{1} to Shutdown the system or {0}r{1} to Reboot and press {0}ENTER{1}.'
+              .format(Fore.CYAN, Fore.RESET))
+        print('{}Press just ENTER to finish Workbench and the USB detection.'
+              .format(Style.DIM))
+        char = input()
         if char == 's' or char == 'r':
             # Fast and violent shutdown for Linux
             # use only on a live system where you don't care about file integrity

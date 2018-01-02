@@ -4,7 +4,8 @@ from enum import Enum
 from itertools import chain
 from subprocess import PIPE, Popen
 
-from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, get_nested_dicts_with_key_value
+from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
+    get_nested_dicts_with_key_value
 from pydash import clean, compact, find, find_key, get, py_
 
 from ereuse_workbench import utils
@@ -21,26 +22,31 @@ p = py_()
 
 class Computer:
     CONNECTORS = 'usb', 'firewire', 'serial', 'pcmcia'
-    MEANINGLESS = [
-        p.to_lower().is_equal('to be filled'),
-        p.to_lower().includes('o.e.m'),
-        p.to_lower().includes('n/a'),
-        p.to_lower().is_equal('na'),
-        p.to_lower().includes('atapi'),
-        p.to_lower().is_equal('system'),
-        p.to_lower().includes('sernum0'),
-        p.is_equal('['),
-        p.to_lower().includes('none'),
-        p.to_lower().includes('xxxxx'),
-        p.to_lower().includes('prod'),
-        p.to_lower().includes('system name'),
-        p.to_lower().includes('not specified'),
-        p.to_lower().includes('manufacturer'),
-        p.to_lower().includes('modulepartnumber'),
-        p.to_lower().includes('system manufacturer'),
-        p.to_lower().includes('system serial'),
-        p.includes('0001-067A-0000-0000-0000')
-    ]
+    TO_REMOVE = {
+        'none',
+        'prod',
+        'o.e.m',
+        'oem',
+        'n/a',
+        'atapi',
+    }
+    """Delete those *words* from the value."""
+    TO_REMOVE_EXP = re.compile('\\b({})\W'.format('|'.join(re.escape(s) for s in TO_REMOVE)), re.I)
+    CHARS_TO_REMOVE = '(){}[]'
+    """Remove those *characters* from the value."""
+    MEANINGLESS = {
+        'to be filled',
+        'system manufacturer',
+        'system product',
+        'sernum0',
+        'xxxxx',
+        'system name',
+        'not specified',
+        'modulepartnumber',
+        'system serial',
+        '0001-067A-0000-0000-0000'
+    }
+    """Discard a value if any of these values are inside it."""
 
     CHASSIS_TO_TYPE = {
         # dmi types from https://ezix.org/src/pkg/lshw/src/master/src/core/dmi.cc#L632
@@ -50,6 +56,7 @@ class Computer:
         'Netbook': {'notebook', 'handheld', 'sub-notebook'},
         'Server': {'server'}
     }
+    """A conversion table from DMI's chassis type value to our type value."""
 
     def __init__(self, benchmarker: Benchmarker = False):
         self.benchmarker = benchmarker
@@ -61,7 +68,8 @@ class Computer:
     def run(self) -> (dict, list):
         # Process it
         computer = self.computer()
-        components = chain(self.processors(), self.ram_modules(), self.hard_drives(), self.graphic_cards(),
+        components = chain(self.processors(), self.ram_modules(), self.hard_drives(),
+                           self.graphic_cards(),
                            [self.motherboard()], self.network_adapters(), self.sound_cards())
         return computer, compact(components)
 
@@ -100,7 +108,8 @@ class Computer:
     def ram_modules(self):
         # We can get flash memory (BIOS?), system memory and unknown types of meomry
         memories = get_nested_dicts_with_key_value(self.lshw, 'id', 'memory')
-        main_memory = find(memories, lambda m: clean(m.get('description').lower()) == 'system memory')
+        main_memory = find(memories,
+                           lambda m: clean(m.get('description').lower()) == 'system memory')
         return (self.ram_module(node) for node in get(main_memory, 'children', []))
 
     def ram_module(self, module: dict):
@@ -109,7 +118,8 @@ class Computer:
             return dict({
                 '@type': 'RamModule',
                 'size': utils.convert_capacity(module['size'], module['units'], 'MB'),
-                'speed': utils.convert_frequency(module['clock'], 'Hz', 'MHz') if 'clock' in module else None
+                'speed': utils.convert_frequency(module['clock'], 'Hz',
+                                                 'MHz') if 'clock' in module else None
             }, **self._common(module))
 
     def hard_drives(self):
@@ -118,7 +128,8 @@ class Computer:
 
     def hard_drive(self, node) -> dict or None:
         logical_name = node['logicalname']
-        interface = utils.run('udevadm info --query=all --name={} | grep ID_BUS | cut -c 11-'.format(logical_name))
+        interface = utils.run(
+            'udevadm info --query=all --name={} | grep ID_BUS | cut -c 11-'.format(logical_name))
         interface = interface or 'ata'
         if interface != 'usb':
             hdd = {
@@ -166,9 +177,11 @@ class Computer:
         node, *_ = get_nested_dicts_with_key_value(self.lshw, 'description', 'Motherboard')
         return dict({
             '@type': 'Motherboard',
-            'connectors': {name: self.motherboard_num_of_connectors(name) for name in self.CONNECTORS},
+            'connectors': {name: self.motherboard_num_of_connectors(name) for name in
+                           self.CONNECTORS},
             'totalSlots': int(utils.run('dmidecode -t 17 | grep -o BANK | wc -l')),
-            'usedSlots': int(utils.run('dmidecode -t 17 | grep Size | grep MB | awk \'{print $2}\' | wc -l'))
+            'usedSlots': int(
+                utils.run('dmidecode -t 17 | grep Size | grep MB | awk \'{print $2}\' | wc -l'))
         }, **self._common(node))
 
     def motherboard_num_of_connectors(self, connector_name):
@@ -186,7 +199,17 @@ class Computer:
         network['@type'] = 'NetworkAdapter'
         if 'capacity' in node:
             network['speed'] = utils.convert_speed(node['capacity'], 'bps', 'Mbps')
-        network['serialNumber'] = network['serialNumber'] or utils.get_hw_addr(node['logicalname'])
+        if 'logicalname' in network:
+            # If we don't have logicalname it means we don't have the (proprietary)
+            #  drivers fot that NetworkAdaptor
+            # which means we can't access at the MAC address (note that S/N == MAC)
+            # "sudo /sbin/lspci -vv" could bring the MAC even if no drivers are installed
+            # however more work has to be done in ensuring it is reliable, really needed,
+            #  and to parse it
+            # https://www.redhat.com/archives/redhat-list/2010-October/msg00066.html
+            # workbench-live includes proprietary firmwares
+            if not network['serialNumber']:
+                network['serialNumber'] = utils.get_hw_addr(node['logicalname'])
         return network
 
     def sound_cards(self):
@@ -206,7 +229,18 @@ class Computer:
         }
 
     @classmethod
-    def get(cls, node, key) -> object or None:
-        """Gets a string value from the LSHW node totally sanitazed."""
-        val = node.get(key)
-        return clean(val) if val and not find(cls.MEANINGLESS, lambda p: p(val)) else None
+    def get(cls, node: dict, key: str) -> object or None:
+        """
+        Gets a string value from the LSHW node sanitized.
+
+        Words without meaning are removed, spaces trimmed and discarded meaningless values.
+
+        """
+        val = cls.TO_REMOVE_EXP.sub('', node.get(key, ''))
+        for char_to_remove in cls.CHARS_TO_REMOVE:
+            val = val.replace(char_to_remove, '')
+        val = clean(val)
+        if val and not any(meaningless in val.lower() for meaningless in cls.MEANINGLESS):
+            return val
+        else:
+            return None

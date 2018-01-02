@@ -1,0 +1,799 @@
+{
+  "id" : "ultrax",
+  "class" : "system",
+  "claimed" : true,
+  "handle" : "DMI:0001",
+  "description" : "Notebook",
+  "product" : "TM1613 (Sku Number)",
+  "vendor" : "Timi",
+  "version" : "A05",
+  "serial" : "13138/00064437",
+  "width" : 64,
+  "configuration" : {
+    "chassis" : "notebook",
+    "family" : "Timibook",
+    "sku" : "Sku Number",
+    "uuid" : "DAF57708-09A3-E611-D9A6-C2000A30BA7D"
+  },
+  "capabilities" : {
+    "smbios-2.8" : "SMBIOS version 2.8",
+    "dmi-2.8" : "DMI version 2.8",
+    "vsyscall32" : "32-bit processes"
+  },
+  "children" : [
+    {
+      "id" : "core",
+      "class" : "bus",
+      "claimed" : true,
+      "handle" : "DMI:0002",
+      "description" : "Motherboard",
+      "product" : "TM1613",
+      "vendor" : "Timi",
+      "physid" : "0",
+      "version" : "A05",
+      "serial" : "MMG5S000000226B1P02YK",
+      "slot" : "Type2 - Board Chassis Location",
+      "children" : [
+        {
+          "id" : "firmware",
+          "class" : "memory",
+          "claimed" : true,
+          "description" : "BIOS",
+          "vendor" : "Insyde Corp.",
+          "physid" : "0",
+          "version" : "A05",
+          "date" : "08/11/2016",
+          "units" : "bytes",
+          "size" : 131072,
+          "capacity" : 8323072,
+          "capabilities" : {
+            "pci" : "PCI bus",
+            "upgrade" : "BIOS EEPROM can be upgraded",
+            "shadowing" : "BIOS shadowing",
+            "cdboot" : "Booting from CD-ROM/DVD",
+            "bootselect" : "Selectable boot path",
+            "edd" : "Enhanced Disk Drive extensions",
+            "int9keyboard" : "i8042 keyboard controller",
+            "int10video" : "INT10 CGA/Mono video",
+            "acpi" : "ACPI",
+            "usb" : "USB legacy emulation",
+            "biosbootspecification" : "BIOS boot specification",
+            "uefi" : "UEFI specification is supported"
+          }
+        },
+        {
+          "id" : "cpu",
+          "class" : "processor",
+          "claimed" : true,
+          "handle" : "DMI:0004",
+          "description" : "CPU",
+          "product" : "Intel(R) Core(TM) i5-6200U CPU @ 2.30GHz",
+          "vendor" : "Intel Corp.",
+          "physid" : "4",
+          "businfo" : "cpu@0",
+          "version" : "Intel(R) Core(TM) i5-6200U CPU @ 2.30GHz",
+          "serial" : "To Be Filled By O.E.M.",
+          "slot" : "U3E1",
+          "units" : "Hz",
+          "size" : 2684156000,
+          "capacity" : 4005032704,
+          "width" : 64,
+          "clock" : 100000000,
+          "configuration" : {
+            "cores" : "2",
+            "enabledcores" : "2",
+            "threads" : "4"
+          },
+          "capabilities" : {
+            "x86-64" : "64bits extensions (x86-64)",
+            "fpu" : "mathematical co-processor",
+            "fpu_exception" : "FPU exceptions reporting",
+            "wp" : true,
+            "vme" : "virtual mode extensions",
+            "de" : "debugging extensions",
+            "pse" : "page size extensions",
+            "tsc" : "time stamp counter",
+            "msr" : "model-specific registers",
+            "pae" : "4GB+ memory addressing (Physical Address Extension)",
+            "mce" : "machine check exceptions",
+            "cx8" : "compare and exchange 8-byte",
+            "apic" : "on-chip advanced programmable interrupt controller (APIC)",
+            "sep" : "fast system calls",
+            "mtrr" : "memory type range registers",
+            "pge" : "page global enable",
+            "mca" : "machine check architecture",
+            "cmov" : "conditional move instruction",
+            "pat" : "page attribute table",
+            "pse36" : "36-bit page size extensions",
+            "clflush" : true,
+            "dts" : "debug trace and EMON store MSRs",
+            "acpi" : "thermal control (ACPI)",
+            "mmx" : "multimedia extensions (MMX)",
+            "fxsr" : "fast floating point save/restore",
+            "sse" : "streaming SIMD extensions (SSE)",
+            "sse2" : "streaming SIMD extensions (SSE2)",
+            "ss" : "self-snoop",
+            "ht" : "HyperThreading",
+            "tm" : "thermal interrupt and status",
+            "pbe" : "pending break event",
+            "syscall" : "fast system calls",
+            "nx" : "no-execute bit (NX)",
+            "pdpe1gb" : true,
+            "rdtscp" : true,
+            "constant_tsc" : true,
+            "art" : true,
+            "arch_perfmon" : true,
+            "pebs" : true,
+            "bts" : true,
+            "rep_good" : true,
+            "nopl" : true,
+            "xtopology" : true,
+            "nonstop_tsc" : true,
+            "aperfmperf" : true,
+            "eagerfpu" : true,
+            "pni" : true,
+            "pclmulqdq" : true,
+            "dtes64" : true,
+            "monitor" : true,
+            "ds_cpl" : true,
+            "vmx" : true,
+            "est" : true,
+            "tm2" : true,
+            "ssse3" : true,
+            "sdbg" : true,
+            "fma" : true,
+            "cx16" : true,
+            "xtpr" : true,
+            "pdcm" : true,
+            "pcid" : true,
+            "sse4_1" : true,
+            "sse4_2" : true,
+            "x2apic" : true,
+            "movbe" : true,
+            "popcnt" : true,
+            "tsc_deadline_timer" : true,
+            "aes" : true,
+            "xsave" : true,
+            "avx" : true,
+            "f16c" : true,
+            "rdrand" : true,
+            "lahf_lm" : true,
+            "abm" : true,
+            "3dnowprefetch" : true,
+            "epb" : true,
+            "intel_pt" : true,
+            "tpr_shadow" : true,
+            "vnmi" : true,
+            "flexpriority" : true,
+            "ept" : true,
+            "vpid" : true,
+            "fsgsbase" : true,
+            "tsc_adjust" : true,
+            "bmi1" : true,
+            "avx2" : true,
+            "smep" : true,
+            "bmi2" : true,
+            "erms" : true,
+            "invpcid" : true,
+            "mpx" : true,
+            "rdseed" : true,
+            "adx" : true,
+            "smap" : true,
+            "clflushopt" : true,
+            "xsaveopt" : true,
+            "xsavec" : true,
+            "xgetbv1" : true,
+            "dtherm" : true,
+            "ida" : true,
+            "arat" : true,
+            "pln" : true,
+            "pts" : true,
+            "hwp" : true,
+            "hwp_notify" : true,
+            "hwp_act_window" : true,
+            "hwp_epp" : true,
+            "cpufreq" : "CPU Frequency scaling"
+          },
+          "children" : [
+            {
+              "id" : "cache:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0006",
+              "description" : "L1 cache",
+              "physid" : "6",
+              "slot" : "L1 Cache",
+              "units" : "bytes",
+              "size" : 65536,
+              "capacity" : 65536,
+              "configuration" : {
+                "level" : "1"
+              },
+              "capabilities" : {
+                "synchronous" : "Synchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "instruction" : "Instruction cache"
+              }
+            },
+            {
+              "id" : "cache:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0007",
+              "description" : "L2 cache",
+              "physid" : "7",
+              "slot" : "L2 Cache",
+              "units" : "bytes",
+              "size" : 524288,
+              "capacity" : 524288,
+              "configuration" : {
+                "level" : "2"
+              },
+              "capabilities" : {
+                "synchronous" : "Synchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "unified" : "Unified cache"
+              }
+            },
+            {
+              "id" : "cache:2",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0008",
+              "description" : "L3 cache",
+              "physid" : "8",
+              "slot" : "L3 Cache",
+              "units" : "bytes",
+              "size" : 3145728,
+              "capacity" : 3145728,
+              "configuration" : {
+                "level" : "3"
+              },
+              "capabilities" : {
+                "synchronous" : "Synchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "unified" : "Unified cache"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "cache",
+          "class" : "memory",
+          "claimed" : true,
+          "handle" : "DMI:0005",
+          "description" : "L1 cache",
+          "physid" : "5",
+          "slot" : "L1 Cache",
+          "units" : "bytes",
+          "size" : 65536,
+          "capacity" : 65536,
+          "configuration" : {
+            "level" : "1"
+          },
+          "capabilities" : {
+            "synchronous" : "Synchronous",
+            "internal" : "Internal",
+            "write-back" : "Write-back",
+            "data" : "Data cache"
+          }
+        },
+        {
+          "id" : "memory",
+          "class" : "memory",
+          "claimed" : true,
+          "handle" : "DMI:000F",
+          "description" : "System Memory",
+          "physid" : "f",
+          "slot" : "System board or motherboard",
+          "units" : "bytes",
+          "size" : 8589934592,
+          "children" : [
+            {
+              "id" : "bank:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0010",
+              "description" : "SODIMM Synchronous 2133 MHz (0,5 ns)",
+              "product" : "M471A1K43BB0-CPB",
+              "vendor" : "Samsung",
+              "physid" : "0",
+              "serial" : "00000000",
+              "slot" : "ChannelA-DIMM0",
+              "units" : "bytes",
+              "size" : 8589934592,
+              "width" : 64,
+              "clock" : 2133000000
+            },
+            {
+              "id" : "bank:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0011",
+              "description" : "[empty]",
+              "physid" : "1",
+              "slot" : "ChannelA-DIMM1"
+            },
+            {
+              "id" : "bank:2",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0012",
+              "description" : "[empty]",
+              "physid" : "2",
+              "slot" : "ChannelB-DIMM0"
+            },
+            {
+              "id" : "bank:3",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0013",
+              "description" : "[empty]",
+              "physid" : "3",
+              "slot" : "ChannelB-DIMM1"
+            }
+          ]
+        },
+        {
+          "id" : "pci",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "Sky Lake Host Bridge/DRAM Registers",
+          "vendor" : "Intel Corporation",
+          "physid" : "100",
+          "businfo" : "pci@0000:00:00.0",
+          "version" : "08",
+          "width" : 32,
+          "clock" : 33000000,
+          "children" : [
+            {
+              "id" : "display",
+              "class" : "display",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:02.0",
+              "description" : "VGA compatible controller",
+              "product" : "Sky Lake Integrated Graphics",
+              "vendor" : "Intel Corporation",
+              "physid" : "2",
+              "businfo" : "pci@0000:00:02.0",
+              "version" : "07",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "i915_bpo",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pciexpress" : "PCI Express",
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "vga_controller" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing",
+                "rom" : "extension ROM"
+              }
+            },
+            {
+              "id" : "usb",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:14.0",
+              "description" : "USB controller",
+              "product" : "Intel Corporation",
+              "vendor" : "Intel Corporation",
+              "physid" : "14",
+              "businfo" : "pci@0000:00:14.0",
+              "version" : "21",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "xhci_hcd",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "xhci" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost:0",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:2:1",
+                  "product" : "xHCI Host Controller",
+                  "vendor" : "Linux 4.4.0-77-generic xhci-hcd",
+                  "physid" : "0",
+                  "businfo" : "usb@2",
+                  "logicalname" : "usb2",
+                  "version" : "4.04",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "6",
+                    "speed" : "5000Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-3.00" : true
+                  }
+                },
+                {
+                  "id" : "usbhost:1",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:1:1",
+                  "product" : "xHCI Host Controller",
+                  "vendor" : "Linux 4.4.0-77-generic xhci-hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@1",
+                  "logicalname" : "usb1",
+                  "version" : "4.04",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "12",
+                    "speed" : "480Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-2.00" : "USB 2.0"
+                  },
+                  "children" : [
+                    {
+                      "id" : "usb:0",
+                      "class" : "multimedia",
+                      "claimed" : true,
+                      "handle" : "USB:1:2",
+                      "description" : "Video",
+                      "product" : "XiaoMi USB 2.0 Webcam",
+                      "vendor" : "SunplusIT Inc",
+                      "physid" : "5",
+                      "businfo" : "usb@1:5",
+                      "version" : "1.03",
+                      "configuration" : {
+                        "driver" : "uvcvideo",
+                        "maxpower" : "500mA",
+                        "speed" : "480Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-2.00" : "USB 2.0"
+                      }
+                    },
+                    {
+                      "id" : "usb:1",
+                      "class" : "communication",
+                      "claimed" : true,
+                      "handle" : "USB:1:3",
+                      "description" : "Bluetooth wireless interface",
+                      "vendor" : "Intel Corp.",
+                      "physid" : "7",
+                      "businfo" : "usb@1:7",
+                      "version" : "0.01",
+                      "configuration" : {
+                        "driver" : "btusb",
+                        "maxpower" : "100mA",
+                        "speed" : "12Mbit/s"
+                      },
+                      "capabilities" : {
+                        "bluetooth" : "Bluetooth wireless radio",
+                        "usb-2.00" : "USB 2.0"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id" : "communication",
+              "class" : "communication",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:16.0",
+              "description" : "Communication controller",
+              "product" : "Intel Corporation",
+              "vendor" : "Intel Corporation",
+              "physid" : "16",
+              "businfo" : "pci@0000:00:16.0",
+              "version" : "21",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "mei_me",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "storage",
+              "class" : "storage",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:17.0",
+              "description" : "SATA controller",
+              "product" : "Intel Corporation",
+              "vendor" : "Intel Corporation",
+              "physid" : "17",
+              "businfo" : "pci@0000:00:17.0",
+              "version" : "21",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ahci",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "storage" : true,
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "ahci_1.0" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "pci:0",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:01",
+              "description" : "PCI bridge",
+              "product" : "Intel Corporation",
+              "vendor" : "Intel Corporation",
+              "physid" : "1c",
+              "businfo" : "pci@0000:00:1c.0",
+              "version" : "f1",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "pcieport"
+              },
+              "capabilities" : {
+                "pci" : true,
+                "pciexpress" : "PCI Express",
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "display",
+                  "class" : "display",
+                  "claimed" : true,
+                  "handle" : "PCI:0000:01:00.0",
+                  "description" : "3D controller",
+                  "product" : "NVIDIA Corporation",
+                  "vendor" : "NVIDIA Corporation",
+                  "physid" : "0",
+                  "businfo" : "pci@0000:01:00.0",
+                  "version" : "a2",
+                  "width" : 64,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "driver" : "nvidia",
+                    "latency" : "0"
+                  },
+                  "capabilities" : {
+                    "pm" : "Power Management",
+                    "msi" : "Message Signalled Interrupts",
+                    "pciexpress" : "PCI Express",
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "pci:1",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:02",
+              "description" : "PCI bridge",
+              "product" : "Intel Corporation",
+              "vendor" : "Intel Corporation",
+              "physid" : "1c.4",
+              "businfo" : "pci@0000:00:1c.4",
+              "version" : "f1",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "pcieport"
+              },
+              "capabilities" : {
+                "pci" : true,
+                "pciexpress" : "PCI Express",
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "network",
+                  "class" : "network",
+                  "claimed" : true,
+                  "handle" : "PCI:0000:02:00.0",
+                  "description" : "Wireless interface",
+                  "product" : "Wireless 8260",
+                  "vendor" : "Intel Corporation",
+                  "physid" : "0",
+                  "businfo" : "pci@0000:02:00.0",
+                  "logicalname" : "wlp2s0",
+                  "version" : "3a",
+                  "serial" : "a0:c5:89:41:a8:a7",
+                  "width" : 64,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "broadcast" : "yes",
+                    "driver" : "iwlwifi",
+                    "driverversion" : "4.4.0-77-generic",
+                    "firmware" : "16.242414.0",
+                    "ip" : "192.168.1.53",
+                    "latency" : "0",
+                    "link" : "yes",
+                    "multicast" : "yes",
+                    "wireless" : "IEEE 802.11abgn"
+                  },
+                  "capabilities" : {
+                    "pm" : "Power Management",
+                    "msi" : "Message Signalled Interrupts",
+                    "pciexpress" : "PCI Express",
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing",
+                    "ethernet" : true,
+                    "physical" : "Physical interface",
+                    "wireless" : "Wireless-LAN"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "pci:2",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:03",
+              "description" : "PCI bridge",
+              "product" : "Intel Corporation",
+              "vendor" : "Intel Corporation",
+              "physid" : "1d",
+              "businfo" : "pci@0000:00:1d.0",
+              "version" : "f1",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "pcieport"
+              },
+              "capabilities" : {
+                "pci" : true,
+                "pciexpress" : "PCI Express",
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "storage",
+                  "class" : "storage",
+                  "claimed" : true,
+                  "handle" : "PCI:0000:03:00.0",
+                  "description" : "Non-Volatile memory controller",
+                  "product" : "Samsung Electronics Co Ltd",
+                  "vendor" : "Samsung Electronics Co Ltd",
+                  "physid" : "0",
+                  "businfo" : "pci@0000:03:00.0",
+                  "version" : "01",
+                  "width" : 64,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "driver" : "nvme",
+                    "latency" : "0"
+                  },
+                  "capabilities" : {
+                    "storage" : true,
+                    "pm" : "Power Management",
+                    "msi" : "Message Signalled Interrupts",
+                    "pciexpress" : "PCI Express",
+                    "msix" : "MSI-X",
+                    "nvm_express" : true,
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "isa",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1f.0",
+              "description" : "ISA bridge",
+              "product" : "Intel Corporation",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f",
+              "businfo" : "pci@0000:00:1f.0",
+              "version" : "21",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "isa" : true,
+                "bus_master" : "bus mastering"
+              }
+            },
+            {
+              "id" : "memory",
+              "class" : "memory",
+              "handle" : "PCI:0000:00:1f.2",
+              "description" : "Memory controller",
+              "product" : "Intel Corporation",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f.2",
+              "businfo" : "pci@0000:00:1f.2",
+              "version" : "21",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "bus_master" : "bus mastering"
+              }
+            },
+            {
+              "id" : "multimedia",
+              "class" : "multimedia",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1f.3",
+              "description" : "Audio device",
+              "product" : "Intel Corporation",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f.3",
+              "businfo" : "pci@0000:00:1f.3",
+              "version" : "21",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "snd_hda_intel",
+                "latency" : "32"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "serial",
+              "class" : "bus",
+              "handle" : "PCI:0000:00:1f.4",
+              "description" : "SMBus",
+              "product" : "Intel Corporation",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f.4",
+              "businfo" : "pci@0000:00:1f.4",
+              "version" : "21",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "latency" : "0"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
