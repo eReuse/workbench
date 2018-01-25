@@ -1,44 +1,37 @@
-# eReuse Workbench
-
-The eReuse Workbench (formerly Device Inventory) is a set of tools and services to assist the preparation for reuse and traceability of digital devices (capture of hardware characteristics, hardware rating and testing, secure deletion of data and install Linux OS).
+# eReuse.org Workbench
+The eReuse.org Workbench is a set of tools and services to assist the preparation for reuse and
+traceability of digital devices (capture of hardware characteristics, hardware rating and testing,
+secure deletion of data and install Linux OS).
 
 ## Features
-- Run in an unattended way without the need for additional steps rather than powering up the computer.
-
-- Provides signed documents for deletion of data, tests of operation,
-hardware information and serial numbers for traceability.
-
-- Install Linux OS in record-time thanks to the easy-to-setup PXE server.
-
-- Only a few minutes required to register and select devices which reach user defined requirements (e.g. hard drive witouth faulty sectors, at least one NIC...).
-
+- Run in an unattended way without the need for additional steps rather than powering up the
+  computer.
+- Provides documents for deletion of data, tests of operation, hardware information and serial
+  numbers for traceability.
+- Install Linux OS in record-time.
+- Mass process network-connected computers with
+  [Workbench Server](https://github.com/ereuse/workbench-server).
 
 ## Requirements
-* An english Debian/Ubuntu or derived system with ``wget``
-* Python 2.7 with ``pip``
+* Debian based Linux. Tested with Debian 9. 
+
+Our installation script automatically installs [debian packages](debian-requirements.txt) and 
+[python libraries](requirements.txt).
+
+If you want to erase the hard-drive of a computer you will need to execute Workbench in a live cd.
+We offer a live-cd with a pre-configured Workbench that connects to Workbench Server in
+[Workbench Live](https://github.com/ereuse/workbench-live). You can use this project to customize
+a workbench live that suits your needs.
 
 ## Installation
-On a Debian based distribution using `apt`:
-
-    apt-get install $(sed -rn 's/.*\bdeb:(.+)$/\1/p' requirements.txt requirements-full.txt)
-
-Then download and install Reciclanet's image installation script:
-
-    wget "https://raw.githubusercontent.com/eReuse/SCRIPTS/ereuse/instalar" -O /usr/local/bin/erwb-install-image
-    chmod a+rx /usr/local/bin/erwb-install-image
-
-And then install `ereuse-workbench` and its requirements using `pip`:
-
-    pip install git+https://github.com/eReuse/workbench.git#egg=ereuse-workbench
+Download this project (clone it or with a zip) and then execute with root (as it will install as a
+command-line too) `{project-folder}/scrpits/install.sh {project-folder}`, where `{project-folder}`
+is the path where your project is. So, for example, if the path of your project is
+`~/Documents/workbench`, then execute `~/Documents/workbench/scripts/install.sh
+~/Documents/workbench`.
 
 ## Usage
-Just run it as priviliged user (e.g. ``sudo erwb``) and fill some information:
-
-  - A unique label
-  - A device type (desktop, laptop...)
-  - A visual grade (new, used, worn, broken...)
-  - A functional grade (new, used, worn, broken...)
-  - A free-format comment
+Execute `erwb` as root, like `sudo erwb`. 
 
 The process will generate a JSON file with the hardware description in it, for example:
 ```json
