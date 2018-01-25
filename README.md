@@ -31,7 +31,12 @@ is the path where your project is. So, for example, if the path of your project 
 ~/Documents/workbench`.
 
 ## Usage
-Execute `erwb` as root, like `sudo erwb`. 
+Execute `erwb` as root, like `sudo erwb`. From a python file you can:
+```python
+    from ereuse_workbench.workbench import Workbench
+    erwb = Workbench()
+    erwb.run()
+```
 
 The process will generate a JSON file with the hardware description in it, for example:
 ```json

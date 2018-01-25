@@ -3,6 +3,7 @@ import re
 from enum import Enum
 from itertools import chain
 from subprocess import PIPE, Popen
+from typing import List
 
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
     get_nested_dicts_with_key_value
@@ -18,9 +19,6 @@ class PrivateFields(Enum):
     private for internal usage.
     """
     logical_name = 'logical_name'
-
-
-p = py_()
 
 
 class Computer:
@@ -80,8 +78,15 @@ class Computer:
         stdout, _ = Popen(cmd, stdout=PIPE, shell=True, universal_newlines=True).communicate()
         self.lshw = json.loads(stdout)
 
-    def run(self) -> (dict, list):
-        """Get the hardware information. This is the main method."""
+    def run(self) -> (dict, List[dict]):
+        """
+        Get the hardware information.
+
+        This method returns *almost* DeviceHub ready information in a
+        tuple, where the first element is information related to the
+        overall machine, like the S/N of the computer, and the second
+        item is a list of hardware information per component.
+        """
         computer = self.computer()
         components = chain(self.processors(), self.ram_modules(), self.hard_drives(),
                            self.graphic_cards(), [self.motherboard()], self.network_adapters(),
@@ -121,10 +126,10 @@ class Computer:
         return dict(processor, **self._common(node))
 
     def ram_modules(self):
-        # We can get flash memory (BIOS?), system memory and unknown types of meomry
+        # We can get flash memory (BIOS?), system memory and unknown types of memory
         memories = get_nested_dicts_with_key_value(self.lshw, 'id', 'memory')
         is_system_memory = lambda m: clean(m.get('description').lower()) == 'system memory'
-        main_memory = next(m for m in memories if is_system_memory(m))
+        main_memory = next((m for m in memories if is_system_memory(m)), None)
         return (self.ram_module(node) for node in get(main_memory, 'children', []))
 
     def ram_module(self, module: dict):
@@ -139,7 +144,9 @@ class Computer:
 
     def hard_drives(self):
         nodes = get_nested_dicts_with_key_containing_value(self.lshw, 'id', 'disk')
-        return (self.hard_drive(node) for node in nodes)
+        # We can get nodes that are not truly disks as they don't have
+        # size. Let's just forget about those.
+        return (self.hard_drive(node) for node in nodes if 'size' in node)
 
     def hard_drive(self, node) -> dict or None:
         logical_name = node['logicalname']

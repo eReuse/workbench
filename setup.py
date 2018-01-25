@@ -34,5 +34,12 @@ setup(
         'requests',
         'ereuse-utils [usb_flash_drive]',
         'colorama'
-    ]
+    ],
+    setup_requires=[
+        'pytest-runner'
+    ],
+    tests_require=[
+        'pytest',
+        'pytest-mock'
+    ],
 )
