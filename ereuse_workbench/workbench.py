@@ -185,7 +185,8 @@ class Workbench:
             print('{} Install {}...'.format(self._print_phase(5), self.install))
             snapshot['osInstallation'] = self.install_os()
             self.after_phase(snapshot, init_time)
-            self.unmount_images()
+            if self.server:
+                self.unmount_images()
 
         print('{}eReuse.org Workbench has finished properly.'.format(Fore.GREEN))
 
