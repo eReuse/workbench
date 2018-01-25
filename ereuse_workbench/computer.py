@@ -84,8 +84,8 @@ class Computer:
         """Get the hardware information. This is the main method."""
         computer = self.computer()
         components = chain(self.processors(), self.ram_modules(), self.hard_drives(),
-                           self.graphic_cards(),
-                           [self.motherboard()], self.network_adapters(), self.sound_cards())
+                           self.graphic_cards(), [self.motherboard()], self.network_adapters(),
+                           self.sound_cards())
         return computer, compact(components)
 
     def computer(self):
@@ -199,11 +199,11 @@ class Computer:
                 utils.run('dmidecode -t 17 | grep Size | grep MB | awk \'{print $2}\' | wc -l'))
         }, **self._common(node))
 
-    def motherboard_num_of_connectors(self, connector_name):
+    def motherboard_num_of_connectors(self, connector_name) -> int:
         connectors = get_nested_dicts_with_key_containing_value(self.lshw, 'id', connector_name)
         if connector_name == 'usb':
-            connectors = list(filter(lambda c: 'usbhost' not in c['id'], connectors))
-        return len(connectors)
+            connectors = (c for c in connectors if 'usbhost' not in c['id'])
+        return len(tuple(connectors))
 
     def network_adapters(self):
         nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'network')
