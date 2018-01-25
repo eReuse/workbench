@@ -6,14 +6,17 @@ from subprocess import PIPE, Popen
 
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
     get_nested_dicts_with_key_value
-from pydash import clean, compact, find, find_key, get, py_
+from pydash import clean, compact, find_key, get, py_
 
 from ereuse_workbench import utils
 from ereuse_workbench.benchmarker import Benchmarker
 
 
 class PrivateFields(Enum):
-    """These fields are not converted to JSON so they are kept private for internal usage"""
+    """
+    These fields are not converted to JSON so they are kept
+    private for internal usage.
+    """
     logical_name = 'logical_name'
 
 
@@ -21,6 +24,18 @@ p = py_()
 
 
 class Computer:
+    """
+    Gets hardware information from the computer and its components,
+    like serial numbers or model names. At the same time and
+    if a Benchmarker is passed-in, benchmarks some of them.
+
+    This class is divided by the methods that extract the hardware
+    information for each component individually and a ``.run()``
+    method that glues them.
+
+    This class uses ``LSHW`` as the main source of hardware information,
+    which is obtained once when it is instantiated.
+    """
     CONNECTORS = 'usb', 'firewire', 'serial', 'pcmcia'
     TO_REMOVE = {
         'none',
@@ -66,7 +81,7 @@ class Computer:
         self.lshw = json.loads(stdout)
 
     def run(self) -> (dict, list):
-        # Process it
+        """Get the hardware information. This is the main method."""
         computer = self.computer()
         components = chain(self.processors(), self.ram_modules(), self.hard_drives(),
                            self.graphic_cards(),
@@ -74,7 +89,7 @@ class Computer:
         return computer, compact(components)
 
     def computer(self):
-        node, *_ = get_nested_dicts_with_key_value(self.lshw, 'class', 'system')
+        node = next(get_nested_dicts_with_key_value(self.lshw, 'class', 'system'))
         # Get type
         chassis = py_.get(node, 'configuration.chassis')
         _type = find_key(self.CHASSIS_TO_TYPE, lambda values, key: chassis in values)
@@ -108,8 +123,8 @@ class Computer:
     def ram_modules(self):
         # We can get flash memory (BIOS?), system memory and unknown types of meomry
         memories = get_nested_dicts_with_key_value(self.lshw, 'id', 'memory')
-        main_memory = find(memories,
-                           lambda m: clean(m.get('description').lower()) == 'system memory')
+        is_system_memory = lambda m: clean(m.get('description').lower()) == 'system memory'
+        main_memory = next(m for m in memories if is_system_memory(m))
         return (self.ram_module(node) for node in get(main_memory, 'children', []))
 
     def ram_module(self, module: dict):
@@ -174,7 +189,7 @@ class Computer:
         return None
 
     def motherboard(self):
-        node, *_ = get_nested_dicts_with_key_value(self.lshw, 'description', 'Motherboard')
+        node = next(get_nested_dicts_with_key_value(self.lshw, 'description', 'Motherboard'))
         return dict({
             '@type': 'Motherboard',
             'connectors': {name: self.motherboard_num_of_connectors(name) for name in
@@ -200,12 +215,13 @@ class Computer:
         if 'capacity' in node:
             network['speed'] = utils.convert_speed(node['capacity'], 'bps', 'Mbps')
         if 'logicalname' in network:
-            # If we don't have logicalname it means we don't have the (proprietary)
-            #  drivers fot that NetworkAdaptor
-            # which means we can't access at the MAC address (note that S/N == MAC)
-            # "sudo /sbin/lspci -vv" could bring the MAC even if no drivers are installed
-            # however more work has to be done in ensuring it is reliable, really needed,
-            #  and to parse it
+            # If we don't have logicalname it means we don't have the
+            # (proprietary) drivers fot that NetworkAdaptor
+            # which means we can't access at the MAC address
+            # (note that S/N == MAC) "sudo /sbin/lspci -vv" could bring
+            # the MAC even if no drivers are installed however more work
+            # has to be done in ensuring it is reliable, really needed,
+            # and to parse it
             # https://www.redhat.com/archives/redhat-list/2010-October/msg00066.html
             # workbench-live includes proprietary firmwares
             if not network['serialNumber']:
@@ -233,8 +249,8 @@ class Computer:
         """
         Gets a string value from the LSHW node sanitized.
 
-        Words without meaning are removed, spaces trimmed and discarded meaningless values.
-
+        Words without meaning are removed, spaces trimmed and
+        discarded meaningless values.
         """
         val = cls.TO_REMOVE_EXP.sub('', node.get(key, ''))
         for char_to_remove in cls.CHARS_TO_REMOVE:

@@ -22,34 +22,52 @@ from ereuse_workbench.usb_sneaky import USBSneaky
 
 class Workbench:
     """
-    Create a full report of your computer with serials, testing, benchmarking, erasing and installing an OS.
+    Create a full report of your computer with serials,
+    testing, benchmarking, erasing and installing an OS.
     """
 
     def __init__(self, smart: Smart = False, erase: EraseType = False, erase_steps: int = 1,
                  erase_leading_zeros: bool = False, stress: int = 0,
                  install: str = False, server: str = None, tester: Type[Tester] = Tester,
                  computer: Type[Computer] = Computer, eraser: Type[Eraser] = Eraser,
-                 benchmarker: Type[Benchmarker] = Benchmarker, usb_sneaky: Type[USBSneaky] = USBSneaky):
+                 benchmarker: Type[Benchmarker] = Benchmarker,
+                 usb_sneaky: Type[USBSneaky] = USBSneaky):
         """
         Configures this Workbench.
 
-        :param smart: Should we perform a SMART test to the hard-drives? If so, pass :attr:`.Workbench.Smart.short` for
-                      a short test and :attr:`.Workbench.Smart.long` for a long test.
-        :param erase: Should we erase the hard-drives? If so, pass the :attr:`.Workbench.Erase.normal` way, which is
-                      faster but it can't guarantee at 100% full erasure, or :attr:`.Workbench.Erase.sectors` way,
+        :param smart: Should we perform a SMART test to the hard-drives?
+                      If so, pass :attr:`.Workbench.Smart.short` for a
+                      short test and :attr:`.Workbench.Smart.long` for a
+                      long test.
+        :param erase: Should we erase the hard-drives? If so, pass the
+                      :attr:`.Workbench.Erase.normal` way, which is
+                      faster but it can't guarantee at 100% full
+                      erasure, or :attr:`.Workbench.Erase.sectors` way,
                       which is slower but with 100% guarantee.
-        :param erase_steps: In case `erase` is truthy, how many steps overriding data should we perform? Policies
-                            and regulations may set= a specific value. Normal 'secure' value is `3`.
-        :param erase_leading_zeros: In case `erase` is truthy, should we finish erasing with an extra step that
-                                    writes zeroes? This can be enforced by policy and regulation.
-        :param stress: How many minutes should stress the machine. 0 minutes disables this test. A stress test
-                       puts the machine at 100% (CPU, RAM and HDD) to ensure components can handle heavy work.
-        :param install: Image name to install. A falsey value will disable installation. The image is a FSA file
-                        that will be installed on the first hard-drive. Do not add the extension ('.fsa').
-        :param server: An URL pointing to a WorkbenchServer. Setting a truthy value will turn-on server functionality
-                       like USBSneaky module, sending snapshots to server and getting configuration from it.
+        :param erase_steps: In case `erase` is truthy, how many steps
+                            overriding data should we perform? Policies
+                            and regulations may set= a specific value.
+                            Normal 'secure' value is `3`.
+        :param erase_leading_zeros: In case `erase` is truthy,
+                                    should we finish erasing with an
+                                    extra step that
+                                    writes zeroes? This can be enforced
+                                    by policy and regulation.
+        :param stress: How many minutes should stress the machine.
+                       0 minutes disables this test. A stress test
+                       puts the machine at 100% (CPU, RAM and HDD)
+                       to ensure components can handle heavy work.
+        :param install: Image name to install. A falsey value will
+                        disable installation. The image is a FSA file
+                        that will be installed on the first hard-drive.
+                        Do not add the extension ('.fsa').
+        :param server: An URL pointing to a WorkbenchServer. Setting a
+                       truthy value will turn-on server functionality
+                       like USBSneaky module, sending snapshots to
+                       server and getting configuration from it.
         :param tester: Testing class to use to perform tests.
-        :param computer: Computer class to use to retrieve computer information.
+        :param computer: Computer class to use to retrieve computer
+                         information.
         """
         if os.geteuid() != 0:
             raise EnvironmentError('Execute Workbench as root.')
@@ -77,7 +95,8 @@ class Workbench:
                 self.mount_images(self.server)
             self.usb_sneaky = Process(target=usb_sneaky, args=(self.uuid, server))
 
-        self.phases = 1 + bool(self.smart) + bool(self.stress) + bool(self.erase) + bool(self.install)
+        self.phases = 1 + bool(self.smart) + bool(self.stress) + bool(self.erase) + \
+                      bool(self.install)
         """The number of phases we will be performing."""
 
         self.tester = tester()
@@ -102,7 +121,8 @@ class Workbench:
         self.install_path.mkdir(parents=True, exist_ok=True)
         ip, _ = urlparse(server).netloc.split(':')
         c = 'mount -t cifs -o guest,uid=root,forceuid,gid=root,forcegid "//{}/workbench-images" {}'
-        p = Popen(c.format(ip, self.install_path), stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True)
+        c = c.format(ip, self.install_path)
+        p = Popen(c, stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True)
         _, stderr = p.communicate()
         if stderr:
             raise CannotMount(stderr + '\nYou might need to "umount {}"'.format(self.install_path))
@@ -131,7 +151,7 @@ class Workbench:
             'inventory': {
                 'elapsed': now() - init_time
             },
-            'date': now(),  # todo ensure we try to update local time through Internet if we are on a live-cd
+            'date': now(),  # todo ensure we try to update local time through Internet
             '@type': 'devices:Snapshot'
         }
         self.after_phase(snapshot, init_time)
@@ -145,7 +165,7 @@ class Workbench:
             self.after_phase(snapshot, init_time)
 
         if self.stress:
-            print('{} Run stress tests for {} minutes...'.format(self._print_phase(3), self.stress))
+            print('{} Run stress tests for {} mins...'.format(self._print_phase(3), self.stress))
             snapshot['tests'] = [self.tester.stress(self.stress)]
             self.after_phase(snapshot, init_time)
 
@@ -190,7 +210,9 @@ class Workbench:
             check_call(['erwb-install-image'], env=env)
             success = True
         except CalledProcessError:
-            success = False  # todo erwb-install-image never returns 1 so this never executes
+            # todo erwb-install-image never returns 1 so
+            # this never executes
+            success = False
         return {
             'elapsed': now() - init_time,
             'label': self.install,
@@ -205,7 +227,8 @@ class Workbench:
 
     def send_to_server(self, snapshot: dict):
         url = '/snapshots/{}'.format(snapshot['_uuid'])
-        r = self.session.patch(url, data=json.dumps(snapshot, cls=DeviceHubJSONEncoder, skipkeys=True))
+        r = self.session.patch(url,
+                               data=json.dumps(snapshot, cls=DeviceHubJSONEncoder, skipkeys=True))
         r.raise_for_status()
 
     def _print_phase(self, phase: int):

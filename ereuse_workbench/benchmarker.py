@@ -1,20 +1,24 @@
-"""
-Devices benchmark
-
-Set of programs, or other operations, in order to assess the relative
-performance of an object, normally by running a number of standard
-tests and trials against it.
-
-"""
 import subprocess
 
 from .utils import convert_capacity
 
 
 class Benchmarker:
+    """
+    Set of method that run standard tests to assess the relative
+    performance of components or the entire machine.
+
+    See each method to know what they benchmark.
+    """
     BENCHMARK_HDD_COMMON = 'bs=1M', 'count=256', 'oflag=dsync'
 
     def benchmark_hdd(self, disk):
+        """
+        Computers the reading and writing speed of a hard-drive by
+        writing and reading a piece of the hard-drive.
+
+        This method does not destroy existing data.
+        """
         # Read
         cmd_read = ('dd', 'if=%s' % disk, 'of=/dev/null') + self.BENCHMARK_HDD_COMMON
         p = subprocess.Popen(cmd_read, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -41,6 +45,7 @@ class Benchmarker:
 
     @staticmethod
     def processor():
+        """Gets the BogoMips of the processor."""
         # https://en.wikipedia.org/wiki/BogoMips
         # score = sum(cpu.bogomips for cpu in device.cpus)
         mips = []
