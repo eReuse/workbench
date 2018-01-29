@@ -1,0 +1,661 @@
+{
+  "id" : "debian",
+  "class" : "system",
+  "claimed" : true,
+  "handle" : "DMI:0001",
+  "description" : "Computer",
+  "product" : "VirtualBox",
+  "vendor" : "innotek GmbH",
+  "version" : "1.2",
+  "serial" : "0",
+  "width" : 32,
+  "configuration" : {
+    "cpus" : "2",
+    "family" : "Virtual Machine",
+    "uuid" : "EB35494B-713A-468A-8061-8F3919FB3803"
+  },
+  "capabilities" : {
+    "smbios-2.5" : "SMBIOS version 2.5",
+    "dmi-2.5" : "DMI version 2.5",
+    "smp-1.4" : "SMP specification v1.4",
+    "smp" : "Symmetric Multi-Processing"
+  },
+  "children" : [
+    {
+      "id" : "core",
+      "class" : "bus",
+      "claimed" : true,
+      "handle" : "DMI:0008",
+      "description" : "Motherboard",
+      "product" : "VirtualBox",
+      "vendor" : "Oracle Corporation",
+      "physid" : "0",
+      "version" : "1.2",
+      "serial" : "0",
+      "children" : [
+        {
+          "id" : "firmware",
+          "class" : "memory",
+          "claimed" : true,
+          "description" : "BIOS",
+          "vendor" : "innotek GmbH",
+          "physid" : "0",
+          "version" : "VirtualBox",
+          "date" : "12/01/2006",
+          "units" : "bytes",
+          "size" : 131072,
+          "capabilities" : {
+            "isa" : "ISA bus",
+            "pci" : "PCI bus",
+            "cdboot" : "Booting from CD-ROM/DVD",
+            "bootselect" : "Selectable boot path",
+            "int9keyboard" : "i8042 keyboard controller",
+            "int10video" : "INT10 CGA/Mono video",
+            "acpi" : "ACPI"
+          }
+        },
+        {
+          "id" : "cpu:0",
+          "class" : "processor",
+          "claimed" : true,
+          "product" : "Intel(R) Core(TM) i7-2620M CPU @ 2.70GHz",
+          "vendor" : "Intel Corp.",
+          "physid" : "1",
+          "businfo" : "cpu@0",
+          "version" : "6.10.7",
+          "serial" : "0002-06A7-0000-0000-0000-0000",
+          "units" : "Hz",
+          "size" : 2700000000,
+          "width" : 32,
+          "configuration" : {
+            "id" : "1"
+          },
+          "capabilities" : {
+            "boot" : "boot processor",
+            "fpu" : "mathematical co-processor",
+            "fpu_exception" : "FPU exceptions reporting",
+            "wp" : true,
+            "vme" : "virtual mode extensions",
+            "de" : "debugging extensions",
+            "pse" : "page size extensions",
+            "tsc" : "time stamp counter",
+            "msr" : "model-specific registers",
+            "pae" : "4GB+ memory addressing (Physical Address Extension)",
+            "mce" : "machine check exceptions",
+            "cx8" : "compare and exchange 8-byte",
+            "apic" : "on-chip advanced programmable interrupt controller (APIC)",
+            "sep" : "fast system calls",
+            "mtrr" : "memory type range registers",
+            "pge" : "page global enable",
+            "mca" : "machine check architecture",
+            "cmov" : "conditional move instruction",
+            "pat" : "page attribute table",
+            "pse36" : "36-bit page size extensions",
+            "clflush" : true,
+            "mmx" : "multimedia extensions (MMX)",
+            "fxsr" : "fast floating point save/restore",
+            "sse" : "streaming SIMD extensions (SSE)",
+            "sse2" : "streaming SIMD extensions (SSE2)",
+            "ht" : "HyperThreading",
+            "nx" : "no-execute bit (NX)",
+            "rdtscp" : true,
+            "constant_tsc" : true,
+            "xtopology" : true,
+            "nonstop_tsc" : true,
+            "eagerfpu" : true,
+            "pni" : true,
+            "pclmulqdq" : true,
+            "ssse3" : true,
+            "cx16" : true,
+            "sse4_1" : true,
+            "sse4_2" : true,
+            "x2apic" : true,
+            "popcnt" : true,
+            "aes" : true,
+            "xsave" : true,
+            "avx" : true,
+            "hypervisor" : true,
+            "lahf_lm" : true
+          },
+          "children" : [
+            {
+              "id" : "logicalcpu:0",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:1.0",
+              "description" : "Logical CPU",
+              "physid" : "1.1",
+              "width" : 32,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:1",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:1.1",
+              "description" : "Logical CPU",
+              "physid" : "1.2",
+              "width" : 32,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "cpu:1",
+          "class" : "processor",
+          "claimed" : true,
+          "physid" : "2",
+          "businfo" : "cpu@1",
+          "version" : "6.10.7",
+          "serial" : "0002-06A7-0000-0000-0000-0000",
+          "units" : "Hz",
+          "size" : 2700000000,
+          "configuration" : {
+            "id" : "1"
+          },
+          "capabilities" : {
+            "ht" : "HyperThreading"
+          },
+          "children" : [
+            {
+              "id" : "logicalcpu:0",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:1.0",
+              "description" : "Logical CPU",
+              "physid" : "1.1",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:1",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:1.1",
+              "description" : "Logical CPU",
+              "physid" : "1.2",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "memory",
+          "class" : "memory",
+          "claimed" : true,
+          "description" : "System memory",
+          "physid" : "3",
+          "units" : "bytes",
+          "size" : 1065349120
+        },
+        {
+          "id" : "pci",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "440FX - 82441FX PMC [Natoma]",
+          "vendor" : "Intel Corporation",
+          "physid" : "100",
+          "businfo" : "pci@0000:00:00.0",
+          "version" : "02",
+          "width" : 32,
+          "clock" : 33000000,
+          "children" : [
+            {
+              "id" : "isa",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:01.0",
+              "description" : "ISA bridge",
+              "product" : "82371SB PIIX3 ISA [Natoma/Triton II]",
+              "vendor" : "Intel Corporation",
+              "physid" : "1",
+              "businfo" : "pci@0000:00:01.0",
+              "version" : "00",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "isa" : true,
+                "bus_master" : "bus mastering"
+              }
+            },
+            {
+              "id" : "ide",
+              "class" : "storage",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:01.1",
+              "description" : "IDE interface",
+              "product" : "82371AB/EB/MB PIIX4 IDE",
+              "vendor" : "Intel Corporation",
+              "physid" : "1.1",
+              "businfo" : "pci@0000:00:01.1",
+              "version" : "01",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "ata_piix",
+                "latency" : "64"
+              },
+              "capabilities" : {
+                "ide" : true,
+                "bus_master" : "bus mastering"
+              }
+            },
+            {
+              "id" : "display",
+              "class" : "display",
+              "handle" : "PCI:0000:00:02.0",
+              "description" : "VGA compatible controller",
+              "product" : "VirtualBox Graphics Adapter",
+              "vendor" : "InnoTek Systemberatung GmbH",
+              "physid" : "2",
+              "businfo" : "pci@0000:00:02.0",
+              "version" : "00",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "vga_controller" : true,
+                "bus_master" : "bus mastering"
+              }
+            },
+            {
+              "id" : "network",
+              "class" : "network",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:03.0",
+              "description" : "Ethernet interface",
+              "product" : "82540EM Gigabit Ethernet Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "3",
+              "businfo" : "pci@0000:00:03.0",
+              "logicalname" : "enp0s3",
+              "version" : "02",
+              "serial" : "08:00:27:53:cb:af",
+              "units" : "bit/s",
+              "size" : 1000000000,
+              "capacity" : 1000000000,
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "autonegotiation" : "on",
+                "broadcast" : "yes",
+                "driver" : "e1000",
+                "driverversion" : "7.3.21-k8-NAPI",
+                "duplex" : "full",
+                "ip" : "10.0.2.15",
+                "latency" : "64",
+                "link" : "yes",
+                "mingnt" : "255",
+                "multicast" : "yes",
+                "port" : "twisted pair",
+                "speed" : "1Gbit/s"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "pcix" : "PCI-X",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing",
+                "ethernet" : true,
+                "physical" : "Physical interface",
+                "tp" : "twisted pair",
+                "10bt" : "10Mbit/s",
+                "10bt-fd" : "10Mbit/s (full duplex)",
+                "100bt" : "100Mbit/s",
+                "100bt-fd" : "100Mbit/s (full duplex)",
+                "1000bt-fd" : "1Gbit/s (full duplex)",
+                "autonegotiation" : "Auto-negotiation"
+              }
+            },
+            {
+              "id" : "generic",
+              "class" : "generic",
+              "handle" : "PCI:0000:00:04.0",
+              "description" : "System peripheral",
+              "product" : "VirtualBox Guest Service",
+              "vendor" : "InnoTek Systemberatung GmbH",
+              "physid" : "4",
+              "businfo" : "pci@0000:00:04.0",
+              "version" : "00",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "bus_master" : "bus mastering"
+              }
+            },
+            {
+              "id" : "multimedia",
+              "class" : "multimedia",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:05.0",
+              "description" : "Multimedia audio controller",
+              "product" : "82801AA AC'97 Audio Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "5",
+              "businfo" : "pci@0000:00:05.0",
+              "version" : "01",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "snd_intel8x0",
+                "latency" : "64"
+              },
+              "capabilities" : {
+                "bus_master" : "bus mastering"
+              }
+            },
+            {
+              "id" : "usb:0",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:06.0",
+              "description" : "USB controller",
+              "product" : "KeyLargo/Intrepid USB",
+              "vendor" : "Apple Inc.",
+              "physid" : "6",
+              "businfo" : "pci@0000:00:06.0",
+              "version" : "00",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "ohci-pci",
+                "latency" : "64"
+              },
+              "capabilities" : {
+                "ohci" : "Open Host Controller Interface",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:2:1",
+                  "product" : "OHCI PCI host controller",
+                  "vendor" : "Linux 4.9.0-4-686 ohci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@2",
+                  "logicalname" : "usb2",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "12",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  },
+                  "children" : [
+                    {
+                      "id" : "usb",
+                      "class" : "input",
+                      "claimed" : true,
+                      "handle" : "USB:2:2",
+                      "description" : "Human interface device",
+                      "product" : "USB Tablet",
+                      "vendor" : "VirtualBox",
+                      "physid" : "1",
+                      "businfo" : "usb@2:1",
+                      "version" : "1.00",
+                      "configuration" : {
+                        "driver" : "usbhid",
+                        "maxpower" : "100mA",
+                        "speed" : "12Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-1.10" : "USB 1.1"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id" : "bridge",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:07.0",
+              "description" : "Bridge",
+              "product" : "82371AB/EB/MB PIIX4 ACPI",
+              "vendor" : "Intel Corporation",
+              "physid" : "7",
+              "businfo" : "pci@0000:00:07.0",
+              "version" : "08",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "piix4_smbus",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "bridge" : true,
+                "bus_master" : "bus mastering"
+              }
+            },
+            {
+              "id" : "usb:1",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:0b.0",
+              "description" : "USB controller",
+              "product" : "82801FB/FBM/FR/FW/FRW (ICH6 Family) USB2 EHCI Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "b",
+              "businfo" : "pci@0000:00:0b.0",
+              "version" : "00",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "ehci-pci",
+                "latency" : "64"
+              },
+              "capabilities" : {
+                "ehci" : "Enhanced Host Controller Interface (USB2)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:1:1",
+                  "product" : "EHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-4-686 ehci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@1",
+                  "logicalname" : "usb1",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "12",
+                    "speed" : "480Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-2.00" : "USB 2.0"
+                  },
+                  "children" : [
+                    {
+                      "id" : "usb",
+                      "class" : "storage",
+                      "claimed" : true,
+                      "handle" : "USB:1:4",
+                      "description" : "Mass storage device",
+                      "product" : "TransMemory",
+                      "vendor" : "TOSHIBA",
+                      "physid" : "1",
+                      "businfo" : "usb@1:1",
+                      "logicalname" : "scsi3",
+                      "version" : "1.00",
+                      "serial" : "7427EAB351F9C02108B22CDD",
+                      "configuration" : {
+                        "driver" : "usb-storage",
+                        "maxpower" : "200mA",
+                        "speed" : "480Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-2.00" : "USB 2.0",
+                        "scsi" : "SCSI",
+                        "emulated" : "Emulated device"
+                      },
+                      "children" : [
+                        {
+                          "id" : "disk",
+                          "class" : "disk",
+                          "claimed" : true,
+                          "handle" : "SCSI:03:00:00:00",
+                          "description" : "SCSI Disk",
+                          "physid" : "0.0.0",
+                          "businfo" : "scsi@3:0.0.0",
+                          "logicalname" : "/dev/sda",
+                          "dev" : "8:0",
+                          "configuration" : {
+                            "logicalsectorsize" : "512",
+                            "sectorsize" : "512"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id" : "storage",
+              "class" : "storage",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:0d.0",
+              "description" : "SATA controller",
+              "product" : "82801HM/HEM (ICH8M/ICH8M-E) SATA Controller [AHCI mode]",
+              "vendor" : "Intel Corporation",
+              "physid" : "d",
+              "businfo" : "pci@0000:00:0d.0",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "ahci",
+                "latency" : "64"
+              },
+              "capabilities" : {
+                "storage" : true,
+                "pm" : "Power Management",
+                "ahci_1.0" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "scsi",
+          "class" : "storage",
+          "claimed" : true,
+          "physid" : "4",
+          "logicalname" : "scsi1",
+          "capabilities" : {
+            "emulated" : "Emulated device"
+          },
+          "children" : [
+            {
+              "id" : "cdrom",
+              "class" : "disk",
+              "claimed" : true,
+              "handle" : "SCSI:01:00:00:00",
+              "description" : "DVD reader",
+              "product" : "CD-ROM",
+              "vendor" : "VBOX",
+              "physid" : "0.0.0",
+              "businfo" : "scsi@1:0.0.0",
+              "logicalname" : ["/dev/cdrom", "/dev/dvd", "/dev/sr0", "/lib/live/mount/medium"],
+              "dev" : "11:0",
+              "version" : "1.0",
+              "configuration" : {
+                "ansiversion" : "5",
+                "mount.fstype" : "iso9660",
+                "mount.options" : "ro,noatime",
+                "state" : "mounted",
+                "status" : "ready"
+              },
+              "capabilities" : {
+                "removable" : "support is removable",
+                "audio" : "Audio CD playback",
+                "dvd" : "DVD playback"
+              },
+              "children" : [
+                {
+                  "id" : "medium",
+                  "class" : "disk",
+                  "claimed" : true,
+                  "physid" : "0",
+                  "logicalname" : ["/dev/cdrom", "/lib/live/mount/medium"],
+                  "dev" : "11:0",
+                  "configuration" : {
+                    "mount.fstype" : "iso9660",
+                    "mount.options" : "ro,noatime",
+                    "signature" : "6f23356c",
+                    "state" : "mounted"
+                  },
+                  "capabilities" : {
+                    "partitioned" : "Partitioned disk",
+                    "partitioned:dos" : "MS-DOS partition table"
+                  },
+                  "children" : [
+                    {
+                      "id" : "volume:0",
+                      "class" : "volume",
+                      "description" : "Empty partition",
+                      "physid" : "1",
+                      "capacity" : 414154752,
+                      "capabilities" : {
+                        "primary" : "Primary partition",
+                        "bootable" : "Bootable partition (active)",
+                        "nofs" : "No filesystem"
+                      }
+                    },
+                    {
+                      "id" : "volume:1",
+                      "class" : "volume",
+                      "description" : "Windows FAT volume",
+                      "vendor" : "mkfs.fat",
+                      "physid" : "2",
+                      "version" : "FAT12",
+                      "serial" : "c4a6-fe0d",
+                      "size" : 18446744073709551104,
+                      "configuration" : {
+                        "FATs" : "2",
+                        "filesystem" : "fat"
+                      },
+                      "capabilities" : {
+                        "primary" : "Primary partition",
+                        "boot" : "Contains boot code",
+                        "fat" : "Windows FAT",
+                        "initialized" : "initialized volume"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

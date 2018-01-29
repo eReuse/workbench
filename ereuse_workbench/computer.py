@@ -45,7 +45,7 @@ class Computer:
     }
     """Delete those *words* from the value."""
     TO_REMOVE_EXP = re.compile('\\b({})\W'.format('|'.join(re.escape(s) for s in TO_REMOVE)), re.I)
-    CHARS_TO_REMOVE = '(){}[]'
+    CHARS_TO_REMOVE = '{}[]'
     """Remove those *characters* from the value."""
     MEANINGLESS = {
         'to be filled',
@@ -57,7 +57,9 @@ class Computer:
         'not specified',
         'modulepartnumber',
         'system serial',
-        '0001-067A-0000-0000-0000'
+        '0001-067A-0000-0000-0000',
+        'partnum0',
+        'manufacturer0'
     }
     """Discard a value if any of these values are inside it."""
 
@@ -209,7 +211,8 @@ class Computer:
     def motherboard_num_of_connectors(self, connector_name) -> int:
         connectors = get_nested_dicts_with_key_containing_value(self.lshw, 'id', connector_name)
         if connector_name == 'usb':
-            connectors = (c for c in connectors if 'usbhost' not in c['id'])
+            connectors = (c for c in connectors
+                          if 'usbhost' not in c['id'] and 'usb' not in c['businfo'])
         return len(tuple(connectors))
 
     def network_adapters(self):
@@ -260,6 +263,7 @@ class Computer:
         discarded meaningless values.
         """
         val = cls.TO_REMOVE_EXP.sub('', node.get(key, ''))
+        val = re.sub(r'\([^)]*\)', '', val)  # Remove everything between ()
         for char_to_remove in cls.CHARS_TO_REMOVE:
             val = val.replace(char_to_remove, '')
         val = clean(val)

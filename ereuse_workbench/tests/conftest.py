@@ -5,6 +5,7 @@ from unittest import mock
 from unittest.mock import MagicMock
 
 import pytest
+from ereuse_utils import DeviceHubJSONEncoder
 
 from ereuse_workbench.computer import Computer
 
@@ -46,4 +47,7 @@ def computer(lshw: MagicMock, json_name: str) -> (dict, List[dict]):
     lshw.return_value.json = fixture(json_name + '.json')
     computer_getter = Computer()
     assert lshw.called
-    return computer_getter.run()
+    pc, components = computer_getter.run()
+    components = json.dumps(components, skipkeys=True, cls=DeviceHubJSONEncoder, indent=2)
+    components = json.loads(components)
+    return pc, components
