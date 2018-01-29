@@ -127,13 +127,21 @@ class Workbench:
         if stderr:
             raise CannotMount(stderr + '\nYou might need to "umount {}"'.format(self.install_path))
 
-    def unmount_images(self):
-        _, stderr = Popen('umount {}'.format(self.install_path), shell=True).communicate()
-        if stderr:
-            raise CannotMount(stderr.decode())
-
     def run(self) -> str:
-        """Executes Workbench on this computer and returns a valid JSON for DeviceHub."""
+        """
+        Executes Workbench on this computer and
+        returns a valid JSON for DeviceHub.
+        """
+        try:
+            return self._run()
+        finally:
+            if self.server:
+                # Un-mount images
+                _, stderr = Popen('umount {}'.format(self.install_path), shell=True).communicate()
+                if stderr:
+                    raise CannotMount(stderr)
+
+    def _run(self) -> str:
         print('{}Starting eReuse.org Workbench'.format(Fore.CYAN))
         if self.server:
             self.usb_sneaky.start()
@@ -185,8 +193,6 @@ class Workbench:
             print('{} Install {}...'.format(self._print_phase(5), self.install))
             snapshot['osInstallation'] = self.install_os()
             self.after_phase(snapshot, init_time)
-            if self.server:
-                self.unmount_images()
 
         print('{}eReuse.org Workbench has finished properly.'.format(Fore.GREEN))
 
