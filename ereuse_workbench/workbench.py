@@ -8,6 +8,7 @@ from subprocess import CalledProcessError, PIPE, Popen, check_call
 from typing import Type
 from urllib.parse import urlparse
 
+import pkg_resources
 import urllib3
 from colorama import Fore, init
 from ereuse_utils import DeviceHubJSONEncoder, now
@@ -38,15 +39,17 @@ class Workbench:
         :param smart: Should we perform a SMART test to the hard-drives?
                       If so, pass :attr:`.Workbench.Smart.short` for a
                       short test and :attr:`.Workbench.Smart.long` for a
-                      long test.
-        :param erase: Should we erase the hard-drives? If so, pass the
-                      :attr:`.Workbench.Erase.normal` way, which is
-                      faster but it can't guarantee at 100% full
-                      erasure, or :attr:`.Workbench.Erase.sectors` way,
-                      which is slower but with 100% guarantee.
+                      long test. Falsy values disables the
+                      functionality.
+        :param erase: Should we erase the hard-drives? Pass-in a
+                      :attr:`.Workbench.Erase.normal` to perform
+                      a normal erasure (quite secure) or
+                      :attr:`.Workbench.Erase.sectors` to perform
+                      a slower but fully secured erasure. Falsy values
+                      disables the functionality.
         :param erase_steps: In case `erase` is truthy, how many steps
                             overriding data should we perform? Policies
-                            and regulations may set= a specific value.
+                            and regulations may set a specific value.
                             Normal 'secure' value is `3`.
         :param erase_leading_zeros: In case `erase` is truthy,
                                     should we finish erasing with an
@@ -57,7 +60,7 @@ class Workbench:
                        0 minutes disables this test. A stress test
                        puts the machine at 100% (CPU, RAM and HDD)
                        to ensure components can handle heavy work.
-        :param install: Image name to install. A falsey value will
+        :param install: Image name to install. A falsy value will
                         disable installation. The image is a FSA file
                         that will be installed on the first hard-drive.
                         Do not add the extension ('.fsa').
@@ -97,7 +100,12 @@ class Workbench:
 
         self.phases = 1 + bool(self.smart) + bool(self.stress) + bool(self.erase) + \
                       bool(self.install)
-        """The number of phases we will be performing."""
+        """
+        The number of phases we will be performing.
+        
+        A phase is a piece of execution. Gathering hardware info is
+        the first phase, and executing a smart test is the second one.
+        """
 
         self.tester = tester()
         self.eraser = eraser(self.erase, self.erase_steps, self.erase_leading_zeros)
@@ -135,7 +143,7 @@ class Workbench:
         try:
             return self._run()
         finally:
-            if self.server:
+            if self.server and self.install:
                 # Un-mount images
                 _, stderr = Popen('umount {}'.format(self.install_path), shell=True).communicate()
                 if stderr:
@@ -148,7 +156,8 @@ class Workbench:
 
         print('{} Getting computer information...'.format(self._print_phase(1)))
         init_time = now()
-        computer, components = self.Computer(self.benchmarker).run()
+        computer_getter = self.Computer(self.benchmarker)
+        computer, components = computer_getter.run()
         snapshot = {
             'device': computer,
             'components': components,
@@ -159,14 +168,23 @@ class Workbench:
             'inventory': {
                 'elapsed': now() - init_time
             },
-            'date': now(),  # todo ensure we try to update local time through Internet
+            # The version of Workbench
+            # from https://stackoverflow.com/a/2073599
+            # This throws an exception if you git clone this package
+            # and did not install it with pip
+            # Perform ``pip install -e .`` or similar to fix
+            'version': pkg_resources.require('ereuse-workbench')[0].version,
+            'automatic': True,
+            'debug': computer_getter.lshw,
+            'date': now(),  # todo we should ensure debian updates the machine time from Internet
             '@type': 'devices:Snapshot'
         }
         self.after_phase(snapshot, init_time)
+        hdds = tuple(c for c in components if c['@type'] == 'HardDrive')
 
         if self.smart:
             print('{} Run SMART test and benchmark hard-drives...'.format(self._print_phase(2)))
-            for hdd in filter(lambda x: x['@type'] == 'HardDrive', components):
+            for hdd in hdds:
                 hdd['test'] = self.tester.smart(hdd[PrivateFields.logical_name], self.smart)
                 if hdd['test']['error']:
                     print('{}Failed SMART for HDD {}'.format(Fore.RED, hdd.get('serialNumber')))
@@ -181,13 +199,11 @@ class Workbench:
             text = '{} Erase Hard-Drives with {} method, {} steps and {} overriding with zeros...'
             print(text.format(self._print_phase(4), self.erase.name, self.erase_steps,
                               '' if self.erase_leading_zeros else 'not'))
-            for hdd in filter(lambda x: x['@type'] == 'HardDrive', components):
+            for hdd in hdds:
                 hdd['erasure'] = self.eraser.erase(hdd[PrivateFields.logical_name])
                 if not hdd['erasure']['success']:
                     print('{}Failed erasing HDD {}'.format(Fore.RED, hdd.get('serialNumber')))
             self.after_phase(snapshot, init_time)
-            if self.server:
-                self.send_to_server(snapshot)
 
         if self.install:
             print('{} Install {}...'.format(self._print_phase(5), self.install))
@@ -202,6 +218,10 @@ class Workbench:
         return json.dumps(snapshot, skipkeys=True, cls=DeviceHubJSONEncoder, indent=2)
 
     def install_os(self) -> dict:
+        """
+        Installs the OS by executing
+        erwb-install-image from reciclanet-scripts.
+        """
         # Customizations are passed as environment variables.
         env = os.environ.copy()
         env['IMAGE_NAME'] = self.install
@@ -215,11 +235,11 @@ class Workbench:
         init_time = now()
         try:
             check_call(['erwb-install-image'], env=env)
-            success = True
         except CalledProcessError:
-            # todo erwb-install-image never returns 1 so
-            # this never executes
+            # todo erwb-install-image never returns 1 so this never executes
             success = False
+        else:
+            success = True
         return {
             'elapsed': now() - init_time,
             'label': self.install,
@@ -230,15 +250,13 @@ class Workbench:
         snapshot['_phases'] += 1
         snapshot['elapsed'] = now() - init_time
         if self.server:
-            self.send_to_server(snapshot)
+            # Send to server
+            url = '/snapshots/{}'.format(snapshot['_uuid'])
+            data = json.dumps(snapshot, cls=DeviceHubJSONEncoder, skipkeys=True)
+            self.session.patch(url, data=data).raise_for_status()
 
-    def send_to_server(self, snapshot: dict):
-        url = '/snapshots/{}'.format(snapshot['_uuid'])
-        r = self.session.patch(url,
-                               data=json.dumps(snapshot, cls=DeviceHubJSONEncoder, skipkeys=True))
-        r.raise_for_status()
-
-    def _print_phase(self, phase: int):
+    @staticmethod
+    def _print_phase(phase: int):
         return '[ {}Phase {}{} ]'.format(Fore.CYAN, phase, Fore.RESET)
 
 
