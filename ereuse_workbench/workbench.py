@@ -47,14 +47,17 @@ class Workbench:
                       :attr:`.Workbench.Erase.sectors` to perform
                       a slower but fully secured erasure. Falsy values
                       disables the functionality.
+                      See `a detailed explanation of the erasure
+                      process in the FAQ
+                      <https://ereuse-org.gitbooks.io/faq/content/w-
+                      hich-is-the-data-wiping-process-performed.html>`_.
         :param erase_steps: In case `erase` is truthy, how many steps
                             overriding data should we perform? Policies
                             and regulations may set a specific value.
-                            Normal 'secure' value is `3`.
         :param erase_leading_zeros: In case `erase` is truthy,
                                     should we finish erasing with an
-                                    extra step that
-                                    writes zeroes? This can be enforced
+                                    extra step that writes zeroes?
+                                    This can be enforced
                                     by policy and regulation.
         :param stress: How many minutes should stress the machine.
                        0 minutes disables this test. A stress test
