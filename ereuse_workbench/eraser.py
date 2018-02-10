@@ -32,7 +32,8 @@ class Eraser:
         HMG IS5 standard.
         """
         time_start = now()
-        steps = []
+        remaining_steps = self.steps
+        steps_performed = []
 
         total_success = True
 
@@ -42,7 +43,7 @@ class Eraser:
             success = self.erase_process(dev, '-zvn', 0)
             if not success:
                 total_success = False
-            steps.append({
+            steps_performed.append({
                 '@type': 'Zeros',
                 'startingTime': now(),
                 'success': success,
@@ -51,31 +52,31 @@ class Eraser:
 
         if self.mode == EraseType.EraseBasic:
             # random with shred
-            while self.steps != 0:
+            while remaining_steps != 0:
                 success = self.erase_process(dev, '-vn', 1)
                 if not success:
                     total_success = False
-                steps.append({
+                steps_performed.append({
                     '@type': 'Random',
                     'startingTime': now(),
                     'success': success,
                     'endingTime': now(),
                 })
-                self.steps -= 1
+                remaining_steps -= 1
         elif self.mode == EraseType.EraseSectors:
             # random with badblock
-            while self.steps != 0:
+            while remaining_steps != 0:
                 output = '/tmp/badblocks'
                 success = self.erase_sectors(dev, output)
                 if not success:
                     total_success = False
-                steps.append({
+                steps_performed.append({
                     '@type': 'Random',
                     'startingTime': now(),
                     'success': success,
                     'endingTime': now(),
                 })
-                self.steps -= 1
+                remaining_steps -= 1
 
         time_end = now()
         return {
@@ -85,7 +86,7 @@ class Eraser:
             'startingTime': time_start,
             'endingTime': time_end,
             'success': total_success,
-            'steps': steps
+            'steps': steps_performed
         }
 
     @staticmethod

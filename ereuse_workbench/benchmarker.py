@@ -41,7 +41,9 @@ class Benchmarker:
     def _benchmark_hdd_to_mb(output: bytes) -> float:
         output = output.decode()
         value = float(output.split()[-2].replace(',', '.'))
-        return convert_capacity(value, output.split()[-1][0:2], 'MB')
+        speed = convert_capacity(value, output.split()[-1][0:2], 'MB')
+        assert 1 < speed < 300, '{} doesn\'t seem like normal HDD speed'.format(speed)
+        return speed
 
     @staticmethod
     def processor():

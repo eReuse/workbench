@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3 -O
 
 # -*- coding: utf-8 -*-
 
@@ -14,9 +14,12 @@ from ereuse_workbench.eraser import EraseType
 from ereuse_workbench.tester import Smart
 from ereuse_workbench.workbench import Workbench
 
+# Note that this script, if executed directly (./erwb) runs in
+# python optimized mode to avoid asserts
 if __name__ == '__main__':
     desc = getdoc(Workbench)
-    epilog = 'Example: test the computer and save a JSON report to a file: erwb --smart --stress --json > snapshot.json'
+    epilog = 'Example: test the computer and save a JSON report to a file: ' \
+             'erwb --smart --stress --json > snapshot.json'
     parser = argparse.ArgumentParser(description=desc, epilog=epilog)
     parser.add_argument('--smart', type=Smart, choices=list(Smart),
                         help='Perform a SMART test to the HDDs.')
@@ -32,7 +35,8 @@ if __name__ == '__main__':
                              'The file has to be in /media/workbench-images')
     parser.add_argument('--server', type=str,
                         help='Connect to a WorkbenchServer at the specified URI. '
-                             'This will activate USBSneaky module and load the settings from the server.')
+                             'This will activate USBSneaky module and load the '
+                             'settings from the server.')
     parser.add_argument('--json', action='store_true', help='Print only a JSON report to stdout.')
     parser.add_argument('--ask-shutdown', action='store_true',
                         help='Show a message to (violently) shutdown the PC after finishing.')
@@ -40,17 +44,20 @@ if __name__ == '__main__':
     print_json = args.pop('json')
     ask_shutdown = args.pop('ask_shutdown')
     if print_json:
-        with redirect_stdout(StringIO()):
-            snapshot = Workbench(**args).run()
+        with redirect_stdout(StringIO()):  # We trash all printing from Workbench
+            workbench = Workbench(**args)
+            snapshot = workbench.run()
         print(snapshot)
     else:
-        Workbench(**args).run()
+        workbench = Workbench(**args)
+        workbench.run()
     if ask_shutdown:
         print('Press {0}s{1} to Shutdown the system or {0}r{1} to Reboot and press {0}ENTER{1}.'
               .format(Fore.CYAN, Fore.RESET))
         print('{}Press just ENTER to finish Workbench and the USB detection.'
               .format(Style.DIM))
         char = input()
+        workbench.usb_sneaky.terminate()
         if char == 's' or char == 'r':
             # Fast and violent shutdown for Linux
             # use only on a live system where you don't care about file integrity
@@ -58,4 +65,3 @@ if __name__ == '__main__':
                 f.write('1')
             with Path('/proc/sysrq-trigger').open() as f:
                 f.write('o' if char == 's' else 'b')
-        exit(0)

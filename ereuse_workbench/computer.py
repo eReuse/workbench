@@ -2,6 +2,7 @@ import json
 import re
 from enum import Enum
 from itertools import chain
+from math import floor
 from subprocess import PIPE, Popen
 from typing import List
 
@@ -114,10 +115,12 @@ class Computer:
                 'logical' not in node['id'] and 'description' in node and not node.get('disabled'))
 
     def processor(self, node):
+        speed = utils.convert_frequency(node['size'], node['units'], 'GHz')
+        assert 0.1 <= speed <= 9, 'Frequency is not in reasonable GHz'
         processor = {
             '@type': 'Processor',
-            'speed': utils.convert_frequency(node['size'], node['units'], 'GHz'),
-            'numberOfCores': get(node, 'configuration.cores'),
+            'speed': speed,
+            'numberOfCores': int(get(node, 'configuration.cores')),
             'address': node['width']
         }
         if self.benchmarker:
@@ -137,12 +140,17 @@ class Computer:
     def ram_module(self, module: dict):
         # Node with no size == empty ram slot
         if 'size' in module:
-            return dict({
+            ram = dict({
                 '@type': 'RamModule',
-                'size': utils.convert_capacity(module['size'], module['units'], 'MB'),
-                'speed': utils.convert_frequency(module['clock'], 'Hz',
-                                                 'MHz') if 'clock' in module else None
+                'size': int(utils.convert_capacity(module['size'], module['units'], 'MB'))
             }, **self._common(module))
+            # power of 2
+            assert 128 <= ram['size'] <= 2 ** 15 and (ram['size'] & (ram['size'] - 1) == 0), \
+                'Invalid value {} MB for RAM Speed'.format(ram['size'])
+            if 'clock' in module:
+                ram['speed'] = speed = utils.convert_frequency(module['clock'], 'Hz', 'MHz')
+                assert 100 <= speed <= 10000, 'Invalid value {} Mhz for RAM speed'.format(speed)
+            return ram
 
     def hard_drives(self):
         nodes = get_nested_dicts_with_key_containing_value(self.lshw, 'id', 'disk')
@@ -152,16 +160,17 @@ class Computer:
 
     def hard_drive(self, node) -> dict or None:
         logical_name = node['logicalname']
-        interface = utils.run(
-            'udevadm info --query=all --name={} | grep ID_BUS | cut -c 11-'.format(logical_name))
-        interface = interface or 'ata'
-        if interface != 'usb':
+        interface = utils.run('udevadm info --query=all --name={} | grep ID_BUS | cut -c 11-'
+                              .format(logical_name))
+        # todo not sure if ``interface != usb`` is needed
+        if interface != 'usb' and not get(node, 'capabilities.removable'):
             hdd = {
                 '@type': 'HardDrive',
-                'size': utils.convert_capacity(node['size'], node['units'], 'MB'),
+                'size': floor(utils.convert_capacity(node['size'], node['units'], 'MB')),
                 'interface': interface,
                 PrivateFields.logical_name: logical_name
             }
+            assert 20000 < hdd['size'] < 10 ** 8, 'Invalid HDD size {} MB'.format(hdd['size'])
             if self.benchmarker:
                 hdd['benchmark'] = self.benchmarker.benchmark_hdd(logical_name)
             return dict(hdd, **self._common(node))
@@ -194,7 +203,9 @@ class Computer:
                 max_size = size_kb
 
         if max_size > 0:
-            return utils.convert_capacity(max_size, 'KB', 'MB')
+            size = utils.convert_capacity(max_size, 'KB', 'MB')
+            assert 8 < size < 2 ** 14, 'Invalid Graphic Card size {} MB'.format(size)
+            return size
         return None
 
     def motherboard(self):

@@ -48,6 +48,13 @@ def test_dell(lshw: MagicMock):
     computer(lshw, 'dell-logicalname-network')
 
 
+def test_hp_dc7900(lshw: MagicMock):
+    """Tests an HP DC 7900 with an erased HDD following HMG IS5."""
+    # todo check totalSlots and usedSlots
+    pc, components = computer(lshw, 'erased-i5.lshw')
+    assert pc['@type'] == 'Computer'
+
+
 def test_virtualbox_without_hdd_and_with_usb(lshw: MagicMock):
     """
     Tests that a Virtualbox with an USB plugged-in doesn't provide
