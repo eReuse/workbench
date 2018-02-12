@@ -19,7 +19,7 @@ from ereuse_workbench.workbench import Workbench
 if __name__ == '__main__':
     desc = getdoc(Workbench)
     epilog = 'Example: test the computer and save a JSON report to a file: ' \
-             'erwb --smart --stress --json > snapshot.json'
+             'erwb --smart short --stress 2 --json > snapshot.json'
     parser = argparse.ArgumentParser(description=desc, epilog=epilog)
     parser.add_argument('--smart', type=Smart, choices=list(Smart),
                         help='Perform a SMART test to the HDDs.')

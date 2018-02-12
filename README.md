@@ -24,14 +24,17 @@ We offer a live-cd with a pre-configured Workbench that connects to Workbench Se
 a workbench live that suits your needs.
 
 ## Installation
-Download this project (clone it or with a zip) and then execute with root (as it will install as a
-command-line too) `{project-folder}/scrpits/install.sh {project-folder}`, where `{project-folder}`
-is the path where your project is. So, for example, if the path of your project is
-`~/Documents/workbench`, then execute `~/Documents/workbench/scripts/install.sh
-~/Documents/workbench`.
+1. Download this project with `git clone https://github.com/ereuse/workbench`
+2. Go to the project folder and execute `git submodule init` and `git submodule update`.
+3. Execute with root `{project-folder}/scrpits/install.sh {project-folder}`,
+   where `{project-folder}` is the path where your project is. 
+   So, for example, if the path of your project is `~/Documents/workbench`, then execute 
+   `~/Documents/workbench/scripts/install.sh ~/Documents/workbench`.
 
 ## Usage
-Execute `erwb` as root, like `sudo erwb`. From a python file you can:
+Execute `erwb` as root, like `sudo erwb` (see usage with `erwb --help`).
+
+From a python file you can:
 ```python
     from ereuse_workbench.workbench import Workbench
     erwb = Workbench()
