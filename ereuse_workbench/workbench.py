@@ -99,7 +99,9 @@ class Workbench:
             if self.install:
                 # We get the OS to install from the server through a mounted samba
                 self.mount_images(self.server)
-            self.usb_sneaky = Process(target=usb_sneaky, args=(self.uuid, server))
+            # We use thread just to ease killing it when we finish
+            # By setting daemon=True USB Sneaky will die when we die
+            self.usb_sneaky = Process(target=usb_sneaky, args=(self.uuid, server), daemon=True)
 
         self.phases = 1 + bool(self.smart) + bool(self.stress) + bool(self.erase) + \
                       bool(self.install)
@@ -136,7 +138,8 @@ class Workbench:
         p = Popen(c, stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True)
         _, stderr = p.communicate()
         if stderr:
-            raise CannotMount(stderr + '\nYou might need to "umount {}"'.format(self.install_path))
+            raise CannotMount('{}\nYou might need to "umount {}"'
+                              .format(stderr.decode(), self.install_path))
 
     def run(self) -> str:
         """

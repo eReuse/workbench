@@ -6,9 +6,8 @@ import argparse
 from contextlib import redirect_stdout
 from inspect import getdoc
 from io import StringIO
-from pathlib import Path
 
-from colorama import Fore, Style
+from colorama import Style
 
 from ereuse_workbench.eraser import EraseType
 from ereuse_workbench.tester import Smart
@@ -35,33 +34,26 @@ if __name__ == '__main__':
                              'The file has to be in /media/workbench-images')
     parser.add_argument('--server', type=str,
                         help='Connect to a WorkbenchServer at the specified URI. '
-                             'This will activate USBSneaky module and load the '
-                             'settings from the server.')
+                             'This will activate USBSneaky module, load the '
+                             'settings from the server and keep indefinitely waiting for an USB to'
+                             'be plugged-in.')
     parser.add_argument('--json', action='store_true', help='Print only a JSON report to stdout.')
-    parser.add_argument('--ask-shutdown', action='store_true',
-                        help='Show a message to (violently) shutdown the PC after finishing.')
     args = vars(parser.parse_args())
     print_json = args.pop('json')
-    ask_shutdown = args.pop('ask_shutdown')
+    workbench = Workbench(**args)
     if print_json:
         with redirect_stdout(StringIO()):  # We trash all printing from Workbench
-            workbench = Workbench(**args)
             snapshot = workbench.run()
         print(snapshot)
     else:
-        workbench = Workbench(**args)
         workbench.run()
-    if ask_shutdown:
-        print('Press {0}s{1} to Shutdown the system or {0}r{1} to Reboot and press {0}ENTER{1}.'
-              .format(Fore.CYAN, Fore.RESET))
-        print('{}Press just ENTER to finish Workbench and the USB detection.'
-              .format(Style.DIM))
-        char = input()
-        workbench.usb_sneaky.terminate()
-        if char == 's' or char == 'r':
-            # Fast and violent shutdown for Linux
-            # use only on a live system where you don't care about file integrity
-            with Path('/proc/sys/kernel/sysrq').open() as f:
-                f.write('1')
-            with Path('/proc/sysrq-trigger').open() as f:
-                f.write('o' if char == 's' else 'b')
+        if args.get('server', None):
+            print('You can still link the computer.')
+            print('Stop the machine by pressing the power button.')
+            print('{}Press CTRL-C to terminate Workbench (you won\'t be able to link).'
+                  .format(Style.DIM))
+            # We wait indefinitely until the user presses CTRL-C
+            # or our child process dies for some reason
+            # Note that the child is a daemon so it will be terminated
+            # once this main process terminates too
+            workbench.usb_sneaky.join()
