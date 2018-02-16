@@ -120,9 +120,11 @@ class Computer:
         processor = {
             '@type': 'Processor',
             'speed': speed,
-            'numberOfCores': int(get(node, 'configuration.cores')),
             'address': node['width']
         }
+        if 'cores' in node['configuration']:
+            processor['numberOfCores'] = cores = int(node['configuration']['cores'])
+            assert 1 <= cores <= 16
         if self.benchmarker:
             processor['benchmark'] = {
                 '@type': 'BenchmarkProcessor',
