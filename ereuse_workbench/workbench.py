@@ -47,14 +47,17 @@ class Workbench:
                       :attr:`.Workbench.Erase.sectors` to perform
                       a slower but fully secured erasure. Falsy values
                       disables the functionality.
+                      See `a detailed explanation of the erasure
+                      process in the FAQ
+                      <https://ereuse-org.gitbooks.io/faq/content/w-
+                      hich-is-the-data-wiping-process-performed.html>`_.
         :param erase_steps: In case `erase` is truthy, how many steps
                             overriding data should we perform? Policies
                             and regulations may set a specific value.
-                            Normal 'secure' value is `3`.
         :param erase_leading_zeros: In case `erase` is truthy,
                                     should we finish erasing with an
-                                    extra step that
-                                    writes zeroes? This can be enforced
+                                    extra step that writes zeroes?
+                                    This can be enforced
                                     by policy and regulation.
         :param stress: How many minutes should stress the machine.
                        0 minutes disables this test. A stress test
@@ -96,7 +99,9 @@ class Workbench:
             if self.install:
                 # We get the OS to install from the server through a mounted samba
                 self.mount_images(self.server)
-            self.usb_sneaky = Process(target=usb_sneaky, args=(self.uuid, server))
+            # We use thread just to ease killing it when we finish
+            # By setting daemon=True USB Sneaky will die when we die
+            self.usb_sneaky = Process(target=usb_sneaky, args=(self.uuid, server), daemon=True)
 
         self.phases = 1 + bool(self.smart) + bool(self.stress) + bool(self.erase) + \
                       bool(self.install)
@@ -133,7 +138,8 @@ class Workbench:
         p = Popen(c, stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True)
         _, stderr = p.communicate()
         if stderr:
-            raise CannotMount(stderr + '\nYou might need to "umount {}"'.format(self.install_path))
+            raise CannotMount('{}\nYou might need to "umount {}"'
+                              .format(stderr.decode(), self.install_path))
 
     def run(self) -> str:
         """

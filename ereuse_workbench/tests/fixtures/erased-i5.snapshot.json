@@ -1,0 +1,125 @@
+{
+  "@type": "devices:Snapshot",
+  "_uuid": "c52b8bab-20fe-46d1-ba21-6e6694a59d31",
+  "automatic": true,
+  "components": [
+    {
+      "@type": "Processor",
+      "address": 64,
+      "benchmark": {
+        "@type": "BenchmarkProcessor",
+        "score": 11969.8
+      },
+      "manufacturer": "Intel Corp.",
+      "model": "Intel Core2 Duo CPU E8400 @ 3.00GHz",
+      "numberOfCores": 2,
+      "serialNumber": null,
+      "speed": 3.0
+    },
+    {
+      "@type": "HardDrive",
+      "benchmark": {
+        "@type": "BenchmarkHardDrive",
+        "readingSpeed": 77.6,
+        "writingSpeed": 20.2
+      },
+      "erasure": {
+        "@type": "EraseSectors",
+        "cleanWithZeros": true,
+        "endingTime": "2018-02-07T11:51:46",
+        "secureRandomSteps": 1,
+        "startingTime": "2018-02-07T09:39:57",
+        "steps": [
+          {
+            "@type": "Zeros",
+            "endingTime": "2018-02-07T10:23:54",
+            "startingTime": "2018-02-07T10:23:54",
+            "success": true
+          },
+          {
+            "@type": "Random",
+            "endingTime": "2018-02-07T11:51:46",
+            "startingTime": "2018-02-07T11:51:46",
+            "success": true
+          }
+        ],
+        "success": true
+      },
+      "interface": "ata",
+      "manufacturer": "Seagate",
+      "model": "ST3160815AS",
+      "serialNumber": "6RX7AWEZ",
+      "size": 152627,
+      "test": {
+        "@type": "TestHardDrive",
+        "error": false,
+        "firstError": null,
+        "lifetime": 17717,
+        "status": "Completed without error",
+        "type": "Extended offline"
+      }
+    },
+    {
+      "@type": "GraphicCard",
+      "manufacturer": "Intel Corporation",
+      "memory": null,
+      "model": "4 Series Chipset Integrated Graphics Controller",
+      "serialNumber": null
+    },
+    {
+      "@type": "Motherboard",
+      "connectors": {
+        "firewire": 0,
+        "pcmcia": 0,
+        "serial": 0,
+        "usb": 8
+      },
+      "manufacturer": "Hewlett-Packard",
+      "model": "3031h",
+      "serialNumber": "CZC901381R",
+      "totalSlots": 0,
+      "usedSlots": 1
+    },
+    {
+      "@type": "NetworkAdapter",
+      "manufacturer": "Intel Corporation",
+      "model": "82567LM-3 Gigabit Network Connection",
+      "serialNumber": "00:23:7d:49:5e:31",
+      "speed": 1000
+    },
+    {
+      "@type": "NetworkAdapter",
+      "manufacturer": "Realtek Semiconductor Co., Ltd.",
+      "model": "RTL8169 PCI Gigabit Ethernet Controller",
+      "serialNumber": "00:b0:c2:02:ab:b7",
+      "speed": 1000
+    },
+    {
+      "@type": "SoundCard",
+      "manufacturer": "Intel Corporation",
+      "model": "82801JD/DO HD Audio Controller",
+      "serialNumber": null
+    }
+  ],
+  "date": "2018-02-07T11:51:46",
+  "device": {
+    "@type": "Computer",
+    "manufacturer": "Hewlett-Packard",
+    "model": "HP Compaq dc7900 Small Form Factor",
+    "serialNumber": "CZC901381R",
+    "type": "Microtower"
+  },
+  "elapsed": "3:01:56",
+  "inventory": {
+    "elapsed": "0:00:18"
+  },
+  "snapshotSoftware": "Workbench",
+  "tests": [
+    {
+      "@type": "StressTest",
+      "elapsed": "0:01:00",
+      "success": true
+    }
+  ],
+  "version": "10.0b1"
+}

@@ -7,8 +7,8 @@ import os
 import struct
 
 
-def convert_base(value, src_unit, dst_unit, distance=1000):
-    UNITS = ['unit', 'K', 'M', 'G', 'T']
+def convert_base(value, src_unit, dst_unit, distance=1000) -> float:
+    UNITS = 'unit', 'K', 'M', 'G', 'T'
     assert src_unit in UNITS, src_unit
     assert dst_unit in UNITS, dst_unit
 
@@ -17,8 +17,8 @@ def convert_base(value, src_unit, dst_unit, distance=1000):
     return value * pow(distance, diff)
 
 
-def convert_frequency(value, src_unit, dst_unit):
-    UNITS = ['Hz', 'KHz', 'MHz', 'GHz']
+def convert_frequency(value, src_unit, dst_unit) -> float:
+    UNITS = 'Hz', 'KHz', 'MHz', 'GHz'
     assert src_unit in UNITS, src_unit
     assert dst_unit in UNITS, dst_unit
 
@@ -27,10 +27,10 @@ def convert_frequency(value, src_unit, dst_unit):
     return value * pow(1000, diff)
 
 
-def convert_capacity(value, src_unit, dst_unit):
+def convert_capacity(value, src_unit, dst_unit) -> float:
     # FIXME International System vs IEC
     # https://en.wikipedia.org/wiki/Units_of_information#Systematic_multiples
-    UNITS = ["bytes", "KB", "MB", "GB"]
+    UNITS = 'bytes', 'KB', 'MB', 'GB'
     assert src_unit in UNITS, src_unit
     assert dst_unit in UNITS, dst_unit
 
@@ -39,9 +39,8 @@ def convert_capacity(value, src_unit, dst_unit):
     return value * pow(1024, diff)
 
 
-def convert_speed(value, src_unit, dst_unit):
-    # TODO convert to the bigger unit that returns an integer
-    UNITS = ["bps", "Kbps", "Mbps", "Gbps"]
+def convert_speed(value, src_unit, dst_unit) -> int:
+    UNITS = 'bps', 'Kbps', 'Mbps', 'Gbps'
     assert src_unit in UNITS, src_unit
     assert dst_unit in UNITS, dst_unit
 
@@ -55,7 +54,7 @@ def get_hw_addr(ifname):
     # http://stackoverflow.com/a/4789267/1538221
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     info = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', ifname[:15]))
-    return ':'.join(['%02x' % ord(char) for char in info[18:24]])
+    return ':'.join('%02x' % ord(char) for char in info[18:24])
 
 
 def run(cmd: str) -> str:

@@ -2,6 +2,7 @@ import json
 import re
 from enum import Enum
 from itertools import chain
+from math import floor
 from subprocess import PIPE, Popen
 from typing import List
 
@@ -42,9 +43,9 @@ class Computer:
         'oem',
         'n/a',
         'atapi',
+        'pc'
     }
     """Delete those *words* from the value."""
-    TO_REMOVE_EXP = re.compile('\\b({})\W'.format('|'.join(re.escape(s) for s in TO_REMOVE)), re.I)
     CHARS_TO_REMOVE = '{}[]'
     """Remove those *characters* from the value."""
     MEANINGLESS = {
@@ -114,22 +115,28 @@ class Computer:
                 'logical' not in node['id'] and 'description' in node and not node.get('disabled'))
 
     def processor(self, node):
+        speed = utils.convert_frequency(node['size'], node['units'], 'GHz')
+        assert 0.1 <= speed <= 9, 'Frequency is not in reasonable GHz'
         processor = {
             '@type': 'Processor',
-            'speed': utils.convert_frequency(node['size'], node['units'], 'GHz'),
-            'numberOfCores': get(node, 'configuration.cores'),
+            'speed': speed,
             'address': node['width']
         }
+        if 'cores' in node['configuration']:
+            processor['numberOfCores'] = cores = int(node['configuration']['cores'])
+            assert 1 <= cores <= 16
         if self.benchmarker:
             processor['benchmark'] = {
                 '@type': 'BenchmarkProcessor',
                 'score': self.benchmarker.processor()
             }
-        return dict(processor, **self._common(node))
+        processor = dict(processor, **self._common(node))
+        processor['serialNumber'] = None  # Processors don't have valid SN :-(
+        return processor
 
     def ram_modules(self):
         # We can get flash memory (BIOS?), system memory and unknown types of memory
-        memories = get_nested_dicts_with_key_value(self.lshw, 'id', 'memory')
+        memories = get_nested_dicts_with_key_value(self.lshw, 'class', 'memory')
         is_system_memory = lambda m: clean(m.get('description').lower()) == 'system memory'
         main_memory = next((m for m in memories if is_system_memory(m)), None)
         return (self.ram_module(node) for node in get(main_memory, 'children', []))
@@ -137,12 +144,17 @@ class Computer:
     def ram_module(self, module: dict):
         # Node with no size == empty ram slot
         if 'size' in module:
-            return dict({
+            ram = dict({
                 '@type': 'RamModule',
-                'size': utils.convert_capacity(module['size'], module['units'], 'MB'),
-                'speed': utils.convert_frequency(module['clock'], 'Hz',
-                                                 'MHz') if 'clock' in module else None
+                'size': int(utils.convert_capacity(module['size'], module['units'], 'MB'))
             }, **self._common(module))
+            # power of 2
+            assert 128 <= ram['size'] <= 2 ** 15 and (ram['size'] & (ram['size'] - 1) == 0), \
+                'Invalid value {} MB for RAM Speed'.format(ram['size'])
+            if 'clock' in module:
+                ram['speed'] = speed = utils.convert_frequency(module['clock'], 'Hz', 'MHz')
+                assert 100 <= speed <= 10000, 'Invalid value {} Mhz for RAM speed'.format(speed)
+            return ram
 
     def hard_drives(self):
         nodes = get_nested_dicts_with_key_containing_value(self.lshw, 'id', 'disk')
@@ -152,16 +164,17 @@ class Computer:
 
     def hard_drive(self, node) -> dict or None:
         logical_name = node['logicalname']
-        interface = utils.run(
-            'udevadm info --query=all --name={} | grep ID_BUS | cut -c 11-'.format(logical_name))
-        interface = interface or 'ata'
-        if interface != 'usb':
+        interface = utils.run('udevadm info --query=all --name={} | grep ID_BUS | cut -c 11-'
+                              .format(logical_name))
+        # todo not sure if ``interface != usb`` is needed
+        if interface != 'usb' and not get(node, 'capabilities.removable'):
             hdd = {
                 '@type': 'HardDrive',
-                'size': utils.convert_capacity(node['size'], node['units'], 'MB'),
+                'size': floor(utils.convert_capacity(node['size'], node['units'], 'MB')),
                 'interface': interface,
                 PrivateFields.logical_name: logical_name
             }
+            assert 20000 < hdd['size'] < 10 ** 8, 'Invalid HDD size {} MB'.format(hdd['size'])
             if self.benchmarker:
                 hdd['benchmark'] = self.benchmarker.benchmark_hdd(logical_name)
             return dict(hdd, **self._common(node))
@@ -194,7 +207,9 @@ class Computer:
                 max_size = size_kb
 
         if max_size > 0:
-            return utils.convert_capacity(max_size, 'KB', 'MB')
+            size = utils.convert_capacity(max_size, 'KB', 'MB')
+            assert 8 < size < 2 ** 14, 'Invalid Graphic Card size {} MB'.format(size)
+            return size
         return None
 
     def motherboard(self):
@@ -248,21 +263,28 @@ class Computer:
         }, **self._common(node))
 
     def _common(self, node: dict) -> dict:
+        manufacturer = self.get(node, 'vendor')
         return {
-            'manufacturer': self.get(node, 'vendor'),
-            'model': self.get(node, 'product'),
+            'manufacturer': manufacturer,
+            'model': self.get(node, 'product', remove=manufacturer),
             'serialNumber': self.get(node, 'serial')
         }
 
     @classmethod
-    def get(cls, node: dict, key: str) -> object or None:
+    def get(cls, node: dict, key: str, remove=None) -> object or None:
         """
         Gets a string value from the LSHW node sanitized.
 
         Words without meaning are removed, spaces trimmed and
         discarded meaningless values.
+
+        :param remove: Remove this word if found.
         """
-        val = cls.TO_REMOVE_EXP.sub('', node.get(key, ''))
+        to_remove = cls.TO_REMOVE
+        if remove:
+            to_remove.add(remove)
+        regex = re.compile('\\b({})\W'.format('|'.join(re.escape(s) for s in to_remove)), re.I)
+        val = regex.sub('', node.get(key, ''))
         val = re.sub(r'\([^)]*\)', '', val)  # Remove everything between ()
         for char_to_remove in cls.CHARS_TO_REMOVE:
             val = val.replace(char_to_remove, '')

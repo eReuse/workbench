@@ -404,7 +404,7 @@
               "version" : "1.0",
               "serial" : "VBd9783eb3-8ef7f22a",
               "units" : "bytes",
-              "size" : 8589934592,
+              "size" : 80589934592,
               "configuration" : {
                 "ansiversion" : "5",
                 "logicalsectorsize" : "512",

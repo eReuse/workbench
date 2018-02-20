@@ -1,0 +1,126 @@
+{
+  "@type": "devices:Snapshot", 
+  "_uuid": "45c32e3e-cabd-4454-b4ad-d3469605dcdb", 
+  "automatic": true, 
+  "components": [
+    {
+      "@type": "Processor", 
+      "address": 64, 
+      "benchmark": {
+        "@type": "BenchmarkProcessor", 
+        "score": 11999.94
+      }, 
+      "manufacturer": "Intel Corp.", 
+      "model": "Intel Core2 Duo CPU E8400 @ 3.00GHz", 
+      "numberOfCores": 2, 
+      "serialNumber": "0001-0676-0000-0000-0000-0000", 
+      "speed": 3.0
+    }, 
+    {
+      "@type": "RamModule", 
+      "manufacturer": "Samsung", 
+      "model": "M3 78T2863QZS-CE6", 
+      "serialNumber": "253C8F0C", 
+      "size": 1024, 
+      "speed": 667.0
+    }, 
+    {
+      "@type": "RamModule", 
+      "manufacturer": "Samsung", 
+      "model": "M3 78T2863QZS-CE6", 
+      "serialNumber": "253C8DE7", 
+      "size": 1024, 
+      "speed": 667.0
+    }, 
+    {
+      "@type": "HardDrive", 
+      "benchmark": {
+        "@type": "BenchmarkHardDrive", 
+        "readingSpeed": 104.0, 
+        "writingSpeed": 24.1
+      }, 
+      "interface": "ata", 
+      "manufacturer": "Hitachi", 
+      "model": "Hitachi HDT72103", 
+      "serialNumber": "STA2L7MV39LL6D", 
+      "size": 305245, 
+      "test": {
+        "@type": "TestHardDrive", 
+        "error": false, 
+        "firstError": null, 
+        "lifetime": 9132, 
+        "status": "Completed without error", 
+        "type": "Short offline"
+      }
+    }, 
+    {
+      "@type": "GraphicCard", 
+      "manufacturer": "Intel Corporation", 
+      "memory": 256.0, 
+      "model": "82Q35 Express Integrated Graphics Controller", 
+      "serialNumber": null
+    }, 
+    {
+      "@type": "Motherboard", 
+      "connectors": {
+        "firewire": 1, 
+        "pcmcia": 0, 
+        "serial": 1, 
+        "usb": 8
+      }, 
+      "manufacturer": "Micro-Star International Co Ltd", 
+      "model": "MS-7377", 
+      "serialNumber": "9516777584", 
+      "totalSlots": 4, 
+      "usedSlots": 2
+    }, 
+    {
+      "@type": "NetworkAdapter", 
+      "manufacturer": "Intel Corporation", 
+      "model": "82566DM-2 Gigabit Network Connection", 
+      "serialNumber": "00:24:21:7a:90:02", 
+      "speed": 1000
+    }, 
+    {
+      "@type": "SoundCard", 
+      "manufacturer": "Intel Corporation", 
+      "model": "82801I HD Audio Controller", 
+      "serialNumber": null
+    }
+  ], 
+  "condition": {
+    "appearance": {
+      "general": "A"
+    }, 
+    "functionality": {
+      "general": "A"
+    }
+  }, 
+  "date": "2018-02-16T11:21:40", 
+  "device": {
+    "@type": "Computer", 
+    "_id": "3640", 
+    "manufacturer": "NEC Computers SAS", 
+    "model": "Powermate MLxxx", 
+    "serialNumber": "SN 123456789ABC", 
+    "type": "Desktop"
+  }, 
+  "elapsed": "0:08:44", 
+  "inventory": {
+    "elapsed": "0:00:15"
+  }, 
+  "osInstallation": {
+    "elapsed": "0:03:18", 
+    "label": "linux-mint-1801-ca", 
+    "success": true
+  }, 
+  "snapshotSoftware": "Workbench", 
+  "tests": [
+    {
+      "@type": "StressTest", 
+      "elapsed": "0:05:00", 
+      "success": true
+    }
+  ], 
+  "version": "10.0b1"
+}
