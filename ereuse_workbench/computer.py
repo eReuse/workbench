@@ -43,9 +43,9 @@ class Computer:
         'oem',
         'n/a',
         'atapi',
+        'pc'
     }
     """Delete those *words* from the value."""
-    TO_REMOVE_EXP = re.compile('\\b({})\W'.format('|'.join(re.escape(s) for s in TO_REMOVE)), re.I)
     CHARS_TO_REMOVE = '{}[]'
     """Remove those *characters* from the value."""
     MEANINGLESS = {
@@ -130,11 +130,13 @@ class Computer:
                 '@type': 'BenchmarkProcessor',
                 'score': self.benchmarker.processor()
             }
-        return dict(processor, **self._common(node))
+        processor = dict(processor, **self._common(node))
+        processor['serialNumber'] = None  # Processors don't have valid SN :-(
+        return processor
 
     def ram_modules(self):
         # We can get flash memory (BIOS?), system memory and unknown types of memory
-        memories = get_nested_dicts_with_key_value(self.lshw, 'id', 'memory')
+        memories = get_nested_dicts_with_key_value(self.lshw, 'class', 'memory')
         is_system_memory = lambda m: clean(m.get('description').lower()) == 'system memory'
         main_memory = next((m for m in memories if is_system_memory(m)), None)
         return (self.ram_module(node) for node in get(main_memory, 'children', []))
@@ -261,21 +263,28 @@ class Computer:
         }, **self._common(node))
 
     def _common(self, node: dict) -> dict:
+        manufacturer = self.get(node, 'vendor')
         return {
-            'manufacturer': self.get(node, 'vendor'),
-            'model': self.get(node, 'product'),
+            'manufacturer': manufacturer,
+            'model': self.get(node, 'product', remove=manufacturer),
             'serialNumber': self.get(node, 'serial')
         }
 
     @classmethod
-    def get(cls, node: dict, key: str) -> object or None:
+    def get(cls, node: dict, key: str, remove=None) -> object or None:
         """
         Gets a string value from the LSHW node sanitized.
 
         Words without meaning are removed, spaces trimmed and
         discarded meaningless values.
+
+        :param remove: Remove this word if found.
         """
-        val = cls.TO_REMOVE_EXP.sub('', node.get(key, ''))
+        to_remove = cls.TO_REMOVE
+        if remove:
+            to_remove.add(remove)
+        regex = re.compile('\\b({})\W'.format('|'.join(re.escape(s) for s in to_remove)), re.I)
+        val = regex.sub('', node.get(key, ''))
         val = re.sub(r'\([^)]*\)', '', val)  # Remove everything between ()
         for char_to_remove in cls.CHARS_TO_REMOVE:
             val = val.replace(char_to_remove, '')
