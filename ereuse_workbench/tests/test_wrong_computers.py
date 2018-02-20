@@ -141,3 +141,21 @@ def test_hp_compaq_8100(lshw: MagicMock):
         assert ram['serialNumber'] in {'92072F30', 'A4482E29', '939E2E29', '48FD2E30'}
         assert ram['speed'] == 1333.0
         assert ram['size'] == 2048
+
+
+def test_lenovo_7220w3t(lshw: MagicMock):
+    pc, components = computer(lshw, 'lenovo-7220w3t.lshw')
+    assert pc['manufacturer'] == 'LENOVO'
+    assert pc['serialNumber'] == 'S4R6062'
+    assert pc['model'] == '7220W3T'
+    assert len(components['Processor']) == 1
+    assert len(components['HardDrive']) == 1
+    motherboard = components['Motherboard'][0]
+    assert motherboard['serialNumber'] is None
+    assert len(components['RamModule']) == 2
+    for ram in components['RamModule']:
+        assert ram['serialNumber'] is None
+        assert ram['model'] is None
+        assert ram['manufacturer'] is None
+        assert ram['size'] == 2048
+        assert ram['speed'] == 1067.0

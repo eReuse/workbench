@@ -4,7 +4,7 @@ from enum import Enum
 from itertools import chain
 from math import floor
 from subprocess import PIPE, Popen
-from typing import List
+from typing import List, Set
 
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
     get_nested_dicts_with_key_value
@@ -41,12 +41,13 @@ class Computer:
         'prod',
         'o.e.m',
         'oem',
-        'n/a',
+        r'n/a',
         'atapi',
-        'pc'
+        'pc',
+        'unknown'
     }
-    """Delete those *words* from the value."""
-    CHARS_TO_REMOVE = '{}[]'
+    """Delete those *words* from the value. Words are in lowercase."""
+    CHARS_TO_REMOVE = '(){}[]'
     """Remove those *characters* from the value."""
     MEANINGLESS = {
         'to be filled',
@@ -60,9 +61,13 @@ class Computer:
         'system serial',
         '0001-067A-0000-0000-0000',
         'partnum0',
-        'manufacturer0'
+        'manufacturer0',
+        '0000000'
     }
-    """Discard a value if any of these values are inside it."""
+    """
+    Discard a value if any of these values are inside it. 
+    Words are in lowercase.
+    """
 
     CHASSIS_TO_TYPE = {
         # dmi types from https://ezix.org/src/pkg/lshw/src/master/src/core/dmi.cc#L632
@@ -266,30 +271,30 @@ class Computer:
         manufacturer = self.get(node, 'vendor')
         return {
             'manufacturer': manufacturer,
-            'model': self.get(node, 'product', remove=manufacturer),
+            'model': self.get(node, 'product', remove={manufacturer} if manufacturer else None),
             'serialNumber': self.get(node, 'serial')
         }
 
     @classmethod
-    def get(cls, node: dict, key: str, remove=None) -> object or None:
+    def get(cls, node: dict, key: str, remove: Set[str] = None) -> object or None:
         """
         Gets a string value from the LSHW node sanitized.
 
         Words without meaning are removed, spaces trimmed and
         discarded meaningless values.
 
-        :param remove: Remove this word if found.
+        :param remove: Remove these words if found.
         """
-        to_remove = cls.TO_REMOVE
-        if remove:
-            to_remove.add(remove)
-        regex = re.compile('\\b({})\W'.format('|'.join(re.escape(s) for s in to_remove)), re.I)
-        val = regex.sub('', node.get(key, ''))
+        remove = (remove or set()) | cls.TO_REMOVE
+        regex = r'({})\W'.format('|'.join(s for s in remove))
+        val = re.sub(regex, '', node.get(key, ''), flags=re.IGNORECASE)
+        val = '' if val.lower() in remove else val  # regex's `\W` != whole string
         val = re.sub(r'\([^)]*\)', '', val)  # Remove everything between ()
         for char_to_remove in cls.CHARS_TO_REMOVE:
             val = val.replace(char_to_remove, '')
         val = clean(val)
         if val and not any(meaningless in val.lower() for meaningless in cls.MEANINGLESS):
+            # The val.l
             return val
         else:
             return None
