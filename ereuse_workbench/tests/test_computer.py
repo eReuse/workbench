@@ -40,3 +40,9 @@ def test_unknown():
 def test_remove():
     assert get('foobar', remove={'foobar'}) is None
     assert get('foobarx', remove={'foobar'}) == 'foobarx'
+
+
+def test_cpu_values():
+    # Note that we still remove the S/N of cpus in computer.processors()
+    assert get('0001-067A-0000-0000-0000-0000') is None
+    assert get('0001-067A-0000-0000') is None

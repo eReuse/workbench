@@ -46,9 +46,15 @@ class Computer:
         'pc',
         'unknown'
     }
-    """Delete those *words* from the value. Words are in lowercase."""
+    """Delete those *words* from the value"""
+    assert all(v.lower() == v for v in TO_REMOVE), 'All words need to be lower-case'
+
     CHARS_TO_REMOVE = '(){}[]'
-    """Remove those *characters* from the value."""
+    """
+    Remove those *characters* from the value. 
+    All chars inside those are removed. Ex: foo (bar) => foo
+    """
+
     MEANINGLESS = {
         'to be filled',
         'system manufacturer',
@@ -59,15 +65,13 @@ class Computer:
         'not specified',
         'modulepartnumber',
         'system serial',
-        '0001-067A-0000-0000-0000',
+        '0001-067a-0000',
         'partnum0',
         'manufacturer0',
         '0000000'
     }
-    """
-    Discard a value if any of these values are inside it. 
-    Words are in lowercase.
-    """
+    """Discard a value if any of these values are inside it. """
+    assert all(v.lower() == v for v in MEANINGLESS), 'All values need to be lower-case'
 
     CHASSIS_TO_TYPE = {
         # dmi types from https://ezix.org/src/pkg/lshw/src/master/src/core/dmi.cc#L632
@@ -276,25 +280,29 @@ class Computer:
         }
 
     @classmethod
-    def get(cls, node: dict, key: str, remove: Set[str] = None) -> object or None:
+    def get(cls, dictionary: dict, key: str, remove: Set[str] = None) -> str or None:
         """
-        Gets a string value from the LSHW node sanitized.
+        Gets a string value from the dictionary and sanitizes it.
+        Returns ``None`` if the value does not exist or it doesn't
+        have meaning.
 
-        Words without meaning are removed, spaces trimmed and
-        discarded meaningless values.
+        Values are patterned and compared against sets
+        of meaningless characters usually found in LSHW's output.
 
+        :param dictionary: A dictionary potentially containing the value.
+        :param key: The key in ``dictionary`` where the value
+                    potentially is.
         :param remove: Remove these words if found.
         """
         remove = (remove or set()) | cls.TO_REMOVE
         regex = r'({})\W'.format('|'.join(s for s in remove))
-        val = re.sub(regex, '', node.get(key, ''), flags=re.IGNORECASE)
+        val = re.sub(regex, '', dictionary.get(key, ''), flags=re.IGNORECASE)
         val = '' if val.lower() in remove else val  # regex's `\W` != whole string
-        val = re.sub(r'\([^)]*\)', '', val)  # Remove everything between ()
+        val = re.sub(r'\([^)]*\)', '', val)  # Remove everything between CHARS_TO_REMOVE
         for char_to_remove in cls.CHARS_TO_REMOVE:
             val = val.replace(char_to_remove, '')
         val = clean(val)
         if val and not any(meaningless in val.lower() for meaningless in cls.MEANINGLESS):
-            # The val.l
             return val
         else:
             return None
