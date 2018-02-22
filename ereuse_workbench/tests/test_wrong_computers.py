@@ -159,3 +159,20 @@ def test_lenovo_7220w3t(lshw: MagicMock):
         assert ram['manufacturer'] is None
         assert ram['size'] == 2048
         assert ram['speed'] == 1067.0
+
+
+def test_lenovo_type_as_intel(lshw: MagicMock):
+    """
+    Tests a lenovo computer whose LSHW output was wrongly taken
+    as an Intel and without S/N.
+    """
+    pc, components = computer(lshw, 'lenovo-as-intel.lshw')
+    assert pc['manufacturer'] == 'LENOVO'
+    assert pc['serialNumber'] == 'S4R6460'
+    assert pc['model'] == '7220W3T'
+    hdd = components['HardDrive'][0]
+    assert hdd['serialNumber'] == 'S1L6J9BZ103714'
+    assert hdd['model'] == 'SAMSUNG HD251HJ'
+    # todo model should be HD251HJ and manufacturer Samsung
+    # assert hdd['model'] == 'HD251HJ'
+    # assert hdd['manufacturer'] == 'Samsung'

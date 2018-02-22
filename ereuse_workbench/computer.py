@@ -106,9 +106,8 @@ class Computer:
         return computer, compact(components)
 
     def computer(self):
-        node = next(get_nested_dicts_with_key_value(self.lshw, 'class', 'system'))
-        # Get type
-        chassis = py_.get(node, 'configuration.chassis')
+        node = self.lshw  # Computer node is just the root of lshw
+        chassis = node['configuration'].get('chassis', None)
         _type = find_key(self.CHASSIS_TO_TYPE, lambda values, key: chassis in values)
         return dict({
             'type': _type,
