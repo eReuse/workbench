@@ -7,7 +7,7 @@ code is just placeholder.
 
 import subprocess
 import textwrap
-from enum import Enum, auto
+from enum import Enum
 
 
 class PartitionType(Enum):
@@ -15,8 +15,8 @@ class PartitionType(Enum):
     Indicates disk partitioning scheme. Implies whether the system will boot via legacy BIOS
     or UEFI.
     """
-    GPT = auto()
-    MBR = auto()
+    GPT = 0
+    MBR = 1
 
 
 GPT = PartitionType.GPT
@@ -28,12 +28,60 @@ def do_sync():
     subprocess.run('sync', timeout=10)
 
 
-def install(path_to_os_image: str, target_disk='/dev/sda', swap_space=True, part_type=MBR, ):
+def zero_out(drive: str):
+    command = 'dd', 'if=/dev/zero', 'of={}'.format(drive), 'bs=512', 'count=1'
+    subprocess.run(command, check=True)
+    do_sync()
+
+
+def do_partition(target_disk: str, swap_space: bool, part_type):
+    """
+    :return: A string representing the partition that has been allocated
+             to the OS
+    """
+    if part_type == GPT:
+        raise NotImplementedError
+    else:  # part_type == BIOS
+        if swap_space:
+            parted_commands = textwrap.dedent("""\
+                mklabel msdos \
+                mkpart primary ext2 1MiB -1GiB \
+                mkpart primary linux-swap -1GiB 100% \
+                """)
+            os_partition = '{}{}'.format(target_disk, 1)  # "/dev/sda1"
+        else:
+            parted_commands = textwrap.dedent("""\
+                mklabel msdos \
+                mkpart primary ext2 1MiB 100% \
+            """)
+            os_partition = '{}{}'.format(target_disk, 1)  # "/dev/sda1"
+    command = 'parted', '--script', target_disk, '--', parted_commands
+    subprocess.run(command, check=True)
+    return os_partition
+
+
+def do_install(path_to_os_image: str, os_partition: str):
+    command = 'fsarchiver', 'restfs', path_to_os_image, 'id=0,dest={}'.format(os_partition)
+    subprocess.run(command, check=True)
+
+
+def do_install_bootloader(target_disk: str, part_type):
+    if part_type == GPT:
+        raise NotImplementedError
+    elif part_type == MBR:
+        command = 'grub-install', target_disk
+    subprocess.run(command, check=True)
+
+
+def install(path_to_os_image: str, target_disk='/dev/sda', swap_space=True, part_type=MBR):
     """
     Partitions block device(s) and installs an OS.
 
-    :param path_to_os_image: A filesystem path to the OS .fsa.
+    :param path_to_os_image: A filesystem path to the OS .fsa. It must
+                             be somewhere in the client's filesystem
+                             hiearchy.
     :param target_disk: Target disk's device name (e.g. /dev/sda).
+                        It must exist.
     :param swap_space: Whether to provision a swap partition.
     :param part_type: Whether to use BIOS/MBR or UEFI/GPT schemes.
     :return: Nothing. Return on success, raise exception otherwise.
@@ -60,34 +108,10 @@ def install(path_to_os_image: str, target_disk='/dev/sda', swap_space=True, part
     #   UEFI: GRUB to ESP
 
     # Zero out disk label
-    command = 'dd', 'if=/dev/zero', 'of={}'.format(target_disk), 'bs=512', 'count=1'
-    subprocess.run(command, check=True)
-    do_sync()
+    zero_out(target_disk)
     # Partition main disk (must set os_partition appropriately in every possible case)
-    if part_type == GPT:
-        raise NotImplementedError
-    else:  # part_type == BIOS
-        if swap_space:
-            parted_commands = textwrap.dedent("""\
-                mklabel msdos
-                mkpart primary ext2 1MiB -4GiB
-                mkpart primary linux-swap -4GiB 100%
-                """)
-            os_partition = '{}{}'.format(target_disk, 1)  # "/dev/sda1"
-        else:
-            parted_commands = textwrap.dedent("""\
-                mklabel msdos
-                mkpart primary ext2 1MiB 100%
-            """)
-            os_partition = '{}{}'.format(target_disk, 1)  # "/dev/sda1"
-    command = 'parted', '--script', target_disk, '--', parted_commands
-    subprocess.run(command, check=True)
+    os_partition = do_partition(target_disk, swap_space, part_type)
     # Install OS
-    command = 'fsarchiver', 'restfs', path_to_os_image, 'id=0,dest={}'.format(os_partition)
-    subprocess.run(command, check=True)
+    do_install(path_to_os_image, os_partition)
     # Install bootloader
-    if part_type == GPT:
-        raise NotImplementedError
-    elif part_type == MBR:
-        command = 'grub-install', target_disk
-    subprocess.run(command, check=True)
+    do_install_bootloader(target_disk, part_type)

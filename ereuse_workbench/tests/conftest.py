@@ -56,3 +56,10 @@ def computer(lshw: MagicMock, json_name: str) -> (dict, Dict[str, List[dict]]):
     for component in json.loads(components):
         grouped[component['@type']].append(component)
     return pc, grouped
+
+
+@pytest.fixture()
+def subprocess_os_installer() -> MagicMock:
+    with mock.patch('ereuse_workbench.os_installer.subprocess') as subprocess:
+        subprocess.run = MagicMock()
+        yield subprocess
