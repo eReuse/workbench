@@ -8,6 +8,7 @@ from typing import List, Set
 
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
     get_nested_dicts_with_key_value
+from pySMART import Device
 from pydash import clean, compact, find_key, get, py_
 
 from ereuse_workbench import utils
@@ -164,18 +165,21 @@ class Computer:
                 assert 100 <= speed <= 10000, 'Invalid value {} Mhz for RAM speed'.format(speed)
             return ram
 
-    def hard_drives(self):
+    def hard_drives(self, get_removables=False):
         nodes = get_nested_dicts_with_key_containing_value(self.lshw, 'id', 'disk')
         # We can get nodes that are not truly disks as they don't have
         # size. Let's just forget about those.
-        return (self.hard_drive(node) for node in nodes if 'size' in node)
+        return (self.hard_drive(node, get_removables) for node in nodes if 'size' in node)
 
-    def hard_drive(self, node) -> dict or None:
+    def hard_drive(self, node, get_removable=False) -> dict or None:
         logical_name = node['logicalname']
         interface = utils.run('udevadm info --query=all --name={} | grep ID_BUS | cut -c 11-'
                               .format(logical_name))
         # todo not sure if ``interface != usb`` is needed
-        if interface != 'usb' and not get(node, 'capabilities.removable'):
+        is_not_removable = interface != 'usb' and not get(node, 'capabilities.removable')
+        is_removable = interface == 'usb'
+        if get_removable and is_removable or not get_removable and is_not_removable:
+            # If get_removable and is_removable or not get_removable and is not_removable
             hdd = {
                 '@type': 'HardDrive',
                 'size': floor(utils.convert_capacity(node['size'], node['units'], 'MB')),
@@ -185,7 +189,12 @@ class Computer:
             assert 20000 < hdd['size'] < 10 ** 8, 'Invalid HDD size {} MB'.format(hdd['size'])
             if self.benchmarker:
                 hdd['benchmark'] = self.benchmarker.benchmark_hdd(logical_name)
-            return dict(hdd, **self._common(node))
+            hdd = dict(hdd, **self._common(node))
+            if not hdd['serialNumber']:
+                hdd['serialNumber'] = Device(hdd[PrivateFields.logical_name]).serial
+            if not hdd['model']:
+                hdd['model'] = Device(hdd[PrivateFields.logical_name]).model
+            return hdd
 
     def graphic_cards(self):
         nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'display')
