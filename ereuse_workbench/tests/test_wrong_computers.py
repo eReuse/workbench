@@ -176,3 +176,8 @@ def test_lenovo_type_as_intel(lshw: MagicMock):
     # todo model should be HD251HJ and manufacturer Samsung
     # assert hdd['model'] == 'HD251HJ'
     # assert hdd['manufacturer'] == 'Samsung'
+
+
+def test_asus_all_series(lshw: MagicMock):
+    pc, components = computer(lshw, 'asus-all-series.lshw')
+    # todo it doesn't work assert pc['serialNumber'] == '104094'

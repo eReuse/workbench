@@ -146,7 +146,7 @@ class Computer:
     def ram_modules(self):
         # We can get flash memory (BIOS?), system memory and unknown types of memory
         memories = get_nested_dicts_with_key_value(self.lshw, 'class', 'memory')
-        is_system_memory = lambda m: clean(m.get('description').lower()) == 'system memory'
+        is_system_memory = lambda m: clean(m.get('description', '').lower()) == 'system memory'
         main_memory = next((m for m in memories if is_system_memory(m)), None)
         return (self.ram_module(node) for node in get(main_memory, 'children', []))
 
