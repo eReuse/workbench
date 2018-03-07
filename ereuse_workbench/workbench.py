@@ -19,6 +19,7 @@ from ereuse_workbench.computer import Computer, PrivateFields
 from ereuse_workbench.eraser import EraseType, Eraser
 from ereuse_workbench.tester import Smart, Tester
 from ereuse_workbench.usb_sneaky import USBSneaky
+from ereuse_workbench.os_installer import install
 
 
 class Workbench:
@@ -225,24 +226,20 @@ class Workbench:
 
     def install_os(self) -> dict:
         """
-        Installs the OS by executing
-        erwb-install-image from reciclanet-scripts.
+        Installs the OS by executing the workbench's os_installer module
         """
-        # Customizations are passed as environment variables.
-        env = os.environ.copy()
-        env['IMAGE_NAME'] = self.install
-        env['CONFIRM'] = 'no'
-        env['LOCAL_MP'] = str(self.install_path)
-        env['IMAGE_DIR'] = '.'
-        env['REMOTE_TYPE'] = 'local'
-        env['HD_SWAP'] = 'AUTO'
-        env['HD_ROOT'] = 'FILL'
 
         init_time = now()
         try:
-            check_call(['erwb-install-image'], env=env)
-        except CalledProcessError:
-            # todo erwb-install-image never returns 1 so this never executes
+            # TODO: Current target disk value hardcoded as /dev/sda. (cont \/)
+            # Add some logic (here!) to handle cases where the machine
+            # has multiple disks, possibly SSDs and rotationals, or two
+            # rotationals of different size, etc.
+            install(self.install)
+        except Exception as e:
+            print('OS installation failed. An "{}" exception with '
+                  'message "{}" was raised by the installation routines.'
+                  .format(type(e).__name__, str(e)))
             success = False
         else:
             success = True

@@ -40,7 +40,7 @@ def do_partition(target_disk: str, swap_space: bool, part_type):
              to the OS
     """
     if part_type == GPT:
-        raise NotImplementedError
+        raise NotImplementedError("GPT partition types not yet implemented!")
     else:  # part_type == BIOS
         if swap_space:
             parted_commands = textwrap.dedent("""\
@@ -60,14 +60,26 @@ def do_partition(target_disk: str, swap_space: bool, part_type):
     return os_partition
 
 
-def do_install(path_to_os_image: str, os_partition: str):
-    command = 'fsarchiver', 'restfs', path_to_os_image, 'id=0,dest={}'.format(os_partition)
+def do_install(path_to_os_image: str, target_partition: str):
+    """
+    Installs an OS image to a target partition.
+    :param path_to_os_image:
+    :param target_partition:
+    :return:
+    """
+    command = 'fsarchiver', 'restfs', path_to_os_image, 'id=0,dest={}'.format(target_partition)
     subprocess.run(command, check=True)
 
 
 def do_install_bootloader(target_disk: str, part_type):
+    """
+    Installs the grub2 bootloader to the target disk.
+    :param target_disk:
+    :param part_type:
+    :return:
+    """
     if part_type == GPT:
-        raise NotImplementedError
+        raise NotImplementedError("GPT partition types not yet implemented!")
     elif part_type == MBR:
         command = 'grub-install', target_disk
     subprocess.run(command, check=True)

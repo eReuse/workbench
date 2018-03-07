@@ -19,10 +19,4 @@ echo 'Installing erwb command line...'
 install -m 0755 scripts/erwb /usr/local/sbin/erwb
 # Execution example: sudo erwb
 
-echo 'Installing reciclanet scripts...'
-echo 'Ensure you have performed git submodule init / git submodule update'
-#git submodule init
-#git submodule update
-install -m 0755 reciclanet-scripts/instalar /usr/local/bin/erwb-install-image
-
 echo Workbench installed!
