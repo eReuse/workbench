@@ -9,7 +9,7 @@ from typing import List, Set
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
     get_nested_dicts_with_key_value
 from pySMART import Device
-from pydash import clean, compact, find_key, get, py_
+from pydash import clean, compact, find_key, get
 
 from ereuse_workbench import utils
 from ereuse_workbench.benchmarker import Benchmarker
@@ -83,6 +83,7 @@ class Computer:
         'Server': {'server'}
     }
     """A conversion table from DMI's chassis type value to our type value."""
+    PHYSICAL_RAM_TYPES = 'ddr2', 'ddr3', 'ddr4', 'ddr5', 'sdram', 'sodimm'
 
     def __init__(self, benchmarker: Benchmarker = False):
         self.benchmarker = benchmarker
@@ -146,9 +147,10 @@ class Computer:
     def ram_modules(self):
         # We can get flash memory (BIOS?), system memory and unknown types of memory
         memories = get_nested_dicts_with_key_value(self.lshw, 'class', 'memory')
-        is_system_memory = lambda m: clean(m.get('description', '').lower()) == 'system memory'
-        main_memory = next((m for m in memories if is_system_memory(m)), None)
-        return (self.ram_module(node) for node in get(main_memory, 'children', []))
+        for memory in memories:
+            for ram_type in self.PHYSICAL_RAM_TYPES:
+                if ram_type in memory.get('description', '').lower():
+                    yield self.ram_module(memory)
 
     def ram_module(self, module: dict):
         # Node with no size == empty ram slot
