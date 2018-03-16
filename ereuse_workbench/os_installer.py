@@ -67,7 +67,7 @@ def do_install(path_to_os_image: str, target_partition: str):
     :param target_partition:
     :return:
     """
-    command = 'fsarchiver', 'restfs', path_to_os_image, 'id=0,dest={}'.format(target_partition)
+    command = 'fsarchiver', 'restfs', path_to_os_image + '.fsa', 'id=0,dest={}'.format(target_partition)
     subprocess.run(command, check=True)
 
 
@@ -81,8 +81,12 @@ def do_install_bootloader(target_disk: str, part_type):
     if part_type == GPT:
         raise NotImplementedError("GPT partition types not yet implemented!")
     elif part_type == MBR:
-        command = 'grub-install', target_disk
+        grub_install_command = 'grub-install', '--boot-directory=/tmproot/boot', target_disk
+    command = 'mkdir', '/tmproot'
     subprocess.run(command, check=True)
+    command = 'mount', '/dev/sda', '/tmproot'
+    subprocess.run(command, check=True)
+    subprocess.run(grub_install_command, check=True)
 
 
 def install(path_to_os_image: str, target_disk='/dev/sda', swap_space=True, part_type=MBR):
@@ -127,3 +131,6 @@ def install(path_to_os_image: str, target_disk='/dev/sda', swap_space=True, part
     do_install(path_to_os_image, os_partition)
     # Install bootloader
     do_install_bootloader(target_disk, part_type)
+    # TODO rewrite fstab to use swap space correctly. sth like:
+    # OLD_SWAP_UUID=$(grep swap $tmproot/etc/fstab | get_uuid)
+    # sed -i "s/$OLD_SWAP_UUID/$NEW_SWAP_UUID/g" $tmproot/etc/fstab

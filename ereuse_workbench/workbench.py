@@ -215,8 +215,9 @@ class Workbench:
         if self.install:
             print('{} Install {}...'.format(self._print_phase(5), self.install))
             snapshot['osInstallation'] = self.install_os()
+            if not snapshot['osInstallation']['success']:
+                print('{}Failed installing OS'.format(Fore.RED))
             self.after_phase(snapshot, init_time)
-
         print('{}eReuse.org Workbench has finished properly.'.format(Fore.GREEN))
 
         # Comply with DeviceHub's Snapshot
@@ -235,7 +236,7 @@ class Workbench:
             # Add some logic (here!) to handle cases where the machine
             # has multiple disks, possibly SSDs and rotationals, or two
             # rotationals of different size, etc.
-            install(self.install)
+            install(os.path.join(str(self.install_path), self.install))
         except Exception as e:
             print('OS installation failed. An "{}" exception with '
                   'message "{}" was raised by the installation routines.'
