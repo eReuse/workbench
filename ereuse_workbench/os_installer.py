@@ -84,9 +84,11 @@ def do_install_bootloader(target_disk: str, part_type):
         grub_install_command = 'grub-install', '--boot-directory=/tmproot/boot', target_disk
     command = 'mkdir', '/tmproot'
     subprocess.run(command, check=True)
-    command = 'mount', '/dev/sda', '/tmproot'
+    command = 'mount', '/dev/sda1', '/tmproot'
     subprocess.run(command, check=True)
     subprocess.run(grub_install_command, check=True)
+    command = 'umount', '/dev/sda1'
+    subprocess.run(command, check=True)
 
 
 def install(path_to_os_image: str, target_disk='/dev/sda', swap_space=True, part_type=MBR):
