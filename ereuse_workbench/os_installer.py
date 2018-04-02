@@ -80,14 +80,14 @@ def do_install_bootloader(target_disk: str, part_type):
     """
     if part_type == GPT:
         raise NotImplementedError("GPT partition types not yet implemented!")
-    elif part_type == MBR:
-        grub_install_command = 'grub-install', '--boot-directory=/tmproot/boot', target_disk
-    command = 'mkdir', '/tmproot'
+    # Must install grub via 'grub-install', but it will complain if --boot-directory is not used.
+    command = 'mkdir', '/tmp/mnt'
     subprocess.run(command, check=True)
-    command = 'mount', '/dev/sda1', '/tmproot'
+    command = 'mount', '{}1'.format(target_disk), '/tmp/mnt'
     subprocess.run(command, check=True)
-    subprocess.run(grub_install_command, check=True)
-    command = 'umount', '/dev/sda1'
+    command = 'grub-install', '--boot-directory=/tmp/mnt/boot/', '/dev/sda'
+    subprocess.run(command, check=True)
+    command = 'umount', '/tmp/mnt'
     subprocess.run(command, check=True)
 
 
