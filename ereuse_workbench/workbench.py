@@ -214,7 +214,14 @@ class Workbench:
 
         if self.install:
             print('{} Install {}...'.format(self._print_phase(5), self.install))
-            snapshot['osInstallation'] = self.install_os()
+
+            # TODO: See comment below.
+            # Current target disk value hardcoded as /dev/sda.
+            # Must add some logic (here!) to handle cases where the machine
+            # has multiple disks, possibly SSDs and rotationals, or two
+            # rotationals of different size, etc.
+            snapshot['osInstallation'] = install(os.path.join(str(self.install_path), self.install))
+
             if not snapshot['osInstallation']['success']:
                 print('{}Failed installing OS'.format(Fore.RED))
             self.after_phase(snapshot, init_time)
@@ -224,31 +231,6 @@ class Workbench:
         snapshot.pop('_phases', None)
         snapshot.pop('_totalPhases', None)
         return json.dumps(snapshot, skipkeys=True, cls=DeviceHubJSONEncoder, indent=2)
-
-    def install_os(self) -> dict:
-        """
-        Installs the OS by executing the workbench's os_installer module
-        """
-
-        init_time = now()
-        try:
-            # TODO: Current target disk value hardcoded as /dev/sda. (cont \/)
-            # Add some logic (here!) to handle cases where the machine
-            # has multiple disks, possibly SSDs and rotationals, or two
-            # rotationals of different size, etc.
-            install(os.path.join(str(self.install_path), self.install))
-        except Exception as e:
-            print('OS installation failed. An "{}" exception with '
-                  'message "{}" was raised by the installation routines.'
-                  .format(type(e).__name__, str(e)))
-            success = False
-        else:
-            success = True
-        return {
-            'elapsed': now() - init_time,
-            'label': self.install,
-            'success': success
-        }
 
     def after_phase(self, snapshot: dict, init_time: datetime):
         snapshot['_phases'] += 1

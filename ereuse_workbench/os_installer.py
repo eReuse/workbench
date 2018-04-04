@@ -8,6 +8,7 @@ code is just placeholder.
 import subprocess
 import textwrap
 from enum import Enum
+from ereuse_utils import now
 
 
 class PartitionType(Enum):
@@ -102,7 +103,7 @@ def install(path_to_os_image: str, target_disk='/dev/sda', swap_space=True, part
                         It must exist.
     :param swap_space: Whether to provision a swap partition.
     :param part_type: Whether to use BIOS/MBR or UEFI/GPT schemes.
-    :return: Nothing. Return on success, raise exception otherwise.
+    :return: A dictonary with the summary of the operation.
     """
     # Steps:
     # Zero out disk label
@@ -125,14 +126,29 @@ def install(path_to_os_image: str, target_disk='/dev/sda', swap_space=True, part
     #   BIOS: GRUB to MBR + VBR
     #   UEFI: GRUB to ESP
 
-    # Zero out disk label
-    zero_out(target_disk)
-    # Partition main disk (must set os_partition appropriately in every possible case)
-    os_partition = do_partition(target_disk, swap_space, part_type)
-    # Install OS
-    do_install(path_to_os_image, os_partition)
-    # Install bootloader
-    do_install_bootloader(target_disk, part_type)
+    init_time = now()
+    try:
+        # Zero out disk label
+        zero_out(target_disk)
+        # Partition main disk (must set os_partition appropriately in every possible case)
+        os_partition = do_partition(target_disk, swap_space, part_type)
+        # Install OS
+        do_install(path_to_os_image, os_partition)
+        # Install bootloader
+        do_install_bootloader(target_disk, part_type)
+        success = True
+    except Exception as e:
+        print('OS installation failed. An "{}" exception with '
+              'message "{}" was raised by the installation routines.'
+              .format(type(e).__name__, str(e)))
+        success = False
+    return {
+        'elapsed': now() - init_time,
+        'label': install,
+        'success': success
+    }
+
+
     # TODO rewrite fstab to use swap space correctly. sth like:
     # OLD_SWAP_UUID=$(grep swap $tmproot/etc/fstab | get_uuid)
     # sed -i "s/$OLD_SWAP_UUID/$NEW_SWAP_UUID/g" $tmproot/etc/fstab
