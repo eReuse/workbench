@@ -141,3 +141,83 @@ def test_hp_compaq_8100(lshw: MagicMock):
         assert ram['serialNumber'] in {'92072F30', 'A4482E29', '939E2E29', '48FD2E30'}
         assert ram['speed'] == 1333.0
         assert ram['size'] == 2048
+
+
+def test_lenovo_7220w3t(lshw: MagicMock):
+    pc, components = computer(lshw, 'lenovo-7220w3t.lshw')
+    assert pc['manufacturer'] == 'LENOVO'
+    assert pc['serialNumber'] == 'S4R6062'
+    assert pc['model'] == '7220W3T'
+    assert len(components['Processor']) == 1
+    assert len(components['HardDrive']) == 1
+    motherboard = components['Motherboard'][0]
+    assert motherboard['serialNumber'] is None
+    assert len(components['RamModule']) == 2
+    for ram in components['RamModule']:
+        assert ram['serialNumber'] is None
+        assert ram['model'] is None
+        assert ram['manufacturer'] is None
+        assert ram['size'] == 2048
+        assert ram['speed'] == 1067.0
+
+
+def test_lenovo_type_as_intel(lshw: MagicMock):
+    """
+    Tests a lenovo computer whose LSHW output was wrongly taken
+    as an Intel and without S/N.
+    """
+    pc, components = computer(lshw, 'lenovo-as-intel.lshw')
+    assert pc['manufacturer'] == 'LENOVO'
+    assert pc['serialNumber'] == 'S4R6460'
+    assert pc['model'] == '7220W3T'
+    hdd = components['HardDrive'][0]
+    assert hdd['serialNumber'] == 'S1L6J9BZ103714'
+    assert hdd['model'] == 'SAMSUNG HD251HJ'
+    # todo model should be HD251HJ and manufacturer Samsung
+    # assert hdd['model'] == 'HD251HJ'
+    # assert hdd['manufacturer'] == 'Samsung'
+    assert len(components['RamModule']) == 2
+    for ram in components['RamModule']:
+        assert ram['serialNumber'] is None
+        assert ram['model'] is None
+        # todo why when ram who as empty has a vendor of "48spaces"?
+
+
+def test_asus_all_series(lshw: MagicMock):
+    pc, components = computer(lshw, 'asus-all-series.lshw')
+    # todo it doesn't work assert pc['serialNumber'] == '104094'
+    ram = components['RamModule'][0]
+    assert ram['manufacturer'] == 'Kingston'
+    assert ram['model'] == '9905584-017.A00LF'
+    assert ram['serialNumber'] == '9D341297'
+
+
+def test_custom_pc(lshw: MagicMock):
+    pc, components = computer(lshw, 'custom.lshw')
+    ram = components['RamModule'][0]
+    assert ram['manufacturer'] == 'Kingston'
+    assert ram['model'] == '9905584-017.A00LF'
+    assert ram['serialNumber'] == '9D341297'
+    assert ram['size'] == 4096
+    assert ram['speed'] == 1600
+
+
+def test_all_series(lshw: MagicMock):
+    pc, components = computer(lshw, 'all-series.lshw')
+    assert 'RamModule' in components
+    ram = components['RamModule'][0]
+    assert ram['manufacturer'] == 'Kingston'
+    assert ram['serialNumber'] == '290E5155'
+    assert ram['model'] == '99U5584-003.A00LF'
+
+
+def test_vostro_260(lshw: MagicMock):
+    pc, components = computer(lshw, 'vostro-260.lshw')
+    processor = components['Processor'][0]
+    assert processor['serialNumber'] is None
+    assert processor['model'] == 'Intel Core i3-2120 CPU @ 3.30GHz'
+    assert processor['manufacturer'] == 'Intel Corp.'
+    graphic_card = components['GraphicCard'][0]
+    assert graphic_card['serialNumber'] is None
+    assert graphic_card['model'] == '2nd Generation Core Processor Family ' \
+                                    'Integrated Graphics Controller'

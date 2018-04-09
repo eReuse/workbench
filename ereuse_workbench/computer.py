@@ -4,11 +4,12 @@ from enum import Enum
 from itertools import chain
 from math import floor
 from subprocess import PIPE, Popen
-from typing import List
+from typing import List, Set
 
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
     get_nested_dicts_with_key_value
-from pydash import clean, compact, find_key, get, py_
+from pySMART import Device
+from pydash import clean, compact, find_key, get
 
 from ereuse_workbench import utils
 from ereuse_workbench.benchmarker import Benchmarker
@@ -41,13 +42,20 @@ class Computer:
         'prod',
         'o.e.m',
         'oem',
-        'n/a',
+        r'n/a',
         'atapi',
-        'pc'
+        'pc',
+        'unknown'
     }
-    """Delete those *words* from the value."""
-    CHARS_TO_REMOVE = '{}[]'
-    """Remove those *characters* from the value."""
+    """Delete those *words* from the value"""
+    assert all(v.lower() == v for v in TO_REMOVE), 'All words need to be lower-case'
+
+    CHARS_TO_REMOVE = '(){}[]'
+    """
+    Remove those *characters* from the value. 
+    All chars inside those are removed. Ex: foo (bar) => foo
+    """
+
     MEANINGLESS = {
         'to be filled',
         'system manufacturer',
@@ -58,11 +66,13 @@ class Computer:
         'not specified',
         'modulepartnumber',
         'system serial',
-        '0001-067A-0000-0000-0000',
+        '0001-067a-0000',
         'partnum0',
-        'manufacturer0'
+        'manufacturer0',
+        '0000000'
     }
-    """Discard a value if any of these values are inside it."""
+    """Discard a value if any of these values are inside it. """
+    assert all(v.lower() == v for v in MEANINGLESS), 'All values need to be lower-case'
 
     CHASSIS_TO_TYPE = {
         # dmi types from https://ezix.org/src/pkg/lshw/src/master/src/core/dmi.cc#L632
@@ -73,6 +83,7 @@ class Computer:
         'Server': {'server'}
     }
     """A conversion table from DMI's chassis type value to our type value."""
+    PHYSICAL_RAM_TYPES = 'ddr2', 'ddr3', 'ddr4', 'ddr5', 'sdram', 'sodimm'
 
     def __init__(self, benchmarker: Benchmarker = False):
         self.benchmarker = benchmarker
@@ -97,9 +108,8 @@ class Computer:
         return computer, compact(components)
 
     def computer(self):
-        node = next(get_nested_dicts_with_key_value(self.lshw, 'class', 'system'))
-        # Get type
-        chassis = py_.get(node, 'configuration.chassis')
+        node = self.lshw  # Computer node is just the root of lshw
+        chassis = node['configuration'].get('chassis', None)
         _type = find_key(self.CHASSIS_TO_TYPE, lambda values, key: chassis in values)
         return dict({
             'type': _type,
@@ -137,9 +147,10 @@ class Computer:
     def ram_modules(self):
         # We can get flash memory (BIOS?), system memory and unknown types of memory
         memories = get_nested_dicts_with_key_value(self.lshw, 'class', 'memory')
-        is_system_memory = lambda m: clean(m.get('description').lower()) == 'system memory'
-        main_memory = next((m for m in memories if is_system_memory(m)), None)
-        return (self.ram_module(node) for node in get(main_memory, 'children', []))
+        for memory in memories:
+            for ram_type in self.PHYSICAL_RAM_TYPES:
+                if ram_type in memory.get('description', '').lower():
+                    yield self.ram_module(memory)
 
     def ram_module(self, module: dict):
         # Node with no size == empty ram slot
@@ -156,18 +167,21 @@ class Computer:
                 assert 100 <= speed <= 10000, 'Invalid value {} Mhz for RAM speed'.format(speed)
             return ram
 
-    def hard_drives(self):
+    def hard_drives(self, get_removables=False):
         nodes = get_nested_dicts_with_key_containing_value(self.lshw, 'id', 'disk')
         # We can get nodes that are not truly disks as they don't have
         # size. Let's just forget about those.
-        return (self.hard_drive(node) for node in nodes if 'size' in node)
+        return (self.hard_drive(node, get_removables) for node in nodes if 'size' in node)
 
-    def hard_drive(self, node) -> dict or None:
+    def hard_drive(self, node, get_removable=False) -> dict or None:
         logical_name = node['logicalname']
         interface = utils.run('udevadm info --query=all --name={} | grep ID_BUS | cut -c 11-'
                               .format(logical_name))
         # todo not sure if ``interface != usb`` is needed
-        if interface != 'usb' and not get(node, 'capabilities.removable'):
+        is_not_removable = interface != 'usb' and not get(node, 'capabilities.removable')
+        is_removable = interface == 'usb'
+        if get_removable and is_removable or not get_removable and is_not_removable:
+            # If get_removable and is_removable or not get_removable and is not_removable
             hdd = {
                 '@type': 'HardDrive',
                 'size': floor(utils.convert_capacity(node['size'], node['units'], 'MB')),
@@ -177,7 +191,12 @@ class Computer:
             assert 20000 < hdd['size'] < 10 ** 8, 'Invalid HDD size {} MB'.format(hdd['size'])
             if self.benchmarker:
                 hdd['benchmark'] = self.benchmarker.benchmark_hdd(logical_name)
-            return dict(hdd, **self._common(node))
+            hdd = dict(hdd, **self._common(node))
+            if not hdd['serialNumber']:
+                hdd['serialNumber'] = Device(hdd[PrivateFields.logical_name]).serial
+            if not hdd['model']:
+                hdd['model'] = Device(hdd[PrivateFields.logical_name]).model
+            return hdd
 
     def graphic_cards(self):
         nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'display')
@@ -266,26 +285,30 @@ class Computer:
         manufacturer = self.get(node, 'vendor')
         return {
             'manufacturer': manufacturer,
-            'model': self.get(node, 'product', remove=manufacturer),
+            'model': self.get(node, 'product', remove={manufacturer} if manufacturer else None),
             'serialNumber': self.get(node, 'serial')
         }
 
     @classmethod
-    def get(cls, node: dict, key: str, remove=None) -> object or None:
+    def get(cls, dictionary: dict, key: str, remove: Set[str] = None) -> str or None:
         """
-        Gets a string value from the LSHW node sanitized.
+        Gets a string value from the dictionary and sanitizes it.
+        Returns ``None`` if the value does not exist or it doesn't
+        have meaning.
 
-        Words without meaning are removed, spaces trimmed and
-        discarded meaningless values.
+        Values are patterned and compared against sets
+        of meaningless characters usually found in LSHW's output.
 
-        :param remove: Remove this word if found.
+        :param dictionary: A dictionary potentially containing the value.
+        :param key: The key in ``dictionary`` where the value
+                    potentially is.
+        :param remove: Remove these words if found.
         """
-        to_remove = cls.TO_REMOVE
-        if remove:
-            to_remove.add(remove)
-        regex = re.compile('\\b({})\W'.format('|'.join(re.escape(s) for s in to_remove)), re.I)
-        val = regex.sub('', node.get(key, ''))
-        val = re.sub(r'\([^)]*\)', '', val)  # Remove everything between ()
+        remove = (remove or set()) | cls.TO_REMOVE
+        regex = r'({})\W'.format('|'.join(s for s in remove))
+        val = re.sub(regex, '', dictionary.get(key, ''), flags=re.IGNORECASE)
+        val = '' if val.lower() in remove else val  # regex's `\W` != whole string
+        val = re.sub(r'\([^)]*\)', '', val)  # Remove everything between CHARS_TO_REMOVE
         for char_to_remove in cls.CHARS_TO_REMOVE:
             val = val.replace(char_to_remove, '')
         val = clean(val)

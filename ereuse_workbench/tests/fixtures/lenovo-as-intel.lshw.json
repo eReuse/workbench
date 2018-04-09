@@ -1,0 +1,1092 @@
+{
+  "id" : "debian",
+  "class" : "system",
+  "claimed" : true,
+  "handle" : "DMI:0001",
+  "description" : "Desktop Computer",
+  "product" : "7220W3T (NONE)",
+  "vendor" : "LENOVO",
+  "version" : "ThinkCentre M58p",
+  "serial" : "S4R6460",
+  "width" : 32,
+  "configuration" : {
+    "administrator_password" : "enabled",
+    "boot" : "normal",
+    "chassis" : "desktop",
+    "cpus" : "2",
+    "family" : "NONE",
+    "keyboard_password" : "disabled",
+    "power-on_password" : "disabled",
+    "sku" : "NONE",
+    "uuid" : "006F3B61-234A-DF11-8B19-93F7629A1E58"
+  },
+  "capabilities" : {
+    "smbios-2.5" : "SMBIOS version 2.5",
+    "dmi-2.5" : "DMI version 2.5",
+    "smp-1.4" : "SMP specification v1.4",
+    "smp" : "Symmetric Multi-Processing"
+  },
+  "children" : [
+    {
+      "id" : "core",
+      "class" : "bus",
+      "claimed" : true,
+      "handle" : "DMI:0002",
+      "description" : "Motherboard",
+      "product" : "LENOVO",
+      "vendor" : "LENOVO",
+      "physid" : "0",
+      "version" : "NONE",
+      "serial" : "NONE",
+      "slot" : "INSIDE",
+      "children" : [
+        {
+          "id" : "firmware",
+          "class" : "memory",
+          "claimed" : true,
+          "description" : "BIOS",
+          "vendor" : "LENOVO",
+          "physid" : "0",
+          "version" : "5CKT61AUS",
+          "date" : "02/01/2010",
+          "units" : "bytes",
+          "size" : 129008,
+          "capacity" : 4128768,
+          "capabilities" : {
+            "pci" : "PCI bus",
+            "pnp" : "Plug-and-Play",
+            "upgrade" : "BIOS EEPROM can be upgraded",
+            "shadowing" : "BIOS shadowing",
+            "escd" : "ESCD",
+            "cdboot" : "Booting from CD-ROM/DVD",
+            "edd" : "Enhanced Disk Drive extensions",
+            "acpi" : "ACPI",
+            "usb" : "USB legacy emulation",
+            "ls120boot" : "Booting from LS-120",
+            "smartbattery" : "Smart battery",
+            "biosbootspecification" : "BIOS boot specification"
+          }
+        },
+        {
+          "id" : "cpu:0",
+          "class" : "processor",
+          "claimed" : true,
+          "handle" : "DMI:0004",
+          "description" : "CPU",
+          "product" : "Intel(R) Core(TM)2 Duo CPU     E8400  @ 3.00GHz",
+          "vendor" : "Intel Corp.",
+          "physid" : "4",
+          "businfo" : "cpu@0",
+          "version" : "6.7.10",
+          "serial" : "0001-067A-0000-0000-0000-0000",
+          "slot" : "LGA 775",
+          "units" : "Hz",
+          "size" : 3000000000,
+          "capacity" : 3600000000,
+          "width" : 64,
+          "clock" : 333000000,
+          "configuration" : {
+            "cores" : "2",
+            "enabledcores" : "2",
+            "id" : "1",
+            "threads" : "2"
+          },
+          "capabilities" : {
+            "x86-64" : "64bits extensions (x86-64)",
+            "boot" : "boot processor",
+            "fpu" : "mathematical co-processor",
+            "fpu_exception" : "FPU exceptions reporting",
+            "wp" : true,
+            "vme" : "virtual mode extensions",
+            "de" : "debugging extensions",
+            "pse" : "page size extensions",
+            "tsc" : "time stamp counter",
+            "msr" : "model-specific registers",
+            "pae" : "4GB+ memory addressing (Physical Address Extension)",
+            "mce" : "machine check exceptions",
+            "cx8" : "compare and exchange 8-byte",
+            "apic" : "on-chip advanced programmable interrupt controller (APIC)",
+            "sep" : "fast system calls",
+            "mtrr" : "memory type range registers",
+            "pge" : "page global enable",
+            "mca" : "machine check architecture",
+            "cmov" : "conditional move instruction",
+            "pat" : "page attribute table",
+            "pse36" : "36-bit page size extensions",
+            "clflush" : true,
+            "dts" : "debug trace and EMON store MSRs",
+            "acpi" : "thermal control (ACPI)",
+            "mmx" : "multimedia extensions (MMX)",
+            "fxsr" : "fast floating point save/restore",
+            "sse" : "streaming SIMD extensions (SSE)",
+            "sse2" : "streaming SIMD extensions (SSE2)",
+            "ss" : "self-snoop",
+            "ht" : "HyperThreading",
+            "tm" : "thermal interrupt and status",
+            "pbe" : "pending break event",
+            "nx" : "no-execute bit (NX)",
+            "constant_tsc" : true,
+            "arch_perfmon" : true,
+            "pebs" : true,
+            "bts" : true,
+            "aperfmperf" : true,
+            "eagerfpu" : true,
+            "pni" : true,
+            "dtes64" : true,
+            "monitor" : true,
+            "ds_cpl" : true,
+            "vmx" : "CPU virtualization (Vanderpool)",
+            "smx" : true,
+            "est" : true,
+            "tm2" : true,
+            "ssse3" : true,
+            "cx16" : true,
+            "xtpr" : true,
+            "pdcm" : true,
+            "sse4_1" : true,
+            "xsave" : true,
+            "lahf_lm" : true,
+            "tpr_shadow" : true,
+            "vnmi" : true,
+            "flexpriority" : true,
+            "dtherm" : true,
+            "cpufreq" : "CPU Frequency scaling"
+          },
+          "children" : [
+            {
+              "id" : "cache:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0005",
+              "description" : "L1 cache",
+              "physid" : "5",
+              "slot" : "L1 Cache",
+              "units" : "bytes",
+              "size" : 16384,
+              "capacity" : 262144,
+              "configuration" : {
+                "level" : "1"
+              },
+              "capabilities" : {
+                "asynchronous" : "Asynchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back"
+              }
+            },
+            {
+              "id" : "cache:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0006",
+              "description" : "L2 cache",
+              "physid" : "6",
+              "slot" : "L2 Cache",
+              "units" : "bytes",
+              "size" : 6291456,
+              "capacity" : 12582912,
+              "configuration" : {
+                "level" : "2"
+              },
+              "capabilities" : {
+                "burst" : "Burst",
+                "internal" : "Internal",
+                "write-back" : "Write-back"
+              }
+            },
+            {
+              "id" : "logicalcpu:0",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:1.0",
+              "description" : "Logical CPU",
+              "physid" : "1.1",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:1",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:1.1",
+              "description" : "Logical CPU",
+              "physid" : "1.2",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "memory",
+          "class" : "memory",
+          "claimed" : true,
+          "handle" : "DMI:001E",
+          "description" : "System Memory",
+          "physid" : "1e",
+          "slot" : "System board or motherboard",
+          "units" : "bytes",
+          "size" : 4294967296,
+          "children" : [
+            {
+              "id" : "bank:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:001F",
+              "description" : "DIMM DDR2 Synchronous 1067 MHz (0.9 ns)",
+              "product" : "000000000000000000000000000000000000",
+              "vendor" : "Unknown",
+              "physid" : "0",
+              "serial" : "00000000",
+              "slot" : "J6G1",
+              "units" : "bytes",
+              "size" : 2147483648,
+              "width" : 40960,
+              "clock" : 1067000000
+            },
+            {
+              "id" : "bank:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0020",
+              "description" : "DIMM DDR2 Synchronous 1067 MHz (0.9 ns) [empty]",
+              "product" : "012345678901234567890123456789012345",
+              "vendor" : "48spaces",
+              "physid" : "1",
+              "serial" : "01234567",
+              "slot" : "J6G2",
+              "clock" : 1067000000
+            },
+            {
+              "id" : "bank:2",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0021",
+              "description" : "DIMM DDR2 Synchronous 1067 MHz (0.9 ns)",
+              "product" : "000000000000000000000000000000000000",
+              "vendor" : "Unknown",
+              "physid" : "2",
+              "serial" : "00000000",
+              "slot" : "J6H1",
+              "units" : "bytes",
+              "size" : 2147483648,
+              "width" : 41984,
+              "clock" : 1067000000
+            },
+            {
+              "id" : "bank:3",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0022",
+              "description" : "DIMM DDR2 Synchronous 1067 MHz (0.9 ns) [empty]",
+              "product" : "012345678901234567890123456789012345",
+              "vendor" : "48spaces",
+              "physid" : "3",
+              "serial" : "01234567",
+              "slot" : "J6H2",
+              "clock" : 1067000000
+            }
+          ]
+        },
+        {
+          "id" : "cpu:1",
+          "class" : "processor",
+          "claimed" : true,
+          "physid" : "1",
+          "businfo" : "cpu@1",
+          "version" : "6.7.10",
+          "serial" : "0001-067A-0000-0000-0000-0000",
+          "units" : "Hz",
+          "size" : 3000000000,
+          "capacity" : 3000000000,
+          "configuration" : {
+            "id" : "1"
+          },
+          "capabilities" : {
+            "vmx" : "CPU virtualization (Vanderpool)",
+            "ht" : "HyperThreading",
+            "cpufreq" : "CPU Frequency scaling"
+          },
+          "children" : [
+            {
+              "id" : "logicalcpu:0",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:1.0",
+              "description" : "Logical CPU",
+              "physid" : "1.1",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:1",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:1.1",
+              "description" : "Logical CPU",
+              "physid" : "1.2",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "pci",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "4 Series Chipset DRAM Controller",
+          "vendor" : "Intel Corporation",
+          "physid" : "100",
+          "businfo" : "pci@0000:00:00.0",
+          "version" : "03",
+          "width" : 32,
+          "clock" : 33000000,
+          "children" : [
+            {
+              "id" : "display:0",
+              "class" : "display",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:02.0",
+              "description" : "VGA compatible controller",
+              "product" : "4 Series Chipset Integrated Graphics Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "2",
+              "businfo" : "pci@0000:00:02.0",
+              "version" : "03",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "i915",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "vga_controller" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing",
+                "rom" : "extension ROM"
+              }
+            },
+            {
+              "id" : "display:1",
+              "class" : "display",
+              "handle" : "PCI:0000:00:02.1",
+              "description" : "Display controller",
+              "product" : "4 Series Chipset Integrated Graphics Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "2.1",
+              "businfo" : "pci@0000:00:02.1",
+              "version" : "03",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "communication:0",
+              "class" : "communication",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:03.0",
+              "description" : "Communication controller",
+              "product" : "4 Series Chipset HECI Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "3",
+              "businfo" : "pci@0000:00:03.0",
+              "version" : "03",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "mei_me",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "ide",
+              "class" : "storage",
+              "handle" : "PCI:0000:00:03.2",
+              "description" : "IDE interface",
+              "product" : "4 Series Chipset PT IDER Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "3.2",
+              "businfo" : "pci@0000:00:03.2",
+              "version" : "03",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "ide" : true,
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "communication:1",
+              "class" : "communication",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:03.3",
+              "description" : "Serial controller",
+              "product" : "4 Series Chipset Serial KT Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "3.3",
+              "businfo" : "pci@0000:00:03.3",
+              "version" : "03",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "serial",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "16550" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "network",
+              "class" : "network",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:19.0",
+              "description" : "Ethernet interface",
+              "product" : "82567LM-3 Gigabit Network Connection",
+              "vendor" : "Intel Corporation",
+              "physid" : "19",
+              "businfo" : "pci@0000:00:19.0",
+              "logicalname" : "enp0s25",
+              "version" : "02",
+              "serial" : "00:24:7e:02:15:1a",
+              "units" : "bit/s",
+              "size" : 1000000000,
+              "capacity" : 1000000000,
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "autonegotiation" : "on",
+                "broadcast" : "yes",
+                "driver" : "e1000e",
+                "driverversion" : "3.2.6-k",
+                "duplex" : "full",
+                "firmware" : "0.4-3",
+                "ip" : "192.168.2.18",
+                "latency" : "0",
+                "link" : "yes",
+                "multicast" : "yes",
+                "port" : "twisted pair",
+                "speed" : "1Gbit/s"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing",
+                "ethernet" : true,
+                "physical" : "Physical interface",
+                "tp" : "twisted pair",
+                "10bt" : "10Mbit/s",
+                "10bt-fd" : "10Mbit/s (full duplex)",
+                "100bt" : "100Mbit/s",
+                "100bt-fd" : "100Mbit/s (full duplex)",
+                "1000bt-fd" : "1Gbit/s (full duplex)",
+                "autonegotiation" : "Auto-negotiation"
+              }
+            },
+            {
+              "id" : "usb:0",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1a.0",
+              "description" : "USB controller",
+              "product" : "82801JD/DO (ICH10 Family) USB UHCI Controller #4",
+              "vendor" : "Intel Corporation",
+              "physid" : "1a",
+              "businfo" : "pci@0000:00:1a.0",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "uhci_hcd",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "uhci" : "Universal Host Controller Interface (USB1)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:1:1",
+                  "product" : "UHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-5-686 uhci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@1",
+                  "logicalname" : "usb1",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "2",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:1",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1a.1",
+              "description" : "USB controller",
+              "product" : "82801JD/DO (ICH10 Family) USB UHCI Controller #5",
+              "vendor" : "Intel Corporation",
+              "physid" : "1a.1",
+              "businfo" : "pci@0000:00:1a.1",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "uhci_hcd",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "uhci" : "Universal Host Controller Interface (USB1)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:2:1",
+                  "product" : "UHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-5-686 uhci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@2",
+                  "logicalname" : "usb2",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "2",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:2",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1a.2",
+              "description" : "USB controller",
+              "product" : "82801JD/DO (ICH10 Family) USB UHCI Controller #6",
+              "vendor" : "Intel Corporation",
+              "physid" : "1a.2",
+              "businfo" : "pci@0000:00:1a.2",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "uhci_hcd",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "uhci" : "Universal Host Controller Interface (USB1)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:3:1",
+                  "product" : "UHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-5-686 uhci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@3",
+                  "logicalname" : "usb3",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "2",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:3",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1a.7",
+              "description" : "USB controller",
+              "product" : "82801JD/DO (ICH10 Family) USB2 EHCI Controller #2",
+              "vendor" : "Intel Corporation",
+              "physid" : "1a.7",
+              "businfo" : "pci@0000:00:1a.7",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "ehci-pci",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "debug" : "Debug port",
+                "ehci" : "Enhanced Host Controller Interface (USB2)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:5:1",
+                  "product" : "EHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-5-686 ehci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@5",
+                  "logicalname" : "usb5",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "6",
+                    "speed" : "480Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-2.00" : "USB 2.0"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "multimedia",
+              "class" : "multimedia",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1b.0",
+              "description" : "Audio device",
+              "product" : "82801JD/DO (ICH10 Family) HD Audio Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "1b",
+              "businfo" : "pci@0000:00:1b.0",
+              "version" : "02",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "snd_hda_intel",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "pciexpress" : "PCI Express",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "usb:4",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1d.0",
+              "description" : "USB controller",
+              "product" : "82801JD/DO (ICH10 Family) USB UHCI Controller #1",
+              "vendor" : "Intel Corporation",
+              "physid" : "1d",
+              "businfo" : "pci@0000:00:1d.0",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "uhci_hcd",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "uhci" : "Universal Host Controller Interface (USB1)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:4:1",
+                  "product" : "UHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-5-686 uhci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@4",
+                  "logicalname" : "usb4",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "2",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:5",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1d.1",
+              "description" : "USB controller",
+              "product" : "82801JD/DO (ICH10 Family) USB UHCI Controller #2",
+              "vendor" : "Intel Corporation",
+              "physid" : "1d.1",
+              "businfo" : "pci@0000:00:1d.1",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "uhci_hcd",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "uhci" : "Universal Host Controller Interface (USB1)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:7:1",
+                  "product" : "UHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-5-686 uhci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@7",
+                  "logicalname" : "usb7",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "2",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:6",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1d.2",
+              "description" : "USB controller",
+              "product" : "82801JD/DO (ICH10 Family) USB UHCI Controller #3",
+              "vendor" : "Intel Corporation",
+              "physid" : "1d.2",
+              "businfo" : "pci@0000:00:1d.2",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "uhci_hcd",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "uhci" : "Universal Host Controller Interface (USB1)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:8:1",
+                  "product" : "UHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-5-686 uhci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@8",
+                  "logicalname" : "usb8",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "2",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:7",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1d.7",
+              "description" : "USB controller",
+              "product" : "82801JD/DO (ICH10 Family) USB2 EHCI Controller #1",
+              "vendor" : "Intel Corporation",
+              "physid" : "1d.7",
+              "businfo" : "pci@0000:00:1d.7",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "ehci-pci",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "debug" : "Debug port",
+                "ehci" : "Enhanced Host Controller Interface (USB2)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:6:1",
+                  "product" : "EHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-5-686 ehci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@6",
+                  "logicalname" : "usb6",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "6",
+                    "speed" : "480Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-2.00" : "USB 2.0"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "pci",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:11",
+              "description" : "PCI bridge",
+              "product" : "82801 PCI Bridge",
+              "vendor" : "Intel Corporation",
+              "physid" : "1e",
+              "businfo" : "pci@0000:00:1e.0",
+              "version" : "a2",
+              "width" : 32,
+              "clock" : 33000000,
+              "capabilities" : {
+                "pci" : true,
+                "subtractive_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "isa",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1f.0",
+              "description" : "ISA bridge",
+              "product" : "82801JDO (ICH10DO) LPC Interface Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f",
+              "businfo" : "pci@0000:00:1f.0",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "lpc_ich",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "isa" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "storage",
+              "class" : "storage",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1f.2",
+              "description" : "SATA controller",
+              "product" : "82801JD/DO (ICH10 Family) SATA AHCI Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f.2",
+              "businfo" : "pci@0000:00:1f.2",
+              "version" : "02",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ahci",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "storage" : true,
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "ahci_1.0" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "serial",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1f.3",
+              "description" : "SMBus",
+              "product" : "82801JD/DO (ICH10 Family) SMBus Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f.3",
+              "businfo" : "pci@0000:00:1f.3",
+              "version" : "02",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "i801_smbus",
+                "latency" : "0"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "scsi:0",
+          "class" : "storage",
+          "claimed" : true,
+          "physid" : "2",
+          "logicalname" : "scsi0",
+          "capabilities" : {
+            "emulated" : "Emulated device"
+          },
+          "children" : [
+            {
+              "id" : "disk",
+              "class" : "disk",
+              "claimed" : true,
+              "handle" : "SCSI:00:00:00:00",
+              "description" : "ATA Disk",
+              "product" : "SAMSUNG HD251HJ",
+              "physid" : "0.0.0",
+              "businfo" : "scsi@0:0.0.0",
+              "logicalname" : "/dev/sda",
+              "dev" : "8:0",
+              "version" : "1116",
+              "serial" : "S1L6J9BZ103714",
+              "units" : "bytes",
+              "size" : 250059350016,
+              "configuration" : {
+                "ansiversion" : "5",
+                "logicalsectorsize" : "512",
+                "sectorsize" : "512"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "scsi:1",
+          "class" : "storage",
+          "claimed" : true,
+          "physid" : "3",
+          "logicalname" : "scsi1",
+          "capabilities" : {
+            "emulated" : "Emulated device"
+          },
+          "children" : [
+            {
+              "id" : "cdrom",
+              "class" : "disk",
+              "claimed" : true,
+              "handle" : "SCSI:01:00:00:00",
+              "description" : "DVD-RAM writer",
+              "product" : "DVD-RAM GH40N",
+              "vendor" : "HL-DT-ST",
+              "physid" : "0.0.0",
+              "businfo" : "scsi@1:0.0.0",
+              "logicalname" : ["/dev/cdrom", "/dev/cdrw", "/dev/dvd", "/dev/dvdrw", "/dev/sr0"],
+              "dev" : "11:0",
+              "version" : "NX05",
+              "configuration" : {
+                "ansiversion" : "5",
+                "status" : "nodisc"
+              },
+              "capabilities" : {
+                "removable" : "support is removable",
+                "audio" : "Audio CD playback",
+                "cd-r" : "CD-R burning",
+                "cd-rw" : "CD-RW burning",
+                "dvd" : "DVD playback",
+                "dvd-r" : "DVD-R burning",
+                "dvd-ram" : "DVD-RAM burning"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id" : "remoteaccess",
+      "class" : "system",
+      "vendor" : "Intel",
+      "physid" : "1",
+      "capabilities" : {
+        "outbound" : "make outbound connections"
+      }
+    },
+    {
+      "id" : "power",
+      "class" : "power",
+      "description" : "Standard 235 ATX",
+      "product" : "Diamond MM #87997/1845333",
+      "vendor" : "PC POwer & Cooling, INC",
+      "physid" : "2",
+      "version" : "2.30",
+      "serial" : "7481909424",
+      "units" : "mWh",
+      "capacity" : 125
+    }
+  ]
+}
