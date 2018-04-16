@@ -107,6 +107,7 @@ def install(path_to_os_image: Path, target_disk='/dev/sda', swap_space=True, par
     :param part_type: Whether to use BIOS/MBR or UEFI/GPT schemes.
     :return: A dictonary with the summary of the operation.
     """
+    assert isinstance(path_to_os_image, Path)
     # Steps:
     # Zero out disk label
     #   TODO: ensure disk not mounted (findmnt?)

@@ -219,7 +219,8 @@ class Workbench:
             # Must add some logic (here!) to handle cases where the machine
             # has multiple disks, possibly SSDs and rotationals, or two
             # rotationals of different size, etc.
-            snapshot['osInstallation'] = install(os.path.join(str(self.install_path), self.install))
+            assert isinstance(self.install, str), "Installation image name should be a string."
+            snapshot['osInstallation'] = install(self.install_path / self.install)
 
             if not snapshot['osInstallation']['success']:
                 print('{}Failed installing OS'.format(Fore.RED))
