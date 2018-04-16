@@ -139,8 +139,7 @@ class Workbench:
         p = Popen(c, stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True)
         _, stderr = p.communicate()
         if stderr:
-            raise CannotMount('{}\nYou might need to "umount {}"'
-                              .format(stderr.decode(), self.install_path))
+            raise CannotMount('{}\nYou might need to "umount {}"'.format(stderr, self.install_path))
 
     def run(self) -> str:
         """
