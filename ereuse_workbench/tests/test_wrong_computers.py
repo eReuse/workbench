@@ -176,8 +176,48 @@ def test_lenovo_type_as_intel(lshw: MagicMock):
     # todo model should be HD251HJ and manufacturer Samsung
     # assert hdd['model'] == 'HD251HJ'
     # assert hdd['manufacturer'] == 'Samsung'
+    assert len(components['RamModule']) == 2
+    for ram in components['RamModule']:
+        assert ram['serialNumber'] is None
+        assert ram['model'] is None
+        # todo why when ram who as empty has a vendor of "48spaces"?
 
 
 def test_asus_all_series(lshw: MagicMock):
     pc, components = computer(lshw, 'asus-all-series.lshw')
     # todo it doesn't work assert pc['serialNumber'] == '104094'
+    ram = components['RamModule'][0]
+    assert ram['manufacturer'] == 'Kingston'
+    assert ram['model'] == '9905584-017.A00LF'
+    assert ram['serialNumber'] == '9D341297'
+
+
+def test_custom_pc(lshw: MagicMock):
+    pc, components = computer(lshw, 'custom.lshw')
+    ram = components['RamModule'][0]
+    assert ram['manufacturer'] == 'Kingston'
+    assert ram['model'] == '9905584-017.A00LF'
+    assert ram['serialNumber'] == '9D341297'
+    assert ram['size'] == 4096
+    assert ram['speed'] == 1600
+
+
+def test_all_series(lshw: MagicMock):
+    pc, components = computer(lshw, 'all-series.lshw')
+    assert 'RamModule' in components
+    ram = components['RamModule'][0]
+    assert ram['manufacturer'] == 'Kingston'
+    assert ram['serialNumber'] == '290E5155'
+    assert ram['model'] == '99U5584-003.A00LF'
+
+
+def test_vostro_260(lshw: MagicMock):
+    pc, components = computer(lshw, 'vostro-260.lshw')
+    processor = components['Processor'][0]
+    assert processor['serialNumber'] is None
+    assert processor['model'] == 'Intel Core i3-2120 CPU @ 3.30GHz'
+    assert processor['manufacturer'] == 'Intel Corp.'
+    graphic_card = components['GraphicCard'][0]
+    assert graphic_card['serialNumber'] is None
+    assert graphic_card['model'] == '2nd Generation Core Processor Family ' \
+                                    'Integrated Graphics Controller'

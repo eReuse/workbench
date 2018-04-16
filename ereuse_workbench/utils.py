@@ -57,7 +57,7 @@ def get_hw_addr(ifname):
     return ':'.join('%02x' % ord(char) for char in info[18:24])
 
 
-def run(cmd: object) -> object:
+def run(cmd: str) -> str:
     return os.popen(cmd).read().strip()
 
 
