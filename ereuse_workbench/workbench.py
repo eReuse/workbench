@@ -216,7 +216,6 @@ class Workbench:
 
         if self.install:
             print('{} Install {}...'.format(self._print_phase(5), self.install))
-            assert isinstance(self.install, str), "Installation image name should be a string."
             snapshot['osInstallation'] = self.installer.install(self.install_path / self.install)
 
             if not snapshot['osInstallation']['success']:

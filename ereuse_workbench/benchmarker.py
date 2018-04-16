@@ -1,4 +1,5 @@
-from subprocess import run
+from subprocess import PIPE, run
+from warnings import warn
 
 from .utils import convert_capacity
 
@@ -21,11 +22,11 @@ class Benchmarker:
         """
         # Read
         cmd_read = ('dd', 'if={}'.format(disk), 'of=/dev/null') + self.BENCHMARK_HDD_COMMON
-        reading = self._benchmark_hdd_to_mb(run(cmd_read).stderr)
+        reading = self._benchmark_hdd_to_mb(run(cmd_read, stderr=PIPE).stderr)
 
         # Write
         cmd_write = ('dd', 'of={}'.format(disk), 'if={}'.format(disk)) + self.BENCHMARK_HDD_COMMON
-        writing = self._benchmark_hdd_to_mb(run(cmd_write).stderr)
+        writing = self._benchmark_hdd_to_mb(run(cmd_write, stderr=PIPE).stderr)
 
         return {
             '@type': 'BenchmarkHardDrive',
@@ -38,7 +39,9 @@ class Benchmarker:
         output = output.decode()
         value = float(output.split()[-2].replace(',', '.'))
         speed = convert_capacity(value, output.split()[-1][0:2], 'MB')
-        assert 1 < speed < 300, '{} doesn\'t seem like normal HDD speed'.format(speed)
+        if speed > 300:
+            warn('Detected {} MB/s is far superior from normal HDD speed'.format(speed))
+        assert 5 < speed, 'Speed must be above 5 MB/S and is {}'.format(speed)
         return speed
 
     @staticmethod
