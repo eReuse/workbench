@@ -1,5 +1,5 @@
-import subprocess
 from enum import Enum
+from subprocess import CalledProcessError, run
 
 from ereuse_utils import now
 
@@ -93,9 +93,9 @@ class Eraser:
     def erase_process(dev, options, steps):
         # Erasing
         try:
-            subprocess.check_call(['shred', options, str(steps), dev])
+            run(('shred', options, str(steps), dev), check=True)
             state = True
-        except subprocess.CalledProcessError:
+        except CalledProcessError:
             state = False
             print('Cannot erase the hard drive {}'.format(dev))
         return state
@@ -103,8 +103,9 @@ class Eraser:
     @staticmethod
     def erase_sectors(disk, output):
         try:
-            subprocess.check_output(['badblocks', '-st', 'random', '-w', disk, '-o', output])
-            return True
-        except subprocess.CalledProcessError:
+            run(('badblocks', '-st', 'random', '-w', disk, '-o', output), check=True)
+            state = True
+        except CalledProcessError:
+            state = False
             print('Cannot erase the hard drive {}'.format(disk))
-            return False
+        return state

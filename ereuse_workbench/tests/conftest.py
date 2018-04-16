@@ -31,22 +31,32 @@ def lshw() -> MagicMock:
     ``mocked`` is the injected parameter you receive in your test.
     """
 
-    class LSHW:
+    class Run:
         def __init__(self) -> None:
             self.json = ''
             super().__init__()
 
-        def communicate(self):
-            return self.json, None
+        def __call__(self, cmd, **kwargs):
+            cmd = str(cmd)
+            if 'lshw' in cmd:
+                return Result(self.json)
+            elif 'dmidecode' in cmd:
+                return Result(1)
+            else:
+                return Result('')
 
-    with mock.patch('ereuse_workbench.computer.Popen') as Popen:
-        Popen.return_value = LSHW()
-        yield Popen
+    class Result:
+        def __init__(self, stdout) -> None:
+            self.stdout = stdout
+
+    with mock.patch('ereuse_workbench.computer.run') as run:
+        run.side_effect = Run()
+        yield run
 
 
 def computer(lshw: MagicMock, json_name: str) -> (dict, Dict[str, List[dict]]):
     """Given a LSHW output and a LSHW mock, runs Computer."""
-    lshw.return_value.json = fixture(json_name + '.json')
+    lshw.side_effect.json = fixture(json_name + '.json')
     computer_getter = Computer()
     assert lshw.called
     pc, components = computer_getter.run()

@@ -3,7 +3,7 @@ import re
 from enum import Enum
 from itertools import chain
 from math import floor
-from subprocess import PIPE, Popen
+from subprocess import run
 from typing import List, Set
 
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
@@ -60,15 +60,15 @@ class Computer:
         'to be filled',
         'system manufacturer',
         'system product',
-        'sernum0',
+        'sernum',
         'xxxxx',
         'system name',
         'not specified',
         'modulepartnumber',
         'system serial',
         '0001-067a-0000',
-        'partnum0',
-        'manufacturer0',
+        'partnum',
+        'manufacturer',
         '0000000'
     }
     """Discard a value if any of these values are inside it. """
@@ -88,8 +88,9 @@ class Computer:
     def __init__(self, benchmarker: Benchmarker = False):
         self.benchmarker = benchmarker
         # Obtain raw from LSHW
-        cmd = 'LC_ALL=C lshw -json -quiet'
-        stdout, _ = Popen(cmd, stdout=PIPE, shell=True, universal_newlines=True).communicate()
+        stdout = run(('LC_ALL=C', 'lshw', '-json', '-quiet'),
+                     check=True,
+                     universal_newlines=True).stdout
         self.lshw = json.loads(stdout)
 
     def run(self) -> (dict, List[dict]):
@@ -175,8 +176,13 @@ class Computer:
 
     def hard_drive(self, node, get_removable=False) -> dict or None:
         logical_name = node['logicalname']
-        interface = utils.run('udevadm info --query=all --name={} | grep ID_BUS | cut -c 11-'
-                              .format(logical_name))
+        interface = run('udevadm info '
+                        '--query=all '
+                        '--name={} | '
+                        'grep '
+                        'ID_BUS | '
+                        'cut -c 11-'.format(logical_name),
+                        check=True, universal_newlines=True, shell=True).stdout
         # todo not sure if ``interface != usb`` is needed
         is_not_removable = interface != 'usb' and not get(node, 'capabilities.removable')
         is_removable = interface == 'usb'
@@ -210,13 +216,13 @@ class Computer:
 
     @staticmethod
     def _graphic_card_memory(bus_info):
-        values = utils.run("lspci -v -s {bus} | "
-                           "grep 'prefetchable' | "
-                           "grep -v 'non-prefetchable' | "
-                           "egrep -o '[0-9]{{1,3}}[KMGT]+'".format(bus=bus_info)).splitlines()
+        ret = run('lspci -v -s {bus} |'
+                  'grep \'prefetchable\' | '
+                  'grep -v \'non-prefetchable\' | '
+                  'egrep -o \'[0-9]{{1,3}}[KMGT]+\''.format(bus=bus_info))
         # Get max memory value
         max_size = 0
-        for value in values:
+        for value in ret.stdout.splitlines():
             unit = re.split('\d+', value)[1]
             size = int(value.rstrip(unit))
 
@@ -235,11 +241,18 @@ class Computer:
         node = next(get_nested_dicts_with_key_value(self.lshw, 'description', 'Motherboard'))
         return dict({
             '@type': 'Motherboard',
-            'connectors': {name: self.motherboard_num_of_connectors(name) for name in
-                           self.CONNECTORS},
-            'totalSlots': int(utils.run('dmidecode -t 17 | grep -o BANK | wc -l')),
-            'usedSlots': int(
-                utils.run('dmidecode -t 17 | grep Size | grep MB | awk \'{print $2}\' | wc -l'))
+            'connectors': {name: self.motherboard_num_of_connectors(name)
+                           for name in self.CONNECTORS},
+            'totalSlots': int(run('dmidecode -t 17 | '
+                                  'grep -o BANK | '
+                                  'wc -l',
+                                  check=True, universal_newlines=True, shell=True).stdout),
+            'usedSlots': int(run('dmidecode -t 17 | '
+                                 'grep Size | '
+                                 'grep MB | '
+                                 'awk \'{print $2}\' | '
+                                 'wc -l',
+                                 check=True, universal_newlines=True, shell=True).stdout)
         }, **self._common(node))
 
     def motherboard_num_of_connectors(self, connector_name) -> int:

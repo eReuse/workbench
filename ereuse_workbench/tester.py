@@ -1,10 +1,10 @@
 import re
-import subprocess
 import sys
 import time
 from contextlib import suppress
 from datetime import datetime, timedelta
 from enum import Enum
+from subprocess import Popen, run, CalledProcessError
 from time import sleep
 
 import pySMART
@@ -37,27 +37,25 @@ class Tester:
             mem_kib = int(match.group(1))
         # Exclude a percentage of available memory for the stress processes themselves.
         mem_worker_kib = (mem_kib / ncores) * 90 / 100
-        proc = subprocess.Popen([
-            'stress',
-            '-c', str(ncores),
-            '-m', str(ncores),
-            '--vm-bytes', '%dK' % mem_worker_kib,
-            '-t', '%dm' % minutes],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
+        process = Popen(('stress',
+                         '-c', str(ncores),
+                         '-m', str(ncores),
+                         '--vm-bytes', '{}K'.format(mem_worker_kib),
+                         '-t', '{}m'.format(minutes)))
         for _ in tqdm.trange(minutes * 60):  # update progress bar every second
             sleep(1)
-        proc.communicate()  # wait for process, consume output
+        process.communicate()  # wait for process, consume output
         return {
             '@type': 'StressTest',
             'elapsed': timedelta(minutes=minutes),
-            'success': proc.returncode == 0
+            'success': process.returncode == 0
         }
 
     def smart(self, disk, test_type: Smart):
         # Enable SMART on hard drive
         try:
-            subprocess.check_output(['smartctl', '-s', 'on', disk], universal_newlines=True)
-        except subprocess.CalledProcessError as e:
+            run(('smartctl', '-s', 'on', disk), universal_newlines=True, check=True)
+        except CalledProcessError as e:
             status = 'SMART cannot be enabled on this device.'
             print(status, file=sys.stderr)
             print(e, file=sys.stderr)

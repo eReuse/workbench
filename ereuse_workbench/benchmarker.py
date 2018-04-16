@@ -1,4 +1,4 @@
-import subprocess
+from subprocess import run
 
 from .utils import convert_capacity
 
@@ -20,21 +20,17 @@ class Benchmarker:
         This method does not destroy existing data.
         """
         # Read
-        cmd_read = ('dd', 'if=%s' % disk, 'of=/dev/null') + self.BENCHMARK_HDD_COMMON
-        p = subprocess.Popen(cmd_read, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        _, err = p.communicate()
-        reading = self._benchmark_hdd_to_mb(err)
+        cmd_read = ('dd', 'if={}'.format(disk), 'of=/dev/null') + self.BENCHMARK_HDD_COMMON
+        reading = self._benchmark_hdd_to_mb(run(cmd_read).stderr)
 
         # Write
-        cmd_write = ('dd', 'of=%s' % disk, 'if=%s' % disk) + self.BENCHMARK_HDD_COMMON
-        p = subprocess.Popen(cmd_write, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        _, err = p.communicate()
-        writing = self._benchmark_hdd_to_mb(err)
+        cmd_write = ('dd', 'of={}'.format(disk), 'if={}'.format(disk)) + self.BENCHMARK_HDD_COMMON
+        writing = self._benchmark_hdd_to_mb(run(cmd_write).stderr)
 
         return {
             '@type': 'BenchmarkHardDrive',
             'readingSpeed': reading,
-            'writingSpeed': writing,
+            'writingSpeed': writing
         }
 
     @staticmethod

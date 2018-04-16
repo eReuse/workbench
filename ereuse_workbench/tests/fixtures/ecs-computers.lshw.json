@@ -193,14 +193,14 @@
           "serial" : "0003-06C3-0000-0000-0000-0000",
           "slot" : "SOCKET 1150",
           "units" : "Hz",
-          "size" : 3195550000,
+          "size" : 2200311000,
           "capacity" : 3900000000,
           "width" : 64,
           "clock" : 100000000,
           "configuration" : {
             "cores" : "4",
             "enabledcores" : "4",
-            "id" : "4",
+            "id" : "6",
             "threads" : "4"
           },
           "capabilities" : {
@@ -301,9 +301,9 @@
               "id" : "logicalcpu:0",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.0",
+              "handle" : "CPU:6.0",
               "description" : "Logical CPU",
-              "physid" : "4.1",
+              "physid" : "6.1",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -313,9 +313,9 @@
               "id" : "logicalcpu:1",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.1",
+              "handle" : "CPU:6.1",
               "description" : "Logical CPU",
-              "physid" : "4.2",
+              "physid" : "6.2",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -325,9 +325,9 @@
               "id" : "logicalcpu:2",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.2",
+              "handle" : "CPU:6.2",
               "description" : "Logical CPU",
-              "physid" : "4.3",
+              "physid" : "6.3",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -337,9 +337,9 @@
               "id" : "logicalcpu:3",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.3",
+              "handle" : "CPU:6.3",
               "description" : "Logical CPU",
-              "physid" : "4.4",
+              "physid" : "6.4",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -349,9 +349,9 @@
               "id" : "logicalcpu:4",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.4",
+              "handle" : "CPU:6.4",
               "description" : "Logical CPU",
-              "physid" : "4.5",
+              "physid" : "6.5",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -361,9 +361,9 @@
               "id" : "logicalcpu:5",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.5",
+              "handle" : "CPU:6.5",
               "description" : "Logical CPU",
-              "physid" : "4.6",
+              "physid" : "6.6",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -373,9 +373,9 @@
               "id" : "logicalcpu:6",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.6",
+              "handle" : "CPU:6.6",
               "description" : "Logical CPU",
-              "physid" : "4.7",
+              "physid" : "6.7",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -385,9 +385,9 @@
               "id" : "logicalcpu:7",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.7",
+              "handle" : "CPU:6.7",
               "description" : "Logical CPU",
-              "physid" : "4.8",
+              "physid" : "6.8",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -397,9 +397,9 @@
               "id" : "logicalcpu:8",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.8",
+              "handle" : "CPU:6.8",
               "description" : "Logical CPU",
-              "physid" : "4.9",
+              "physid" : "6.9",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -409,9 +409,9 @@
               "id" : "logicalcpu:9",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.9",
+              "handle" : "CPU:6.9",
               "description" : "Logical CPU",
-              "physid" : "4.a",
+              "physid" : "6.a",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -421,9 +421,9 @@
               "id" : "logicalcpu:10",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.10",
+              "handle" : "CPU:6.10",
               "description" : "Logical CPU",
-              "physid" : "4.b",
+              "physid" : "6.b",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -433,9 +433,9 @@
               "id" : "logicalcpu:11",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.11",
+              "handle" : "CPU:6.11",
               "description" : "Logical CPU",
-              "physid" : "4.c",
+              "physid" : "6.c",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -445,9 +445,9 @@
               "id" : "logicalcpu:12",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.12",
+              "handle" : "CPU:6.12",
               "description" : "Logical CPU",
-              "physid" : "4.d",
+              "physid" : "6.d",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -457,9 +457,9 @@
               "id" : "logicalcpu:13",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.13",
+              "handle" : "CPU:6.13",
               "description" : "Logical CPU",
-              "physid" : "4.e",
+              "physid" : "6.e",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -469,9 +469,9 @@
               "id" : "logicalcpu:14",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.14",
+              "handle" : "CPU:6.14",
               "description" : "Logical CPU",
-              "physid" : "4.f",
+              "physid" : "6.f",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -481,9 +481,9 @@
               "id" : "logicalcpu:15",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.15",
+              "handle" : "CPU:6.15",
               "description" : "Logical CPU",
-              "physid" : "4.10",
+              "physid" : "6.10",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -500,10 +500,10 @@
           "version" : "6.12.3",
           "serial" : "0003-06C3-0000-0000-0000-0000",
           "units" : "Hz",
-          "size" : 3100946000,
+          "size" : 1392767000,
           "capacity" : 3300000000,
           "configuration" : {
-            "id" : "4"
+            "id" : "6"
           },
           "capabilities" : {
             "vmx" : "CPU virtualization (Vanderpool)",
@@ -515,9 +515,9 @@
               "id" : "logicalcpu:0",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.0",
+              "handle" : "CPU:6.0",
               "description" : "Logical CPU",
-              "physid" : "4.1",
+              "physid" : "6.1",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -526,9 +526,9 @@
               "id" : "logicalcpu:1",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.1",
+              "handle" : "CPU:6.1",
               "description" : "Logical CPU",
-              "physid" : "4.2",
+              "physid" : "6.2",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -537,9 +537,9 @@
               "id" : "logicalcpu:2",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.2",
+              "handle" : "CPU:6.2",
               "description" : "Logical CPU",
-              "physid" : "4.3",
+              "physid" : "6.3",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -548,9 +548,9 @@
               "id" : "logicalcpu:3",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.3",
+              "handle" : "CPU:6.3",
               "description" : "Logical CPU",
-              "physid" : "4.4",
+              "physid" : "6.4",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -559,9 +559,9 @@
               "id" : "logicalcpu:4",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.4",
+              "handle" : "CPU:6.4",
               "description" : "Logical CPU",
-              "physid" : "4.5",
+              "physid" : "6.5",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -570,9 +570,9 @@
               "id" : "logicalcpu:5",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.5",
+              "handle" : "CPU:6.5",
               "description" : "Logical CPU",
-              "physid" : "4.6",
+              "physid" : "6.6",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -581,9 +581,9 @@
               "id" : "logicalcpu:6",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.6",
+              "handle" : "CPU:6.6",
               "description" : "Logical CPU",
-              "physid" : "4.7",
+              "physid" : "6.7",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -592,9 +592,9 @@
               "id" : "logicalcpu:7",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.7",
+              "handle" : "CPU:6.7",
               "description" : "Logical CPU",
-              "physid" : "4.8",
+              "physid" : "6.8",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -603,9 +603,9 @@
               "id" : "logicalcpu:8",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.8",
+              "handle" : "CPU:6.8",
               "description" : "Logical CPU",
-              "physid" : "4.9",
+              "physid" : "6.9",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -614,9 +614,9 @@
               "id" : "logicalcpu:9",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.9",
+              "handle" : "CPU:6.9",
               "description" : "Logical CPU",
-              "physid" : "4.a",
+              "physid" : "6.a",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -625,9 +625,9 @@
               "id" : "logicalcpu:10",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.10",
+              "handle" : "CPU:6.10",
               "description" : "Logical CPU",
-              "physid" : "4.b",
+              "physid" : "6.b",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -636,9 +636,9 @@
               "id" : "logicalcpu:11",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.11",
+              "handle" : "CPU:6.11",
               "description" : "Logical CPU",
-              "physid" : "4.c",
+              "physid" : "6.c",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -647,9 +647,9 @@
               "id" : "logicalcpu:12",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.12",
+              "handle" : "CPU:6.12",
               "description" : "Logical CPU",
-              "physid" : "4.d",
+              "physid" : "6.d",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -658,9 +658,9 @@
               "id" : "logicalcpu:13",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.13",
+              "handle" : "CPU:6.13",
               "description" : "Logical CPU",
-              "physid" : "4.e",
+              "physid" : "6.e",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -669,9 +669,9 @@
               "id" : "logicalcpu:14",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.14",
+              "handle" : "CPU:6.14",
               "description" : "Logical CPU",
-              "physid" : "4.f",
+              "physid" : "6.f",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -680,9 +680,9 @@
               "id" : "logicalcpu:15",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.15",
+              "handle" : "CPU:6.15",
               "description" : "Logical CPU",
-              "physid" : "4.10",
+              "physid" : "6.10",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -698,10 +698,10 @@
           "version" : "6.12.3",
           "serial" : "0003-06C3-0000-0000-0000-0000",
           "units" : "Hz",
-          "size" : 3297534000,
+          "size" : 1500805000,
           "capacity" : 3300000000,
           "configuration" : {
-            "id" : "4"
+            "id" : "6"
           },
           "capabilities" : {
             "vmx" : "CPU virtualization (Vanderpool)",
@@ -713,9 +713,9 @@
               "id" : "logicalcpu:0",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.0",
+              "handle" : "CPU:6.0",
               "description" : "Logical CPU",
-              "physid" : "4.1",
+              "physid" : "6.1",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -724,9 +724,9 @@
               "id" : "logicalcpu:1",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.1",
+              "handle" : "CPU:6.1",
               "description" : "Logical CPU",
-              "physid" : "4.2",
+              "physid" : "6.2",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -735,9 +735,9 @@
               "id" : "logicalcpu:2",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.2",
+              "handle" : "CPU:6.2",
               "description" : "Logical CPU",
-              "physid" : "4.3",
+              "physid" : "6.3",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -746,9 +746,9 @@
               "id" : "logicalcpu:3",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.3",
+              "handle" : "CPU:6.3",
               "description" : "Logical CPU",
-              "physid" : "4.4",
+              "physid" : "6.4",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -757,9 +757,9 @@
               "id" : "logicalcpu:4",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.4",
+              "handle" : "CPU:6.4",
               "description" : "Logical CPU",
-              "physid" : "4.5",
+              "physid" : "6.5",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -768,9 +768,9 @@
               "id" : "logicalcpu:5",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.5",
+              "handle" : "CPU:6.5",
               "description" : "Logical CPU",
-              "physid" : "4.6",
+              "physid" : "6.6",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -779,9 +779,9 @@
               "id" : "logicalcpu:6",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.6",
+              "handle" : "CPU:6.6",
               "description" : "Logical CPU",
-              "physid" : "4.7",
+              "physid" : "6.7",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -790,9 +790,9 @@
               "id" : "logicalcpu:7",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.7",
+              "handle" : "CPU:6.7",
               "description" : "Logical CPU",
-              "physid" : "4.8",
+              "physid" : "6.8",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -801,9 +801,9 @@
               "id" : "logicalcpu:8",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.8",
+              "handle" : "CPU:6.8",
               "description" : "Logical CPU",
-              "physid" : "4.9",
+              "physid" : "6.9",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -812,9 +812,9 @@
               "id" : "logicalcpu:9",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.9",
+              "handle" : "CPU:6.9",
               "description" : "Logical CPU",
-              "physid" : "4.a",
+              "physid" : "6.a",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -823,9 +823,9 @@
               "id" : "logicalcpu:10",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.10",
+              "handle" : "CPU:6.10",
               "description" : "Logical CPU",
-              "physid" : "4.b",
+              "physid" : "6.b",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -834,9 +834,9 @@
               "id" : "logicalcpu:11",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.11",
+              "handle" : "CPU:6.11",
               "description" : "Logical CPU",
-              "physid" : "4.c",
+              "physid" : "6.c",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -845,9 +845,9 @@
               "id" : "logicalcpu:12",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.12",
+              "handle" : "CPU:6.12",
               "description" : "Logical CPU",
-              "physid" : "4.d",
+              "physid" : "6.d",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -856,9 +856,9 @@
               "id" : "logicalcpu:13",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.13",
+              "handle" : "CPU:6.13",
               "description" : "Logical CPU",
-              "physid" : "4.e",
+              "physid" : "6.e",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -867,9 +867,9 @@
               "id" : "logicalcpu:14",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.14",
+              "handle" : "CPU:6.14",
               "description" : "Logical CPU",
-              "physid" : "4.f",
+              "physid" : "6.f",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -878,9 +878,9 @@
               "id" : "logicalcpu:15",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.15",
+              "handle" : "CPU:6.15",
               "description" : "Logical CPU",
-              "physid" : "4.10",
+              "physid" : "6.10",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -896,10 +896,10 @@
           "version" : "6.12.3",
           "serial" : "0003-06C3-0000-0000-0000-0000",
           "units" : "Hz",
-          "size" : 3100189000,
+          "size" : 1344140000,
           "capacity" : 3300000000,
           "configuration" : {
-            "id" : "4"
+            "id" : "6"
           },
           "capabilities" : {
             "vmx" : "CPU virtualization (Vanderpool)",
@@ -911,9 +911,9 @@
               "id" : "logicalcpu:0",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.0",
+              "handle" : "CPU:6.0",
               "description" : "Logical CPU",
-              "physid" : "4.1",
+              "physid" : "6.1",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -922,9 +922,9 @@
               "id" : "logicalcpu:1",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.1",
+              "handle" : "CPU:6.1",
               "description" : "Logical CPU",
-              "physid" : "4.2",
+              "physid" : "6.2",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -933,9 +933,9 @@
               "id" : "logicalcpu:2",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.2",
+              "handle" : "CPU:6.2",
               "description" : "Logical CPU",
-              "physid" : "4.3",
+              "physid" : "6.3",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -944,9 +944,9 @@
               "id" : "logicalcpu:3",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.3",
+              "handle" : "CPU:6.3",
               "description" : "Logical CPU",
-              "physid" : "4.4",
+              "physid" : "6.4",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -955,9 +955,9 @@
               "id" : "logicalcpu:4",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.4",
+              "handle" : "CPU:6.4",
               "description" : "Logical CPU",
-              "physid" : "4.5",
+              "physid" : "6.5",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -966,9 +966,9 @@
               "id" : "logicalcpu:5",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.5",
+              "handle" : "CPU:6.5",
               "description" : "Logical CPU",
-              "physid" : "4.6",
+              "physid" : "6.6",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -977,9 +977,9 @@
               "id" : "logicalcpu:6",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.6",
+              "handle" : "CPU:6.6",
               "description" : "Logical CPU",
-              "physid" : "4.7",
+              "physid" : "6.7",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -988,9 +988,9 @@
               "id" : "logicalcpu:7",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.7",
+              "handle" : "CPU:6.7",
               "description" : "Logical CPU",
-              "physid" : "4.8",
+              "physid" : "6.8",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -999,9 +999,9 @@
               "id" : "logicalcpu:8",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.8",
+              "handle" : "CPU:6.8",
               "description" : "Logical CPU",
-              "physid" : "4.9",
+              "physid" : "6.9",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -1010,9 +1010,9 @@
               "id" : "logicalcpu:9",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.9",
+              "handle" : "CPU:6.9",
               "description" : "Logical CPU",
-              "physid" : "4.a",
+              "physid" : "6.a",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -1021,9 +1021,9 @@
               "id" : "logicalcpu:10",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.10",
+              "handle" : "CPU:6.10",
               "description" : "Logical CPU",
-              "physid" : "4.b",
+              "physid" : "6.b",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -1032,9 +1032,9 @@
               "id" : "logicalcpu:11",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.11",
+              "handle" : "CPU:6.11",
               "description" : "Logical CPU",
-              "physid" : "4.c",
+              "physid" : "6.c",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -1043,9 +1043,9 @@
               "id" : "logicalcpu:12",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.12",
+              "handle" : "CPU:6.12",
               "description" : "Logical CPU",
-              "physid" : "4.d",
+              "physid" : "6.d",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -1054,9 +1054,9 @@
               "id" : "logicalcpu:13",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.13",
+              "handle" : "CPU:6.13",
               "description" : "Logical CPU",
-              "physid" : "4.e",
+              "physid" : "6.e",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -1065,9 +1065,9 @@
               "id" : "logicalcpu:14",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.14",
+              "handle" : "CPU:6.14",
               "description" : "Logical CPU",
-              "physid" : "4.f",
+              "physid" : "6.f",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -1076,9 +1076,9 @@
               "id" : "logicalcpu:15",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:4.15",
+              "handle" : "CPU:6.15",
               "description" : "Logical CPU",
-              "physid" : "4.10",
+              "physid" : "6.10",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }

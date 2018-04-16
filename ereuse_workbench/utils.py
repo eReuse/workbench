@@ -3,7 +3,6 @@ import fcntl
 import json
 import socket
 
-import os
 import struct
 
 
@@ -55,10 +54,6 @@ def get_hw_addr(ifname):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     info = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', ifname[:15]))
     return ':'.join('%02x' % ord(char) for char in info[18:24])
-
-
-def run(cmd: str) -> str:
-    return os.popen(cmd).read().strip()
 
 
 class InventoryJSONEncoder(json.JSONEncoder):

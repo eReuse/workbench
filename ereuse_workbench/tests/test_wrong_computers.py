@@ -221,3 +221,20 @@ def test_vostro_260(lshw: MagicMock):
     assert graphic_card['serialNumber'] is None
     assert graphic_card['model'] == '2nd Generation Core Processor Family ' \
                                     'Integrated Graphics Controller'
+
+
+def test_ecs_computers(lshw: MagicMock):
+    pc, components = computer(lshw, 'ecs-computers.lshw')
+    # todo
+
+
+def test_core2(lshw: MagicMock):
+    pc, components = computer(lshw, 'core2.lshw')
+    assert len(components) == 7
+    ram = components['RamModule'][0]
+    assert ram['manufacturer'] is None
+    assert ram['serialNumber'] is None
+    assert ram['model'] is None
+    assert ram['size'] == 1024
+    assert ram['speed'] == 667.0
+

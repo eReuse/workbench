@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from multiprocessing import Process
 from pathlib import Path
-from subprocess import CalledProcessError, PIPE, Popen, check_call
+from subprocess import CalledProcessError, run
 from typing import Type
 from urllib.parse import urlparse
 
@@ -17,9 +17,9 @@ from requests_toolbelt.sessions import BaseUrlSession
 from ereuse_workbench.benchmarker import Benchmarker
 from ereuse_workbench.computer import Computer, PrivateFields
 from ereuse_workbench.eraser import EraseType, Eraser
+from ereuse_workbench.os_installer import install
 from ereuse_workbench.tester import Smart, Tester
 from ereuse_workbench.usb_sneaky import USBSneaky
-from ereuse_workbench.os_installer import install
 
 
 class Workbench:
@@ -100,7 +100,6 @@ class Workbench:
             if self.install:
                 # We get the OS to install from the server through a mounted samba
                 self.mount_images(self.server)
-            # We use thread just to ease killing it when we finish
             # By setting daemon=True USB Sneaky will die when we die
             self.usb_sneaky = Process(target=usb_sneaky, args=(self.uuid, server), daemon=True)
 
@@ -134,12 +133,14 @@ class Workbench:
         """Mounts the folder where the OS images are."""
         self.install_path.mkdir(parents=True, exist_ok=True)
         ip, _ = urlparse(server).netloc.split(':')
-        c = 'mount -t cifs -o guest,uid=root,forceuid,gid=root,forcegid "//{}/workbench-images" {}'
-        c = c.format(ip, self.install_path)
-        p = Popen(c, stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True)
-        _, stderr = p.communicate()
-        if stderr:
-            raise CannotMount('{}\nYou might need to "umount {}"'.format(stderr, self.install_path))
+        try:
+            run(('mount',
+                 '-t', 'cifs',
+                 '-o', 'guest,uid=root,forceuid,gid=root,forcegid',
+                 '"//{}/workbench-images"'.format(ip),
+                 self.install_path), universal_newlines=True, check=True)
+        except CalledProcessError as e:
+            raise CannotMount('Did you umount?') from e
 
     def run(self) -> str:
         """
@@ -151,9 +152,10 @@ class Workbench:
         finally:
             if self.server and self.install:
                 # Un-mount images
-                _, stderr = Popen('umount {}'.format(self.install_path), shell=True).communicate()
-                if stderr:
-                    raise CannotMount(stderr)
+                try:
+                    run(('umount', self.install_path), universal_newlines=True, check=True)
+                except CalledProcessError as e:
+                    raise CannotMount() from e
 
     def _run(self) -> str:
         print('{}Starting eReuse.org Workbench'.format(Fore.CYAN))
@@ -219,7 +221,8 @@ class Workbench:
             # Must add some logic (here!) to handle cases where the machine
             # has multiple disks, possibly SSDs and rotationals, or two
             # rotationals of different size, etc.
-            snapshot['osInstallation'] = install(os.path.join(str(self.install_path), self.install))
+            snapshot['osInstallation'] = install(
+                os.path.join(str(self.install_path), self.install))
 
             if not snapshot['osInstallation']['success']:
                 print('{}Failed installing OS'.format(Fore.RED))
