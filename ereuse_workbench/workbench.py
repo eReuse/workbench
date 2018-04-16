@@ -19,7 +19,7 @@ from ereuse_workbench.computer import Computer, PrivateFields
 from ereuse_workbench.eraser import EraseType, Eraser
 from ereuse_workbench.tester import Smart, Tester
 from ereuse_workbench.usb_sneaky import USBSneaky
-from ereuse_workbench.os_installer import install
+from ereuse_workbench.os_installer import Installer
 
 
 class Workbench:
@@ -30,10 +30,12 @@ class Workbench:
 
     def __init__(self, smart: Smart = False, erase: EraseType = False, erase_steps: int = 1,
                  erase_leading_zeros: bool = False, stress: int = 0,
-                 install: str = False, server: str = None, tester: Type[Tester] = Tester,
+                 server: str = None, tester: Type[Tester] = Tester,
                  computer: Type[Computer] = Computer, eraser: Type[Eraser] = Eraser,
                  benchmarker: Type[Benchmarker] = Benchmarker,
-                 usb_sneaky: Type[USBSneaky] = USBSneaky):
+                 usb_sneaky: Type[USBSneaky] = USBSneaky,
+                 install: str = False,
+                 ):
         """
         Configures this Workbench.
 
@@ -85,9 +87,10 @@ class Workbench:
         self.erase_steps = erase_steps
         self.erase_leading_zeros = erase_leading_zeros
         self.stress = stress
-        self.install = install
         self.server = server
         self.uuid = uuid.uuid4()
+        self.installer = Installer()
+        self.install = install
         self.install_path = Path('/media/workbench-images')
 
         if self.server:
@@ -213,14 +216,8 @@ class Workbench:
 
         if self.install:
             print('{} Install {}...'.format(self._print_phase(5), self.install))
-
-            # TODO: See comment below.
-            # Current target disk value hardcoded as /dev/sda.
-            # Must add some logic (here!) to handle cases where the machine
-            # has multiple disks, possibly SSDs and rotationals, or two
-            # rotationals of different size, etc.
             assert isinstance(self.install, str), "Installation image name should be a string."
-            snapshot['osInstallation'] = install(self.install_path / self.install)
+            snapshot['osInstallation'] = self.installer.install(self.install_path / self.install)
 
             if not snapshot['osInstallation']['success']:
                 print('{}Failed installing OS'.format(Fore.RED))

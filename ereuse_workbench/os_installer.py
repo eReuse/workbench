@@ -70,7 +70,8 @@ def do_install(path_to_os_image: Path, target_partition: str):
     :return:
     """
     assert path_to_os_image.suffix != '.fsa', 'Do not set the .fsa extension'
-    command = 'fsarchiver', 'restfs', str(path_to_os_image.with_suffix('.fsa')), 'id=0,dest={}'.format(target_partition)
+    command = ('fsarchiver', 'restfs', str(path_to_os_image.with_suffix('.fsa')),
+               'id=0,dest={}'.format(target_partition))
     subprocess.run(command, check=True)
 
 
@@ -94,64 +95,91 @@ def do_install_bootloader(target_disk: str, part_type):
     subprocess.run(command, check=True)
 
 
-def install(path_to_os_image: Path, target_disk='/dev/sda', swap_space=True, part_type=MBR):
-    """
-    Partitions block device(s) and installs an OS.
+class Installer:
+    def __init__(self,
+                 target_disk: str = '/dev/sda',
+                 swap_space: bool = True,
+                 part_type=MBR):
+        """
+        Initializes variables to sensible defaults
+        :param target_disk: Target disk's device name (e.g. /dev/sda).
+                            It must exist.
+        :param swap_space: Whether to provision a swap partition.
+        :param part_type: Whether to use BIOS/MBR or UEFI/GPT schemes.
+        """
+        self.target_disk = target_disk
+        self.swap_space = swap_space
+        self.part_type = part_type
 
-    :param path_to_os_image: A filesystem path to the OS .fsa. It must
-                             be somewhere in the client's filesystem
-                             hiearchy.
-    :param target_disk: Target disk's device name (e.g. /dev/sda).
-                        It must exist.
-    :param swap_space: Whether to provision a swap partition.
-    :param part_type: Whether to use BIOS/MBR or UEFI/GPT schemes.
-    :return: A dictonary with the summary of the operation.
-    """
-    assert isinstance(path_to_os_image, Path)
-    # Steps:
-    # Zero out disk label
-    #   TODO: ensure disk not mounted (findmnt?)
-    # Partition according to BIOS or GPT scheme
-    #   TODO: SERIOUSLY consider replacing parted with (s)gdisk
-    #   BIOS
-    #   ----
-    #     Swap: [1MB buffer, 1st part OS from 1M to -4G,
-    #       2nd part swap from -4G to 100%]
-    #     No swap: [1MB buffer, 1st part OS from 1M to 100%]
-    #   UEFI
-    #     Swap: [1st part ESP 0% to 100M, 2nd part OS from 100M to -4G,
-    #      3rd part swap from -4G to 100%]
-    #     No swap: [1st part ESP 0% to 100M, 2nd part OS from 100M to -4G]
-    # Install OS to OS partition
-    #   debootstrap (with a pre-primed cache?)
-    #   fsarchive?
-    # Install bootloader
-    #   BIOS: GRUB to MBR + VBR
-    #   UEFI: GRUB to ESP
+    def guess_defaults(self):
+        """
+        Based on information of the machine, such as
+         Disk count, size(s), and type(s) (i.e. HDD vs. SSD)
+         Processor architecture
+         Year of manufacture
+        determines sensible defaults for this machine.
+        Sets target_disk, swap_space & part_type variables.
+        :return: None, sets instance's variables.
+        """
+        # TODO: Actually do something... :)
 
-    init_time = now()
-    try:
+    def install(self, path_to_os_image: Path):
+        """
+        Partitions block device(s) and installs an OS.
+
+        :param path_to_os_image: A filesystem path to the OS .fsa. It must
+                                 be somewhere in the client's filesystem
+                                 hiearchy.
+        :return: A dictonary with the summary of the operation.
+        """
+        assert isinstance(path_to_os_image, Path)
+        # Steps:
         # Zero out disk label
-        zero_out(target_disk)
-        # Partition main disk (must set os_partition appropriately in every possible case)
-        os_partition = do_partition(target_disk, swap_space, part_type)
-        # Install OS
-        do_install(path_to_os_image, os_partition)
+        #   TODO (low prio): ensure disk not mounted (findmnt?)
+        # Partition according to BIOS or GPT scheme
+        #   TODO: SERIOUSLY consider replacing parted with (s)gdisk
+        #   BIOS
+        #   ----
+        #     Swap: [1MB buffer, 1st part OS from 1M to -4G,
+        #       2nd part swap from -4G to 100%]
+        #     No swap: [1MB buffer, 1st part OS from 1M to 100%]
+        #   UEFI
+        #     Swap: [1st part ESP 0% to 100M, 2nd part OS from 100M to -4G,
+        #      3rd part swap from -4G to 100%]
+        #     No swap: [1st part ESP 0% to 100M, 2nd part OS from 100M to -4G]
+        # Install OS to OS partition
+        #   fsarchiver vs tar/rsync? Much to my surprise, fsarchiver looks more suited
+        #   https://forums.fsarchiver.org/viewtopic.php?t=922
         # Install bootloader
-        do_install_bootloader(target_disk, part_type)
-        success = True
-    except Exception as e:
-        print('OS installation failed. An "{}" exception with '
-              'message "{}" was raised by the installation routines.'
-              .format(type(e).__name__, str(e)))
-        success = False
-    return {
-        'elapsed': now() - init_time,
-        'label': str(path_to_os_image),
-        'success': success
-    }
+        #   BIOS: GRUB to MBR + VBR
+        #   UEFI: GRUB to ESP
 
+        init_time = now()
+        try:
+            # Zero out disk label
+            zero_out(self.target_disk)
 
-    # TODO rewrite fstab to use swap space correctly. sth like:
-    # OLD_SWAP_UUID=$(grep swap $tmproot/etc/fstab | get_uuid)
-    # sed -i "s/$OLD_SWAP_UUID/$NEW_SWAP_UUID/g" $tmproot/etc/fstab
+            # Partition main disk (must set os_partition appropriately in every possible case)
+            os_partition = do_partition(self.target_disk, self.swap_space, self.part_type)
+
+            # Install OS
+            do_install(path_to_os_image, os_partition)
+
+            # Install bootloader
+            do_install_bootloader(self.target_disk, self.part_type)
+
+            # TODO rewrite fstab to use swap space correctly. sth like:
+            # OLD_SWAP_UUID=$(grep swap $tmproot/etc/fstab | get_uuid)
+            # sed -i "s/$OLD_SWAP_UUID/$NEW_SWAP_UUID/g" $tmproot/etc/fstab
+
+            success = True
+        except Exception as e:
+            print('OS installation failed. An "{}" exception with '
+                  'message "{}" was raised by the installation routines.'
+                  .format(type(e).__name__, str(e)))
+            success = False
+        return {
+            'elapsed': now() - init_time,
+            'label': str(path_to_os_image),
+            'success': success
+        }
