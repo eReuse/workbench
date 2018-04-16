@@ -1,18 +1,23 @@
+from pathlib import Path
+from unittest.mock import patch
+
 from ereuse_workbench import os_installer
-from unittest.mock import call
 
 
-def test_full_run(subprocess_os_installer):
-    run = subprocess_os_installer.run
-    os_installer.install('/tmp/linuxmint.fsa')
-    assert run.call_count == 5
-    print(run.call_args_list)
+def test_installer():
+    with patch.object(os_installer.subprocess, 'run') as mocked_run:
+        # Run module
+        image_path = Path('/media/linuxmint')
+        dict_return = os_installer.install(image_path)
 
-#    calls = run.call_args_list
+        # Do checks
+        assert mocked_run.call_count == 8
 
-#    assert calls == expected_calls
+        fscall = [args[0] for args, kwargs in mocked_run.call_args_list if args[0][0] == 'fsarchiver'][0]
+        assert fscall[2] == str(image_path.with_suffix('.fsa')), 'Failed to add extension to image name'
 
-
+        assert dict_return['label'] == str(image_path)
+        assert dict_return['success'] is True
 
 
 """

@@ -9,6 +9,7 @@ import subprocess
 import textwrap
 from enum import Enum
 from ereuse_utils import now
+from pathlib import Path
 
 
 class PartitionType(Enum):
@@ -26,7 +27,7 @@ MBR = PartitionType.MBR
 
 def do_sync():
     print("Syncing block devices - 10 second timeout")
-    subprocess.run('sync', timeout=10)
+    subprocess.run(('sync',), timeout=10)
 
 
 def zero_out(drive: str):
@@ -61,14 +62,15 @@ def do_partition(target_disk: str, swap_space: bool, part_type):
     return os_partition
 
 
-def do_install(path_to_os_image: str, target_partition: str):
+def do_install(path_to_os_image: Path, target_partition: str):
     """
     Installs an OS image to a target partition.
     :param path_to_os_image:
     :param target_partition:
     :return:
     """
-    command = 'fsarchiver', 'restfs', path_to_os_image + '.fsa', 'id=0,dest={}'.format(target_partition)
+    assert path_to_os_image.suffix != '.fsa', 'Do not set the .fsa extension'
+    command = 'fsarchiver', 'restfs', str(path_to_os_image.with_suffix('.fsa')), 'id=0,dest={}'.format(target_partition)
     subprocess.run(command, check=True)
 
 
@@ -92,7 +94,7 @@ def do_install_bootloader(target_disk: str, part_type):
     subprocess.run(command, check=True)
 
 
-def install(path_to_os_image: str, target_disk='/dev/sda', swap_space=True, part_type=MBR):
+def install(path_to_os_image: Path, target_disk='/dev/sda', swap_space=True, part_type=MBR):
     """
     Partitions block device(s) and installs an OS.
 
@@ -144,7 +146,7 @@ def install(path_to_os_image: str, target_disk='/dev/sda', swap_space=True, part
         success = False
     return {
         'elapsed': now() - init_time,
-        'label': install,
+        'label': str(path_to_os_image),
         'success': success
     }
 
