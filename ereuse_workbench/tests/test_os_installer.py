@@ -1,14 +1,15 @@
 from pathlib import Path
 from unittest.mock import patch
 
-from ereuse_workbench import os_installer
+from ereuse_workbench.os_installer import Installer
 
 
 def test_installer():
-    with patch.object(os_installer.subprocess, 'run') as mocked_run:
+    with patch('ereuse_workbench.os_installer.subprocess.run') as mocked_run:
         # Run module
-        image_path = Path('/media/linuxmint')
-        dict_return = os_installer.install(image_path)
+        image_path = Path('/media/workbench-images/foobar')
+        installer = Installer()
+        dict_return = installer.install(image_path)
 
         # Do checks
         assert mocked_run.call_count == 8
