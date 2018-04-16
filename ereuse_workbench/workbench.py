@@ -30,10 +30,10 @@ class Workbench:
 
     def __init__(self, smart: Smart = False, erase: EraseType = False, erase_steps: int = 1,
                  erase_leading_zeros: bool = False, stress: int = 0,
-                 install: str = False, server: str = None, tester: Type[Tester] = Tester,
-                 computer: Type[Computer] = Computer, eraser: Type[Eraser] = Eraser,
-                 benchmarker: Type[Benchmarker] = Benchmarker,
-                 usb_sneaky: Type[USBSneaky] = USBSneaky):
+                 install: str = False, server: str = None, Tester: Type[Tester] = Tester,
+                 Computer: Type[Computer] = Computer, Eraser: Type[Eraser] = Eraser,
+                 Benchmarker: Type[Benchmarker] = Benchmarker,
+                 USBSneaky: Type[USBSneaky] = USBSneaky, Installer: Type[Installer] = Installer):
         """
         Configures this Workbench.
 
@@ -72,8 +72,8 @@ class Workbench:
                        truthy value will turn-on server functionality
                        like USBSneaky module, sending snapshots to
                        server and getting configuration from it.
-        :param tester: Testing class to use to perform tests.
-        :param computer: Computer class to use to retrieve computer
+        :param Tester: Testing class to use to perform tests.
+        :param Computer: Computer class to use to retrieve computer
                          information.
         """
         if os.geteuid() != 0:
@@ -87,7 +87,6 @@ class Workbench:
         self.stress = stress
         self.server = server
         self.uuid = uuid.uuid4()
-        self.installer = Installer()
         self.install = install
         self.install_path = Path('/media/workbench-images')
 
@@ -102,7 +101,7 @@ class Workbench:
                 # We get the OS to install from the server through a mounted samba
                 self.mount_images(self.server)
             # By setting daemon=True USB Sneaky will die when we die
-            self.usb_sneaky = Process(target=usb_sneaky, args=(self.uuid, server), daemon=True)
+            self.usb_sneaky = Process(target=USBSneaky, args=(self.uuid, server), daemon=True)
 
         self.phases = 1 + bool(self.smart) + bool(self.stress) + bool(self.erase) + \
                       bool(self.install)
@@ -113,10 +112,11 @@ class Workbench:
         the first phase, and executing a smart test is the second one.
         """
 
-        self.tester = tester()
-        self.eraser = eraser(self.erase, self.erase_steps, self.erase_leading_zeros)
-        self.benchmarker = benchmarker()
-        self.Computer = computer
+        self.installer = Installer()
+        self.tester = Tester()
+        self.eraser = Eraser(self.erase, self.erase_steps, self.erase_leading_zeros)
+        self.benchmarker = Benchmarker()
+        self.Computer = Computer
 
     def config_from_server(self):
         """Configures the Workbench from a config endpoint in the server."""
