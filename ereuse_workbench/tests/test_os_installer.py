@@ -15,7 +15,8 @@ def test_installer():
         assert mocked_run.call_count == 8
 
         fscall = [args[0] for args, kwargs in mocked_run.call_args_list if args[0][0] == 'fsarchiver'][0]
-        assert fscall[2] == str(image_path) + '.fsa', 'Failed to add extension to image name'
+        assert fscall[2] == str(image_path) + '.fsa', \
+            'Failed to add extension to image name'
 
         assert dict_return['label'] == str(image_path)
         assert dict_return['success'] is True

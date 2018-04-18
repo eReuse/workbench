@@ -138,8 +138,8 @@ class Workbench:
             run(('mount',
                  '-t', 'cifs',
                  '-o', 'guest,uid=root,forceuid,gid=root,forcegid',
-                 '"//{}/workbench-images"'.format(ip),
-                 self.install_path), universal_newlines=True, check=True)
+                 '//{}/workbench-images'.format(ip),
+                 str(self.install_path)), universal_newlines=True, check=True)
         except CalledProcessError as e:
             raise CannotMount('Did you umount?') from e
 
@@ -154,7 +154,7 @@ class Workbench:
             if self.server and self.install:
                 # Un-mount images
                 try:
-                    run(('umount', self.install_path), universal_newlines=True, check=True)
+                    run(('umount', str(self.install_path)), universal_newlines=True, check=True)
                 except CalledProcessError as e:
                     raise CannotMount() from e
 
@@ -216,7 +216,6 @@ class Workbench:
 
         if self.install:
             print('{} Install {}...'.format(self._print_phase(5), self.install))
-            assert isinstance(self.install, str), "Installation image name should be a string."
             snapshot['osInstallation'] = self.installer.install(self.install_path / self.install)
 
             if not snapshot['osInstallation']['success']:

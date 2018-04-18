@@ -3,7 +3,7 @@ import re
 from enum import Enum
 from itertools import chain
 from math import floor
-from subprocess import run
+from subprocess import run, PIPE
 from typing import List, Set
 
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
@@ -88,8 +88,9 @@ class Computer:
     def __init__(self, benchmarker: Benchmarker = False):
         self.benchmarker = benchmarker
         # Obtain raw from LSHW
-        stdout = run(('LC_ALL=C', 'lshw', '-json', '-quiet'),
+        stdout = run(('lshw', '-json', '-quiet'),
                      check=True,
+                     stdout=PIPE,
                      universal_newlines=True).stdout
         self.lshw = json.loads(stdout)
 
@@ -182,7 +183,7 @@ class Computer:
                         'grep '
                         'ID_BUS | '
                         'cut -c 11-'.format(logical_name),
-                        check=True, universal_newlines=True, shell=True).stdout
+                        check=True, universal_newlines=True, shell=True, stdout=PIPE).stdout
         # todo not sure if ``interface != usb`` is needed
         is_not_removable = interface != 'usb' and not get(node, 'capabilities.removable')
         is_removable = interface == 'usb'
@@ -194,7 +195,7 @@ class Computer:
                 'interface': interface,
                 PrivateFields.logical_name: logical_name
             }
-            assert 20000 < hdd['size'] < 10 ** 8, 'Invalid HDD size {} MB'.format(hdd['size'])
+            assert 10000 < hdd['size'] < 10 ** 8, 'Invalid HDD size {} MB'.format(hdd['size'])
             if self.benchmarker:
                 hdd['benchmark'] = self.benchmarker.benchmark_hdd(logical_name)
             hdd = dict(hdd, **self._common(node))
@@ -219,7 +220,10 @@ class Computer:
         ret = run('lspci -v -s {bus} |'
                   'grep \'prefetchable\' | '
                   'grep -v \'non-prefetchable\' | '
-                  'egrep -o \'[0-9]{{1,3}}[KMGT]+\''.format(bus=bus_info))
+                  'egrep -o \'[0-9]{{1,3}}[KMGT]+\''.format(bus=bus_info),
+                  stdout=PIPE,
+                  shell=True,
+                  universal_newlines=True)
         # Get max memory value
         max_size = 0
         for value in ret.stdout.splitlines():
@@ -246,13 +250,19 @@ class Computer:
             'totalSlots': int(run('dmidecode -t 17 | '
                                   'grep -o BANK | '
                                   'wc -l',
-                                  check=True, universal_newlines=True, shell=True).stdout),
+                                  check=True,
+                                  universal_newlines=True,
+                                  shell=True,
+                                  stdout=PIPE).stdout),
             'usedSlots': int(run('dmidecode -t 17 | '
                                  'grep Size | '
                                  'grep MB | '
                                  'awk \'{print $2}\' | '
                                  'wc -l',
-                                 check=True, universal_newlines=True, shell=True).stdout)
+                                 check=True,
+                                 universal_newlines=True,
+                                 shell=True,
+                                 stdout=PIPE).stdout)
         }, **self._common(node))
 
     def motherboard_num_of_connectors(self, connector_name) -> int:
