@@ -25,76 +25,6 @@ GPT = PartitionType.GPT
 MBR = PartitionType.MBR
 
 
-def do_sync():
-    print("Syncing block devices - 10 second timeout")
-    subprocess.run(('sync',), timeout=10)
-
-
-def zero_out(drive: str):
-    command = 'dd', 'if=/dev/zero', 'of={}'.format(drive), 'bs=512', 'count=1'
-    subprocess.run(command, check=True)
-    do_sync()
-
-
-def do_partition(target_disk: str, swap_space: bool, part_type):
-    """
-    :return: A string representing the partition that has been allocated
-             to the OS
-    """
-    if part_type == GPT:
-        raise NotImplementedError("GPT partition types not yet implemented!")
-    else:  # part_type == BIOS
-        if swap_space:
-            parted_commands = textwrap.dedent("""\
-                mklabel msdos \
-                mkpart primary ext2 1MiB -1GiB \
-                mkpart primary linux-swap -1GiB 100% \
-                """)
-            os_partition = '{}{}'.format(target_disk, 1)  # "/dev/sda1"
-        else:
-            parted_commands = textwrap.dedent("""\
-                mklabel msdos \
-                mkpart primary ext2 1MiB 100% \
-            """)
-            os_partition = '{}{}'.format(target_disk, 1)  # "/dev/sda1"
-    command = 'parted', '--script', target_disk, '--', parted_commands
-    subprocess.run(command, check=True)
-    return os_partition
-
-
-def do_install(path_to_os_image: Path, target_partition: str):
-    """
-    Installs an OS image to a target partition.
-    :param path_to_os_image:
-    :param target_partition:
-    :return:
-    """
-    assert path_to_os_image.suffix != '.fsa', 'Do not set the .fsa extension'
-    command = ('fsarchiver', 'restfs', str(path_to_os_image.with_suffix('.fsa')),
-               'id=0,dest={}'.format(target_partition))
-    subprocess.run(command, check=True)
-
-
-def do_install_bootloader(target_disk: str, part_type):
-    """
-    Installs the grub2 bootloader to the target disk.
-    :param target_disk:
-    :param part_type:
-    :return:
-    """
-    if part_type == GPT:
-        raise NotImplementedError("GPT partition types not yet implemented!")
-    # Must install grub via 'grub-install', but it will complain if --boot-directory is not used.
-    command = 'mkdir', '/tmp/mnt'
-    subprocess.run(command, check=True)
-    command = 'mount', '{}1'.format(target_disk), '/tmp/mnt'
-    subprocess.run(command, check=True)
-    command = 'grub-install', '--boot-directory=/tmp/mnt/boot/', '/dev/sda'
-    subprocess.run(command, check=True)
-    command = 'umount', '/tmp/mnt'
-    subprocess.run(command, check=True)
-
-
 class Installer:
     def __init__(self,
                  target_disk: str = '/dev/sda',
@@ -111,17 +41,75 @@ class Installer:
         self.swap_space = swap_space
         self.part_type = part_type
 
-    def guess_defaults(self):
+    @staticmethod
+    def do_sync():
+        print("Syncing block devices - 10 second timeout")
+        subprocess.run(('sync',), timeout=10)
+
+    @classmethod
+    def zero_out(cls, drive: str):
+        command = 'dd', 'if=/dev/zero', 'of={}'.format(drive), 'bs=512', 'count=1'
+        subprocess.run(command, check=True)
+        cls.do_sync()
+
+    @staticmethod
+    def do_partition(target_disk: str, swap_space: bool, part_type):
         """
-        Based on information of the machine, such as
-         Disk count, size(s), and type(s) (i.e. HDD vs. SSD)
-         Processor architecture
-         Year of manufacture
-        determines sensible defaults for this machine.
-        Sets target_disk, swap_space & part_type variables.
-        :return: None, sets instance's variables.
+        :return: A string representing the partition that has been allocated
+                 to the OS
         """
-        # TODO: Actually do something... :)
+        if part_type == GPT:
+            raise NotImplementedError("GPT partition types not yet implemented!")
+        else:  # part_type == BIOS
+            if swap_space:
+                parted_commands = textwrap.dedent("""\
+                    mklabel msdos \
+                    mkpart primary ext2 1MiB -1GiB \
+                    mkpart primary linux-swap -1GiB 100% \
+                    """)
+                os_partition = '{}{}'.format(target_disk, 1)  # "/dev/sda1"
+            else:
+                parted_commands = textwrap.dedent("""\
+                    mklabel msdos \
+                    mkpart primary ext2 1MiB 100% \
+                """)
+                os_partition = '{}{}'.format(target_disk, 1)  # "/dev/sda1"
+        command = 'parted', '--script', target_disk, '--', parted_commands
+        subprocess.run(command, check=True)
+        return os_partition
+
+    @staticmethod
+    def do_install(path_to_os_image: Path, target_partition: str):
+        """
+        Installs an OS image to a target partition.
+        :param path_to_os_image:
+        :param target_partition:
+        :return:
+        """
+        assert path_to_os_image.suffix != '.fsa', 'Do not set the .fsa extension'
+        command = ('fsarchiver', 'restfs', str(path_to_os_image) + '.fsa',
+                   'id=0,dest={}'.format(target_partition))
+        subprocess.run(command, check=True)
+
+    @staticmethod
+    def do_install_bootloader(target_disk: str, part_type):
+        """
+        Installs the grub2 bootloader to the target disk.
+        :param target_disk:
+        :param part_type:
+        :return:
+        """
+        if part_type == GPT:
+            raise NotImplementedError("GPT partition types not yet implemented!")
+        # Must install grub via 'grub-install', but it will complain if --boot-directory is not used.
+        command = 'mkdir', '/tmp/mnt'
+        subprocess.run(command, check=True)
+        command = 'mount', '{}1'.format(target_disk), '/tmp/mnt'
+        subprocess.run(command, check=True)
+        command = 'grub-install', '--boot-directory=/tmp/mnt/boot/', '/dev/sda'
+        subprocess.run(command, check=True)
+        command = 'umount', '/tmp/mnt'
+        subprocess.run(command, check=True)
 
     def install(self, path_to_os_image: Path):
         """
@@ -157,16 +145,16 @@ class Installer:
         init_time = now()
         try:
             # Zero out disk label
-            zero_out(self.target_disk)
+            self.zero_out(self.target_disk)
 
             # Partition main disk (must set os_partition appropriately in every possible case)
-            os_partition = do_partition(self.target_disk, self.swap_space, self.part_type)
+            os_partition = self.do_partition(self.target_disk, self.swap_space, self.part_type)
 
             # Install OS
-            do_install(path_to_os_image, os_partition)
+            self.do_install(path_to_os_image, os_partition)
 
             # Install bootloader
-            do_install_bootloader(self.target_disk, self.part_type)
+            self.do_install_bootloader(self.target_disk, self.part_type)
 
             # TODO rewrite fstab to use swap space correctly. sth like:
             # OLD_SWAP_UUID=$(grep swap $tmproot/etc/fstab | get_uuid)
