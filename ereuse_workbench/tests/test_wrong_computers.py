@@ -225,7 +225,49 @@ def test_vostro_260(lshw: MagicMock):
 
 def test_ecs_computers(lshw: MagicMock):
     pc, components = computer(lshw, 'ecs-computers.lshw')
-    # todo
+    assert len(components['HardDrive']) == 1
+    hdd = components['HardDrive'][0]
+    assert hdd['serialNumber'] == 'WD-WCC2ETY84203'  # printed sn is 'WCC2ETY84203'
+    assert hdd['model'] == 'WDC WD5000AAKX-6'  # printed sn is 'WD5000AAKX'
+    assert hdd['manufacturer'] == 'Western Digital'  # printed is the logo: 'WD'
+    assert len(components['RamModule'])
+    ram = components['RamModule'][0]
+    assert ram['manufacturer'] == 'Kingston'
+    assert ram['serialNumber'] == '8618F309'  # This is not present in the module
+    assert ram['size'] == 4096
+    assert ram['speed'] == 1600.0
+    assert ram['model'] == '99U5584-003.A00LF'  # Exactly as printed
+    assert len(components['SoundCard']) == 1
+    sound_card = components['SoundCard'][0]
+    assert sound_card['model'] == '8 Series/C220 Series Chipset ' \
+                                  'High Definition Audio Controller'
+    assert sound_card['serialNumber'] is None
+    assert sound_card['manufacturer'] == 'Intel Corporation'
+    assert len(components['Processor']) == 1
+    cpu = components['Processor'][0]
+    assert cpu['address'] == 64
+    assert cpu['manufacturer'] == 'Intel Corp.'
+    assert cpu['model'] == 'Intel Core i5-4440 CPU @ 3.10GHz'
+    assert cpu['numberOfCores'] == 4
+    assert cpu['serialNumber'] is None
+    assert cpu['speed'] == 2.200311
+    assert len(components['NetworkAdapter']) == 1
+    net = components['NetworkAdapter'][0]
+    assert net['manufacturer'] == 'Realtek Semiconductor Co., Ltd.'
+    assert net['model'] == 'RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller'
+    assert net['serialNumber'] == 'e0:3f:49:1a:d0:44'
+    assert net['speed'] == 1000
+    assert len(components['Motherboard']) == 1
+    mother = components['Motherboard'][0]
+    assert mother['serialNumber'] == '131219772601195'  # Found in printed barcode but the
+    # text is different
+    assert mother['model'] == 'H81M-K'  # found exactly like this
+    assert mother['manufacturer'] == 'ASUSTeK COMPUTER INC.'  # found as ASUS
+    assert mother['totalSlots'] == 1  # Verified
+    assert mother['usedSlots'] == 1  # It was not used though
+    # todo assert net['connectors']['usb'] == 6 but only 3 recognized
+    assert len(components['GraphicCard']) == 1
+    assert components['GraphicCard'][0]['manufacturer'] == 'Intel Corporation'
 
 
 def test_core2(lshw: MagicMock):
@@ -238,3 +280,13 @@ def test_core2(lshw: MagicMock):
     assert ram['size'] == 1024
     assert ram['speed'] == 667.0
 
+
+def test_ecs2(lshw: MagicMock):
+    pc, components = computer(lshw, 'ecs-2.lshw')
+    assert len(components['RamModule']) == 3
+    for ram in components['RamModule']:
+        assert ram['manufacturer'] is None
+        assert ram['serialNumber'] is None
+        assert ram['model'] is None
+        assert ram['speed'] == 533.0
+        assert ram['size'] == 1024
