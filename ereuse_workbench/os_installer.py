@@ -161,7 +161,7 @@ class Installer:
             # sed -i "s/$OLD_SWAP_UUID/$NEW_SWAP_UUID/g" $tmproot/etc/fstab
 
             success = True
-        except Exception as e:
+        except (NotImplementedError, subprocess.CalledProcessError) as e:
             print('OS installation failed. An "{}" exception with '
                   'message "{}" was raised by the installation routines.'
                   .format(type(e).__name__, str(e)))

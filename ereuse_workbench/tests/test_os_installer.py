@@ -1,7 +1,24 @@
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
+
 from ereuse_workbench.os_installer import Installer
+import subprocess
+
+"""
+Tests the OSInstaller. 
+
+How to create a lightweight fsa for testing purposes:
+dd if=/dev/zero of=mockdev bs=1M count=2
+losetup /dev/loop0 mockdev
+mkfs.ext4 /dev/loop0
+mkdir lomount; mount /dev/loop0 lomount
+echo "samplecontents" >lomount/samplefile
+umount lomount
+fsarchiver savefs mockfs.fsa /dev/loop0
+ezpzlmnsqz
+"""
 
 
 def test_installer():
@@ -22,14 +39,20 @@ def test_installer():
         assert dict_return['success'] is True
 
 
-"""
-How to create a lightweight fsa for testing purposes:
-dd if=/dev/zero of=mockdev bs=1M count=2
-losetup /dev/loop0 mockdev
-mkfs.ext4 /dev/loop0
-mkdir lomount; mount /dev/loop0 lomount
-echo "samplecontents" >lomount/samplefile
-umount lomount
-fsarchiver savefs mockfs.fsa /dev/loop0
-ezpzlmnsqz
-"""
+def test_installer_with_known_error():
+    with patch('ereuse_workbench.os_installer.subprocess.run') as mocked_run:
+        mocked_run.side_effect = subprocess.CalledProcessError(69, 'test')
+        image_path = Path('/media/workbench-images/FooBarOS-18.3-English')
+        installer = Installer()
+        dict_return = installer.install(image_path)
+        assert dict_return['success'] is False
+
+
+def test_installer_with_unknown_error():
+    with patch('ereuse_workbench.os_installer.subprocess.run') as mocked_run:
+        mocked_run.side_effect = Exception()
+        image_path = Path('/media/workbench-images/FooBarOS-18.3-English')
+        installer = Installer()
+        with pytest.raises(Exception):
+            installer.install(image_path)
+

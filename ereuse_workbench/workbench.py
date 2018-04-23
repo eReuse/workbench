@@ -150,6 +150,10 @@ class Workbench:
         """
         try:
             return self._run()
+        except Exception:
+            print('Workbench panic - unexpected exception found. Please take '
+                  'a photo of the screen and send it to eReuse Workbench Developers.')
+            raise
         finally:
             if self.server and self.install:
                 # Un-mount images
