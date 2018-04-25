@@ -69,7 +69,8 @@ class Computer:
         '0001-067a-0000',
         'partnum',
         'manufacturer',
-        '0000000'
+        '0000000',
+        'fffff'
     }
     """Discard a value if any of these values are inside it. """
     assert all(v.lower() == v for v in MEANINGLESS), 'All values need to be lower-case'
@@ -83,7 +84,7 @@ class Computer:
         'Server': {'server'}
     }
     """A conversion table from DMI's chassis type value to our type value."""
-    PHYSICAL_RAM_TYPES = 'ddr2', 'ddr3', 'ddr4', 'ddr5', 'sdram', 'sodimm'
+    PHYSICAL_RAM_TYPES = 'ddr', 'sdram', 'sodimm'
 
     def __init__(self, benchmarker: Benchmarker = False):
         self.benchmarker = benchmarker
@@ -207,7 +208,7 @@ class Computer:
 
     def graphic_cards(self):
         nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'display')
-        return (self.graphic_card(node) for node in nodes)
+        return (self.graphic_card(node) for node in nodes if node['configuration'].get('driver', None))
 
     def graphic_card(self, node) -> dict:
         return dict({

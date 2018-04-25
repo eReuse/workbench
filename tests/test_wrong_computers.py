@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock
 
-from ereuse_workbench.tests.assertions import has_ram
-from ereuse_workbench.tests.conftest import computer
+from tests.assertions import has_ram
+from tests.conftest import computer
 
 """
 Tests computers that broke the Workbench at one point in time.
@@ -22,6 +22,7 @@ def test_eee_pc(lshw: MagicMock):
     assert pc['serialNumber'] == '8BOAAQ191999'
     assert pc['type'] == 'Netbook'
     assert pc['@type'] == 'Computer'
+    assert len(components['GraphicCard']) == 1
     # todo assert components == jsonf('eee-pc-components-output')
 
 
@@ -36,6 +37,7 @@ def test_pc_laudem(lshw: MagicMock):
     pc, components = computer(lshw, 'pc-laudem')
     assert len(components['Processor']) == 1
     assert has_ram(components), 'Computer without RAM'
+    assert len(components['GraphicCard']) == 1
 
 
 def test_virtualbox_client(lshw: MagicMock):
@@ -50,21 +52,35 @@ def test_virtualbox_client(lshw: MagicMock):
 
 def test_xeon(lshw: MagicMock):
     pc, components = computer(lshw, 'xeon')
-
     assert 'HardDrive' not in components
     assert has_ram(components), 'Computer without RAM'
+    assert len(components['GraphicCard']) == 2
+    ram0, ram1 = components['GraphicCard']
+    assert ram0['serialNumber'] is ram1['serialNumber'] is None
+    assert ram0['model'] == 'GT200GL Quadro FX 3800'
+    assert ram1['model'] == 'GF100GL Quadro 4000'
+    assert ram0['manufacturer'] == ram1['manufacturer'] == 'NVIDIA Corporation'
 
 
 def test_xiaomi(lshw: MagicMock):
     pc, components = computer(lshw, 'xiaomi')
     assert len(components['Processor']) == 1
     assert has_ram(components), 'Computer without RAM'
+    assert len(components['GraphicCard']) == 2
+    ram0, ram1 = components['GraphicCard']
+    assert ram0['model'] == 'Sky Lake Integrated Graphics'
+    assert ram0['serialNumber'] is None
+    assert ram0['manufacturer'] == 'Intel Corporation'
+    assert ram1['model'] == 'NVIDIA Corporation'
+    assert ram1['serialNumber'] is None
+    assert ram1['manufacturer'] == 'NVIDIA Corporation'
 
 
 def test_dell(lshw: MagicMock):
     pc, components = computer(lshw, 'dell-logicalname-network')
     assert len(components['Processor']) == 1
     assert has_ram(components), 'Computer without RAM'
+    assert len(components['GraphicCard']) == 1
 
 
 def test_hp_dc7900(lshw: MagicMock):
@@ -74,6 +90,8 @@ def test_hp_dc7900(lshw: MagicMock):
     assert len(components['Processor']) == 1
     assert pc['@type'] == 'Computer'
     assert has_ram(components), 'Computer without RAM'
+    assert len(components['GraphicCard']) == 1
+
 
 
 def test_virtualbox_without_hdd_and_with_usb(lshw: MagicMock):
@@ -113,6 +131,7 @@ def test_nec(lshw: MagicMock):
     for ram in components['RamModule']:
         assert ram['model'] == 'M3 78T2863QZS-CE6'
         assert ram['size'] == 1024
+    assert len(components['GraphicCard']) == 1
 
 
 def test_hp_compaq_8100(lshw: MagicMock):
@@ -141,6 +160,7 @@ def test_hp_compaq_8100(lshw: MagicMock):
         assert ram['serialNumber'] in {'92072F30', 'A4482E29', '939E2E29', '48FD2E30'}
         assert ram['speed'] == 1333.0
         assert ram['size'] == 2048
+    assert len(components['GraphicCard']) == 1
 
 
 def test_lenovo_7220w3t(lshw: MagicMock):
@@ -159,6 +179,7 @@ def test_lenovo_7220w3t(lshw: MagicMock):
         assert ram['manufacturer'] is None
         assert ram['size'] == 2048
         assert ram['speed'] == 1067.0
+    assert len(components['GraphicCard']) == 1
 
 
 def test_lenovo_type_as_intel(lshw: MagicMock):
@@ -181,6 +202,7 @@ def test_lenovo_type_as_intel(lshw: MagicMock):
         assert ram['serialNumber'] is None
         assert ram['model'] is None
         # todo why when ram who as empty has a vendor of "48spaces"?
+    assert len(components['GraphicCard']) == 1
 
 
 def test_asus_all_series(lshw: MagicMock):
@@ -190,6 +212,7 @@ def test_asus_all_series(lshw: MagicMock):
     assert ram['manufacturer'] == 'Kingston'
     assert ram['model'] == '9905584-017.A00LF'
     assert ram['serialNumber'] == '9D341297'
+    assert len(components['GraphicCard']) == 1
 
 
 def test_custom_pc(lshw: MagicMock):
@@ -200,6 +223,7 @@ def test_custom_pc(lshw: MagicMock):
     assert ram['serialNumber'] == '9D341297'
     assert ram['size'] == 4096
     assert ram['speed'] == 1600
+    assert len(components['GraphicCard']) == 1
 
 
 def test_all_series(lshw: MagicMock):
@@ -209,6 +233,7 @@ def test_all_series(lshw: MagicMock):
     assert ram['manufacturer'] == 'Kingston'
     assert ram['serialNumber'] == '290E5155'
     assert ram['model'] == '99U5584-003.A00LF'
+    assert len(components['GraphicCard']) == 1
 
 
 def test_vostro_260(lshw: MagicMock):
@@ -221,9 +246,11 @@ def test_vostro_260(lshw: MagicMock):
     assert graphic_card['serialNumber'] is None
     assert graphic_card['model'] == '2nd Generation Core Processor Family ' \
                                     'Integrated Graphics Controller'
+    assert len(components['GraphicCard']) == 1
 
 
 def test_ecs_computers(lshw: MagicMock):
+    # Visually checked
     pc, components = computer(lshw, 'ecs-computers.lshw')
     assert len(components['HardDrive']) == 1
     hdd = components['HardDrive'][0]
@@ -279,6 +306,7 @@ def test_core2(lshw: MagicMock):
     assert ram['model'] is None
     assert ram['size'] == 1024
     assert ram['speed'] == 667.0
+    assert len(components['GraphicCard']) == 1
 
 
 def test_ecs2(lshw: MagicMock):
@@ -290,3 +318,60 @@ def test_ecs2(lshw: MagicMock):
         assert ram['model'] is None
         assert ram['speed'] == 533.0
         assert ram['size'] == 1024
+    assert len(components['GraphicCard']) == 1
+
+
+def test_optiplex_745(lshw: MagicMock):
+    # Visually checked
+    pc, components = computer(lshw, 'optiplex-745.lshw')
+    assert pc['model'] == 'OptiPlex 745'
+    assert pc['manufacturer'] == 'Dell Inc.'
+    assert pc['serialNumber'] == 'HQ5583J'  # Checked
+    assert len(components['RamModule']) == 2
+    ram0, ram1 = components['RamModule']
+    # The printed code is HYS64T128020HU-3S-B
+    assert ram0['model'] == ram1['model'] == '64T128020HU3SB'
+    # It doesn't appear printer
+    assert ram0['manufacturer'] == ram1['manufacturer'] == 'Infineon'
+    assert ram0['serialNumber'] == '07129114'
+    assert ram1['serialNumber'] == '07127E11'
+    assert len(components['HardDrive']) == 1
+    hdd = components['HardDrive'][0]
+    assert hdd['manufacturer'] == 'Western Digital'
+    assert hdd['model'] == 'WDC WD3200AAKS-7'  # Printed is WD3200AAKS-75L9A0 (text and barcode)
+    assert hdd['serialNumber'] == 'WD-WMAV2W580992'  # As printed (text and barcode)
+    assert len(components['GraphicCard']) == 1
+    gc = components['GraphicCard'][0]
+    assert gc['manufacturer'] == 'Intel Corporation'
+    assert gc['model'] == '82Q963/Q965 Integrated Graphics Controller'
+    assert gc['serialNumber'] is None
+    assert len(components['Motherboard']) == 1
+    mb = components['Motherboard'][0]
+    assert mb['manufacturer'] == 'Dell Inc.'
+    assert mb['serialNumber'] == '..CN137407AJ02SW.'  # Printed is CN-0HP962-13740-7AJ-02SW
+    assert mb['model'] == '0HP962'  # As above
+
+
+def test_optiplex_gx520(lshw: MagicMock):
+    pc, components = computer(lshw, 'optiplex-gx520.lshw')
+    assert len(components['RamModule']) == 2
+    ram0, ram1 = components['RamModule']
+    assert ram0['serialNumber'] == '197312A4'  # not printed
+    assert ram0['manufacturer'] == 'Nanya Technology'
+    assert ram0['model'] == 'NT512T64U88A0BY-37'  # Written as NT512T64U88A0BY-37B
+    assert ram1['size'] == ram0['size'] == 512
+    assert ram1['speed'] == ram0['speed'] == 533.0
+    # This ram1 is exactly the same as ram0...
+    assert ram1['serialNumber'] is None
+    assert ram1['manufacturer'] is None
+    assert ram1['model'] is None  # printed is Nanya
+    assert len(components['GraphicCard']) == 1
+    gc = components['GraphicCard'][0]
+    assert gc['manufacturer'] == 'Intel Corporation'
+    assert gc['model'] == '82945G/GZ Integrated Graphics Controller'
+    assert gc['serialNumber'] is None
+    assert len(components['HardDrive']) == 1
+    hdd = components['HardDrive'][0]
+    assert hdd['serialNumber'] == '5LR30DTZ'  # checked on print ok
+    assert hdd['model'] == 'ST3808110AS'  # checked on print ok
+    assert hdd['manufacturer'] == 'Seagate'  # checked on print ok
