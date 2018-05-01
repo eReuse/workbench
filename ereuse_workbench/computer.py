@@ -3,7 +3,7 @@ import re
 from enum import Enum
 from itertools import chain
 from math import floor
-from subprocess import run, PIPE
+from subprocess import PIPE, run
 from typing import List, Set
 
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
@@ -139,10 +139,10 @@ class Computer:
             processor['numberOfCores'] = cores = int(node['configuration']['cores'])
             assert 1 <= cores <= 16
         if self.benchmarker:
-            processor['benchmark'] = {
-                '@type': 'BenchmarkProcessor',
-                'score': self.benchmarker.processor()
-            }
+            processor['benchmark'] = [
+                self.benchmarker.processor(),
+                self.benchmarker.processor_sysbench()
+            ]
         processor = dict(processor, **self._common(node))
         processor['serialNumber'] = None  # Processors don't have valid SN :-(
         return processor
@@ -208,7 +208,7 @@ class Computer:
 
     def graphic_cards(self):
         nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'display')
-        return (self.graphic_card(node) for node in nodes if node['configuration'].get('driver', None))
+        return (self.graphic_card(n) for n in nodes if n['configuration'].get('driver', None))
 
     def graphic_card(self, node) -> dict:
         return dict({

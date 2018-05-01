@@ -195,6 +195,11 @@ class Workbench:
         self.after_phase(snapshot, init_time)
         hdds = tuple(c for c in components if c['@type'] == 'HardDrive')
 
+        if self.benchmarker:
+            snapshot['benchmarks'] = [
+                self.benchmarker.benchmark_memory()
+            ]
+
         if self.smart:
             print('{} Run SMART test and benchmark hard-drives...'.format(self._print_phase(2)))
             for hdd in hdds:

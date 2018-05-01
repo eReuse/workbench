@@ -1,4 +1,5 @@
 from subprocess import PIPE, run
+from typing import Sequence
 from warnings import warn
 
 from .utils import convert_capacity
@@ -49,10 +50,37 @@ class Benchmarker:
         """Gets the BogoMips of the processor."""
         # https://en.wikipedia.org/wiki/BogoMips
         # score = sum(cpu.bogomips for cpu in device.cpus)
-        mips = []
         with open('/proc/cpuinfo') as f:
-            for line in f:
-                if line.startswith('bogomips'):
-                    mips.append(float(line.split(':')[1]))
+            return {
+                'score': sum(float(ln.split(':')[1]) for ln in f if ln.startswith('bogomips')),
+                '@type': 'BenchmarkProcessor'
+            }
 
-        return sum(mips)
+    def processor_sysbench(self) -> dict:
+        """
+        Benchmarks the processor with ``sysbench``.
+        """
+        return self._execute_sysbench(('sysbench',
+                                       '--test=cpu',
+                                       '--cpu-max-prime=25000',
+                                       '--num-threads=16',
+                                       'run'),
+                                      type='BenchmarkProcessorSysbench')
+
+    def benchmark_memory(self) -> dict:
+        return self._execute_sysbench(('sysbench',
+                                       '--test=memory',
+                                       '--memory-block-size=1K',
+                                       '--memory-scope=global',
+                                       '--memory-total-size=50G',
+                                       '--memory-oper=write',
+                                       'run'),
+                                      type='BenchmarkRamSysbench')
+
+    @staticmethod
+    def _execute_sysbench(args: Sequence, type: str) -> dict:
+        res = run(args, universal_newlines=True, stdout=PIPE, check=True).stdout.splitlines()
+        return {
+            '@type': type,
+            'score': float(next(l.split()[-1][0:-1] for l in res if 'total time:' in l))
+        }

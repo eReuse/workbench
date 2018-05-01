@@ -5,11 +5,12 @@ Important: GPT partition scheme and UEFI-based boot not yet supported. All relev
 code is just placeholder.
 """
 
-import subprocess
 import textwrap
 from enum import Enum
 from ereuse_utils import now
 from pathlib import Path
+
+from subprocess import run, CalledProcessError
 
 
 class PartitionType(Enum):
@@ -44,12 +45,12 @@ class Installer:
     @staticmethod
     def do_sync():
         print("Syncing block devices - 10 second timeout")
-        subprocess.run(('sync',), timeout=10)
+        run(('sync',), timeout=10)
 
     @classmethod
     def zero_out(cls, drive: str):
         command = 'dd', 'if=/dev/zero', 'of={}'.format(drive), 'bs=512', 'count=1'
-        subprocess.run(command, check=True)
+        run(command, check=True)
         cls.do_sync()
 
     @staticmethod
@@ -75,7 +76,7 @@ class Installer:
                 """)
                 os_partition = '{}{}'.format(target_disk, 1)  # "/dev/sda1"
         command = 'parted', '--script', target_disk, '--', parted_commands
-        subprocess.run(command, check=True)
+        run(command, check=True)
         return os_partition
 
     @staticmethod
@@ -89,7 +90,7 @@ class Installer:
         assert path_to_os_image.suffix != '.fsa', 'Do not set the .fsa extension'
         command = ('fsarchiver', 'restfs', str(path_to_os_image) + '.fsa',
                    'id=0,dest={}'.format(target_partition))
-        subprocess.run(command, check=True)
+        run(command, check=True)
 
     @staticmethod
     def do_install_bootloader(target_disk: str, part_type):
@@ -103,13 +104,13 @@ class Installer:
             raise NotImplementedError("GPT partition types not yet implemented!")
         # Must install grub via 'grub-install', but it will complain if --boot-directory is not used.
         command = 'mkdir', '/tmp/mnt'
-        subprocess.run(command, check=True)
+        run(command, check=True)
         command = 'mount', '{}1'.format(target_disk), '/tmp/mnt'
-        subprocess.run(command, check=True)
+        run(command, check=True)
         command = 'grub-install', '--boot-directory=/tmp/mnt/boot/', '/dev/sda'
-        subprocess.run(command, check=True)
+        run(command, check=True)
         command = 'umount', '/tmp/mnt'
-        subprocess.run(command, check=True)
+        run(command, check=True)
 
     def install(self, path_to_os_image: Path):
         """
@@ -161,7 +162,7 @@ class Installer:
             # sed -i "s/$OLD_SWAP_UUID/$NEW_SWAP_UUID/g" $tmproot/etc/fstab
 
             success = True
-        except (NotImplementedError, subprocess.CalledProcessError) as e:
+        except (NotImplementedError, CalledProcessError) as e:
             print('OS installation failed. An "{}" exception with '
                   'message "{}" was raised by the installation routines.'
                   .format(type(e).__name__, str(e)))

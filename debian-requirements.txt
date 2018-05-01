@@ -11,3 +11,4 @@ stress
 pciutils
 parted
 libusb-1.0-0
+sysbench

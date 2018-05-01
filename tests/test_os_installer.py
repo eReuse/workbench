@@ -1,10 +1,10 @@
+import subprocess
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 import pytest
 
 from ereuse_workbench.os_installer import Installer
-import subprocess
 
 """
 Tests the OSInstaller. 
@@ -21,38 +21,42 @@ ezpzlmnsqz
 """
 
 
-def test_installer():
-    with patch('ereuse_workbench.os_installer.subprocess.run') as mocked_run:
-        # Run module
-        image_path = Path('/media/workbench-images/FooBarOS-18.3-English')
-        installer = Installer()
-        dict_return = installer.install(image_path)
-
-        # Do checks
-        assert mocked_run.call_count == 8
-
-        fscall = [args[0] for args, kwargs in mocked_run.call_args_list if args[0][0] == 'fsarchiver'][0]
-        assert fscall[2] == str(image_path) + '.fsa', \
-            'Failed to add extension to image name'
-
-        assert dict_return['label'] == str(image_path)
-        assert dict_return['success'] is True
+@pytest.fixture()
+def run() -> MagicMock:
+    with patch('ereuse_workbench.os_installer.run') as mocked_run:
+        yield mocked_run
 
 
-def test_installer_with_known_error():
-    with patch('ereuse_workbench.os_installer.subprocess.run') as mocked_run:
-        mocked_run.side_effect = subprocess.CalledProcessError(69, 'test')
-        image_path = Path('/media/workbench-images/FooBarOS-18.3-English')
-        installer = Installer()
-        dict_return = installer.install(image_path)
-        assert dict_return['success'] is False
+def test_installer(run: MagicMock):
+    # Run module
+    image_path = Path('/media/workbench-images/FooBarOS-18.3-English')
+    installer = Installer()
+    dict_return = installer.install(image_path)
+
+    # Do checks
+    assert run.call_count == 8
+
+    fscall = next(args[0]
+                  for args, kwargs in run.call_args_list
+                  if args[0][0] == 'fsarchiver')
+    assert fscall[2] == str(image_path) + '.fsa', \
+        'Failed to add extension to image name'
+
+    assert dict_return['label'] == str(image_path)
+    assert dict_return['success'] is True
 
 
-def test_installer_with_unknown_error():
-    with patch('ereuse_workbench.os_installer.subprocess.run') as mocked_run:
-        mocked_run.side_effect = Exception()
-        image_path = Path('/media/workbench-images/FooBarOS-18.3-English')
-        installer = Installer()
-        with pytest.raises(Exception):
-            installer.install(image_path)
+def test_installer_with_known_error(run: MagicMock):
+    run.side_effect = subprocess.CalledProcessError(69, 'test')
+    image_path = Path('/media/workbench-images/FooBarOS-18.3-English')
+    installer = Installer()
+    dict_return = installer.install(image_path)
+    assert dict_return['success'] is False
 
+
+def test_installer_with_unknown_error(run: MagicMock):
+    run.side_effect = Exception()
+    image_path = Path('/media/workbench-images/FooBarOS-18.3-English')
+    installer = Installer()
+    with pytest.raises(Exception):
+        installer.install(image_path)
