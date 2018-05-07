@@ -1,15 +1,15 @@
 import re
 import sys
-import time
 from contextlib import suppress
 from datetime import datetime, timedelta
 from enum import Enum
-from subprocess import Popen, run, CalledProcessError
+from subprocess import Popen
 from time import sleep
+from warnings import catch_warnings, filterwarnings
 
-import pySMART
-import tqdm
 from dateutil import parser
+from pySMART import Device
+from tqdm import tqdm, trange
 
 
 class Smart(Enum):
@@ -42,7 +42,7 @@ class Tester:
                          '-m', str(ncores),
                          '--vm-bytes', '{}K'.format(mem_worker_kib),
                          '-t', '{}m'.format(minutes)))
-        for _ in tqdm.trange(minutes * 60):  # update progress bar every second
+        for _ in trange(minutes * 60):  # update progress bar every second
             sleep(1)
         process.communicate()  # wait for process, consume output
         return {
@@ -51,56 +51,49 @@ class Tester:
             'success': process.returncode == 0
         }
 
-    def smart(self, disk, test_type: Smart):
+    @staticmethod
+    def smart(disk: str, test_type: Smart) -> dict:
         # Enable SMART on hard drive
-        try:
-            run(('smartctl', '-s', 'on', disk), universal_newlines=True, check=True)
-        except CalledProcessError as e:
-            status = 'SMART cannot be enabled on this device.'
-            print(status, file=sys.stderr)
-            print(e, file=sys.stderr)
+        with catch_warnings():
+            filterwarnings('error')
+            try:
+                hdd = Device(disk)  # type: Device
+            except Warning:
+                status = 'SMART cannot be enabled on this device.'
+                print(status, file=sys.stderr)
+                return {
+                    '@type': 'TestHardDrive',
+                    'error': True,
+                    'status': status
+                }
+        status_code, status_message, completion_time = hdd.run_selftest(test_type.value)
+        if status_code > 1:
+            print(status_message, file=sys.stderr)
             return {
                 '@type': 'TestHardDrive',
                 'error': True,
-                'status': status,
-            }
-
-        dev = pySMART.Device(disk)
-        smt = dev.run_selftest(test_type.value)
-        '''
-        smt = (0, 'Self-test started successfully', 'Sat Dec 12 20:14:20 2015')
-        0 - Self-test initiated successfully
-        1 - Previous self-test running. Must wait for it to finish.
-        2 - Unknown or illegal test type requested.
-        3 - Unspecified smartctl error. Self-test not initiated.
-        '''
-        if smt[0] > 1:
-            print(smt[1], file=sys.stderr)
-            return {
-                '@type': 'TestHardDrive',
-                'error': True,
-                'status': smt[1],
+                'status': status_message,
             }
 
         # get estimated end of the test
         try:
-            test_end = parser.parse(smt[2])
-        except TypeError:  # smt[2] is None, estimate end time
+            test_end = parser.parse(completion_time)
+        except TypeError:  # completion_time is None, estimate end time
             duration = 2 if test_type == Smart.short else 120
             test_end = datetime.now() + timedelta(minutes=duration)
         print('Runing SMART self-test. It will finish at {0}:'.format(test_end))
 
         # follow progress of test until it ends or the estimated time is reached
-        grace_time = timedelta(seconds=10)
+        GRACE_TIME = timedelta(seconds=10)
         remaining = 100  # test completion pending percentage
-        with tqdm.tqdm(total=remaining, leave=True) as smartbar:
+        with tqdm(total=remaining, leave=True) as bar:
             while remaining > 0:
-                time.sleep(5)  # wait a few seconds between smart retrievals
-                dev.update()
+                sleep(1)  # wait a few seconds between smart retrievals
+                hdd.update()
                 try:
-                    last_test = dev.tests[0]
-                except (TypeError, IndexError) as err:
-                    print(err, file=sys.stderr)
+                    last_test = hdd.tests[0]
+                except (TypeError, IndexError):
+                    pass
                     # The supppress: test is None, no tests
                     # work around because SMART has not been initialized
                     # yet but pySMART library doesn't wait
@@ -110,15 +103,15 @@ class Tester:
                     last = remaining
                     with suppress(ValueError):
                         remaining = int(last_test.remain.strip('%'))
-                    smartbar.update(last - remaining)
+                    bar.update(last - remaining)
 
                 # only allow a few seconds more than the estimated time
-                if datetime.now() > test_end + grace_time:
+                if datetime.now() > test_end + GRACE_TIME:
                     break
 
         # show last test
-        dev.update()
-        last_test = dev.tests[0]
+        hdd.update()
+        last_test = hdd.tests[0]
         try:
             lifetime = int(last_test.hours)
         except ValueError:
@@ -127,13 +120,12 @@ class Tester:
             lba_first_error = int(last_test.LBA, 0)  # accept hex and decimal value
         except ValueError:
             lba_first_error = None
-        test = {
+        return {
             '@type': 'TestHardDrive',
             'type': last_test.type,
             'error': bool(lba_first_error),
             'status': last_test.status,
             'lifetime': lifetime,
             'firstError': lba_first_error,
+            'passedLifetime': int(hdd.attributes[9].raw)
         }
-
-        return test

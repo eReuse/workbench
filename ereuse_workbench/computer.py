@@ -6,10 +6,12 @@ from math import floor
 from subprocess import PIPE, run
 from typing import List, Set
 
+from contextlib import suppress
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
     get_nested_dicts_with_key_value
 from pySMART import Device
 from pydash import clean, compact, find_key, get
+from warnings import catch_warnings, filterwarnings
 
 from ereuse_workbench import utils
 from ereuse_workbench.benchmarker import Benchmarker
@@ -196,6 +198,10 @@ class Computer:
                 'interface': interface,
                 PrivateFields.logical_name: logical_name
             }
+            with catch_warnings():
+                filterwarnings('error')
+                with suppress(Warning):
+                    hdd['type'] = 'SSD' if Device(logical_name).is_ssd else 'HDD'
             assert 10000 < hdd['size'] < 10 ** 8, 'Invalid HDD size {} MB'.format(hdd['size'])
             if self.benchmarker:
                 hdd['benchmark'] = self.benchmarker.benchmark_hdd(logical_name)
