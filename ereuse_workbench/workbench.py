@@ -17,9 +17,9 @@ from requests_toolbelt.sessions import BaseUrlSession
 from ereuse_workbench.benchmarker import Benchmarker
 from ereuse_workbench.computer import Computer, PrivateFields
 from ereuse_workbench.eraser import EraseType, Eraser
+from ereuse_workbench.os_installer import Installer
 from ereuse_workbench.tester import Smart, Tester
 from ereuse_workbench.usb_sneaky import USBSneaky
-from ereuse_workbench.os_installer import Installer
 
 
 class Workbench:
@@ -151,8 +151,9 @@ class Workbench:
         try:
             return self._run()
         except Exception:
-            print('Workbench panic - unexpected exception found. Please take '
-                  'a photo of the screen and send it to eReuse Workbench Developers.')
+            print('{}Workbench panic - unexpected exception found. Please take '
+                  'a photo of the screen and send it to eReuse Workbench Developers.'
+                  .format(Fore.RED))
             raise
         finally:
             if self.server and self.install:

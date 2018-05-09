@@ -1,6 +1,6 @@
 import re
 import sys
-from contextlib import suppress
+from contextlib import suppress, redirect_stdout
 from datetime import datetime, timedelta
 from enum import Enum
 from subprocess import Popen
@@ -8,6 +8,7 @@ from time import sleep
 from warnings import catch_warnings, filterwarnings
 
 from dateutil import parser
+from io import StringIO
 from pySMART import Device
 from tqdm import tqdm, trange
 
@@ -49,14 +50,16 @@ class Tester:
             mem_kib = int(match.group(1))
         # Exclude a percentage of available memory for the stress processes themselves.
         mem_worker_kib = (mem_kib / ncores) * 90 / 100
-        process = Popen(('stress',
-                         '-c', str(ncores),
-                         '-m', str(ncores),
-                         '--vm-bytes', '{}K'.format(mem_worker_kib),
-                         '-t', '{}m'.format(minutes)))
+        with redirect_stdout(StringIO()):
+            process = Popen(('stress',
+                             '-c', str(ncores),
+                             '-m', str(ncores),
+                             '--vm-bytes', '{}K'.format(mem_worker_kib),
+                             '-t', '{}m'.format(minutes)))
         for _ in trange(minutes * 60):  # update progress bar every second
             sleep(1)
-        process.communicate()  # wait for process, consume output
+        with redirect_stdout(StringIO()):
+            process.communicate()  # wait for process, consume output
         return {
             '@type': 'StressTest',
             'elapsed': timedelta(minutes=minutes),
@@ -93,33 +96,34 @@ class Tester:
         except TypeError:  # completion_time is None, estimate end time
             duration = 2 if test_type == Smart.short else 120
             test_end = datetime.now() + timedelta(minutes=duration)
-        print('Runing SMART self-test. It will finish at {0}:'.format(test_end))
+        print('            It will finish around {}:'.format(test_end))
 
         # follow progress of test until it ends or the estimated time is reached
         remaining = 100  # test completion pending percentage
         with tqdm(total=remaining, leave=True) as bar:
             while remaining > 0:
-                sleep(1)  # wait a few seconds between smart retrievals
+                sleep(2)  # wait a few seconds between smart retrievals
                 hdd.update()
                 try:
                     last_test = hdd.tests[0]
                 except (TypeError, IndexError):
                     pass
-                    # The supppress: test is None, no tests
+                    # The suppress: test is None, no tests
                     # work around because SMART has not been initialized
                     # yet but pySMART library doesn't wait
-                    # Just ignore the error because we alreday have an
+                    # Just ignore the error because we alreaday have an
                     # estimation of the ending time
                 else:
                     last = remaining
                     with suppress(ValueError):
                         remaining = int(last_test.remain.strip('%'))
-                    bar.update(last - remaining)
+                    completed = last - remaining
+                    if completed > 0:
+                        bar.update(completed)
 
                 # only allow a few seconds more than the estimated time
                 if datetime.now() > test_end + cls.SMART_GRACE_TIME:
                     break
-
         # show last test
         hdd.update()
         last_test = hdd.tests[0]

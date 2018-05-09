@@ -141,7 +141,7 @@ class Computer:
             processor['numberOfCores'] = cores = int(node['configuration']['cores'])
             assert 1 <= cores <= 16
         if self.benchmarker:
-            processor['benchmark'] = [
+            processor['benchmarks'] = [
                 self.benchmarker.processor(),
                 self.benchmarker.processor_sysbench()
             ]
