@@ -21,6 +21,18 @@ class Smart(Enum):
 
 
 class Tester:
+    SMART_ATTRIBUTES = {
+        5: 'reallocatedSectorCount',
+        12: 'powerCycleCount',
+        187: 'reportedUncorrectableErrors',
+        188: 'CommandTimeout',
+        197: 'CurrentPendingSectorCount',
+        198: 'OfflineUncorrectable',
+        169: 'RemainingLifetimePercentage',  # Can be reported in several places
+        231: 'RemainingLifetimePercentage'
+    }
+    SMART_GRACE_TIME = timedelta(seconds=10)
+
     @staticmethod
     def stress(minutes):
         """Perform a CPU and memory stress test for the given `minutes`.
@@ -51,8 +63,8 @@ class Tester:
             'success': process.returncode == 0
         }
 
-    @staticmethod
-    def smart(disk: str, test_type: Smart) -> dict:
+    @classmethod
+    def smart(cls, disk: str, test_type: Smart) -> dict:
         # Enable SMART on hard drive
         with catch_warnings():
             filterwarnings('error')
@@ -84,7 +96,6 @@ class Tester:
         print('Runing SMART self-test. It will finish at {0}:'.format(test_end))
 
         # follow progress of test until it ends or the estimated time is reached
-        GRACE_TIME = timedelta(seconds=10)
         remaining = 100  # test completion pending percentage
         with tqdm(total=remaining, leave=True) as bar:
             while remaining > 0:
@@ -106,26 +117,28 @@ class Tester:
                     bar.update(last - remaining)
 
                 # only allow a few seconds more than the estimated time
-                if datetime.now() > test_end + GRACE_TIME:
+                if datetime.now() > test_end + cls.SMART_GRACE_TIME:
                     break
 
         # show last test
         hdd.update()
         last_test = hdd.tests[0]
         try:
-            lifetime = int(last_test.hours)
-        except ValueError:
-            lifetime = -1
-        try:
             lba_first_error = int(last_test.LBA, 0)  # accept hex and decimal value
         except ValueError:
             lba_first_error = None
-        return {
+        ret = {
             '@type': 'TestHardDrive',
             'type': last_test.type,
             'error': bool(lba_first_error),
             'status': last_test.status,
-            'lifetime': lifetime,
             'firstError': lba_first_error,
-            'passedLifetime': int(hdd.attributes[9].raw)
+            'passedLifetime': int(hdd.attributes[9].raw),
+            'assessment': True if hdd.assessment == 'PASS' else False
         }
+        with suppress(ValueError):
+            ret['lifetime'] = int(last_test.hours)
+        for key, name in cls.SMART_ATTRIBUTES.items():
+            with suppress(AttributeError):
+                ret[name] = int(hdd.attributes[key].raw)
+        return ret

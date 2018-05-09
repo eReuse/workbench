@@ -26,9 +26,12 @@ def test_tester_smart(Device: pySMART.Device):
     Device.tests[0].LBA = '0'
     Device.tests[0].type = 'foo-type'
     Device.tests[0].status = 'foo-status'
-    Device.attributes = [None] * 10
+    Device.attributes = [None] * 256
     Device.attributes[9] = MagicMock()
     Device.attributes[9].raw = 99
+    Device.attributes[12] = MagicMock()
+    Device.attributes[12].raw = '11'
+    Device.assessment = 'PASS'
     r = Tester.smart('/foo/bar', test_type=Smart.short)
     assert r == {
         'lifetime': 24,
@@ -37,7 +40,9 @@ def test_tester_smart(Device: pySMART.Device):
         'type': 'foo-type',
         'status': 'foo-status',
         'firstError': 0,
-        'passedLifetime': 99
+        'passedLifetime': 99,
+        'assessment': True,
+        'powerCycleCount': 11
     }
 
 
@@ -45,6 +50,7 @@ def test_tester_no_smart(Device: pySMART.Device):
     """
     Tests the smart tester with a hard-drive that doesn't support SMART.
     """
+
     def init(_):
         warn('')
 
