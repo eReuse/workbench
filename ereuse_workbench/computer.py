@@ -1,17 +1,17 @@
 import json
 import re
+from contextlib import suppress
 from enum import Enum
 from itertools import chain
 from math import floor
 from subprocess import PIPE, run
 from typing import List, Set
+from warnings import catch_warnings, filterwarnings
 
-from contextlib import suppress
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
     get_nested_dicts_with_key_value
 from pySMART import Device
 from pydash import clean, compact, find_key, get
-from warnings import catch_warnings, filterwarnings
 
 from ereuse_workbench import utils
 from ereuse_workbench.benchmarker import Benchmarker
@@ -159,11 +159,19 @@ class Computer:
 
     def ram_module(self, module: dict):
         # Node with no size == empty ram slot
+        description = module['description'].upper()
         if 'size' in module:
             ram = dict({
                 '@type': 'RamModule',
+                'form': 'SODIMM' if 'SODIMM' in description else 'DIMM',
                 'size': int(utils.convert_capacity(module['size'], module['units'], 'MB'))
             }, **self._common(module))
+            for w in description.split():
+                if w.startswith('DDR'):
+                    ram['interface'] = w
+                    break
+                elif w.startswith('SDRAM') or w.startswith('SODIMM'):
+                    ram['interface'] = w
             # power of 2
             assert 128 <= ram['size'] <= 2 ** 15 and (ram['size'] & (ram['size'] - 1) == 0), \
                 'Invalid value {} MB for RAM Speed'.format(ram['size'])
@@ -188,6 +196,7 @@ class Computer:
                         'cut -c 11-'.format(logical_name),
                         check=True, universal_newlines=True, shell=True, stdout=PIPE).stdout
         # todo not sure if ``interface != usb`` is needed
+        interface = interface.strip()
         is_not_removable = interface != 'usb' and not get(node, 'capabilities.removable')
         is_removable = interface == 'usb'
         if get_removable and is_removable or not get_removable and is_not_removable:
@@ -195,7 +204,7 @@ class Computer:
             hdd = {
                 '@type': 'HardDrive',
                 'size': floor(utils.convert_capacity(node['size'], node['units'], 'MB')),
-                'interface': interface,
+                'interface': interface.upper(),
                 PrivateFields.logical_name: logical_name
             }
             with catch_warnings():

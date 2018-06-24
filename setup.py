@@ -1,7 +1,10 @@
 from setuptools import find_packages, setup
 
+with open('README.md') as f:
+    long_description = f.read()
+
 setup(
-    name="ereuse-workbench",
+    name='ereuse-workbench',
     version='10.0b6',
     packages=find_packages(),
     license='AGPLv3 License',
@@ -12,7 +15,27 @@ setup(
     scripts=['scripts/erwb'],
     url='https://github.com/eReuse/workbench',
     author='eReuse.org team',
-    include_package_data=True,
+    author_email='x.bustamante@ereuse.org',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    install_requires=[
+        'python-dateutil',
+        'pydash',
+        'tqdm',
+        'pySMART.smartx',
+        'pyudev',
+        'requests',
+        'ereuse-utils [usb_flash_drive]',
+        'colorama',
+        'requests-toolbelt'
+    ],
+    setup_requires=[
+        'pytest-runner'
+    ],
+    tests_require=[
+        'pytest',
+        'pytest-mock'
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
@@ -24,22 +47,5 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Topic :: System :: Logging',
         'Topic :: Utilities',
-    ],
-    install_requires=[
-        'python-dateutil',
-        'pydash',
-        'tqdm',
-        'pySMART.smartx',
-        'pyudev',
-        'requests',
-        'ereuse-utils [usb_flash_drive]',
-        'colorama'
-    ],
-    setup_requires=[
-        'pytest-runner'
-    ],
-    tests_require=[
-        'pytest',
-        'pytest-mock'
-    ],
+    ]
 )
