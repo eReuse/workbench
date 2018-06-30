@@ -1,42 +1,41 @@
-import json
 import os
 import uuid
-from datetime import datetime
+from distutils.version import StrictVersion
 from multiprocessing import Process
 from pathlib import Path
 from subprocess import CalledProcessError, run
-from typing import Type
 from urllib.parse import urlparse
 
 import pkg_resources
 import urllib3
 from colorama import Fore, init
-from ereuse_utils import DeviceHubJSONEncoder, now
-from requests_toolbelt.sessions import BaseUrlSession
+from ereuse_utils.session import Session
 
-from ereuse_workbench.benchmarker import Benchmarker
-from ereuse_workbench.computer import Computer, PrivateFields
-from ereuse_workbench.eraser import EraseType, Eraser
-from ereuse_workbench.os_installer import Installer
-from ereuse_workbench.tester import Smart, Tester
+from ereuse_workbench.erase import EraseType
+from ereuse_workbench.snapshot import Snapshot, SnapshotSoftware
+from ereuse_workbench.test import TestDataStorageLength
 from ereuse_workbench.usb_sneaky import USBSneaky
 
 
 class Workbench:
     """
-    Create a full report of your computer with serials,
-    testing, benchmarking, erasing and installing an OS.
+    Create a hardware report of your computer with serial numbers,
+    testing, benchmarking, erasing, and installing an OS.
     """
 
-    def __init__(self, smart: Smart = False, erase: EraseType = False, erase_steps: int = 1,
-                 erase_leading_zeros: bool = False, stress: int = 0,
-                 install: str = False, server: str = None, Tester: Type[Tester] = Tester,
-                 Computer: Type[Computer] = Computer, Eraser: Type[Eraser] = Eraser,
-                 Benchmarker: Type[Benchmarker] = Benchmarker,
-                 USBSneaky: Type[USBSneaky] = USBSneaky, Installer: Type[Installer] = Installer):
+    def __init__(self,
+                 benchmark: bool = False,
+                 smart: TestDataStorageLength = False,
+                 erase: EraseType = False,
+                 erase_steps: int = 1,
+                 erase_leading_zeros: bool = False,
+                 stress: int = 0,
+                 install: str = False,
+                 server: str = None):
         """
         Configures this Workbench.
 
+        :param benchmark: Whether to execute all benchmarks.
         :param smart: Should we perform a SMART test to the hard-drives?
                       If so, pass :attr:`.Workbench.Smart.short` for a
                       short test and :attr:`.Workbench.Smart.long` for a
@@ -80,6 +79,7 @@ class Workbench:
             raise EnvironmentError('Execute Workbench as root.')
 
         init(autoreset=True)
+        self.benchmark = benchmark
         self.smart = smart
         self.erase = erase
         self.erase_steps = erase_steps
@@ -92,7 +92,7 @@ class Workbench:
 
         if self.server:
             # Override the parameters from the configuration from the server
-            self.session = BaseUrlSession(base_url=self.server)
+            self.session = Session(base_url=self.server)
             self.session.verify = False
             self.session.headers.update({'Content-Type': 'application/json'})
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -103,32 +103,24 @@ class Workbench:
             # By setting daemon=True USB Sneaky will die when we die
             self.usb_sneaky = Process(target=USBSneaky, args=(self.uuid, server), daemon=True)
 
-        self.phases = 1 + bool(self.smart) + bool(self.stress) + bool(self.erase) + \
-                      bool(self.install)
-        """
-        The number of phases we will be performing.
-        
-        A phase is a piece of execution. Gathering hardware info is
-        the first phase, and executing a smart test is the second one.
-        """
-
-        self.installer = Installer()
-        self.tester = Tester()
-        self.eraser = Eraser(self.erase, self.erase_steps, self.erase_leading_zeros)
-        self.benchmarker = Benchmarker()
-        self.Computer = Computer
+        # Devicehub and workbench-server will need this
+        self.expected_events = []
+        if self.benchmark:
+            self.expected_events.append('Benchmark')
+        if self.smart:
+            self.expected_events.append('Smart')
+        if self.stress:
+            self.expected_events.append('StressTest')
+        if self.erase:
+            self.expected_events.append('EraseBasic')
+        if self.install:
+            self.expected_events.append('Install')
 
     def config_from_server(self):
         """Configures the Workbench from a config endpoint in the server."""
         r = self.session.get('/config')
-        r.raise_for_status()
         for key, value in r.json().items():
-            if key == 'smart' and value:
-                self.smart = Smart(value)
-            elif key == 'erase' and value:
-                self.erase = EraseType(value)
-            else:
-                setattr(self, key, value)
+            setattr(self, key, value)
 
     def mount_images(self, server: str):
         """Mounts the folder where the OS images are."""
@@ -143,13 +135,16 @@ class Workbench:
         except CalledProcessError as e:
             raise CannotMount('Did you umount?') from e
 
-    def run(self) -> str:
+    def run(self) -> Snapshot:
         """
         Executes Workbench on this computer and
-        returns a valid JSON for DeviceHub.
+        returns a valid JSON for Devicehub.
         """
+
+        print('{}eReuse.org Workbench {!s}.\n'
+              'Performing {}:'.format(Fore.CYAN, self.version, ', '.join(self.expected_events)))
         try:
-            return self._run()
+            snapshot = self._run()
         except Exception:
             print('{}Workbench panic - unexpected exception found. Please take '
                   'a photo of the screen and send it to eReuse Workbench Developers.'
@@ -162,94 +157,58 @@ class Workbench:
                     run(('umount', str(self.install_path)), universal_newlines=True, check=True)
                 except CalledProcessError as e:
                     raise CannotMount() from e
+        print('{}Workbench has finished properly.'.format(Fore.GREEN))
+        return snapshot
 
-    def _run(self) -> str:
-        print('{}Starting eReuse.org Workbench'.format(Fore.CYAN))
+    def _run(self) -> Snapshot:
         if self.server:
             self.usb_sneaky.start()
 
-        print('{} Getting computer information...'.format(self._print_phase(1)))
-        init_time = now()
-        computer_getter = self.Computer(self.benchmarker)
-        computer, components = computer_getter.run()
-        snapshot = {
-            'device': computer,
-            'components': components,
-            '_uuid': self.uuid,
-            '_totalPhases': self.phases,
-            '_phases': 0,  # Counter of phases we have executed
-            'snapshotSoftware': 'Workbench',
-            'inventory': {
-                'elapsed': now() - init_time
-            },
-            # The version of Workbench
-            # from https://stackoverflow.com/a/2073599
-            # This throws an exception if you git clone this package
-            # and did not install it with pip
-            # Perform ``pip install -e .`` or similar to fix
-            'version': pkg_resources.require('ereuse-workbench')[0].version,
-            'automatic': True,
-            'debug': computer_getter.lshw,
-            'date': now(),  # todo we should ensure debian updates the machine time from Internet
-            '@type': 'devices:Snapshot'
-        }
-        self.after_phase(snapshot, init_time)
-        hdds = tuple(c for c in components if c['@type'] == 'HardDrive')
+        snapshot = Snapshot(self.uuid,
+                            self.expected_events,
+                            SnapshotSoftware.Workbench,
+                            self.version)
+        snapshot.computer()
+        self.after_phase(snapshot)
 
-        if self.benchmarker:
-            snapshot['benchmarks'] = [
-                self.benchmarker.benchmark_memory()
-            ]
+        if self.benchmark:
+            snapshot.benchmarks()
+            self.after_phase(snapshot)
 
         if self.smart:
-            print('{} Run SMART test and benchmark hard-drives...'.format(self._print_phase(2)))
-            for hdd in hdds:
-                hdd['test'] = self.tester.smart(hdd[PrivateFields.logical_name], self.smart)
-                if hdd['test']['error']:
-                    print('{}Failed SMART for HDD {}'.format(Fore.RED, hdd.get('serialNumber')))
-            self.after_phase(snapshot, init_time)
+            snapshot.test_smart(self.smart)
+            self.after_phase(snapshot)
 
         if self.stress:
-            print('{} Run stress tests for {} mins...'.format(self._print_phase(3), self.stress))
-            snapshot['tests'] = [self.tester.stress(self.stress)]
-            self.after_phase(snapshot, init_time)
+            snapshot.test_stress(self.stress)
+            self.after_phase(snapshot)
 
         if self.erase:
-            text = '{} Erase Hard-Drives with {} method, {} steps and {} overriding with zeros...'
-            print(text.format(self._print_phase(4), self.erase.name, self.erase_steps,
-                              '' if self.erase_leading_zeros else 'not'))
-            for hdd in hdds:
-                hdd['erasure'] = self.eraser.erase(hdd[PrivateFields.logical_name])
-                if not hdd['erasure']['success']:
-                    print('{}Failed erasing HDD {}'.format(Fore.RED, hdd.get('serialNumber')))
-            self.after_phase(snapshot, init_time)
+            snapshot.erase(self.erase, self.erase_steps, self.erase_leading_zeros)
+            self.after_phase(snapshot)
 
         if self.install:
-            print('{} Install {}...'.format(self._print_phase(5), self.install))
-            snapshot['osInstallation'] = self.installer.install(self.install_path / self.install)
+            snapshot.install(self.install_path.joinpath(self.install))
+            self.after_phase(snapshot)
 
-            if not snapshot['osInstallation']['success']:
-                print('{}Failed installing OS'.format(Fore.RED))
-            self.after_phase(snapshot, init_time)
-        print('{}eReuse.org Workbench has finished properly.'.format(Fore.GREEN))
+        return snapshot
 
-        # Comply with DeviceHub's Snapshot
-        snapshot.pop('_phases', None)
-        snapshot.pop('_totalPhases', None)
-        return json.dumps(snapshot, skipkeys=True, cls=DeviceHubJSONEncoder, indent=2)
+    def after_phase(self, snapshot: Snapshot):
+        if self.server:  # Send to workbench-server
+            url = '/snapshots/{}'.format(snapshot.uuid)
+            data = snapshot.to_json()
+            self.session.patch(url, data=data)
 
-    def after_phase(self, snapshot: dict, init_time: datetime):
-        snapshot['_phases'] += 1
-        snapshot['elapsed'] = now() - init_time
-        if self.server:
-            # Send to server
-            url = '/snapshots/{}'.format(snapshot['_uuid'])
-            data = json.dumps(snapshot, cls=DeviceHubJSONEncoder, skipkeys=True)
-            self.session.patch(url, data=data).raise_for_status()
-
-    @staticmethod
-    def _print_phase(phase: int):
-        return '[ {}Phase {}{} ]'.format(Fore.CYAN, phase, Fore.RESET)
+    @property
+    def version(self) -> StrictVersion:
+        """
+        The version of Workbench
+        from https://stackoverflow.com/a/2073599
+        This throws an exception if you git clone this package
+        and did not install it with pip
+        Perform ``pip install -e .`` or similar to fix
+        """
+        return StrictVersion(pkg_resources.require('ereuse-workbench')[0].version)
 
 
 class CannotMount(Exception):

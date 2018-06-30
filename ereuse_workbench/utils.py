@@ -2,8 +2,14 @@ import datetime
 import fcntl
 import json
 import socket
-
 import struct
+from contextlib import contextmanager
+
+import inflection
+from ereuse_utils import JSONEncoder
+
+LJUST = 38
+"""Left-justify the print output to X characters."""
 
 
 def convert_base(value, src_unit, dst_unit, distance=1000) -> float:
@@ -56,10 +62,51 @@ def get_hw_addr(ifname):
     return ':'.join('%02x' % ord(char) for char in info[18:24])
 
 
-class InventoryJSONEncoder(json.JSONEncoder):
+class Dumpeable:
+    """
+    A base class to allow inner classes to generate ``json`` and similar
+    structures in an easy-way. It prevents private and
+    constants to be in the JSON and camelCases field names.
+    """
+
+    def dump(self):
+        """
+        Creates a dictionary consisting of the
+        non-private fields of this instance.
+        """
+        d = vars(self)
+        for name in set(d.keys()):
+            if name.startswith('_') or name[0].isupper():
+                del d[name]
+            else:
+                d[inflection.camelize(name, uppercase_first_letter=False)] = d.pop(name)
+        # todo convert names to camelCase
+        return d
+
+    def to_json(self):
+        """
+        Creates a JSON representation of the non-private fields of
+        this class.
+        """
+        return json.dumps(self, cls=DumpeableJSONEncoder, indent=2)
+
+
+class Measurable(Dumpeable):
+    """A base class that allows measuring execution times."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.elapsed = None
+
+    @contextmanager
+    def measure(self):
+        init = datetime.datetime.utcnow()
+        yield
+        self.elapsed = datetime.datetime.utcnow() - init
+
+
+class DumpeableJSONEncoder(JSONEncoder):
     def default(self, obj):
-        if hasattr(obj, 'value'):  # an enumerated value
-            return obj.value
-        elif isinstance(obj, datetime.datetime):
-            return obj.isoformat()
-        return json.JSONEncoder.default(self, obj)
+        if isinstance(obj, Dumpeable):
+            return obj.dump()
+        return super().default(obj)

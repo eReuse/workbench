@@ -1,14 +1,13 @@
 import json
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from unittest import mock
 from unittest.mock import MagicMock
 
 import pytest
-from ereuse_utils import DeviceHubJSONEncoder
 
-from ereuse_workbench.computer import Computer
+from ereuse_workbench.computer import Component, Computer
 
 
 def fixture(file_name: str):
@@ -54,17 +53,15 @@ def lshw() -> MagicMock:
         yield run
 
 
-def computer(lshw: MagicMock, json_name: str) -> (dict, Dict[str, List[dict]]):
+def computer(lshw: MagicMock, json_name: str) -> Tuple[Computer, Dict[str, List[Component]]]:
     """Given a LSHW output and a LSHW mock, runs Computer."""
     lshw.side_effect.json = fixture(json_name + '.json')
-    computer_getter = Computer()
+    pc, components = Computer.run()
     assert lshw.called
-    pc, components = computer_getter.run()
-    components = json.dumps(components, skipkeys=True, cls=DeviceHubJSONEncoder, indent=2)
     # Group components in a dictionary by their @type
     grouped = defaultdict(list)
-    for component in json.loads(components):
-        grouped[component['@type']].append(component)
+    for component in components:
+        grouped[component.type].append(component)
     return pc, grouped
 
 

@@ -1,44 +1,28 @@
 import json
 import re
-from contextlib import suppress
-from enum import Enum
+from enum import Enum, unique
 from itertools import chain
 from math import floor
+from pathlib import Path
 from subprocess import PIPE, run
-from typing import List, Set
+from typing import Iterator, List, Set, Tuple, Union
 from warnings import catch_warnings, filterwarnings
 
+import pySMART
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
     get_nested_dicts_with_key_value
-from pySMART import Device
-from pydash import clean, compact, find_key, get
+from pydash import clean
 
 from ereuse_workbench import utils
-from ereuse_workbench.benchmarker import Benchmarker
+from ereuse_workbench.benchmark import BenchmarkDataStorage, BenchmarkProcessor, \
+    BenchmarkProcessorSysbench, BenchmarkRamSysbench
+from ereuse_workbench.erase import Erase, EraseType
+from ereuse_workbench.install import Install
+from ereuse_workbench.test import StressTest, TestDataStorage, TestDataStorageLength
+from ereuse_workbench.utils import Dumpeable
 
 
-class PrivateFields(Enum):
-    """
-    These fields are not converted to JSON so they are kept
-    private for internal usage.
-    """
-    logical_name = 'logical_name'
-
-
-class Computer:
-    """
-    Gets hardware information from the computer and its components,
-    like serial numbers or model names. At the same time and
-    if a Benchmarker is passed-in, benchmarks some of them.
-
-    This class is divided by the methods that extract the hardware
-    information for each component individually and a ``.run()``
-    method that glues them.
-
-    This class uses ``LSHW`` as the main source of hardware information,
-    which is obtained once when it is instantiated.
-    """
-    CONNECTORS = 'usb', 'firewire', 'serial', 'pcmcia'
+class Device(Dumpeable):
     TO_REMOVE = {
         'none',
         'prod',
@@ -77,256 +61,14 @@ class Computer:
     """Discard a value if any of these values are inside it. """
     assert all(v.lower() == v for v in MEANINGLESS), 'All values need to be lower-case'
 
-    CHASSIS_TO_TYPE = {
-        # dmi types from https://ezix.org/src/pkg/lshw/src/master/src/core/dmi.cc#L632
-        'Desktop': {'desktop', 'low-profile', 'tower', 'docking', 'all-in-one'},
-        'Microtower': {'pizzabox', 'mini-tower', 'space-saving', 'lunchbox', 'mini', 'stick'},
-        'Laptop': {'portable', 'laptop', 'convertible', 'tablet', 'detachable'},
-        'Netbook': {'notebook', 'handheld', 'sub-notebook'},
-        'Server': {'server'}
-    }
-    """A conversion table from DMI's chassis type value to our type value."""
-    PHYSICAL_RAM_TYPES = 'ddr', 'sdram', 'sodimm'
-
-    def __init__(self, benchmarker: Benchmarker = False):
-        self.benchmarker = benchmarker
-        # Obtain raw from LSHW
-        stdout = run(('lshw', '-json', '-quiet'),
-                     check=True,
-                     stdout=PIPE,
-                     universal_newlines=True).stdout
-        self.lshw = json.loads(stdout)
-
-    def run(self) -> (dict, List[dict]):
-        """
-        Get the hardware information.
-
-        This method returns *almost* DeviceHub ready information in a
-        tuple, where the first element is information related to the
-        overall machine, like the S/N of the computer, and the second
-        item is a list of hardware information per component.
-        """
-        computer = self.computer()
-        components = chain(self.processors(), self.ram_modules(), self.hard_drives(),
-                           self.graphic_cards(), [self.motherboard()], self.network_adapters(),
-                           self.sound_cards())
-        return computer, compact(components)
-
-    def computer(self):
-        node = self.lshw  # Computer node is just the root of lshw
-        chassis = node['configuration'].get('chassis', None)
-        _type = find_key(self.CHASSIS_TO_TYPE, lambda values, key: chassis in values)
-        return dict({
-            'type': _type,
-            '@type': 'Computer'
-        }, **self._common(node))
-
-    def processors(self):
-        nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'processor')
-        # We want only the physical cpu's, not the logic ones
-        # In some cases we may get empty cpu nodes, we can detect them because
-        # all regular cpus have at least a description (Intel Core i5...)
-        return (self.processor(node) for node in nodes if
-                'logical' not in node['id'] and 'description' in node and not node.get('disabled'))
-
-    def processor(self, node):
-        speed = utils.convert_frequency(node['size'], node['units'], 'GHz')
-        assert 0.1 <= speed <= 9, 'Frequency is not in reasonable GHz'
-        processor = {
-            '@type': 'Processor',
-            'speed': speed,
-            'address': node['width']
-        }
-        if 'cores' in node['configuration']:
-            processor['numberOfCores'] = cores = int(node['configuration']['cores'])
-            assert 1 <= cores <= 16
-        if self.benchmarker:
-            processor['benchmarks'] = [
-                self.benchmarker.processor(),
-                self.benchmarker.processor_sysbench()
-            ]
-        processor = dict(processor, **self._common(node))
-        processor['serialNumber'] = None  # Processors don't have valid SN :-(
-        return processor
-
-    def ram_modules(self):
-        # We can get flash memory (BIOS?), system memory and unknown types of memory
-        memories = get_nested_dicts_with_key_value(self.lshw, 'class', 'memory')
-        for memory in memories:
-            for ram_type in self.PHYSICAL_RAM_TYPES:
-                if ram_type in memory.get('description', '').lower():
-                    yield self.ram_module(memory)
-
-    def ram_module(self, module: dict):
-        # Node with no size == empty ram slot
-        description = module['description'].upper()
-        if 'size' in module:
-            ram = dict({
-                '@type': 'RamModule',
-                'form': 'SODIMM' if 'SODIMM' in description else 'DIMM',
-                'size': int(utils.convert_capacity(module['size'], module['units'], 'MB'))
-            }, **self._common(module))
-            for w in description.split():
-                if w.startswith('DDR'):
-                    ram['interface'] = w
-                    break
-                elif w.startswith('SDRAM') or w.startswith('SODIMM'):
-                    ram['interface'] = w
-            # power of 2
-            assert 128 <= ram['size'] <= 2 ** 15 and (ram['size'] & (ram['size'] - 1) == 0), \
-                'Invalid value {} MB for RAM Speed'.format(ram['size'])
-            if 'clock' in module:
-                ram['speed'] = speed = utils.convert_frequency(module['clock'], 'Hz', 'MHz')
-                assert 100 <= speed <= 10000, 'Invalid value {} Mhz for RAM speed'.format(speed)
-            return ram
-
-    def hard_drives(self, get_removables=False):
-        nodes = get_nested_dicts_with_key_containing_value(self.lshw, 'id', 'disk')
-        # We can get nodes that are not truly disks as they don't have
-        # size. Let's just forget about those.
-        return (self.hard_drive(node, get_removables) for node in nodes if 'size' in node)
-
-    def hard_drive(self, node, get_removable=False) -> dict or None:
-        logical_name = node['logicalname']
-        interface = run('udevadm info '
-                        '--query=all '
-                        '--name={} | '
-                        'grep '
-                        'ID_BUS | '
-                        'cut -c 11-'.format(logical_name),
-                        check=True, universal_newlines=True, shell=True, stdout=PIPE).stdout
-        # todo not sure if ``interface != usb`` is needed
-        interface = interface.strip()
-        is_not_removable = interface != 'usb' and not get(node, 'capabilities.removable')
-        is_removable = interface == 'usb'
-        if get_removable and is_removable or not get_removable and is_not_removable:
-            # If get_removable and is_removable or not get_removable and is not_removable
-            hdd = {
-                '@type': 'HardDrive',
-                'size': floor(utils.convert_capacity(node['size'], node['units'], 'MB')),
-                'interface': interface.upper(),
-                PrivateFields.logical_name: logical_name
-            }
-            with catch_warnings():
-                filterwarnings('error')
-                with suppress(Warning):
-                    hdd['type'] = 'SSD' if Device(logical_name).is_ssd else 'HDD'
-            assert 10000 < hdd['size'] < 10 ** 8, 'Invalid HDD size {} MB'.format(hdd['size'])
-            if self.benchmarker:
-                hdd['benchmark'] = self.benchmarker.benchmark_hdd(logical_name)
-            hdd = dict(hdd, **self._common(node))
-            if not hdd['serialNumber']:
-                hdd['serialNumber'] = Device(hdd[PrivateFields.logical_name]).serial
-            if not hdd['model']:
-                hdd['model'] = Device(hdd[PrivateFields.logical_name]).model
-            return hdd
-
-    def graphic_cards(self):
-        nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'display')
-        return (self.graphic_card(n) for n in nodes if n['configuration'].get('driver', None))
-
-    def graphic_card(self, node) -> dict:
-        return dict({
-            '@type': 'GraphicCard',
-            'memory': self._graphic_card_memory(node['businfo'].split('@')[1])
-        }, **self._common(node))
-
-    @staticmethod
-    def _graphic_card_memory(bus_info):
-        ret = run('lspci -v -s {bus} |'
-                  'grep \'prefetchable\' | '
-                  'grep -v \'non-prefetchable\' | '
-                  'egrep -o \'[0-9]{{1,3}}[KMGT]+\''.format(bus=bus_info),
-                  stdout=PIPE,
-                  shell=True,
-                  universal_newlines=True)
-        # Get max memory value
-        max_size = 0
-        for value in ret.stdout.splitlines():
-            unit = re.split('\d+', value)[1]
-            size = int(value.rstrip(unit))
-
-            # convert all values to KB before compare
-            size_kb = utils.convert_base(size, unit, 'K', distance=1024)
-            if size_kb > max_size:
-                max_size = size_kb
-
-        if max_size > 0:
-            size = utils.convert_capacity(max_size, 'KB', 'MB')
-            assert 8 < size < 2 ** 14, 'Invalid Graphic Card size {} MB'.format(size)
-            return size
-        return None
-
-    def motherboard(self):
-        node = next(get_nested_dicts_with_key_value(self.lshw, 'description', 'Motherboard'))
-        return dict({
-            '@type': 'Motherboard',
-            'connectors': {name: self.motherboard_num_of_connectors(name)
-                           for name in self.CONNECTORS},
-            'totalSlots': int(run('dmidecode -t 17 | '
-                                  'grep -o BANK | '
-                                  'wc -l',
-                                  check=True,
-                                  universal_newlines=True,
-                                  shell=True,
-                                  stdout=PIPE).stdout),
-            'usedSlots': int(run('dmidecode -t 17 | '
-                                 'grep Size | '
-                                 'grep MB | '
-                                 'awk \'{print $2}\' | '
-                                 'wc -l',
-                                 check=True,
-                                 universal_newlines=True,
-                                 shell=True,
-                                 stdout=PIPE).stdout)
-        }, **self._common(node))
-
-    def motherboard_num_of_connectors(self, connector_name) -> int:
-        connectors = get_nested_dicts_with_key_containing_value(self.lshw, 'id', connector_name)
-        if connector_name == 'usb':
-            connectors = (c for c in connectors
-                          if 'usbhost' not in c['id'] and 'usb' not in c['businfo'])
-        return len(tuple(connectors))
-
-    def network_adapters(self):
-        nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'network')
-        return (self.network_adapter(node) for node in nodes)
-
-    def network_adapter(self, node):
-        network = self._common(node)
-        network['@type'] = 'NetworkAdapter'
-        if 'capacity' in node:
-            network['speed'] = utils.convert_speed(node['capacity'], 'bps', 'Mbps')
-        if 'logicalname' in network:
-            # If we don't have logicalname it means we don't have the
-            # (proprietary) drivers fot that NetworkAdaptor
-            # which means we can't access at the MAC address
-            # (note that S/N == MAC) "sudo /sbin/lspci -vv" could bring
-            # the MAC even if no drivers are installed however more work
-            # has to be done in ensuring it is reliable, really needed,
-            # and to parse it
-            # https://www.redhat.com/archives/redhat-list/2010-October/msg00066.html
-            # workbench-live includes proprietary firmwares
-            if not network['serialNumber']:
-                network['serialNumber'] = utils.get_hw_addr(node['logicalname'])
-        return network
-
-    def sound_cards(self):
-        nodes = get_nested_dicts_with_key_value(self.lshw, 'class', 'multimedia')
-        return (self.sound_card(node) for node in nodes)
-
-    def sound_card(self, node):
-        return dict({
-            '@type': 'SoundCard'
-        }, **self._common(node))
-
-    def _common(self, node: dict) -> dict:
-        manufacturer = self.get(node, 'vendor')
-        return {
-            'manufacturer': manufacturer,
-            'model': self.get(node, 'product', remove={manufacturer} if manufacturer else None),
-            'serialNumber': self.get(node, 'serial')
-        }
+    def __init__(self, node: dict) -> None:
+        self.manufacturer = self.get(node, 'vendor')
+        self.model = self.get(node, 'product',
+                              remove={self.manufacturer} if self.manufacturer else None)
+        self.serial_number = self.get(node, 'serial')
+        self.events = set()
+        self.type = self.__class__.__name__
+        super().__init__()
 
     @classmethod
     def get(cls, dictionary: dict, key: str, remove: Set[str] = None) -> str or None:
@@ -355,3 +97,331 @@ class Computer:
             return val
         else:
             return None
+
+    def benchmarks(self):
+        """
+        Execute all available benchmarks, if any.
+
+        Each device overrides this method with its available benchmarks.
+        """
+        pass
+
+
+class Component(Device):
+    @classmethod
+    def from_lshw(cls, lshw: dict) -> Union[Iterator['Device'], 'Device']:
+        """Obtains all the devices of this type from the LSHW output."""
+        raise NotImplementedError()
+
+
+class Processor(Component):
+    @classmethod
+    def from_lshw(cls, lshw: dict) -> Iterator['Processor']:
+        nodes = get_nested_dicts_with_key_value(lshw, 'class', 'processor')
+        # We want only the physical cpu's, not the logic ones
+        # In some cases we may get empty cpu nodes, we can detect them because
+        # all regular cpus have at least a description (Intel Core i5...)
+        return (cls(node) for node in nodes if
+                'logical' not in node['id'] and 'description' in node and not node.get('disabled'))
+
+    def __init__(self, node: dict) -> None:
+        super().__init__(node)
+        self.speed = utils.convert_frequency(node['size'], node['units'], 'GHz')
+        self.address = node['width']
+        if 'cores' in node['configuration']:
+            self.cores = int(node['configuration']['cores'])
+        self.serial_number = None  # Processors don't have valid SN :-(
+        assert 0.1 <= self.speed <= 9
+        assert not hasattr(self, 'cores') or 1 <= self.cores <= 16
+
+    def benchmarks(self):
+        for Benchmark in BenchmarkProcessor, BenchmarkProcessorSysbench:
+            benchmark = Benchmark()
+            benchmark.run()
+            self.events.add(benchmark)
+
+
+class RamModule(Component):
+    @classmethod
+    def from_lshw(cls, lshw: dict) -> Iterator['RamModule']:
+        # We can get flash memory (BIOS?), system memory and unknown types of memory
+        memories = get_nested_dicts_with_key_value(lshw, 'class', 'memory')
+        TYPES = {'ddr', 'sdram', 'sodimm'}
+        for memory in memories:
+            physical_ram = any(t in memory.get('description', '').lower() for t in TYPES)
+            not_empty = 'size' in memory
+            if physical_ram and not_empty:
+                yield cls(memory)
+
+    def __init__(self, node: dict) -> None:
+        # Node with no size == empty ram slot
+        super().__init__(node)
+        description = node['description'].upper()
+        self.form = 'SODIMM' if 'SODIMM' in description else 'DIMM'
+        self.size = int(utils.convert_capacity(node['size'], node['units'], 'MB'))
+        for w in description.split():
+            if w.startswith('DDR'):
+                self.interface = w
+                break
+            elif w.startswith('SDRAM') or w.startswith('SODIMM'):
+                self.interface = w
+        if 'clock' in node:
+            self.speed = utils.convert_frequency(node['clock'], 'Hz', 'MHz')
+
+        # size is power of 2
+        assert 128 <= self.size <= 2 ** 15 and (self.size & (self.size - 1) == 0)
+        assert not hasattr(self, 'speed') or 100 <= self.speed <= 10000
+
+    def benchmarks(self):
+        b = BenchmarkRamSysbench()
+        b.run()
+        self.events.add(b)
+
+
+class DataStorage(Component):
+    @classmethod
+    def from_lshw(cls, lshw: dict) -> Iterator['DataStorage']:
+        nodes = get_nested_dicts_with_key_containing_value(lshw, 'id', 'disk')
+        # We can get nodes that are not truly disks as they don't have
+        # size. Let's just forget about those.
+        for node in nodes:
+            if 'size' in node:
+                interface = DataStorage.get_interface(node)
+                removable = interface == 'usb' or \
+                            node.get('capabilities', {}).get('removable', False)
+                if not removable:
+                    yield cls(node, interface)
+
+    SSD = 'SolidStateDrive'
+    HDD = 'HardDrive'
+
+    @unique
+    class DataStorageInterface(Enum):
+        ATA = 'ATA'
+        USB = 'USB'
+        PCI = 'PCI'
+
+    def __init__(self, node: dict, interface: str) -> None:
+        super().__init__(node)
+        self.size = floor(utils.convert_capacity(node['size'], node['units'], 'MB'))
+        self.interface = self.DataStorageInterface(interface.upper()) if interface else None
+        self._logical_name = node['logicalname']
+
+        with catch_warnings():
+            filterwarnings('error')
+            try:
+                smart = pySMART.Device(self._logical_name)
+            except Warning:
+                self.type = self.HDD
+            else:
+                self.type = self.SSD if smart.is_ssd else self.HDD
+                self.serial_number = self.serial_number or smart.serial
+                self.model = self.model or smart.model
+
+        assert 10000 < self.size < 10 ** 8, 'Invalid HDD size {} MB'.format(self.size)
+
+    def benchmarks(self):
+        """
+        Computes the reading and writing speed of a hard-drive by
+        writing and reading a piece of the hard-drive.
+
+        This method does not destroy existing data.
+        """
+        b = BenchmarkDataStorage()
+        b.run(self._logical_name)
+        self.events.add(b)
+
+    def test_smart(self, length: TestDataStorageLength):
+        test = TestDataStorage()
+        test.run(self._logical_name, length)
+        self.events.add(test)
+        return test
+
+    def erase(self, erase: EraseType, erase_steps: int, zeros: bool):
+        erasure = Erase(erase, erase_steps, zeros)
+        erasure.run(self._logical_name)
+        self.events.add(erasure)
+
+    def install(self, path_to_os_image: Path):
+        install = Install(path_to_os_image, self._logical_name)
+        install.run()
+        self.events.add(install)
+
+    @staticmethod
+    def get_interface(node: dict):
+        interface = run('udevadm info '
+                        '--query=all '
+                        '--name={} | '
+                        'grep '
+                        'ID_BUS | '
+                        'cut -c 11-'.format(node['logicalname']),
+                        check=True, universal_newlines=True, shell=True, stdout=PIPE).stdout
+        # todo not sure if ``interface != usb`` is needed
+        return interface.strip()
+
+
+class GraphicCard(Component):
+    def __init__(self, node: dict) -> None:
+        super().__init__(node)
+        self.memory = self._memory(node['businfo'].split('@')[1])
+
+    @classmethod
+    def from_lshw(cls, lshw: dict) -> Iterator['GraphicCard']:
+        nodes = get_nested_dicts_with_key_value(lshw, 'class', 'display')
+        return (cls(n) for n in nodes if n['configuration'].get('driver', None))
+
+    @staticmethod
+    def _memory(bus_info):
+        ret = run('lspci -v -s {bus} |'
+                  'grep \'prefetchable\' | '
+                  'grep -v \'non-prefetchable\' | '
+                  'egrep -o \'[0-9]{{1,3}}[KMGT]+\''.format(bus=bus_info),
+                  stdout=PIPE,
+                  shell=True,
+                  universal_newlines=True)
+        # Get max memory value
+        max_size = 0
+        for value in ret.stdout.splitlines():
+            unit = re.split('\d+', value)[1]
+            size = int(value.rstrip(unit))
+
+            # convert all values to KB before compare
+            size_kb = utils.convert_base(size, unit, 'K', distance=1024)
+            if size_kb > max_size:
+                max_size = size_kb
+
+        if max_size > 0:
+            size = utils.convert_capacity(max_size, 'KB', 'MB')
+            assert 8 < size < 2 ** 14, 'Invalid Graphic Card size {} MB'.format(size)
+            return size
+        return None
+
+
+class Motherboard(Component):
+    INTERFACES = 'usb', 'firewire', 'serial', 'pcmcia'
+
+    def __init__(self, node: dict) -> None:
+        super().__init__(node)
+        self.usb = self.num_interfaces(node, 'usb')
+        self.firewire = self.num_interfaces(node, 'firewire')
+        self.serial = self.num_interfaces(node, 'serial')
+        self.pcmcia = self.num_interfaces(node, 'pcmcia')
+        self.slots = int(run('dmidecode -t 17 | '
+                             'grep -o BANK | '
+                             'wc -l',
+                             check=True,
+                             universal_newlines=True,
+                             shell=True,
+                             stdout=PIPE).stdout)
+
+    @staticmethod
+    def num_interfaces(node: dict, interface: str) -> int:
+        interfaces = get_nested_dicts_with_key_containing_value(node, 'id', interface)
+        if interface == 'usb':
+            interfaces = (c for c in interfaces
+                          if 'usbhost' not in c['id'] and 'usb' not in c['businfo'])
+        return len(tuple(interfaces))
+
+    @classmethod
+    def from_lshw(cls, lshw: dict) -> 'Motherboard':
+        node = next(get_nested_dicts_with_key_value(lshw, 'description', 'Motherboard'))
+        return cls(node)
+
+
+class NetworkAdapter(Component):
+    def __init__(self, node: dict) -> None:
+        super().__init__(node)
+        if 'capacity' in node:
+            self.speed = utils.convert_speed(node['capacity'], 'bps', 'Mbps')
+        if 'logicalname' in node:  # todo this was taken from 'self'?
+            # If we don't have logicalname it means we don't have the
+            # (proprietary) drivers fot that NetworkAdaptor
+            # which means we can't access at the MAC address
+            # (note that S/N == MAC) "sudo /sbin/lspci -vv" could bring
+            # the MAC even if no drivers are installed however more work
+            # has to be done in ensuring it is reliable, really needed,
+            # and to parse it
+            # https://www.redhat.com/archives/redhat-list/2010-October/msg00066.html
+            # workbench-live includes proprietary firmwares
+            self.serial_number = self.serial_number or utils.get_hw_addr(node['logicalname'])
+
+    @classmethod
+    def from_lshw(cls, lshw: dict) -> Iterator['NetworkAdapter']:
+        nodes = get_nested_dicts_with_key_value(lshw, 'class', 'network')
+        return (cls(node) for node in nodes)
+
+
+class SoundCard(Component):
+    @classmethod
+    def from_lshw(cls, lshw: dict) -> Union[Iterator['Device'], 'Device']:
+        nodes = get_nested_dicts_with_key_value(lshw, 'class', 'multimedia')
+        return (cls(node) for node in nodes)
+
+
+class Computer(Device):
+    CHASSIS_TYPE = {
+        'Desktop': {'desktop', 'low-profile', 'tower', 'docking', 'all-in-one', 'pizzabox',
+                    'mini-tower', 'space-saving', 'lunchbox', 'mini', 'stick'},
+        'Laptop': {'portable', 'laptop', 'convertible', 'tablet', 'detachable', 'notebook',
+                   'handheld', 'sub-notebook'},
+        'Server': {'server'},
+        'Computer': {'_virtual'}
+    }
+    """
+    A translation dictionary whose keys are Devicehub types and values 
+    are possible chassis values that `dmi <https://ezix.org/src/pkg/
+    lshw/src/master/src/core/dmi.cc#L632>`_ can offer.
+    """
+    CHASSIS_DH = {
+        'Tower': {'desktop', 'low-profile', 'tower', 'server'},
+        'Docking': {'docking'},
+        'AllInOne': {'all-in-one'},
+        'Microtower': {'mini-tower', 'space-saving', 'mini'},
+        'PizzaBox': {'pizzabox'},
+        'Lunchbox': {'lunchbox'},
+        'Stick': {'stick'},
+        'Netbook': {'notebook', 'sub-notebook'},
+        'Handheld': {'handheld'},
+        'Laptop': {'portable', 'laptop'},
+        'Convertible': {'convertible'},
+        'Detachable': {'detachable'},
+        'Tablet': {'tablet'},
+        'Virtual': {'_virtual'}
+    }
+    """
+    A conversion table from DMI's chassis type value Devicehub 
+    chassis value.
+    """
+
+    COMPONENTS = list(Component.__subclasses__())
+    COMPONENTS.remove(Motherboard)
+
+    def __init__(self, node: dict) -> None:
+        super().__init__(node)
+        chassis = node['configuration'].get('chassis', '_virtual')
+        self.type = next(t for t, values in self.CHASSIS_TYPE.items() if chassis in values)
+        self.chassis = next(t for t, values in self.CHASSIS_DH.items() if chassis in values)
+
+    @classmethod
+    def run(cls) -> Tuple['Computer', List[Component]]:
+        """
+        Gets hardware information from the computer and its components,
+        like serial numbers or model names, and benchmarks them.
+
+        This function uses ``LSHW`` as the main source of hardware information,
+        which is obtained once when it is instantiated.
+        """
+        stdout = run(('lshw', '-json', '-quiet'),
+                     check=True,
+                     stdout=PIPE,
+                     universal_newlines=True).stdout
+        lshw = json.loads(stdout)
+        computer = cls(lshw)
+        components = list(chain.from_iterable(D.from_lshw(lshw) for D in cls.COMPONENTS))
+        components.append(Motherboard.from_lshw(lshw))
+        return computer, components
+
+    def test_stress(self, minutes: int):
+        test = StressTest()
+        test.run(minutes)
+        self.events.add(test)

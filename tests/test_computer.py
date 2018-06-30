@@ -1,6 +1,6 @@
 from typing import Set
 
-from ereuse_workbench.computer import Computer
+from ereuse_workbench.computer import Device
 
 """
 Test removing values we don't want and returning None when meaningless
@@ -9,7 +9,7 @@ ones.
 
 
 def get(value: str, remove: Set[str] = None):
-    return Computer.get({'x': value}, 'x', remove=remove)
+    return Device.get({'x': value}, 'x', remove=remove)
 
 
 def test_parenthesis():

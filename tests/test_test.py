@@ -4,7 +4,7 @@ from warnings import warn
 import pySMART
 import pytest
 
-from ereuse_workbench.tester import Smart, Tester
+from ereuse_workbench.test import TestDataStorage, TestDataStorageLength
 
 
 @pytest.fixture()
@@ -12,13 +12,14 @@ def Device() -> MagicMock:
     class Device:
         pass
 
-    with patch('ereuse_workbench.tester.Device') as m:
+    with patch('ereuse_workbench.test.Device') as m:
         m.side_effect = lambda _: Device()
         yield Device
 
 
 def test_tester_smart(Device: pySMART.Device):
     Device.run_selftest = MagicMock(return_value=(0, None, 3))
+    Device.model = 'foo'
     Device.update = MagicMock()
     Device.tests = [MagicMock()]
     Device.tests[0].remain = '0%'
@@ -27,23 +28,19 @@ def test_tester_smart(Device: pySMART.Device):
     Device.tests[0].type = 'foo-type'
     Device.tests[0].status = 'foo-status'
     Device.attributes = [None] * 256
-    Device.attributes[9] = MagicMock()
-    Device.attributes[9].raw = 99
     Device.attributes[12] = MagicMock()
     Device.attributes[12].raw = '11'
     Device.assessment = 'PASS'
-    r = Tester.smart('/foo/bar', test_type=Smart.short)
-    assert r == {
-        'lifetime': 24,
-        '@type': 'TestHardDrive',
-        'error': False,
-        'type': 'foo-type',
-        'status': 'foo-status',
-        'firstError': 0,
-        'passedLifetime': 99,
-        'assessment': True,
-        'powerCycleCount': 11
-    }
+    test = TestDataStorage()
+    test.run('/foo/bar', length=TestDataStorageLength.Short)
+    assert test.lifetime == 24
+    assert test.type == 'TestDataStorage'
+    assert not test.error
+    assert test.status == 'foo-status'
+    assert test.first_error == 0
+    assert test.lifetime == 24
+    assert test.assessment
+    assert test.power_cycle_count == 11
 
 
 def test_tester_no_smart(Device: pySMART.Device):
@@ -55,9 +52,7 @@ def test_tester_no_smart(Device: pySMART.Device):
         warn('')
 
     Device.__init__ = init
-    r = Tester.smart('/foo/bar', test_type=Smart.short)
-    assert r == {
-        'error': True,
-        'status': 'SMART cannot be enabled on this device.',
-        '@type': 'TestHardDrive'
-    }
+    t = TestDataStorage()
+    t.run('/foo/bar', length=TestDataStorageLength.Short)
+    assert t.error
+    assert t.status == 'SMART cannot be enabled on this device.'

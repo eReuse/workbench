@@ -1,10 +1,10 @@
 import subprocess
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from ereuse_workbench.os_installer import Installer
+from ereuse_workbench.install import CannotInstall, Install
 
 """
 Tests the OSInstaller. 
@@ -23,15 +23,15 @@ ezpzlmnsqz
 
 @pytest.fixture()
 def run() -> MagicMock:
-    with patch('ereuse_workbench.os_installer.run') as mocked_run:
+    with patch('ereuse_workbench.install.run') as mocked_run:
         yield mocked_run
 
 
-def test_installer(run: MagicMock):
+def test_install(run: MagicMock):
     # Run module
     image_path = Path('/media/workbench-images/FooBarOS-18.3-English')
-    installer = Installer()
-    dict_return = installer.install(image_path)
+    install = Install(image_path)
+    install.run()
 
     # Do checks
     assert run.call_count == 8
@@ -42,21 +42,20 @@ def test_installer(run: MagicMock):
     assert fscall[2] == str(image_path) + '.fsa', \
         'Failed to add extension to image name'
 
-    assert dict_return['label'] == str(image_path)
-    assert dict_return['success'] is True
+    assert install.name == str(image_path.name)
+    assert not install.error
 
 
 def test_installer_with_known_error(run: MagicMock):
     run.side_effect = subprocess.CalledProcessError(69, 'test')
     image_path = Path('/media/workbench-images/FooBarOS-18.3-English')
-    installer = Installer()
-    dict_return = installer.install(image_path)
-    assert dict_return['success'] is False
+
+    with pytest.raises(CannotInstall):
+        Install(image_path).run()
 
 
 def test_installer_with_unknown_error(run: MagicMock):
     run.side_effect = Exception()
     image_path = Path('/media/workbench-images/FooBarOS-18.3-English')
-    installer = Installer()
     with pytest.raises(Exception):
-        installer.install(image_path)
+        Install(image_path).run()
