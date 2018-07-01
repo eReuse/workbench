@@ -23,6 +23,13 @@ from ereuse_workbench.utils import Dumpeable
 
 
 class Device(Dumpeable):
+    """
+    Base class for a computer and each component, containing
+    its physical characteristics (like serial number) and Devicehub
+    events. For Devicehub events, this class has an interface to execute
+    :meth:`.benchmarks`.
+    """
+
     TO_REMOVE = {
         'none',
         'prod',
@@ -62,6 +69,7 @@ class Device(Dumpeable):
     assert all(v.lower() == v for v in MEANINGLESS), 'All values need to be lower-case'
 
     def __init__(self, node: dict) -> None:
+        """Gets the device information."""
         self.manufacturer = self.get(node, 'vendor')
         self.model = self.get(node, 'product',
                               remove={self.manufacturer} if self.manufacturer else None)

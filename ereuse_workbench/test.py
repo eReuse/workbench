@@ -1,17 +1,15 @@
 import re
-from contextlib import redirect_stdout, suppress
+from contextlib import suppress
 from datetime import datetime, timedelta
 from enum import Enum, unique
-from io import StringIO
-from subprocess import Popen
+from subprocess import DEVNULL, Popen
 from time import sleep
 from warnings import catch_warnings, filterwarnings
 
-from click import progressbar
 from dateutil import parser
 from pySMART import Device
 
-from ereuse_workbench.utils import LJUST, Measurable
+from ereuse_workbench.utils import Measurable, progressbar
 
 
 @unique
@@ -70,8 +68,7 @@ class TestDataStorage(Test):
             # follow progress of test until it ends or the estimated time is reached
             remaining = 100  # test completion pending percentage
             with progressbar(length=remaining,
-                             width=20,
-                             label='SMART test {}'.format(storage.model).ljust(LJUST - 2)) as bar:
+                             title='SMART test {}'.format(storage.model)) as bar:
                 while remaining > 0:
                     sleep(2)  # wait a few seconds between smart retrievals
                     storage.update()
@@ -138,13 +135,10 @@ class StressTest(Test):
                          '-m', str(ncores),
                          '--quiet',
                          '--vm-bytes', '{}K'.format(mem_worker_kib),
-                         '-t', '{}m'.format(minutes)))
-        with progressbar(range(minutes * 60),
-                         width=20,
-                         label='Stress test'.ljust(LJUST - 2)) as bar:
+                         '-t', '{}m'.format(minutes)), stdout=DEVNULL, stderr=DEVNULL)
+        with progressbar(range(minutes * 60), title='Stress test') as bar:
             for _ in bar:
                 sleep(1)
-        with redirect_stdout(StringIO()):
-            process.communicate()  # wait for process, consume output
+        process.communicate()  # wait for process, consume output
         self.elapsed = minutes
         self.error = bool(process.returncode)

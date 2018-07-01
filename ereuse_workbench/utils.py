@@ -5,6 +5,7 @@ import socket
 import struct
 from contextlib import contextmanager
 
+import click
 import inflection
 from ereuse_utils import JSONEncoder
 
@@ -106,7 +107,17 @@ class Measurable(Dumpeable):
 
 
 class DumpeableJSONEncoder(JSONEncoder):
+    """Performs ``dump`` on ``Dumpeable`` objects."""
+
     def default(self, obj):
         if isinstance(obj, Dumpeable):
             return obj.dump()
         return super().default(obj)
+
+
+def progressbar(iterable=None, length=None, title=''):
+    """Customized :def:`click.progressbar` to keep it DRY."""
+    return click.progressbar(iterable,
+                             length=length,
+                             label='{}'.format(title).ljust(LJUST - 2),
+                             width=20)

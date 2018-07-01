@@ -25,6 +25,14 @@ class SnapshotSoftware(Enum):
 
 
 class Snapshot(Dumpeable):
+    """
+    Generates the Snapshot report for Devicehub by obtaining the
+    data from the computer, performing benchmarks and tests...
+
+    After instantiating the class, run :meth:`.computer` before any
+    other method.
+    """
+
     def __init__(self,
                  uuid: UUID,
                  expected_events: List[str],
@@ -40,6 +48,7 @@ class Snapshot(Dumpeable):
         self.date = datetime.utcnow()
 
     def computer(self):
+        """Retrieves information about the computer and components."""
         self._title('Retrieve computer information')
         with click_spinner.spinner():
             self.device, self.components = Computer.run()
@@ -48,6 +57,7 @@ class Snapshot(Dumpeable):
         self._done()
 
     def benchmarks(self):
+        """Perform several benchmarks to the computer and its components."""
         self._title('Benchmark')
         with click_spinner.spinner():
             for component in self.components:
@@ -55,6 +65,7 @@ class Snapshot(Dumpeable):
         self._done()
 
     def test_smart(self, length: TestDataStorageLength):
+        """Performs a SMART test to all the data storage units."""
         t = 'SMART test'
         self._warn_no_storage(t)
         for storage in self._storages:
@@ -67,21 +78,24 @@ class Snapshot(Dumpeable):
         self._elapsed()
 
     def test_stress(self, minutes):
+        """Performs a stress test."""
         self.device.test_stress(minutes)
         self._elapsed()
 
     def erase(self, erase: EraseType, erase_steps: int, zeros: bool):
+        """Erases all the data storage units."""
         t = 'Erase'
         self._warn_no_storage(t)
         for storage in self._storages:
-            self._title('{} {}'.format(t, storage.serial_number))
             try:
                 storage.erase(erase, erase_steps, zeros)
             except CannotErase as e:
+                self._title('{} {}'.format(t, storage.serial_number))
                 self._error(e)
         self._elapsed()
 
     def install(self, path_to_os_image: Path):
+        """Installs an OS to all data storage units."""
         t = 'Installing OS'
         self._warn_no_storage(t)
         for storage in self._storages:
