@@ -2,6 +2,8 @@
 
 # -*- coding: utf-8 -*-
 
+from pathlib import Path
+
 import click
 from ereuse_utils import cli
 
@@ -33,7 +35,6 @@ from ereuse_workbench.workbench import Workbench
               help='The name of the FSA OS to install, without the ".fsa" extension. '
                    'The file has to be in /media/workbench-images')
 @click.option('--server',
-
               help='Connect to a WorkbenchServer at the specified URI. '
                    'This will activate USBSneaky module, load the '
                    'settings from the server, and keep indefinitely waiting for an USB to'
@@ -42,12 +43,10 @@ from ereuse_workbench.workbench import Workbench
               type=click.Path(dir_okay=False, writable=True, resolve_path=True),
               help='Write the resulting report to a JSON file.')
 def erwb(**kwargs):
-    json_path = kwargs.pop('json')
-    workbench = Workbench(**kwargs)
-    snapshot = workbench.run()
-    if json_path:
-        with open(json_path, 'w') as f:
-            f.write(snapshot.to_json())
+    json = kwargs.pop('json')
+    json = Path(json) if json else None
+    workbench = Workbench(**kwargs, json=json)
+    workbench.run()
     print('\a')  # make a bip
     if kwargs.get('server', None):
         print('You can still link the computer.')

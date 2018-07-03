@@ -165,7 +165,7 @@ class RamModule(Component):
         # Node with no size == empty ram slot
         super().__init__(node)
         description = node['description'].upper()
-        self.form = 'SODIMM' if 'SODIMM' in description else 'DIMM'
+        self.format = 'SODIMM' if 'SODIMM' in description else 'DIMM'
         self.size = int(utils.convert_capacity(node['size'], node['units'], 'MB'))
         for w in description.split():
             if w.startswith('DDR'):
@@ -179,11 +179,6 @@ class RamModule(Component):
         # size is power of 2
         assert 128 <= self.size <= 2 ** 15 and (self.size & (self.size - 1) == 0)
         assert not hasattr(self, 'speed') or 100 <= self.speed <= 10000
-
-    def benchmarks(self):
-        b = BenchmarkRamSysbench()
-        b.run()
-        self.events.add(b)
 
 
 class DataStorage(Component):
@@ -433,3 +428,10 @@ class Computer(Device):
         test = StressTest()
         test.run(minutes)
         self.events.add(test)
+
+    def benchmarks(self):
+        # Benchmark runs for all ram modules so we can't set it
+        # to a specific RamModule
+        b = BenchmarkRamSysbench()
+        b.run()
+        self.events.add(b)

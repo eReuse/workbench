@@ -16,3 +16,7 @@ def test_dumpeable():
 
     j = foo.to_json()
     assert json.loads(j) == {'foo': 'fooz', 'bar': {'bar': 'barz', 'fooBar': 1}}
+    assert foo.foo == 'fooz'
+    assert foo._foo == '_f'
+    assert foo.bar.foo_bar == 1
+    assert not hasattr(foo.bar, 'fooBar')

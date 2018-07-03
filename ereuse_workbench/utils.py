@@ -73,15 +73,14 @@ class Dumpeable:
     def dump(self):
         """
         Creates a dictionary consisting of the
-        non-private fields of this instance.
+        non-private fields of this instance with camelCase field names.
         """
-        d = vars(self)
-        for name in set(d.keys()):
+        d = vars(self).copy()
+        for name in vars(self).keys():
             if name.startswith('_') or name[0].isupper():
                 del d[name]
             else:
                 d[inflection.camelize(name, uppercase_first_letter=False)] = d.pop(name)
-        # todo convert names to camelCase
         return d
 
     def to_json(self):

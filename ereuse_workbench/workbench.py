@@ -31,7 +31,8 @@ class Workbench:
                  erase_leading_zeros: bool = False,
                  stress: int = 0,
                  install: str = False,
-                 server: str = None):
+                 server: str = None,
+                 json: Path = None):
         """
         Configures this Workbench.
 
@@ -71,9 +72,7 @@ class Workbench:
                        truthy value will turn-on server functionality
                        like USBSneaky module, sending snapshots to
                        server and getting configuration from it.
-        :param Tester: Testing class to use to perform tests.
-        :param Computer: Computer class to use to retrieve computer
-                         information.
+        :param json: Save a JSON in path.
         """
         if os.geteuid() != 0:
             raise EnvironmentError('Execute Workbench as root.')
@@ -89,6 +88,7 @@ class Workbench:
         self.uuid = uuid.uuid4()
         self.install = install
         self.install_path = Path('/media/workbench-images')
+        self.json = json
 
         if self.server:
             # Override the parameters from the configuration from the server
@@ -108,7 +108,7 @@ class Workbench:
         if self.benchmark:
             self.expected_events.append('Benchmark')
         if self.smart:
-            self.expected_events.append('Smart')
+            self.expected_events.append('SmartTest')
         if self.stress:
             self.expected_events.append('StressTest')
         if self.erase:
@@ -194,6 +194,9 @@ class Workbench:
         return snapshot
 
     def after_phase(self, snapshot: Snapshot):
+        if self.json:
+            with self.json.open('w') as f:
+                f.write(snapshot.to_json())
         if self.server:  # Send to workbench-server
             url = '/snapshots/{}'.format(snapshot.uuid)
             data = snapshot.to_json()

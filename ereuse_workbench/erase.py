@@ -6,7 +6,7 @@ from typing import TextIO
 
 from click._termui_impl import ProgressBar
 
-from ereuse_workbench.utils import progressbar
+from ereuse_workbench.utils import Dumpeable, progressbar
 
 
 class EraseType(Enum):
@@ -17,7 +17,7 @@ class EraseType(Enum):
         return self.value
 
 
-class Measurable:
+class Measurable(Dumpeable):
     @contextmanager
     def measure(self):
         self.start_time = datetime.now()

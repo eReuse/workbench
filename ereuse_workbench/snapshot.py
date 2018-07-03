@@ -1,6 +1,7 @@
 from datetime import datetime
 from distutils.version import StrictVersion
 from enum import Enum, unique
+from itertools import chain
 from pathlib import Path
 from typing import List
 from uuid import UUID
@@ -60,8 +61,8 @@ class Snapshot(Dumpeable):
         """Perform several benchmarks to the computer and its components."""
         self._title('Benchmark')
         with click_spinner.spinner():
-            for component in self.components:
-                component.benchmarks()
+            for device in chain(self.components, [self.device]):
+                device.benchmarks()
         self._done()
 
     def test_smart(self, length: TestDataStorageLength):

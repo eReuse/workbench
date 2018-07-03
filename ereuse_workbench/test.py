@@ -46,6 +46,7 @@ class TestDataStorage(Test):
     SMART_GRACE_TIME = timedelta(seconds=10)
 
     def run(self, logical: str, length: TestDataStorageLength):
+        self.length = length
         with self.measure():
             with catch_warnings():
                 filterwarnings('error')
@@ -96,9 +97,7 @@ class TestDataStorage(Test):
             storage.update()
             last_test = storage.tests[0]
 
-            self.length = length
-            self.first_error = self._first_error(last_test.LBA)
-            self.error = bool(self.first_error)
+            self.error = bool(self._first_error(last_test.LBA))
             self.status = last_test.status
             self.lifetime = int(last_test.hours)
             self.assessment = True if storage.assessment == 'PASS' else False
@@ -140,5 +139,5 @@ class StressTest(Test):
             for _ in bar:
                 sleep(1)
         process.communicate()  # wait for process, consume output
-        self.elapsed = minutes
+        self.elapsed = minutes * 60
         self.error = bool(process.returncode)
