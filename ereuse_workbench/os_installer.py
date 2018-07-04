@@ -161,6 +161,9 @@ class Installer:
             # OLD_SWAP_UUID=$(grep swap $tmproot/etc/fstab | get_uuid)
             # sed -i "s/$OLD_SWAP_UUID/$NEW_SWAP_UUID/g" $tmproot/etc/fstab
 
+            # sync at the end to prepare for abrupt poweroff
+            self.do_sync()
+
             success = True
         except (NotImplementedError, CalledProcessError) as e:
             print('OS installation failed. An "{}" exception with '
