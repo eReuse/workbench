@@ -5,7 +5,7 @@ with open('README.md') as f:
 
 setup(
     name='ereuse-workbench',
-    version='11.0a2',
+    version='11.0a3',
     packages=find_packages(),
     license='AGPLv3 License',
     description='The eReuse Workbench is '
