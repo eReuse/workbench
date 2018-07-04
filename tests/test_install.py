@@ -34,7 +34,7 @@ def test_install(run: MagicMock):
     install.run()
 
     # Do checks
-    assert run.call_count == 8
+    assert run.call_count == 9
 
     fscall = next(args[0]
                   for args, kwargs in run.call_args_list

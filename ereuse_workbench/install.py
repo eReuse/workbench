@@ -73,13 +73,16 @@ class Install(Measurable):
         self.zero_out(self._target_disk)
 
         # Partition main disk (must set os_partition appropriately in every possible case)
-        os_partition = self.do_partition(self._target_disk, self._swap_space)
+        os_partition = self.partition(self._target_disk, self._swap_space)
 
         # Install OS
-        self.do_install(self._path, os_partition)
+        self.install(self._path, os_partition)
 
         # Install bootloader
-        self.do_install_bootloader(self._target_disk)
+        self.install_bootloader(self._target_disk)
+
+        # sync at the end to prepare for abrupt poweroff
+        self.sync()
 
         # TODO rewrite fstab to use swap space correctly. sth like:
         # OLD_SWAP_UUID=$(grep swap $tmproot/etc/fstab | get_uuid)
@@ -89,10 +92,10 @@ class Install(Measurable):
     def zero_out(cls, drive: str):
         command = 'dd', 'if=/dev/zero', 'of={}'.format(drive), 'bs=512', 'count=1'
         run(command, check=True)
-        run(('sync',), timeout=10)
+        cls.sync()
 
     @staticmethod
-    def do_partition(target_disk: str, swap_space: bool):
+    def partition(target_disk: str, swap_space: bool):
         """
         :return: A string representing the partition that has been allocated
                  to the OS
@@ -115,7 +118,7 @@ class Install(Measurable):
         return os_partition
 
     @staticmethod
-    def do_install(path_to_os_image: Path, target_partition: str):
+    def install(path_to_os_image: Path, target_partition: str):
         """
         Installs an OS image to a target partition.
         :param path_to_os_image:
@@ -128,7 +131,7 @@ class Install(Measurable):
         run(command, check=True)
 
     @staticmethod
-    def do_install_bootloader(target_disk: str):
+    def install_bootloader(target_disk: str):
         """
         Installs the grub2 bootloader to the target disk.
         :param target_disk:
@@ -144,6 +147,11 @@ class Install(Measurable):
         run(command, check=True)
         command = 'umount', '/tmp/mnt'
         run(command, check=True)
+
+    @staticmethod
+    def sync():
+        run(('sync',), timeout=10)
+
 
 
 class CannotInstall(Exception):
