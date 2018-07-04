@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="ereuse-workbench",
-    version='10.0b6',
+    version='10.0b7',
     packages=find_packages(),
     license='AGPLv3 License',
     description='The eReuse Workbench is '
