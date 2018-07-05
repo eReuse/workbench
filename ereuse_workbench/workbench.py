@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 import pkg_resources
 import urllib3
 from colorama import Fore, init
-from ereuse_utils import JSONEncoder, now
+from ereuse_utils import DeviceHubJSONEncoder, now
 from requests_toolbelt.sessions import BaseUrlSession
 
 from ereuse_workbench.benchmarker import Benchmarker
@@ -189,7 +189,6 @@ class Workbench:
             # Perform ``pip install -e .`` or similar to fix
             'version': pkg_resources.require('ereuse-workbench')[0].version,
             'automatic': True,
-            'debug': computer_getter.lshw,
             'date': now(),  # todo we should ensure debian updates the machine time from Internet
             '@type': 'devices:Snapshot'
         }
@@ -236,7 +235,7 @@ class Workbench:
         # Comply with DeviceHub's Snapshot
         snapshot.pop('_phases', None)
         snapshot.pop('_totalPhases', None)
-        return json.dumps(snapshot, skipkeys=True, cls=JSONEncoder, indent=2)
+        return json.dumps(snapshot, skipkeys=True, cls=DeviceHubJSONEncoder, indent=2)
 
     def after_phase(self, snapshot: dict, init_time: datetime):
         snapshot['_phases'] += 1
@@ -244,7 +243,7 @@ class Workbench:
         if self.server:
             # Send to server
             url = '/snapshots/{}'.format(snapshot['_uuid'])
-            data = json.dumps(snapshot, cls=JSONEncoder, skipkeys=True)
+            data = json.dumps(snapshot, cls=DeviceHubJSONEncoder, skipkeys=True)
             self.session.patch(url, data=data).raise_for_status()
 
     @staticmethod
