@@ -37,7 +37,6 @@ def test_tester_smart(Device: pySMART.Device):
     assert test.type == 'TestDataStorage'
     assert not test.error
     assert test.status == 'foo-status'
-    assert test.first_error == 0
     assert test.lifetime == 24
     assert test.assessment
     assert test.power_cycle_count == 11
