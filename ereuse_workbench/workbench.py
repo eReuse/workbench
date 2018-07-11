@@ -108,7 +108,7 @@ class Workbench:
         if self.benchmark:
             self.expected_events.append('Benchmark')
         if self.smart:
-            self.expected_events.append('SmartTest')
+            self.expected_events.append('TestDataStorage')
         if self.stress:
             self.expected_events.append('StressTest')
         if self.erase:

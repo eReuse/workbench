@@ -1,4 +1,5 @@
 import json
+import os
 import re
 from enum import Enum, unique
 from itertools import chain
@@ -136,8 +137,13 @@ class Processor(Component):
         super().__init__(node)
         self.speed = utils.convert_frequency(node['size'], node['units'], 'GHz')
         self.address = node['width']
-        if 'cores' in node['configuration']:
+        try:
             self.cores = int(node['configuration']['cores'])
+            self.threads = int(node['configuration']['threads'])
+        except KeyError:
+            self.threads = os.cpu_count()
+            if self.threads == 1:
+                self.cores = 1  # If there is only one thread there is only one core
         self.serial_number = None  # Processors don't have valid SN :-(
         assert 0.1 <= self.speed <= 9
         assert not hasattr(self, 'cores') or 1 <= self.cores <= 16

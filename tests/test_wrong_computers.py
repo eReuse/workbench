@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from ereuse_workbench.computer import Computer
+from ereuse_workbench.computer import Computer, DataStorage, Processor, RamModule
 from tests.assertions import has_ram
 from tests.conftest import computer
 
@@ -8,6 +8,8 @@ from tests.conftest import computer
 Tests computers that broke the Workbench at one point in time.
 
 These tests use the output of LSHW from those computers.
+
+[1]: http://eu.crucial.com/eur/en/support-memory-speeds-compatibility
 """
 
 
@@ -375,3 +377,59 @@ def test_optiplex_gx520(lshw: MagicMock):
     assert hdd.serial_number == '5LR30DTZ'  # checked on print ok
     assert hdd.model == 'ST3808110AS'  # checked on print ok
     assert hdd.manufacturer == 'Seagate'  # checked on print ok
+
+
+def test_hp_pavilion_dv4000(lshw: MagicMock):
+    pc, components = computer(lshw, 'hp-pavilion-dv4000.lshw')
+
+
+def test_nox(lshw: MagicMock):
+    pc, components = computer(lshw, 'nox.lshw')
+    ram = components['RamModule'][0]
+    assert ram.model == '9905403-038.A00LF'
+    assert ram.serial_number == '8F17943'
+    assert ram.size == 4096
+    assert ram.speed == 1333.0  # checked
+    assert ram.manufacturer == 'Kingston'  # checked
+    assert ram.interface == 'DDR3'  # checked
+    assert ram.format == 'DIMM'  # checked
+    hdd = components['HardDrive'][0]
+    assert hdd.model == 'ST3500413AS'  # checked
+    assert hdd.serial_number == 'Z2A3HR7N'  # checked
+    assert hdd.manufacturer == 'Seagate'  # checked
+    assert hdd.size == 476940  # print shows 500GB
+    motherboard = components['Motherboard'][0]
+    assert motherboard.serial_number == '109192430003459'
+    assert motherboard.model == 'P8H61-M LE'  # checked
+    assert motherboard.manufacturer == 'ASUSTeK Computer INC.'  # print shows asus
+
+
+def test_lenovo_thinkcentre_edge(lshw: MagicMock):
+    # serial number motherboard that doesnt recognize: 11S0B39930ZVQ27W2AT2VS 210
+    pc, components = computer(lshw, 'lenovo-thinkcentre-edge.lshw')
+    motherboard = components['Motherboard'][0]
+    ram = components['RamModule'][0]  # type: RamModule
+    assert ram.size == 2048
+    assert ram.serial_number == '292E48DA'  # no printed
+    assert ram.model == '16JTF25664AZ-1G4F1'  # printed one starts with 'MT'...
+    assert ram.manufacturer == 'Micron'  # checked on print ok
+    assert ram.interface == 'DDR3'
+    assert ram.speed == 1333.0  # printed pc3-1600 (check [1] at the beginning of file)
+    hdd = components['HardDrive'][0]
+    assert isinstance(hdd, DataStorage)
+    assert hdd.serial_number == 'Z2AYPLNP'  # checked on print ok
+    assert hdd.model == 'ST250DM000-1BD14'  # printed one doesn't have the '-1BD14'
+    assert hdd.size == 238475  # disk capacity is 250GB
+    assert components['GraphicCard'][0].model == '2nd Generation Core Processor ' \
+                                                 'Family Integrated Graphics Controller'
+    assert len(components['GraphicCard']) == 1
+    assert len(components['Processor']) == 1
+    assert len(components['Processor']) == 1
+    cpu = components['Processor'][0]
+    assert isinstance(cpu, Processor)
+    assert cpu.address == 64
+    assert cpu.cores == 2
+    assert cpu.threads == 2
+    assert cpu.manufacturer == 'Intel Corp.'
+    assert cpu.serial_number is None
+    assert cpu.speed == 1.674792
