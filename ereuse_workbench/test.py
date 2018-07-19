@@ -64,7 +64,6 @@ class TestDataStorage(Test):
             except TypeError:  # completion_time is None, estimate end time
                 duration = 2 if length == TestDataStorageLength.Short else 120
                 test_end = datetime.now() + timedelta(minutes=duration)
-            print('            It will finish around {}:'.format(test_end))
 
             # follow progress of test until it ends or the estimated time is reached
             remaining = 100  # test completion pending percentage
