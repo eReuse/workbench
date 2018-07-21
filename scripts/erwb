@@ -1,10 +1,14 @@
 #!/usr/bin/python3 -O
 
+import subprocess
 # -*- coding: utf-8 -*-
-
+import time
+from datetime import datetime
 from pathlib import Path
 
 import click
+import ntplib
+from colorama import Style
 from ereuse_utils import cli
 
 from ereuse_workbench.erase import EraseType
@@ -39,15 +43,22 @@ from ereuse_workbench.workbench import Workbench
                    'This will activate USBSneaky module, load the '
                    'settings from the server, and keep indefinitely waiting for an USB to'
                    'be plugged-in.')
+@click.option('--sync-time/--no-sync-time',
+              default=False,
+              help='Sync the time with the Internet before executing the Workbench. '
+                   'Print a warning if it cannot sync (ex. no Internet).')
 @click.option('--json',
               type=click.Path(dir_okay=False, writable=True, resolve_path=True),
               help='Write the resulting report to a JSON file.')
 def erwb(**kwargs):
     json = kwargs.pop('json')
     json = Path(json) if json else None
+    _sync_time = kwargs.pop('sync_time')
     workbench = Workbench(**kwargs, json=json)
+    if _sync_time:
+        sync_time()
     workbench.run()
-    print('\a')  # make a bip
+    print('\a')  # Bip!
     if kwargs.get('server', None):
         print('You can still link the computer.')
         print('Stop the machine by pressing the power button.')
@@ -56,6 +67,20 @@ def erwb(**kwargs):
         # Note that the child is a daemon so it will be terminated
         # once this main process terminates too
         workbench.usb_sneaky.join()
+
+
+def sync_time():
+    """Syncs the time of the machine with the Internet."""
+    # from https://stackoverflow.com/a/18720876
+    try:
+        client = ntplib.NTPClient()
+        response = client.request('pool.ntp.org')
+        subprocess.run(('date', time.strftime('%m%d%H%M%Y.%S', time.localtime(response.tx_time))),
+                       stdout=subprocess.DEVNULL,
+                       check=True)
+        print('{}Local time set as {:%H:%M:%S}.{}'.format(Style.DIM, datetime.now(), Style.NORMAL))
+    except Exception:
+        print('{}Time not synced with the Internet.{}'.format(Style.DIM, Style.NORMAL))
 
 
 if __name__ == '__main__':

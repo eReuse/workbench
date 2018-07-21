@@ -5,7 +5,7 @@ with open('README.md') as f:
 
 setup(
     name='ereuse-workbench',
-    version='11.0a3',
+    version='11.0a4',
     packages=find_packages(),
     license='AGPLv3 License',
     description='The eReuse Workbench is '
@@ -29,7 +29,8 @@ setup(
         'colorama',
         'click >= 6.0',
         'click-spinner',
-        'inflection'
+        'inflection',
+        'ntplib'
     ],
     setup_requires=[
         'pytest-runner'

@@ -131,7 +131,10 @@ class Processor(Component):
         # In some cases we may get empty cpu nodes, we can detect them because
         # all regular cpus have at least a description (Intel Core i5...)
         return (cls(node) for node in nodes if
-                'logical' not in node['id'] and 'description' in node and not node.get('disabled'))
+                'logical' not in node['id']
+                and 'description' in node
+                and not node.get('disabled')
+                and 'width' in node)
 
     def __init__(self, node: dict) -> None:
         super().__init__(node)
@@ -353,6 +356,8 @@ class NetworkAdapter(Component):
             # https://www.redhat.com/archives/redhat-list/2010-October/msg00066.html
             # workbench-live includes proprietary firmwares
             self.serial_number = self.serial_number or utils.get_hw_addr(node['logicalname'])
+        self.wireless = bool(node.get('configuration', {}).get('wireless', False))
+
 
     @classmethod
     def from_lshw(cls, lshw: dict) -> Iterator['NetworkAdapter']:

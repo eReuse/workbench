@@ -103,6 +103,7 @@ class Measurable(Dumpeable):
         init = datetime.datetime.utcnow()
         yield
         self.elapsed = datetime.datetime.utcnow() - init
+        assert self.elapsed.total_seconds() > 0
 
 
 class DumpeableJSONEncoder(JSONEncoder):

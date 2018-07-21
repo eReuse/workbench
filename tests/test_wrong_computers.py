@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from ereuse_workbench.computer import Computer, DataStorage, Processor, RamModule
+from ereuse_workbench.computer import Computer, DataStorage, NetworkAdapter, Processor, RamModule
 from tests.assertions import has_ram
 from tests.conftest import computer
 
@@ -11,6 +11,9 @@ These tests use the output of LSHW from those computers.
 
 [1]: http://eu.crucial.com/eur/en/support-memory-speeds-compatibility
 """
+
+
+# todo wireless NetworkAdaptors don't have speed (ex. 54Mbps)
 
 
 def test_box_xavier(lshw: MagicMock):
@@ -26,6 +29,9 @@ def test_eee_pc(lshw: MagicMock):
     assert pc.chassis == 'Netbook'
     assert isinstance(pc, Computer)
     assert len(components['GraphicCard']) == 1
+    eth, wifi = components[NetworkAdapter.__name__]
+    assert not eth.wireless
+    assert wifi.wireless
     # todo assert components == jsonf('eee-pc-components-output')
 
 
@@ -77,6 +83,10 @@ def test_xiaomi(lshw: MagicMock):
     assert ram1.model == 'NVIDIA Corporation'
     assert ram1.serial_number is None
     assert ram1.manufacturer == 'NVIDIA Corporation'
+    # todo pc has ethernet capabilities through USB3 type C
+    # how do we reflect this?
+    wifi = components[NetworkAdapter.__name__][0]
+    assert wifi.wireless
 
 
 def test_dell(lshw: MagicMock):
@@ -381,6 +391,10 @@ def test_optiplex_gx520(lshw: MagicMock):
 
 def test_hp_pavilion_dv4000(lshw: MagicMock):
     pc, components = computer(lshw, 'hp-pavilion-dv4000.lshw')
+    assert pc.type == 'Laptop'
+    wifi, ethernet = components[NetworkAdapter.__name__]
+    assert wifi.wireless
+    assert not ethernet.wireless
 
 
 def test_nox(lshw: MagicMock):
@@ -433,3 +447,7 @@ def test_lenovo_thinkcentre_edge(lshw: MagicMock):
     assert cpu.manufacturer == 'Intel Corp.'
     assert cpu.serial_number is None
     assert cpu.speed == 1.674792
+
+
+def test_toshiba(lshw: MagicMock):
+    pc, components = computer(lshw, 'toshiba.lshw')

@@ -20,9 +20,10 @@ class EraseType(Enum):
 class Measurable(Dumpeable):
     @contextmanager
     def measure(self):
-        self.start_time = datetime.now()
+        self.start_time = datetime.utcnow()
         yield
-        self.end_time = datetime.now()
+        self.end_time = datetime.utcnow()
+        assert self.end_time > self.start_time
 
 
 class Erase(Measurable):

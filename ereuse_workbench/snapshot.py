@@ -74,8 +74,6 @@ class Snapshot(Dumpeable):
             if test.error:
                 self._title('{} {}'.format(t, storage.serial_number))
                 self._error('failed.')
-            else:
-                self._done()
         self._elapsed()
 
     def test_stress(self, minutes):

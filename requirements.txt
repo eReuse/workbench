@@ -10,3 +10,4 @@ ereuse-utils [usb_flash_drive] == 0.3.0b10
 click-spinner
 click==6.7
 inflection
+ntplib
