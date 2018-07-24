@@ -87,6 +87,7 @@ def test_xiaomi(lshw: MagicMock):
     # how do we reflect this?
     wifi = components[NetworkAdapter.__name__][0]
     assert wifi.wireless
+    # todo data storage is not detected! (Pci express data storage)
 
 
 def test_dell(lshw: MagicMock):
