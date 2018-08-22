@@ -20,6 +20,8 @@ def Device() -> MagicMock:
 def test_tester_smart(Device: pySMART.Device):
     Device.run_selftest = MagicMock(return_value=(0, None, 3))
     Device.model = 'foo'
+    Device.get_selftest_result = MagicMock()
+    Device.get_current_test_status = MagicMock(return_value=(None, ' '))
     Device.update = MagicMock()
     Device.tests = [MagicMock()]
     Device.tests[0].remain = '0%'

@@ -452,3 +452,8 @@ def test_lenovo_thinkcentre_edge(lshw: MagicMock):
 
 def test_toshiba(lshw: MagicMock):
     pc, components = computer(lshw, 'toshiba.lshw')
+
+
+def test_acer_aspire_5737z(lshw: MagicMock):
+    pc, components = computer(lshw, 'acer-aspire-5737z.lshw')
+    

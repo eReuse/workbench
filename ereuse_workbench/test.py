@@ -41,8 +41,6 @@ class TestDataStorage(Test):
         169: 'remaining_lifetime_percentage',  # Can be reported in several places
         231: 'remaining_lifetime_percentage'
     }
-    SMART_GRACE_TIME = 10
-    """Seconds to wait to retrieve the SMART test result."""
 
     def run(self, logical: str, length: TestDataStorageLength):
         self.length = length
@@ -53,36 +51,29 @@ class TestDataStorage(Test):
                     storage = Device(logical)  # type: Device
                 except Warning:
                     return self._error('SMART cannot be enabled on this device.')
+            storage.get_selftest_result()  # run_selftest requires this to be executed before
             code, message, completion_time = storage.run_selftest(length.value)
             if code > 1:
                 return self._error(message)
 
-            # follow progress of test until it ends or the estimated time is reached
             remaining = 100  # test completion pending percentage
-            with progressbar(length=remaining + self.SMART_GRACE_TIME,
+            with progressbar(length=remaining,
                              title='SMART test {}'.format(storage.model)) as bar:
-                while remaining > 0:
+                while True:
                     sleep(2)  # wait a few seconds between smart retrievals
-                    storage.update()
+                    last = remaining
+                    _, summary = storage.get_current_test_status()
                     try:
-                        last_test = storage.tests[0]
-                    except (TypeError, IndexError):
-                        pass
-                        # The suppress: test is None, no tests
-                        # work around because SMART has not been initialized
-                        # yet but pySMART library doesn't wait
-                        # Just ignore the error because we alreaday have an
-                        # estimation of the ending time
+                        i = summary.index('%')
+                        remaining = int(summary[i - 2:i])
+                    except (ValueError, IndexError):
+                        break
                     else:
-                        last = remaining
-                        with suppress(ValueError):
-                            remaining = int(last_test.remain.strip('%'))
                         completed = last - remaining
                         if completed > 0:
                             bar.update(completed)
-                for _ in range(self.SMART_GRACE_TIME):
-                    sleep(1)
-                    bar.update(1)
+                bar.update(100)
+            sleep(1)  # grace time
             storage.update()
             last_test = storage.tests[0]
 

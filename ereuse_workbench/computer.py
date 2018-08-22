@@ -133,6 +133,7 @@ class Processor(Component):
         return (cls(node) for node in nodes if
                 'logical' not in node['id']
                 and 'description' in node
+                and node.get('description').lower() != 'co-processor'
                 and not node.get('disabled')
                 and 'width' in node)
 
