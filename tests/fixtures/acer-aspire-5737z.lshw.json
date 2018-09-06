@@ -1,0 +1,1335 @@
+{
+  "id" : "debian",
+  "class" : "system",
+  "claimed" : true,
+  "handle" : "DMI:0001",
+  "description" : "Notebook",
+  "product" : "Aspire 5737Z",
+  "vendor" : "Acer",
+  "version" : "V1.06",
+  "serial" : "LXAZ70X0669112B8DB1601",
+  "width" : 32,
+  "configuration" : {
+    "boot" : "oem-specific",
+    "chassis" : "notebook",
+    "cpus" : "2",
+    "uuid" : "921B8C66-9976-EE71-E299-00235A5F6B8D"
+  },
+  "capabilities" : {
+    "smbios-2.5" : "SMBIOS version 2.5",
+    "dmi-2.5" : "DMI version 2.5",
+    "smp-1.4" : "SMP specification v1.4",
+    "smp" : "Symmetric Multi-Processing"
+  },
+  "children" : [
+    {
+      "id" : "core",
+      "class" : "bus",
+      "claimed" : true,
+      "description" : "Motherboard",
+      "physid" : "0",
+      "children" : [
+        {
+          "id" : "firmware",
+          "class" : "memory",
+          "claimed" : true,
+          "description" : "BIOS",
+          "vendor" : "Acer",
+          "physid" : "0",
+          "version" : "V1.06",
+          "date" : "02/23/2009",
+          "units" : "bytes",
+          "size" : 111328,
+          "capabilities" : {
+            "pci" : "PCI bus",
+            "pnp" : "Plug-and-Play",
+            "apm" : "Advanced Power Management",
+            "upgrade" : "BIOS EEPROM can be upgraded",
+            "shadowing" : "BIOS shadowing",
+            "escd" : "ESCD",
+            "cdboot" : "Booting from CD-ROM/DVD",
+            "bootselect" : "Selectable boot path",
+            "edd" : "Enhanced Disk Drive extensions",
+            "int13floppy360" : "5.25\" 360KB floppy",
+            "int13floppy1200" : "5.25\" 1.2MB floppy",
+            "int13floppy720" : "3.5\" 720KB floppy",
+            "int13floppy2880" : "3.5\" 2.88MB floppy",
+            "int5printscreen" : "Print Screen key",
+            "int9keyboard" : "i8042 keyboard controller",
+            "int14serial" : "INT14 serial line control",
+            "int17printer" : "INT17 printer control",
+            "int10video" : "INT10 CGA/Mono video",
+            "acpi" : "ACPI",
+            "usb" : "USB legacy emulation",
+            "ls120boot" : "Booting from LS-120",
+            "biosbootspecification" : "BIOS boot specification",
+            "netboot" : "Function-key initiated network service boot"
+          }
+        },
+        {
+          "id" : "board",
+          "class" : "bus",
+          "handle" : "DMI:0002",
+          "description" : "Motherboard",
+          "product" : "KALA0",
+          "vendor" : "Acer",
+          "physid" : "2",
+          "version" : "N/A",
+          "serial" : "LXAZ70X0669112B8DB1601",
+          "slot" : "Not Applicable"
+        },
+        {
+          "id" : "cpu:0",
+          "class" : "processor",
+          "claimed" : true,
+          "handle" : "DMI:0004",
+          "description" : "CPU",
+          "product" : "Intel(R) Core(TM)2 Duo CPU     T6400  @ 2.00GHz",
+          "vendor" : "Intel Corp.",
+          "physid" : "4",
+          "businfo" : "cpu@0",
+          "version" : "6.7.10",
+          "serial" : "0001-067A-0000-0000-0000-0000",
+          "slot" : "Socket uFCPGA",
+          "units" : "Hz",
+          "size" : 2000000000,
+          "capacity" : 2000000000,
+          "width" : 64,
+          "clock" : 200000000,
+          "configuration" : {
+            "cores" : "2",
+            "enabledcores" : "2",
+            "id" : "1",
+            "threads" : "2"
+          },
+          "capabilities" : {
+            "x86-64" : "64bits extensions (x86-64)",
+            "boot" : "boot processor",
+            "fpu" : "mathematical co-processor",
+            "fpu_exception" : "FPU exceptions reporting",
+            "wp" : true,
+            "vme" : "virtual mode extensions",
+            "de" : "debugging extensions",
+            "pse" : "page size extensions",
+            "tsc" : "time stamp counter",
+            "msr" : "model-specific registers",
+            "pae" : "4GB+ memory addressing (Physical Address Extension)",
+            "mce" : "machine check exceptions",
+            "cx8" : "compare and exchange 8-byte",
+            "apic" : "on-chip advanced programmable interrupt controller (APIC)",
+            "sep" : "fast system calls",
+            "mtrr" : "memory type range registers",
+            "pge" : "page global enable",
+            "mca" : "machine check architecture",
+            "cmov" : "conditional move instruction",
+            "pat" : "page attribute table",
+            "pse36" : "36-bit page size extensions",
+            "clflush" : true,
+            "dts" : "debug trace and EMON store MSRs",
+            "acpi" : "thermal control (ACPI)",
+            "mmx" : "multimedia extensions (MMX)",
+            "fxsr" : "fast floating point save/restore",
+            "sse" : "streaming SIMD extensions (SSE)",
+            "sse2" : "streaming SIMD extensions (SSE2)",
+            "ss" : "self-snoop",
+            "ht" : "HyperThreading",
+            "tm" : "thermal interrupt and status",
+            "pbe" : "pending break event",
+            "nx" : "no-execute bit (NX)",
+            "constant_tsc" : true,
+            "arch_perfmon" : true,
+            "pebs" : true,
+            "bts" : true,
+            "aperfmperf" : true,
+            "pni" : true,
+            "dtes64" : true,
+            "monitor" : true,
+            "ds_cpl" : true,
+            "est" : true,
+            "tm2" : true,
+            "ssse3" : true,
+            "cx16" : true,
+            "xtpr" : true,
+            "pdcm" : true,
+            "sse4_1" : true,
+            "xsave" : true,
+            "lahf_lm" : true,
+            "dtherm" : true,
+            "cpufreq" : "CPU Frequency scaling"
+          },
+          "children" : [
+            {
+              "id" : "cache:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0005",
+              "description" : "L1 cache",
+              "physid" : "5",
+              "slot" : "L1 Cache",
+              "units" : "bytes",
+              "size" : 65536,
+              "capacity" : 65536,
+              "configuration" : {
+                "level" : "1"
+              },
+              "capabilities" : {
+                "asynchronous" : "Asynchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back"
+              }
+            },
+            {
+              "id" : "cache:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0006",
+              "description" : "L2 cache",
+              "physid" : "6",
+              "slot" : "L2 Cache",
+              "units" : "bytes",
+              "size" : 2097152,
+              "configuration" : {
+                "level" : "2"
+              },
+              "capabilities" : {
+                "burst" : "Burst",
+                "internal" : "Internal",
+                "write-through" : "Write-trough",
+                "unified" : "Unified cache"
+              }
+            },
+            {
+              "id" : "logicalcpu:0",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:1.0",
+              "description" : "Logical CPU",
+              "physid" : "1.1",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:1",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:1.1",
+              "description" : "Logical CPU",
+              "physid" : "1.2",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "memory",
+          "class" : "memory",
+          "claimed" : true,
+          "handle" : "DMI:0008",
+          "description" : "System Memory",
+          "physid" : "8",
+          "slot" : "System board or motherboard",
+          "units" : "bytes",
+          "size" : 4294967296,
+          "children" : [
+            {
+              "id" : "bank:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0009",
+              "description" : "DIMM Synchronous 1066 MHz (0.9 ns)",
+              "product" : "000000000000000000000000000000000000",
+              "vendor" : "48spaces",
+              "physid" : "0",
+              "serial" : "00000000",
+              "slot" : "S1",
+              "units" : "bytes",
+              "size" : 2147483648,
+              "clock" : 1066000000
+            },
+            {
+              "id" : "bank:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:000A",
+              "description" : "DIMM Synchronous 1066 MHz (0.9 ns)",
+              "product" : "000000000000000000000000000000000000",
+              "vendor" : "48spaces",
+              "physid" : "1",
+              "serial" : "00000000",
+              "slot" : "S2",
+              "units" : "bytes",
+              "size" : 2147483648,
+              "clock" : 1066000000
+            }
+          ]
+        },
+        {
+          "id" : "cpu:1",
+          "class" : "processor",
+          "claimed" : true,
+          "physid" : "1",
+          "businfo" : "cpu@1",
+          "version" : "6.7.10",
+          "serial" : "0001-067A-0000-0000-0000-0000",
+          "units" : "Hz",
+          "size" : 1200000000,
+          "capacity" : 2000000000,
+          "configuration" : {
+            "id" : "1"
+          },
+          "capabilities" : {
+            "ht" : "HyperThreading",
+            "cpufreq" : "CPU Frequency scaling"
+          },
+          "children" : [
+            {
+              "id" : "logicalcpu:0",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:1.0",
+              "description" : "Logical CPU",
+              "physid" : "1.1",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:1",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:1.1",
+              "description" : "Logical CPU",
+              "physid" : "1.2",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "pci",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "MCP79 Host Bridge",
+          "vendor" : "NVIDIA Corporation",
+          "physid" : "100",
+          "businfo" : "pci@0000:00:00.0",
+          "version" : "b1",
+          "width" : 32,
+          "clock" : 66000000,
+          "children" : [
+            {
+              "id" : "memory:0",
+              "class" : "memory",
+              "handle" : "PCI:0000:00:00.1",
+              "description" : "RAM memory",
+              "product" : "MCP79 Memory Controller",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "0.1",
+              "businfo" : "pci@0000:00:00.1",
+              "version" : "b1",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "bus_master" : "bus mastering"
+              }
+            },
+            {
+              "id" : "isa",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:03.0",
+              "description" : "ISA bridge",
+              "product" : "MCP79 LPC Bridge",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "3",
+              "businfo" : "pci@0000:00:03.0",
+              "version" : "b2",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "isa" : true,
+                "bus_master" : "bus mastering"
+              }
+            },
+            {
+              "id" : "memory:1",
+              "class" : "memory",
+              "handle" : "PCI:0000:00:03.1",
+              "description" : "RAM memory",
+              "product" : "MCP79 Memory Controller",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "3.1",
+              "businfo" : "pci@0000:00:03.1",
+              "version" : "b1",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "latency" : "0"
+              }
+            },
+            {
+              "id" : "serial",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:03.2",
+              "description" : "SMBus",
+              "product" : "MCP79 SMBus",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "3.2",
+              "businfo" : "pci@0000:00:03.2",
+              "version" : "b1",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "nForce2_smbus",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "memory:2",
+              "class" : "memory",
+              "handle" : "PCI:0000:00:03.3",
+              "description" : "RAM memory",
+              "product" : "MCP79 Memory Controller",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "3.3",
+              "businfo" : "pci@0000:00:03.3",
+              "version" : "b1",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "latency" : "0"
+              }
+            },
+            {
+              "id" : "processor",
+              "class" : "processor",
+              "handle" : "PCI:0000:00:03.5",
+              "description" : "Co-processor",
+              "product" : "MCP79 Co-processor",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "3.5",
+              "businfo" : "pci@0000:00:03.5",
+              "version" : "b1",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "latency" : "0",
+                "maxlatency" : "1",
+                "mingnt" : "3"
+              },
+              "capabilities" : {
+                "bus_master" : "bus mastering"
+              }
+            },
+            {
+              "id" : "usb:0",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:04.0",
+              "description" : "USB controller",
+              "product" : "MCP79 OHCI USB 1.1 Controller",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "4",
+              "businfo" : "pci@0000:00:04.0",
+              "version" : "b1",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ohci-pci",
+                "latency" : "0",
+                "maxlatency" : "1",
+                "mingnt" : "3"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "ohci" : "Open Host Controller Interface",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:3:1",
+                  "product" : "OHCI PCI host controller",
+                  "vendor" : "Linux 4.9.0-8-686 ohci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@3",
+                  "logicalname" : "usb3",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "6",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:1",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:04.1",
+              "description" : "USB controller",
+              "product" : "MCP79 EHCI USB 2.0 Controller",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "4.1",
+              "businfo" : "pci@0000:00:04.1",
+              "version" : "b1",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ehci-pci",
+                "latency" : "0",
+                "maxlatency" : "1",
+                "mingnt" : "3"
+              },
+              "capabilities" : {
+                "debug" : "Debug port",
+                "pm" : "Power Management",
+                "ehci" : "Enhanced Host Controller Interface (USB2)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:1:1",
+                  "product" : "EHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-8-686 ehci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@1",
+                  "logicalname" : "usb1",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "6",
+                    "speed" : "480Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-2.00" : "USB 2.0"
+                  },
+                  "children" : [
+                    {
+                      "id" : "usb:0",
+                      "class" : "storage",
+                      "claimed" : true,
+                      "handle" : "USB:1:3",
+                      "description" : "Mass storage device",
+                      "product" : "DataTraveler 102",
+                      "vendor" : "Kingston",
+                      "physid" : "1",
+                      "businfo" : "usb@1:1",
+                      "logicalname" : "scsi7",
+                      "version" : "1.00",
+                      "serial" : "0014780F9A54F9B08513104D",
+                      "configuration" : {
+                        "driver" : "usb-storage",
+                        "maxpower" : "100mA",
+                        "speed" : "480Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-2.00" : "USB 2.0",
+                        "scsi" : "SCSI",
+                        "emulated" : "Emulated device"
+                      },
+                      "children" : [
+                        {
+                          "id" : "disk",
+                          "class" : "disk",
+                          "claimed" : true,
+                          "handle" : "SCSI:07:00:00:00",
+                          "description" : "SCSI Disk",
+                          "product" : "DataTraveler 102",
+                          "vendor" : "Kingston",
+                          "physid" : "0.0.0",
+                          "businfo" : "scsi@7:0.0.0",
+                          "logicalname" : "/dev/sdc",
+                          "dev" : "8:32",
+                          "version" : "1.00",
+                          "units" : "bytes",
+                          "size" : 8005787648,
+                          "configuration" : {
+                            "ansiversion" : "2",
+                            "logicalsectorsize" : "512",
+                            "sectorsize" : "512"
+                          },
+                          "capabilities" : {
+                            "removable" : "support is removable"
+                          },
+                          "children" : [
+                            {
+                              "id" : "medium",
+                              "class" : "disk",
+                              "claimed" : true,
+                              "handle" : "GUID:306e26c5-96cf-4263-b5ba-d60be0011081",
+                              "physid" : "0",
+                              "logicalname" : "/dev/sdc",
+                              "dev" : "8:32",
+                              "units" : "bytes",
+                              "size" : 8005787648,
+                              "configuration" : {
+                                "guid" : "306e26c5-96cf-4263-b5ba-d60be0011081"
+                              },
+                              "capabilities" : {
+                                "gpt-1.00" : "GUID Partition Table version 1.00",
+                                "partitioned" : "Partitioned disk",
+                                "partitioned:gpt" : "GUID partition table"
+                              },
+                              "children" : [
+                                {
+                                  "id" : "volume",
+                                  "class" : "volume",
+                                  "claimed" : true,
+                                  "handle" : "GUID:6e258a76-2d5d-43c5-a541-88380b6d88d8",
+                                  "description" : "Windows FAT volume",
+                                  "vendor" : "mkfs.fat",
+                                  "physid" : "1",
+                                  "logicalname" : ["/dev/sdc1", "/media/usb"],
+                                  "dev" : "8:33",
+                                  "version" : "FAT32",
+                                  "serial" : "bb9a-0525",
+                                  "size" : 8003657216,
+                                  "capacity" : 8004721664,
+                                  "configuration" : {
+                                    "FATs" : "2",
+                                    "filesystem" : "fat",
+                                    "label" : "isard",
+                                    "mount.fstype" : "vfat",
+                                    "mount.options" : "rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro",
+                                    "name" : "Microsoft Basic Data",
+                                    "state" : "mounted"
+                                  },
+                                  "capabilities" : {
+                                    "fat" : "Windows FAT",
+                                    "initialized" : "initialized volume"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id" : "usb:1",
+                      "class" : "multimedia",
+                      "claimed" : true,
+                      "handle" : "USB:1:2",
+                      "description" : "Video",
+                      "product" : "CNF7017",
+                      "vendor" : "Chicony Electronics Co., Ltd.",
+                      "physid" : "5",
+                      "businfo" : "usb@1:5",
+                      "version" : "11.06",
+                      "serial" : "SN0001",
+                      "configuration" : {
+                        "driver" : "uvcvideo",
+                        "maxpower" : "500mA",
+                        "speed" : "480Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-2.00" : "USB 2.0"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id" : "usb:2",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:06.0",
+              "description" : "USB controller",
+              "product" : "MCP79 OHCI USB 1.1 Controller",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "6",
+              "businfo" : "pci@0000:00:06.0",
+              "version" : "b1",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ohci-pci",
+                "latency" : "0",
+                "maxlatency" : "1",
+                "mingnt" : "3"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "ohci" : "Open Host Controller Interface",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:4:1",
+                  "product" : "OHCI PCI host controller",
+                  "vendor" : "Linux 4.9.0-8-686 ohci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@4",
+                  "logicalname" : "usb4",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "6",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:3",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:06.1",
+              "description" : "USB controller",
+              "product" : "MCP79 EHCI USB 2.0 Controller",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "6.1",
+              "businfo" : "pci@0000:00:06.1",
+              "version" : "b1",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ehci-pci",
+                "latency" : "0",
+                "maxlatency" : "1",
+                "mingnt" : "3"
+              },
+              "capabilities" : {
+                "debug" : "Debug port",
+                "pm" : "Power Management",
+                "ehci" : "Enhanced Host Controller Interface (USB2)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:2:1",
+                  "product" : "EHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-8-686 ehci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@2",
+                  "logicalname" : "usb2",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "6",
+                    "speed" : "480Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-2.00" : "USB 2.0"
+                  },
+                  "children" : [
+                    {
+                      "id" : "usb",
+                      "class" : "storage",
+                      "claimed" : true,
+                      "handle" : "USB:2:2",
+                      "description" : "Mass storage device",
+                      "product" : "Mass Storage",
+                      "vendor" : "Generic",
+                      "physid" : "1",
+                      "businfo" : "usb@2:1",
+                      "logicalname" : "scsi6",
+                      "version" : "1.06",
+                      "serial" : "D24FBB10",
+                      "configuration" : {
+                        "driver" : "usb-storage",
+                        "maxpower" : "200mA",
+                        "speed" : "480Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-2.00" : "USB 2.0",
+                        "scsi" : "SCSI",
+                        "emulated" : "Emulated device"
+                      },
+                      "children" : [
+                        {
+                          "id" : "disk",
+                          "class" : "disk",
+                          "claimed" : true,
+                          "handle" : "SCSI:06:00:00:00",
+                          "description" : "SCSI Disk",
+                          "product" : "Flash Disk",
+                          "vendor" : "Generic",
+                          "physid" : "0.0.0",
+                          "businfo" : "scsi@6:0.0.0",
+                          "logicalname" : "/dev/sdb",
+                          "dev" : "8:16",
+                          "version" : "8.07",
+                          "serial" : "D24FBB10",
+                          "units" : "bytes",
+                          "size" : 15728640000,
+                          "configuration" : {
+                            "ansiversion" : "4",
+                            "logicalsectorsize" : "512",
+                            "sectorsize" : "512"
+                          },
+                          "capabilities" : {
+                            "removable" : "support is removable"
+                          },
+                          "children" : [
+                            {
+                              "id" : "medium",
+                              "class" : "disk",
+                              "claimed" : true,
+                              "physid" : "0",
+                              "logicalname" : "/dev/sdb",
+                              "dev" : "8:16",
+                              "units" : "bytes",
+                              "size" : 15728640000,
+                              "configuration" : {
+                                "signature" : "6f1788d0"
+                              },
+                              "capabilities" : {
+                                "partitioned" : "Partitioned disk",
+                                "partitioned:dos" : "MS-DOS partition table"
+                              },
+                              "children" : [
+                                {
+                                  "id" : "volume:0",
+                                  "class" : "volume",
+                                  "claimed" : true,
+                                  "description" : "Empty partition",
+                                  "physid" : "1",
+                                  "logicalname" : ["/dev/sdb1", "/lib/live/mount/medium"],
+                                  "dev" : "8:17",
+                                  "capacity" : 421494784,
+                                  "configuration" : {
+                                    "mount.fstype" : "iso9660",
+                                    "mount.options" : "ro,noatime",
+                                    "state" : "mounted"
+                                  },
+                                  "capabilities" : {
+                                    "primary" : "Primary partition",
+                                    "bootable" : "Bootable partition (active)",
+                                    "nofs" : "No filesystem"
+                                  }
+                                },
+                                {
+                                  "id" : "volume:1",
+                                  "class" : "volume",
+                                  "claimed" : true,
+                                  "description" : "Windows FAT volume",
+                                  "vendor" : "mkfs.fat",
+                                  "physid" : "2",
+                                  "logicalname" : "/dev/sdb2",
+                                  "dev" : "8:18",
+                                  "version" : "FAT12",
+                                  "serial" : "3ba3-f21f",
+                                  "size" : 18446744073709551104,
+                                  "configuration" : {
+                                    "FATs" : "2",
+                                    "filesystem" : "fat"
+                                  },
+                                  "capabilities" : {
+                                    "primary" : "Primary partition",
+                                    "boot" : "Contains boot code",
+                                    "fat" : "Windows FAT",
+                                    "initialized" : "initialized volume"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id" : "multimedia",
+              "class" : "multimedia",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:08.0",
+              "description" : "Audio device",
+              "product" : "MCP79 High Definition Audio",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "8",
+              "businfo" : "pci@0000:00:08.0",
+              "version" : "b1",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "snd_hda_intel",
+                "latency" : "0",
+                "maxlatency" : "5",
+                "mingnt" : "2"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "pci:0",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:01",
+              "description" : "PCI bridge",
+              "product" : "MCP79 PCI Bridge",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "9",
+              "businfo" : "pci@0000:00:09.0",
+              "version" : "b1",
+              "width" : 32,
+              "clock" : 66000000,
+              "capabilities" : {
+                "pci" : true,
+                "subtractive_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "storage",
+              "class" : "storage",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:0b.0",
+              "description" : "SATA controller",
+              "product" : "MCP79 AHCI Controller",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "b",
+              "businfo" : "pci@0000:00:0b.0",
+              "version" : "b1",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ahci",
+                "latency" : "0",
+                "maxlatency" : "1",
+                "mingnt" : "3"
+              },
+              "capabilities" : {
+                "storage" : true,
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "ahci_1.0" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "pci:1",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:04",
+              "description" : "PCI bridge",
+              "product" : "MCP79 PCI Express Bridge",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "10",
+              "businfo" : "pci@0000:00:10.0",
+              "version" : "b1",
+              "width" : 32,
+              "clock" : 33000000,
+              "capabilities" : {
+                "pci" : true,
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "display",
+                  "class" : "display",
+                  "claimed" : true,
+                  "handle" : "PCI:0000:04:00.0",
+                  "description" : "VGA compatible controller",
+                  "product" : "C79 [GeForce 9400M G]",
+                  "vendor" : "NVIDIA Corporation",
+                  "physid" : "0",
+                  "businfo" : "pci@0000:04:00.0",
+                  "version" : "b1",
+                  "width" : 64,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "driver" : "nouveau",
+                    "latency" : "0"
+                  },
+                  "capabilities" : {
+                    "pm" : "Power Management",
+                    "msi" : "Message Signalled Interrupts",
+                    "vga_controller" : true,
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing",
+                    "rom" : "extension ROM"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "pci:2",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:05",
+              "description" : "PCI bridge",
+              "product" : "MCP79 PCI Express Bridge",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "15",
+              "businfo" : "pci@0000:00:15.0",
+              "version" : "b1",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "pcieport"
+              },
+              "capabilities" : {
+                "pci" : true,
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "pciexpress" : "PCI Express",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "pci:3",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:0b",
+              "description" : "PCI bridge",
+              "product" : "MCP79 PCI Express Bridge",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "16",
+              "businfo" : "pci@0000:00:16.0",
+              "version" : "b1",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "pcieport"
+              },
+              "capabilities" : {
+                "pci" : true,
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "pciexpress" : "PCI Express",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "network",
+                  "class" : "network",
+                  "claimed" : true,
+                  "handle" : "PCI:0000:0b:00.0",
+                  "description" : "Ethernet interface",
+                  "product" : "NetXtreme BCM5764M Gigabit Ethernet PCIe",
+                  "vendor" : "Broadcom Inc. and subsidiaries",
+                  "physid" : "0",
+                  "businfo" : "pci@0000:0b:00.0",
+                  "logicalname" : "enp11s0",
+                  "version" : "10",
+                  "serial" : "00:23:5a:5f:6b:8d",
+                  "units" : "bit/s",
+                  "capacity" : 1000000000,
+                  "width" : 64,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "autonegotiation" : "on",
+                    "broadcast" : "yes",
+                    "driver" : "tg3",
+                    "driverversion" : "3.137",
+                    "firmware" : "sb v2.19",
+                    "latency" : "0",
+                    "link" : "no",
+                    "multicast" : "yes",
+                    "port" : "twisted pair"
+                  },
+                  "capabilities" : {
+                    "pm" : "Power Management",
+                    "vpd" : "Vital Product Data",
+                    "msi" : "Message Signalled Interrupts",
+                    "pciexpress" : "PCI Express",
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing",
+                    "ethernet" : true,
+                    "physical" : "Physical interface",
+                    "tp" : "twisted pair",
+                    "10bt" : "10Mbit/s",
+                    "10bt-fd" : "10Mbit/s (full duplex)",
+                    "100bt" : "100Mbit/s",
+                    "100bt-fd" : "100Mbit/s (full duplex)",
+                    "1000bt" : "1Gbit/s",
+                    "1000bt-fd" : "1Gbit/s (full duplex)",
+                    "autonegotiation" : "Auto-negotiation"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "pci:4",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:11",
+              "description" : "PCI bridge",
+              "product" : "MCP79 PCI Express Bridge",
+              "vendor" : "NVIDIA Corporation",
+              "physid" : "17",
+              "businfo" : "pci@0000:00:17.0",
+              "version" : "b1",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "pcieport"
+              },
+              "capabilities" : {
+                "pci" : true,
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "pciexpress" : "PCI Express",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "network",
+                  "class" : "network",
+                  "disabled" : true,
+                  "claimed" : true,
+                  "handle" : "PCI:0000:11:00.0",
+                  "description" : "Wireless interface",
+                  "product" : "AR928X Wireless Network Adapter (PCI-Express)",
+                  "vendor" : "Qualcomm Atheros",
+                  "physid" : "0",
+                  "businfo" : "pci@0000:11:00.0",
+                  "logicalname" : "wlp17s0",
+                  "version" : "01",
+                  "serial" : "00:24:2b:d3:dd:19",
+                  "width" : 64,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "broadcast" : "yes",
+                    "driver" : "ath9k",
+                    "driverversion" : "4.9.0-8-686",
+                    "firmware" : "N/A",
+                    "latency" : "0",
+                    "link" : "no",
+                    "multicast" : "yes",
+                    "wireless" : "IEEE 802.11"
+                  },
+                  "capabilities" : {
+                    "pm" : "Power Management",
+                    "msi" : "Message Signalled Interrupts",
+                    "pciexpress" : "PCI Express",
+                    "msix" : "MSI-X",
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing",
+                    "ethernet" : true,
+                    "physical" : "Physical interface",
+                    "wireless" : "Wireless-LAN"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id" : "scsi:0",
+          "class" : "storage",
+          "claimed" : true,
+          "physid" : "3",
+          "logicalname" : "scsi0",
+          "capabilities" : {
+            "emulated" : "Emulated device"
+          },
+          "children" : [
+            {
+              "id" : "disk",
+              "class" : "disk",
+              "claimed" : true,
+              "handle" : "SCSI:00:00:00:00",
+              "description" : "ATA Disk",
+              "product" : "WDC WD5000BEVT-2",
+              "vendor" : "Western Digital",
+              "physid" : "0.0.0",
+              "businfo" : "scsi@0:0.0.0",
+              "logicalname" : "/dev/sda",
+              "dev" : "8:0",
+              "version" : "1A01",
+              "serial" : "WD-WXN209S36759",
+              "units" : "bytes",
+              "size" : 500107862016,
+              "configuration" : {
+                "ansiversion" : "5",
+                "logicalsectorsize" : "512",
+                "sectorsize" : "512",
+                "signature" : "2b43ce9e"
+              },
+              "capabilities" : {
+                "partitioned" : "Partitioned disk",
+                "partitioned:dos" : "MS-DOS partition table"
+              },
+              "children" : [
+                {
+                  "id" : "volume:0",
+                  "class" : "volume",
+                  "claimed" : true,
+                  "description" : "Windows NTFS volume",
+                  "physid" : "1",
+                  "businfo" : "scsi@0:0.0.0,1",
+                  "logicalname" : "/dev/sda1",
+                  "dev" : "8:1",
+                  "version" : "3.1",
+                  "serial" : "264b1412-ba44-e011-8b58-00235a5f6b8d",
+                  "size" : 10742150656,
+                  "capacity" : 10742183424,
+                  "configuration" : {
+                    "clustersize" : "4096",
+                    "created" : "2009-03-13 07:58:58",
+                    "filesystem" : "ntfs",
+                    "label" : "PQSERVICE",
+                    "state" : "clean"
+                  },
+                  "capabilities" : {
+                    "primary" : "Primary partition",
+                    "ntfs" : "Windows NTFS",
+                    "initialized" : "initialized volume"
+                  }
+                },
+                {
+                  "id" : "volume:1",
+                  "class" : "volume",
+                  "claimed" : true,
+                  "description" : "Windows NTFS volume",
+                  "physid" : "2",
+                  "businfo" : "scsi@0:0.0.0,2",
+                  "logicalname" : "/dev/sda2",
+                  "dev" : "8:2",
+                  "version" : "3.1",
+                  "serial" : "74141086-37a5-c146-8df5-b7437fc35176",
+                  "size" : 244677869056,
+                  "capacity" : 244683112448,
+                  "configuration" : {
+                    "clustersize" : "4096",
+                    "created" : "2009-03-26 06:50:03",
+                    "filesystem" : "ntfs",
+                    "label" : "SISTEMA",
+                    "modified_by_chkdsk" : "true",
+                    "mounted_on_nt4" : "true",
+                    "resize_log_file" : "true",
+                    "state" : "dirty",
+                    "upgrade_on_mount" : "true"
+                  },
+                  "capabilities" : {
+                    "primary" : "Primary partition",
+                    "bootable" : "Bootable partition (active)",
+                    "ntfs" : "Windows NTFS",
+                    "initialized" : "initialized volume"
+                  }
+                },
+                {
+                  "id" : "volume:2",
+                  "class" : "volume",
+                  "claimed" : true,
+                  "description" : "Windows NTFS volume",
+                  "physid" : "3",
+                  "businfo" : "scsi@0:0.0.0,3",
+                  "logicalname" : "/dev/sda3",
+                  "dev" : "8:3",
+                  "version" : "3.1",
+                  "serial" : "0017d866-f644-e011-8ab0-00235a5f6b8d",
+                  "size" : 244671577600,
+                  "capacity" : 244681015296,
+                  "configuration" : {
+                    "clustersize" : "4096",
+                    "created" : "2011-03-02 18:05:02",
+                    "filesystem" : "ntfs",
+                    "label" : "Maqueta",
+                    "state" : "clean"
+                  },
+                  "capabilities" : {
+                    "primary" : "Primary partition",
+                    "ntfs" : "Windows NTFS",
+                    "initialized" : "initialized volume"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id" : "scsi:1",
+          "class" : "storage",
+          "claimed" : true,
+          "physid" : "5",
+          "logicalname" : "scsi2",
+          "capabilities" : {
+            "emulated" : "Emulated device"
+          },
+          "children" : [
+            {
+              "id" : "cdrom",
+              "class" : "disk",
+              "claimed" : true,
+              "handle" : "SCSI:02:00:00:00",
+              "description" : "DVD-RAM writer",
+              "product" : "DVD RW AD-7580S",
+              "vendor" : "Optiarc",
+              "physid" : "0.0.0",
+              "businfo" : "scsi@2:0.0.0",
+              "logicalname" : ["/dev/cdrom", "/dev/cdrw", "/dev/dvd", "/dev/dvdrw", "/dev/sr0"],
+              "dev" : "11:0",
+              "version" : "FX04",
+              "configuration" : {
+                "ansiversion" : "5",
+                "status" : "nodisc"
+              },
+              "capabilities" : {
+                "removable" : "support is removable",
+                "audio" : "Audio CD playback",
+                "cd-r" : "CD-R burning",
+                "cd-rw" : "CD-RW burning",
+                "dvd" : "DVD playback",
+                "dvd-r" : "DVD-R burning",
+                "dvd-ram" : "DVD-RAM burning"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

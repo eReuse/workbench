@@ -53,6 +53,13 @@ def lshw() -> MagicMock:
         yield run
 
 
+@pytest.fixture()
+def pysmart_device() -> MagicMock:
+    with mock.patch('ereuse_workbench.computer.pySMART.Device') as smart:
+        smart.side_effect = Warning()
+        yield smart
+
+
 def computer(lshw: MagicMock, json_name: str) -> Tuple[Computer, Dict[str, List[Component]]]:
     """Given a LSHW output and a LSHW mock, runs Computer."""
     lshw.side_effect.json = fixture(json_name + '.json')

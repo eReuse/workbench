@@ -1,6 +1,9 @@
 from unittest.mock import MagicMock
 
+import pytest
+
 from ereuse_workbench.computer import Computer, DataStorage, NetworkAdapter, Processor, RamModule
+from tests import conftest
 from tests.assertions import has_ram
 from tests.conftest import computer
 
@@ -15,11 +18,12 @@ These tests use the output of LSHW from those computers.
 
 # todo wireless NetworkAdaptors don't have speed (ex. 54Mbps)
 
-
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_box_xavier(lshw: MagicMock):
     computer(lshw, 'box-xavier')
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_eee_pc(lshw: MagicMock):
     pc, components = computer(lshw, 'eee-pc')
     assert len(components['Processor']) == 1
@@ -35,12 +39,14 @@ def test_eee_pc(lshw: MagicMock):
     # todo assert components == jsonf('eee-pc-components-output')
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_lenovo(lshw: MagicMock):
     pc, components = computer(lshw, 'lenovo')
     assert len(components['Processor']) == 1
     assert has_ram(components), 'Computer without RAM'
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_pc_laudem(lshw: MagicMock):
     # todo fix
     pc, components = computer(lshw, 'pc-laudem')
@@ -49,6 +55,7 @@ def test_pc_laudem(lshw: MagicMock):
     assert len(components['GraphicCard']) == 1
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_virtualbox_client(lshw: MagicMock):
     """
     Tests a virtualized computer.
@@ -59,6 +66,7 @@ def test_virtualbox_client(lshw: MagicMock):
     pc, components = computer(lshw, 'virtualbox-client')
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_xeon(lshw: MagicMock):
     pc, components = computer(lshw, 'xeon')
     assert 'HardDrive' not in components
@@ -71,6 +79,7 @@ def test_xeon(lshw: MagicMock):
     assert ram0.manufacturer == ram1.manufacturer == 'NVIDIA Corporation'
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_xiaomi(lshw: MagicMock):
     pc, components = computer(lshw, 'xiaomi')
     assert len(components['Processor']) == 1
@@ -90,6 +99,7 @@ def test_xiaomi(lshw: MagicMock):
     # todo data storage is not detected! (Pci express data storage)
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_dell(lshw: MagicMock):
     pc, components = computer(lshw, 'dell-logicalname-network')
     assert len(components['Processor']) == 1
@@ -97,6 +107,7 @@ def test_dell(lshw: MagicMock):
     assert len(components['GraphicCard']) == 1
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_hp_dc7900(lshw: MagicMock):
     """Tests an HP DC 7900 with an erased HDD following HMG IS5."""
     # todo check totalSlots and usedSlots
@@ -107,6 +118,7 @@ def test_hp_dc7900(lshw: MagicMock):
     assert len(components['GraphicCard']) == 1
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_virtualbox_without_hdd_and_with_usb(lshw: MagicMock):
     """
     Tests that a Virtualbox with an USB plugged-in doesn't provide
@@ -122,6 +134,7 @@ def test_virtualbox_without_hdd_and_with_usb(lshw: MagicMock):
     assert 'HardDrive' not in components and 'SolidStateDrive' not in components
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_nec(lshw: MagicMock):
     """
     Tests a NEC computer.
@@ -148,6 +161,7 @@ def test_nec(lshw: MagicMock):
     assert len(components['GraphicCard']) == 1
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_hp_compaq_8100(lshw: MagicMock):
     """
     Tests an HP Compaq 8100.
@@ -177,6 +191,7 @@ def test_hp_compaq_8100(lshw: MagicMock):
     assert len(components['GraphicCard']) == 1
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_lenovo_7220w3t(lshw: MagicMock):
     pc, components = computer(lshw, 'lenovo-7220w3t.lshw')
     assert pc.manufacturer == 'LENOVO'
@@ -196,6 +211,7 @@ def test_lenovo_7220w3t(lshw: MagicMock):
     assert len(components['GraphicCard']) == 1
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_lenovo_type_as_intel(lshw: MagicMock):
     """
     Tests a lenovo computer whose LSHW output was wrongly taken
@@ -219,6 +235,7 @@ def test_lenovo_type_as_intel(lshw: MagicMock):
     assert len(components['GraphicCard']) == 1
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_asus_all_series(lshw: MagicMock):
     pc, components = computer(lshw, 'asus-all-series.lshw')
     # todo it doesn't work assert pc.serial_number == '104094'
@@ -229,6 +246,7 @@ def test_asus_all_series(lshw: MagicMock):
     assert len(components['GraphicCard']) == 1
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_custom_pc(lshw: MagicMock):
     pc, components = computer(lshw, 'custom.lshw')
     ram = components['RamModule'][0]
@@ -240,6 +258,7 @@ def test_custom_pc(lshw: MagicMock):
     assert len(components['GraphicCard']) == 1
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_all_series(lshw: MagicMock):
     pc, components = computer(lshw, 'all-series.lshw')
     assert 'RamModule' in components
@@ -250,6 +269,7 @@ def test_all_series(lshw: MagicMock):
     assert len(components['GraphicCard']) == 1
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_vostro_260(lshw: MagicMock):
     pc, components = computer(lshw, 'vostro-260.lshw')
     processor = components['Processor'][0]
@@ -263,6 +283,7 @@ def test_vostro_260(lshw: MagicMock):
     assert len(components['GraphicCard']) == 1
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_ecs_computers(lshw: MagicMock):
     # Visually checked
     pc, components = computer(lshw, 'ecs-computers.lshw')
@@ -310,6 +331,7 @@ def test_ecs_computers(lshw: MagicMock):
     assert components['GraphicCard'][0].manufacturer == 'Intel Corporation'
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_core2(lshw: MagicMock):
     pc, components = computer(lshw, 'core2.lshw')
     assert len(components) == 7
@@ -322,6 +344,7 @@ def test_core2(lshw: MagicMock):
     assert len(components['GraphicCard']) == 1
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_ecs2(lshw: MagicMock):
     pc, components = computer(lshw, 'ecs-2.lshw')
     assert len(components['RamModule']) == 3
@@ -334,6 +357,7 @@ def test_ecs2(lshw: MagicMock):
     assert len(components['GraphicCard']) == 1
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_optiplex_745(lshw: MagicMock):
     # Visually checked
     pc, components = computer(lshw, 'optiplex-745.lshw')
@@ -365,6 +389,7 @@ def test_optiplex_745(lshw: MagicMock):
     assert mb.model == '0HP962'  # As above
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_optiplex_gx520(lshw: MagicMock):
     pc, components = computer(lshw, 'optiplex-gx520.lshw')
     assert len(components['RamModule']) == 2
@@ -390,6 +415,7 @@ def test_optiplex_gx520(lshw: MagicMock):
     assert hdd.manufacturer == 'Seagate'  # checked on print ok
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_hp_pavilion_dv4000(lshw: MagicMock):
     pc, components = computer(lshw, 'hp-pavilion-dv4000.lshw')
     assert pc.type == 'Laptop'
@@ -398,6 +424,7 @@ def test_hp_pavilion_dv4000(lshw: MagicMock):
     assert not ethernet.wireless
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_nox(lshw: MagicMock):
     pc, components = computer(lshw, 'nox.lshw')
     ram = components['RamModule'][0]
@@ -419,6 +446,7 @@ def test_nox(lshw: MagicMock):
     assert motherboard.manufacturer == 'ASUSTeK Computer INC.'  # print shows asus
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_lenovo_thinkcentre_edge(lshw: MagicMock):
     # serial number motherboard that doesnt recognize: 11S0B39930ZVQ27W2AT2VS 210
     pc, components = computer(lshw, 'lenovo-thinkcentre-edge.lshw')
@@ -450,5 +478,12 @@ def test_lenovo_thinkcentre_edge(lshw: MagicMock):
     assert cpu.speed == 1.674792
 
 
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_toshiba(lshw: MagicMock):
     pc, components = computer(lshw, 'toshiba.lshw')
+
+
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
+def test_acer_aspire_5737z(lshw: MagicMock):
+    pc, components = computer(lshw, 'acer-aspire-5737z.lshw')
+
