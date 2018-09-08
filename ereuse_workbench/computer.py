@@ -180,10 +180,11 @@ class RamModule(Component):
         self.format = 'SODIMM' if 'SODIMM' in description else 'DIMM'
         self.size = int(utils.convert_capacity(node['size'], node['units'], 'MB'))
         for w in description.split():
-            if w.startswith('DDR'):
+            if w.startswith('DDR'):  # We assume all DDR are SDRAM
                 self.interface = w
                 break
-            elif w.startswith('SDRAM') or w.startswith('SODIMM'):
+            elif w.startswith('SDRAM'):
+                # Fallback. SDRAM is generic denomination for DDR types.
                 self.interface = w
         if 'clock' in node:
             self.speed = utils.convert_frequency(node['clock'], 'Hz', 'MHz')
@@ -360,7 +361,6 @@ class NetworkAdapter(Component):
             # workbench-live includes proprietary firmwares
             self.serial_number = self.serial_number or utils.get_hw_addr(node['logicalname'])
         self.wireless = bool(node.get('configuration', {}).get('wireless', False))
-
 
     @classmethod
     def from_lshw(cls, lshw: dict) -> Iterator['NetworkAdapter']:

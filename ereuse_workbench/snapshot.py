@@ -46,7 +46,7 @@ class Snapshot(Dumpeable):
         self.version = version
         self.expected_events = expected_events
         self.closed = False
-        self.date = datetime.utcnow()
+        self.endTime = datetime.utcnow()
 
     def computer(self):
         """Retrieves information about the computer and components."""
