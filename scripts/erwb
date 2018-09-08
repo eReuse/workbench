@@ -3,7 +3,7 @@
 import subprocess
 # -*- coding: utf-8 -*-
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import click
@@ -78,7 +78,7 @@ def sync_time():
         subprocess.run(('date', time.strftime('%m%d%H%M%Y.%S', time.localtime(response.tx_time))),
                        stdout=subprocess.DEVNULL,
                        check=True)
-        print('{}Local time set as {:%H:%M:%S}.{}'.format(Style.DIM, datetime.now(), Style.NORMAL))
+        print('{}Local time set as {:%H:%M:%S}.{}'.format(Style.DIM, datetime.now(timezone.utc), Style.NORMAL))
     except Exception:
         print('{}Time not synced with the Internet.{}'.format(Style.DIM, Style.NORMAL))
 

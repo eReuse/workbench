@@ -100,9 +100,9 @@ class Measurable(Dumpeable):
 
     @contextmanager
     def measure(self):
-        init = datetime.datetime.utcnow()
+        init = datetime.datetime.now(datetime.timezone.utc)
         yield
-        self.elapsed = datetime.datetime.utcnow() - init
+        self.elapsed = datetime.datetime.now(datetime.timezone.utc) - init
         assert self.elapsed.total_seconds() > 0
 
 

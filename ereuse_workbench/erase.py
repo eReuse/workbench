@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from subprocess import CalledProcessError, DEVNULL, PIPE, Popen
 from typing import TextIO
@@ -20,9 +20,9 @@ class EraseType(Enum):
 class Measurable(Dumpeable):
     @contextmanager
     def measure(self):
-        self.start_time = datetime.utcnow()
+        self.start_time = datetime.now(timezone.utc)
         yield
-        self.end_time = datetime.utcnow()
+        self.end_time = datetime.now(timezone.utc)
         assert self.end_time > self.start_time
 
 

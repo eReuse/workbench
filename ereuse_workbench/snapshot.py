@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from distutils.version import StrictVersion
 from enum import Enum, unique
 from itertools import chain
@@ -40,13 +40,13 @@ class Snapshot(Dumpeable):
                  software: SnapshotSoftware,
                  version: StrictVersion) -> None:
         self.type = 'Snapshot'
-        self._init_time = datetime.utcnow()
+        self._init_time = datetime.now(timezone.utc)
         self.uuid = uuid
         self.software = software
         self.version = version
         self.expected_events = expected_events
         self.closed = False
-        self.endTime = datetime.utcnow()
+        self.endTime = datetime.now(timezone.utc)
 
     def computer(self):
         """Retrieves information about the computer and components."""
@@ -109,7 +109,7 @@ class Snapshot(Dumpeable):
         self._elapsed()
 
     def _elapsed(self):
-        self.elapsed = datetime.now() - self._init_time
+        self.elapsed = datetime.now(timezone.utc) - self._init_time
 
     def _done(self):
         print('{}done.'.format(Fore.GREEN))
