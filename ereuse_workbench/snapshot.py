@@ -108,6 +108,11 @@ class Snapshot(Dumpeable):
                 self._done()
         self._elapsed()
 
+    def close_if_needed(self, actual_event):
+        """Closes the Snapshot if it has done all expected events."""
+        if not self.expected_events or actual_event == self.expected_events[-1]:
+            self.closed = True
+
     def _elapsed(self):
         self.elapsed = datetime.now(timezone.utc) - self._init_time
 

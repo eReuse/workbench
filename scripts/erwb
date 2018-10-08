@@ -4,41 +4,43 @@ import subprocess
 # -*- coding: utf-8 -*-
 import time
 from datetime import datetime, timezone
-from pathlib import Path
 
 import click
 import ntplib
+from boltons import urlutils
 from colorama import Style
 from ereuse_utils import cli
+from ereuse_utils.session import Session
 
 from ereuse_workbench.erase import EraseType
+from ereuse_workbench.snapshot import Snapshot
 from ereuse_workbench.test import TestDataStorageLength
 from ereuse_workbench.workbench import Workbench
 
 
 @click.command(help=Workbench.__doc__)
-@click.option('--benchmark/--no-benchmark',
+@click.option('--benchmark/--no-benchmark', '-b',
               default=False,
               help='Benchmark the components.')
-@click.option('--smart',
+@click.option('--smart', '-st',
               type=cli.Enum(TestDataStorageLength),
               help='Perform a SMART test to the data storage units.')
-@click.option('--erase', type=cli.Enum(EraseType), help='Erase all data storage units.')
-@click.option('--erase-steps',
+@click.option('--erase', '-e', type=cli.Enum(EraseType), help='Erase all data storage units.')
+@click.option('--erase-steps', '-es',
               type=click.IntRange(min=1),
               default=1,
               help='Number of erasure STEPS.')
 @click.option('--erase-leading-zeros/--no-erase-leading-zeros',
               default=False,
               help='Shall we perform an extra erasure step writing zeros?')
-@click.option('--stress',
+@click.option('--stress', '-ss',
               type=click.IntRange(min=0),
               default=0,
               help='Run stress test for the given MINUTES (0 to disable)')
-@click.option('--install',
+@click.option('--install', '-i',
               help='The name of the FSA OS to install, without the ".fsa" extension. '
                    'The file has to be in /media/workbench-images')
-@click.option('--server',
+@click.option('--server', '-sr',
               help='Connect to a WorkbenchServer at the specified URI. '
                    'This will activate USBSneaky module, load the '
                    'settings from the server, and keep indefinitely waiting for an USB to'
@@ -47,17 +49,22 @@ from ereuse_workbench.workbench import Workbench
               default=False,
               help='Sync the time with the Internet before executing the Workbench. '
                    'Print a warning if it cannot sync (ex. no Internet).')
-@click.option('--json',
-              type=click.Path(dir_okay=False, writable=True, resolve_path=True),
+@click.option('--json', '-j',
+              type=cli.Path(dir_okay=False, writable=True, resolve_path=True),
               help='Write the resulting report to a JSON file.')
+@click.option('--submit', '-st',
+              type=cli.URL(scheme=True, username=True, password=True, host=True,
+                           path=False, query_params=False, fragment=False),
+              help='If set, submits the resulting Snapshot to a passed-in Devicehub.'
+                   'Provide a valid URL with scheme, username, password and host.')
 def erwb(**kwargs):
-    json = kwargs.pop('json')
-    json = Path(json) if json else None
+    click.clear()
     _sync_time = kwargs.pop('sync_time')
-    workbench = Workbench(**kwargs, json=json)
+    _submit = kwargs.pop('submit')
+    workbench = Workbench(**kwargs)
     if _sync_time:
         sync_time()
-    workbench.run()
+    snapshot = workbench.run()
     print('\a')  # Bip!
     if kwargs.get('server', None):
         print('You can still link the computer.')
@@ -67,6 +74,8 @@ def erwb(**kwargs):
         # Note that the child is a daemon so it will be terminated
         # once this main process terminates too
         workbench.usb_sneaky.join()
+    if _submit:
+        submit(_submit, snapshot)
 
 
 def sync_time():
@@ -78,9 +87,22 @@ def sync_time():
         subprocess.run(('date', time.strftime('%m%d%H%M%Y.%S', time.localtime(response.tx_time))),
                        stdout=subprocess.DEVNULL,
                        check=True)
-        print('{}Local time set as {:%H:%M:%S}.{}'.format(Style.DIM, datetime.now(timezone.utc), Style.NORMAL))
+        print('{}Local time set as {:%H:%M:%S}.{}'.format(Style.DIM, datetime.now(timezone.utc),
+                                                          Style.NORMAL))
     except Exception:
         print('{}Time not synced with the Internet.{}'.format(Style.DIM, Style.NORMAL))
+
+
+def submit(url: urlutils.URL, snapshot: Snapshot):
+    username, password = url.username, url.password
+    url.username = ''
+    session = Session(base_url=url.to_text())
+    r = session.post('users/login', json={'email': username, 'password': password})
+    t = r.json()['token']
+    session.post('snapshots/',
+                 data=snapshot.to_json(),
+                 headers={'Authorization': 'Basic {}'.format(t)})
+    print('Submitted :-)')
 
 
 if __name__ == '__main__':

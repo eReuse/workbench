@@ -6,7 +6,7 @@ pyudev==0.21.0
 requests==2.18.4
 requests-toolbelt==0.8.0
 colorama
-ereuse-utils [usb_flash_drive] == 0.3.0b10
+ereuse-utils[usb_flash_drive,session,cli]==0.4.0b8
 click-spinner
 click==6.7
 inflection

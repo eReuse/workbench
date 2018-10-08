@@ -69,6 +69,8 @@ def computer(lshw: MagicMock, json_name: str) -> Tuple[Computer, Dict[str, List[
     lshw.side_effect.json = fixture(json_name + '.json')
     s = Snapshot(UUID(int=000000), [], SnapshotSoftware.Workbench, StrictVersion('11.0a1'))
     s.computer()
+    s.close_if_needed(None)
+    assert s.closed
     pc, components = s.device, s.components
     assert lshw.called
 

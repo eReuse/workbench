@@ -1,3 +1,4 @@
+import json
 import os
 import uuid
 from distutils.version import StrictVersion
@@ -105,6 +106,7 @@ class Workbench:
 
         # Devicehub and workbench-server will need this
         self.expected_events = []
+        self._expected_events_iter = iter(self.expected_events)
         if self.benchmark:
             self.expected_events.append('Benchmark')
         if self.smart:
@@ -116,8 +118,25 @@ class Workbench:
         if self.install:
             self.expected_events.append('Install')
 
+    @property
+    def smart(self):
+        return self._smart
+
+    @smart.setter
+    def smart(self, value):
+        self._smart = TestDataStorageLength(value) if value else None
+
+    @property
+    def erase(self):
+        return self._erase
+
+    @erase.setter
+    def erase(self, value):
+        self._erase = EraseType(value) if value else None
+
     def config_from_server(self):
         """Configures the Workbench from a config endpoint in the server."""
+        # todo test this ensuring values from json are well set
         r = self.session.get('/config')
         for key, value in r.json().items():
             setattr(self, key, value)
@@ -141,8 +160,10 @@ class Workbench:
         returns a valid JSON for Devicehub.
         """
 
-        print('{}eReuse.org Workbench {!s}.\n'
-              'Performing {}:'.format(Fore.CYAN, self.version, ', '.join(self.expected_events)))
+        print('{}eReuse.org Workbench {!s}.'.format(Fore.CYAN, self.version))
+        if self.server:
+            print('{}Connected to Workbench Server.'.format(Fore.CYAN))
+        print('{}Performing {}:'.format(Fore.CYAN, ', '.join(self.expected_events)))
         try:
             snapshot = self._run()
         except Exception:
@@ -169,7 +190,7 @@ class Workbench:
                             SnapshotSoftware.Workbench,
                             self.version)
         snapshot.computer()
-        self.after_phase(snapshot)
+        self.after_phase(snapshot, is_info_phase=True)
 
         if self.benchmark:
             snapshot.benchmarks()
@@ -193,14 +214,19 @@ class Workbench:
 
         return snapshot
 
-    def after_phase(self, snapshot: Snapshot):
+    def after_phase(self, snapshot: Snapshot, is_info_phase=False):
+        actual = next(self._expected_events_iter) if not is_info_phase else None
+        snapshot.close_if_needed(actual)
         if self.json:
             with self.json.open('w') as f:
                 f.write(snapshot.to_json())
         if self.server:  # Send to workbench-server
             url = '/snapshots/{}'.format(snapshot.uuid)
+            # todo to json and then back to dict and finally back to json...
             data = snapshot.to_json()
-            self.session.patch(url, data=data)
+            data = json.loads(data)
+            data['_phase'] = actual
+            self.session.patch(url, json=data)
 
     @property
     def version(self) -> StrictVersion:

@@ -1,13 +1,11 @@
 import datetime
 import fcntl
-import json
 import socket
 import struct
 from contextlib import contextmanager
 
 import click
-import inflection
-from ereuse_utils import JSONEncoder
+from ereuse_utils import Dumpeable
 
 LJUST = 38
 """Left-justify the print output to X characters."""
@@ -63,34 +61,6 @@ def get_hw_addr(ifname):
     return ':'.join('%02x' % ord(char) for char in info[18:24])
 
 
-class Dumpeable:
-    """
-    A base class to allow inner classes to generate ``json`` and similar
-    structures in an easy-way. It prevents private and
-    constants to be in the JSON and camelCases field names.
-    """
-
-    def dump(self):
-        """
-        Creates a dictionary consisting of the
-        non-private fields of this instance with camelCase field names.
-        """
-        d = vars(self).copy()
-        for name in vars(self).keys():
-            if name.startswith('_') or name[0].isupper():
-                del d[name]
-            else:
-                d[inflection.camelize(name, uppercase_first_letter=False)] = d.pop(name)
-        return d
-
-    def to_json(self):
-        """
-        Creates a JSON representation of the non-private fields of
-        this class.
-        """
-        return json.dumps(self, cls=DumpeableJSONEncoder, indent=2)
-
-
 class Measurable(Dumpeable):
     """A base class that allows measuring execution times."""
 
@@ -104,15 +74,6 @@ class Measurable(Dumpeable):
         yield
         self.elapsed = datetime.datetime.now(datetime.timezone.utc) - init
         assert self.elapsed.total_seconds() > 0
-
-
-class DumpeableJSONEncoder(JSONEncoder):
-    """Performs ``dump`` on ``Dumpeable`` objects."""
-
-    def default(self, obj):
-        if isinstance(obj, Dumpeable):
-            return obj.dump()
-        return super().default(obj)
 
 
 def progressbar(iterable=None, length=None, title=''):
