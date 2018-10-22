@@ -64,7 +64,9 @@ class Device(Dumpeable):
         'partnum',
         'manufacturer',
         '0000000',
-        'fffff'
+        'fffff',
+        'jedec id:ad 00 00 00 00 00 00 00',
+        '012000'
     }
     """Discard a value if any of these values are inside it. """
     assert all(v.lower() == v for v in MEANINGLESS), 'All values need to be lower-case'

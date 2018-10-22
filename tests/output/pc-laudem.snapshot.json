@@ -27,9 +27,9 @@
       "threads": 2
     },
     {
-      "manufacturer": "JEDEC ID:AD 00 00 00 00 00 00 00",
+      "manufacturer": null,
       "model": "HYMP125U64CP8-S6",
-      "serialNumber": "01200000",
+      "serialNumber": null,
       "events": [],
       "type": "RamModule",
       "format": "DIMM",

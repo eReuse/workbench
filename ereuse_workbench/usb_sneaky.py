@@ -47,7 +47,7 @@ class USBSneaky:
                 sleep(2.25)  # Don't stress Workbench Server
 
     def send_plug(self, pen: dict):
-        self.session.post('/usbs/plugged/{}'.format(pen['hid']), json=pen)
+        self.session.post('/usbs/{}'.format(pen['hid']), json=pen)
 
     def send_unplug(self, hid: str):
-        self.session.delete('/usbs/plugged/{}'.format(hid))
+        self.session.delete('/usbs/{}'.format(hid))
