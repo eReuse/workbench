@@ -7,7 +7,9 @@ code is just placeholder.
 
 import textwrap
 from pathlib import Path
-from subprocess import CalledProcessError, run
+from subprocess import CalledProcessError
+
+from ereuse_utils import cmd
 
 from ereuse_workbench.utils import Measurable
 
@@ -90,8 +92,7 @@ class Install(Measurable):
 
     @classmethod
     def zero_out(cls, drive: str):
-        command = 'dd', 'if=/dev/zero', 'of={}'.format(drive), 'bs=512', 'count=1'
-        run(command, check=True)
+        cmd.run('dd', 'if=/dev/zero', 'of={}'.format(drive), 'bs=512', 'count=1')
         cls.sync()
 
     @staticmethod
@@ -113,8 +114,7 @@ class Install(Measurable):
                 mkpart primary ext2 1MiB 100% \
             """)
             os_partition = '{}{}'.format(target_disk, 1)  # "/dev/sda1"
-        command = 'parted', '--script', target_disk, '--', parted_commands
-        run(command, check=True)
+        cmd.run('parted', '--script', target_disk, '--', parted_commands)
         return os_partition
 
     @staticmethod
@@ -125,10 +125,8 @@ class Install(Measurable):
         :param target_partition:
         :return:
         """
-        assert path_to_os_image.suffix != '.fsa', 'Do not set the .fsa extension'
-        command = ('fsarchiver', 'restfs', str(path_to_os_image) + '.fsa',
-                   'id=0,dest={}'.format(target_partition))
-        run(command, check=True)
+        assert path_to_os_image.suffix == '.fsa', 'Set the .fsa extension'
+        cmd.run('fsarchiver', 'restfs', path_to_os_image, 'id=0,dest={}'.format(target_partition))
 
     @staticmethod
     def install_bootloader(target_disk: str):
@@ -139,19 +137,14 @@ class Install(Measurable):
         :return:
         """
         # Must install grub via 'grub-install', but it will complain if --boot-directory is not used.
-        command = 'mkdir', '/tmp/mnt'
-        run(command, check=True)
-        command = 'mount', '{}1'.format(target_disk), '/tmp/mnt'
-        run(command, check=True)
-        command = 'grub-install', '--boot-directory=/tmp/mnt/boot/', '/dev/sda'
-        run(command, check=True)
-        command = 'umount', '/tmp/mnt'
-        run(command, check=True)
+        cmd.run('mkdir', '/tmp/mnt')
+        cmd.run('mount', '{}1'.format(target_disk), '/tmp/mnt')
+        cmd.run('grub-install', '--boot-directory=/tmp/mnt/boot/', '/dev/sda')
+        cmd.run('umount', '/tmp/mnt')
 
     @staticmethod
     def sync():
-        run(('sync',), timeout=10)
-
+        cmd.run('sync', timeout=10)
 
 
 class CannotInstall(Exception):

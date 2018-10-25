@@ -178,7 +178,7 @@ class Workbench:
                     run(('umount', str(self.install_path)), universal_newlines=True, check=True)
                 except CalledProcessError as e:
                     raise CannotMount() from e
-        print('{}Workbench has finished properly.'.format(Fore.GREEN))
+        print('{}Workbench has finished properly \u2665'.format(Fore.GREEN))
         return snapshot
 
     def _run(self) -> Snapshot:

@@ -5,7 +5,7 @@ with open('README.md') as f:
 
 setup(
     name='ereuse-workbench',
-    version='11.0a6',
+    version='11.0b1',
     packages=find_packages(),
     license='AGPLv3 License',
     description='The eReuse Workbench is '
@@ -25,7 +25,7 @@ setup(
         'pySMART.smartx',
         'pyudev',
         'requests',
-        'ereuse-utils[usb_flash_drive, session, cli]>=0.3.0b9',
+        'ereuse-utils[usb_flash_drive, session, cli]>=0.3.0b10',
         'colorama',
         'click >= 6.0',
         'click-spinner',

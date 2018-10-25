@@ -7,8 +7,9 @@ from datetime import datetime, timezone
 
 import click
 import ntplib
+import requests
 from boltons import urlutils
-from colorama import Style
+from colorama import Fore, Style
 from ereuse_utils import cli
 from ereuse_utils.session import Session
 
@@ -93,16 +94,45 @@ def sync_time():
         print('{}Time not synced with the Internet.{}'.format(Style.DIM, Style.NORMAL))
 
 
-def submit(url: urlutils.URL, snapshot: Snapshot):
+def _submit(url: urlutils.URL, snapshot: Snapshot):
     username, password = url.username, url.password
-    url.username = ''
+    url.username = ''  # sets password too
     session = Session(base_url=url.to_text())
     r = session.post('users/login', json={'email': username, 'password': password})
     t = r.json()['token']
-    session.post('snapshots/',
-                 data=snapshot.to_json(),
-                 headers={'Authorization': 'Basic {}'.format(t)})
-    print('Submitted :-)')
+    r = session.post('snapshots/',
+                     data=snapshot.to_json(),
+                     headers={
+                         'Authorization': 'Basic {}'.format(t),
+                         'Content-Type': 'application/json'
+                     })
+    return r.json()
+
+
+def submit(url: urlutils.URL, snapshot: Snapshot):
+    try:
+        snapshot_server = _submit(url, snapshot)
+    except (requests.ConnectionError, requests.Timeout):
+        print('{}No Internet.{}'.format(Fore.YELLOW, Style.RESET_ALL),
+              'Connect the computer to the Internet with an Ethernet cable to upload the report.',
+              'Trying again in 10 seconds...')
+        time.sleep(10)
+        submit(url, snapshot)
+    except requests.HTTPError as e:
+        print('{}We could not auto-upload the device.{}'.format(Fore.RED, Style.RESET_ALL))
+        print('This can happen for some devices, like custom-built ones,',
+              'that do not have or do not report a valid S/N.')
+        print('We can process them when this software is being deployed'
+              'with an eReuse.org Server, like the Devicetag.io Box, but not in the actual mode.')
+        print('Contact us if you have any questions.')
+        print('The technical error message is as follows:')
+        print(e)
+    else:
+        url.username = ''
+        device_url = url.navigate(snapshot_server['device']['url'])
+        print('{}Uploaded.{}'.format(Fore.GREEN, Style.RESET_ALL),
+              'Your computer is at {}'.format(device_url.to_text()))
+        print('{}Press the power button to turn this PC off.{}'.format(Style.DIM, Style.NORMAL))
 
 
 if __name__ == '__main__':
