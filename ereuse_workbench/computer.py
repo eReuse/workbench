@@ -44,10 +44,16 @@ class Device(Dumpeable):
     """Delete those *words* from the value"""
     assert all(v.lower() == v for v in TO_REMOVE), 'All words need to be lower-case'
 
-    CHARS_TO_REMOVE = '(){}[]'
+    REMOVE_CHARS_BETWEEN = '(){}[]'
     """
     Remove those *characters* from the value. 
     All chars inside those are removed. Ex: foo (bar) => foo
+    """
+    CHARS_TO_REMOVE = '*'
+    """Remove the characters.
+    
+    '*' Needs to be removed or otherwise it is interpreted
+    as a glob expression by regexes.
     """
 
     MEANINGLESS = {
@@ -100,8 +106,8 @@ class Device(Dumpeable):
         regex = r'({})\W'.format('|'.join(s for s in remove))
         val = re.sub(regex, '', dictionary.get(key, ''), flags=re.IGNORECASE)
         val = '' if val.lower() in remove else val  # regex's `\W` != whole string
-        val = re.sub(r'\([^)]*\)', '', val)  # Remove everything between CHARS_TO_REMOVE
-        for char_to_remove in cls.CHARS_TO_REMOVE:
+        val = re.sub(r'\([^)]*\)', '', val)  # Remove everything between
+        for char_to_remove in chain(cls.REMOVE_CHARS_BETWEEN, cls.CHARS_TO_REMOVE):
             val = val.replace(char_to_remove, '')
         val = clean(val)
         if val and not any(meaningless in val.lower() for meaningless in cls.MEANINGLESS):

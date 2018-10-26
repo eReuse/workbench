@@ -487,3 +487,7 @@ def test_toshiba(lshw: MagicMock):
 def test_acer_aspire_5737z(lshw: MagicMock):
     pc, components = computer(lshw, 'acer-aspire-5737z.lshw')
 
+
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
+def test_david(lshw: MagicMock):
+    pc, components = computer(lshw, 'david.lshw')

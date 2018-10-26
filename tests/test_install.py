@@ -20,27 +20,27 @@ fsarchiver savefs mockfs.fsa /dev/loop0
 ezpzlmnsqz
 """
 
+image_path = Path('/media/workbench-images/FooBarOS-18.3-English.fsa')
+
 
 @pytest.fixture()
 def run() -> MagicMock:
-    with patch('ereuse_workbench.install.run') as mocked_run:
+    with patch('ereuse_utils.cmd.run') as mocked_run:
         yield mocked_run
 
 
 def test_install(run: MagicMock):
     # Run module
-    image_path = Path('/media/workbench-images/FooBarOS-18.3-English')
     install = Install(image_path)
     install.run()
 
     # Do checks
     assert run.call_count == 9
 
-    fscall = next(args[0]
+    fscall = next(args
                   for args, kwargs in run.call_args_list
-                  if args[0][0] == 'fsarchiver')
-    assert fscall[2] == str(image_path) + '.fsa', \
-        'Failed to add extension to image name'
+                  if args[0] == 'fsarchiver')
+    assert fscall[2] == image_path
 
     assert install.name == str(image_path.name)
     assert not install.error
@@ -48,14 +48,11 @@ def test_install(run: MagicMock):
 
 def test_installer_with_known_error(run: MagicMock):
     run.side_effect = subprocess.CalledProcessError(69, 'test')
-    image_path = Path('/media/workbench-images/FooBarOS-18.3-English')
-
     with pytest.raises(CannotInstall):
         Install(image_path).run()
 
 
 def test_installer_with_unknown_error(run: MagicMock):
     run.side_effect = Exception()
-    image_path = Path('/media/workbench-images/FooBarOS-18.3-English')
     with pytest.raises(Exception):
         Install(image_path).run()
