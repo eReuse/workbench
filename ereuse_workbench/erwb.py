@@ -18,14 +18,22 @@ from ereuse_workbench.snapshot import Snapshot
 from ereuse_workbench.test import TestDataStorageLength
 from ereuse_workbench.workbench import Workbench
 
+EPILOG = """\b
+Ex. sudo erwb --benchmark --smart Short --erase EraseSectors --json out.json
 
-@click.command(help=Workbench.__doc__)
+will generate a hardware report plus benchmarks, a short SMART
+test of all data storage units, and a certified erasure of all data
+storage units, saving the resulting report as 'out.json'.
+"""
+
+
+@click.command(help=Workbench.__doc__, epilog=EPILOG)
 @click.option('--benchmark/--no-benchmark', '-b',
               default=False,
-              help='Benchmark the components.')
+              help='Benchmark the components using sysbench and other tools.')
 @click.option('--smart', '-st',
               type=cli.Enum(TestDataStorageLength),
-              help='Perform a SMART test to the data storage units.')
+              help='Perform a SMART test to all the data storage units.')
 @click.option('--erase', '-e', type=cli.Enum(EraseType), help='Erase all data storage units.')
 @click.option('--erase-steps', '-es',
               type=click.IntRange(min=1),

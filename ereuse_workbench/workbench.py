@@ -19,9 +19,16 @@ from ereuse_workbench.usb_sneaky import USBSneaky
 
 
 class Workbench:
-    """
-    Create a hardware report of your computer with serial numbers,
-    testing, benchmarking, erasing, and installing an OS.
+    """Create a hardware report of your computer with components,
+    serial numbers, testing, benchmarking, erasing, and installing
+    an OS.
+
+    By default Workbench only generates a report of the hardware
+    characteristics of the computer, so it is safe to use.
+    Parametrize it to make workbench perform tests, benchmarks...
+    generating a bigger report including the results of those actions.
+
+    You must run this software as root / sudo.
     """
 
     def __init__(self,

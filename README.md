@@ -1,145 +1,61 @@
 # eReuse.org Workbench
-The eReuse.org Workbench is a set of tools and services to assist the preparation for reuse and
-traceability of digital devices (capture of hardware characteristics, hardware rating and testing,
-secure deletion of data and install Linux OS).
+Create a hardware report (JSON) of your computer including components,
+serial numbers, testing (SMART and stress test), benchmarking (sysbench),
+erasing (using certified tools and well-known standards),
+and installing an OS.
 
-## Features
-- Run in an unattended way without the need for additional steps rather than powering up the
-  computer.
-- Provides documents for deletion of data, tests of operation, hardware information and serial
-  numbers for traceability.
-- Install Linux OS in record-time.
-- Mass process network-connected computers with
-  [Workbench Server](https://github.com/ereuse/workbench-server).
+You parametrize Workbench to execute the actions you want and then
+runs without user interaction, generating a human and machine 
+friendly report in JSON. This report can be uploaded to the IT Asset
+Management System [Devicehub](https://github.com/ereuse/devicehub-teal).
+Check example reports [here](https://github.com/eReuse/devicehub-teal/blob/master/ereuse_devicehub/dummy/files/asus-eee-1000h.snapshot.11.yaml),
+[here](https://github.com/eReuse/devicehub-teal/blob/master/ereuse_devicehub/dummy/files/dell-optiplexgx520.snapshot.11.yaml),
+and [here](https://github.com/eReuse/devicehub-teal/blob/master/ereuse_devicehub/dummy/files/lenovo-3493BAG.snapshot.11.yaml).
 
-## Requirements
-* Debian based Linux. Tested with Debian 9. 
+Workbench can be used in an [USB or CD](https://github.com/ereuse/workbench-live),
+or even [over the network through PXE](https://github.com/ereuse/workbench-server),
+specially useful when erasing and installing OSes or working
+with many computers.
 
-Our installation script automatically installs [debian packages](debian-requirements.txt) and 
-[python libraries](requirements.txt).
+This repository is the stand-alone core version of Workbench.
 
-If you want to erase the hard-drive of a computer you will need to execute Workbench in a live cd.
-We offer a live-cd with a pre-configured Workbench that connects to Workbench Server in
-[Workbench Live](https://github.com/ereuse/workbench-live). You can use this project to customize
-a workbench live that suits your needs.
+Workbench uses several well-known Linux packages to perform each
+action, avoiding re-inventing the wheel. It is used
+professionally by refurbishers and regular companies to register,
+prepare, and track their devices, and has great emphasis in data
+correctness. Workbench is free software from [eReuse.org](https://ereuse.org).
 
 ## Installation
-1. Install the [debian packages](debian-requirements.txt).
-2. `pip install ereuse-workbench`
+Workbench is developed and tested in Debian 9, and it should
+work in any Debian based OS, even in any Linux as long as the OS
+has the debian packages listed below.
+
+1. Install the [debian packages](debian-requirements.txt), like
+   the following way `cat debian-requirements.txt | xargs apt install -y`.
+2. `pip3 install ereuse-workbench --pre -U`
 
 ## Usage
+Execute Workbench through the CLI or directly in Python.
+
+To use the CLI check the help for more info: `$ erwb --help`
+
 From a python file you can:
 ```python
     from ereuse_workbench.workbench import Workbench
-    erwb = Workbench()
+    erwb = Workbench() # Check the docs of this class for more info
     erwb.run()
 ```
 
-The process will generate a JSON file with the hardware description in it, for example:
-```json
-{
-    "@type": "Snapshot",
-    "_uuid": "c58060c1-72e9-4638-893b-a928e9fb9c9c",
-    "comment": "A description of this PC.",
-    "components": [
-        {
-            "@type": "GraphicCard",
-            "manufacturer": "Acme Corporation",
-            "memory": 256.0,
-            "model": "82945G/GZ Integrated Graphics Controller"
-        },
-        {
-            "@type": "HardDrive",
-            "benchmark": {
-                "@type": "BenchmarkHardDrive",
-                "readingSpeed": 44.7,
-                "writingSpeed": 24.8
-            },
-            "interface": "ata",
-            "manufacturer": "ACME",
-            "model": "ST380815AS",
-            "serialNumber": "2QZBZX1M",
-            "size": 76319,
-            "test": {
-                "@type": "TestHardDrive",
-                "error": false,
-                "firstError": null,
-                "lifetime": 0,
-                "status": "Completed without error",
-                "type": "Short offline"
-            }
-        },
-        {
-            "@type": "RamModule",
-            "interface": "DDR",
-            "manufacturer": "7F98000000000000",
-            "serialNumber": "AB6F3B4D",
-            "size": 512,
-            "speed": 533.0
-        },
-        {
-            "@type": "Motherboard",
-            "connectors": {
-                "firewire": 0,
-                "pcmcia": 0,
-                "serial": 0,
-                "usb": 5
-            },
-            "manufacturer": "Acme Inc.",
-            "model": "0RJ291",
-            "serialNumber": "..NC317046CX01ZJ.",
-            "totalSlots": 0,
-            "usedSlots": 2
-        },
-        {
-            "@type": "NetworkAdapter",
-            "manufacturer": "ACME Corporation",
-            "model": "NetXtreme BCM5751 Gigabit Ethernet PCI Express",
-            "serialNumber": "00:11:22:33:44:55",
-            "speed": 1000
-        },
-        {
-            "@type": "OpticalDrive",
-            "description": "DVD-RAM writer",
-            "manufacturer": "HL-DT-ST",
-            "model": "DVD-RAM GSA-H55N"
-        },
-        {
-            "@type": "Processor",
-            "benchmark": {
-                "@type": "BenchmarkProcessor",
-                "score": 3193.19
-            },
-            "manufacturer": "ACME Corp.",
-            "model": "ACME(R) Pontium(R) D CPU 2.80GHz",
-            "numberOfCores": 2,
-            "serialNumber": "0000-0F47-0000-0000-0000-0000"
-        },
-        {
-            "@type": "SoundCard",
-            "manufacturer": "ACME Corporation",
-            "model": "82801G (ICH7 Family) AC'97 Audio Controller"
-        }
-    ],
-    "condition": {
-        "appearance": {
-            "general": "C"
-        },
-        "functionality": {
-            "general": "B"
-        }
-    },
-    "device": {
-        "@type": "Computer",
-        "manufacturer": "ACME Inc.",
-        "model": "Super GX520",
-        "serialNumber": "GTK1N3J",
-        "type": "Desktop"
-    },
-    "label": "PC-7",
-    "version": "8.0a2"
-}
-```
+## Testing
+1. Clone this repository and go to the repository main folder.
+2. Install Workbench as `pip3 install -e .[test] -r requirements.txt`.
+3. Run the tests with `python3 setup.py test`
+
+Tests can be run in Windows an Mac machines too, as they use
+stubs instead of accessing the OS packages.
 
 ## Known limitations
+We want to overcome them in the future :-)
+
 - Unsupported USB network adaptors.
+- It cannot not install Windows OS.

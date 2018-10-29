@@ -15,8 +15,4 @@ cat debian-requirements.txt | xargs apt install -y
 echo 'Installing python packages...'
 pip3 install -e . -r requirements.txt
 
-echo 'Installing erwb command line...'
-install -m 0755 scripts/erwb /usr/local/sbin/erwb
-# Execution example: sudo erwb
-
 echo Workbench installed!

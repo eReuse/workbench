@@ -3,19 +3,22 @@ from setuptools import find_packages, setup
 with open('README.md') as f:
     long_description = f.read()
 
+test_requires = [
+    'pytest',
+    'requests_mock'
+]
+
 setup(
     name='ereuse-workbench',
-    version='11.0b1',
-    packages=find_packages(),
-    license='AGPLv3 License',
-    description='The eReuse Workbench is '
-                'a toolset to help with the diagnostic, benchmarking, '
-                'inventory and installation of computers, '
-                'with the optional assistance of a local server.',
-    scripts=['scripts/erwb'],
+    version='11.0b2',
     url='https://github.com/eReuse/workbench',
+    license='Affero',
+    packages=find_packages(),
+    description='Hardware report of the computer including components,'
+                ' testing, benchmarking, erasing, and installing an OS.',
     author='eReuse.org team',
     author_email='x.bustamante@ereuse.org',
+    python_requires='>=3.5.3',
     long_description=long_description,
     long_description_content_type='text/markdown',
     install_requires=[
@@ -35,10 +38,10 @@ setup(
     setup_requires=[
         'pytest-runner'
     ],
-    tests_require=[
-        'pytest',
-        'pytest-mock'
-    ],
+    extras_require={
+        'test': test_requires,
+    },
+    tests_require=test_requires,
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
@@ -50,5 +53,11 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Topic :: System :: Logging',
         'Topic :: Utilities',
-    ]
+    ],
+    py_modules=['ereuse_workbench'],
+    entry_points={
+        'console_scripts': [
+            'erwb = ereuse_workbench.erwb:erwb',
+        ],
+    },
 )
