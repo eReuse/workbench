@@ -31,13 +31,16 @@ work in any Debian based OS, even in any Linux as long as the OS
 has the debian packages listed below.
 
 1. Install the [debian packages](debian-requirements.txt), like
-   the following way `cat debian-requirements.txt | xargs apt install -y`.
-2. `pip3 install ereuse-workbench --pre -U`
+   the following way `cat debian-requirements.txt | sudo xargs apt install -y`.
+2. `sudo pip3 install ereuse-workbench --pre -U`
+
+Note that you need to install this as sudo, as the software can only
+be run with root due to the sensitive tools it uses.
 
 ## Usage
 Execute Workbench through the CLI or directly in Python.
 
-To use the CLI check the help for more info: `$ erwb --help`
+To use the CLI check the help for more info: `sudo erwb --help`
 
 From a python file you can:
 ```python
@@ -49,10 +52,11 @@ From a python file you can:
 ## Testing
 1. Clone this repository and go to the repository main folder.
 2. Install Workbench as `pip3 install -e .[test] -r requirements.txt`.
-3. Run the tests with `python3 setup.py test`
+3. Run the tests with `python3 setup.py test`.
 
-Tests can be run in Windows an Mac machines too, as they use
-stubs instead of accessing the OS packages.
+Note that you do not need to be root to execute tests, and that
+they can be executed in Mac and Windows, as they do not use any
+of the system tools, but stubs.
 
 ## Known limitations
 We want to overcome them in the future :-)
