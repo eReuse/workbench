@@ -2,7 +2,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from ereuse_workbench.computer import Computer, DataStorage, NetworkAdapter, Processor, RamModule
+from ereuse_workbench.computer import Computer, DataStorage, GraphicCard, NetworkAdapter, \
+    Processor, RamModule
 from tests import conftest
 from tests.assertions import has_ram
 from tests.conftest import computer
@@ -490,4 +491,54 @@ def test_acer_aspire_5737z(lshw: MagicMock):
 
 @pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_david(lshw: MagicMock):
+    # todo check on hardware the ids, etc
     pc, components = computer(lshw, 'david.lshw')
+    assert pc.model == 'Latitude E6440'
+    assert pc.serial_number == 'FJBQVZ1'
+    assert pc.manufacturer == 'Dell Inc.'
+    assert pc.type == 'Laptop'
+    cpu = components['Processor'][0]
+    assert len(components['Processor']) == 1
+    assert cpu.model == 'Intel Core i7-4600M CPU @ 2.90GHz'
+    assert len(components['RamModule']) == 2
+    for ram in components['RamModule']:
+        assert isinstance(ram, RamModule)
+        assert ram.format == 'SODIMM'
+        assert ram.interface == 'DDR3'
+        assert ram.model == 'M471B5173DB0-YK0'
+        assert ram.serial_number in {'152DD498', '732CD498'}
+        assert ram.size == 4096
+    hdd = components['HardDrive'][0]
+    assert len(components['HardDrive']) == 1
+    assert isinstance(hdd, DataStorage)
+    assert hdd.model == 'Crucial_CT525MX3'
+    assert hdd.serial_number == '164014297BCC'
+    assert hdd.size == 500786
+    # todo is hdd an ssd?
+    assert len(components['GraphicCard']) == 1
+    gpu = components['GraphicCard'][0]
+    assert isinstance(gpu, GraphicCard)
+    assert gpu.manufacturer == 'Intel Corporation'
+    assert gpu.model == '4th Gen Core Processor Integrated Graphics Controller'
+    assert gpu.serial_number is None
+    assert gpu.memory is None
+    assert len(components['NetworkAdapter']) == 3  # todo why 3?
+    eth = components['NetworkAdapter'][0]
+    assert isinstance(eth, NetworkAdapter)
+    assert eth.speed == 1000
+    assert eth.serial_number == 'ec:f4:bb:0b:18:90'
+    assert not eth.wireless
+    wifi = components['NetworkAdapter'][1]
+    assert isinstance(wifi, NetworkAdapter)
+    assert wifi.model == 'Centrino Advanced-N 6235'
+    assert wifi.serial_number == 'c4:d9:87:47:90:e1'
+    assert wifi.manufacturer == 'Intel Corporation'
+    assert wifi.wireless
+    # todo check the third net adapter
+    # todo check sound cards
+    assert len(components['Motherboard']) == 1
+    mother = components['Motherboard'][0]
+    assert mother.manufacturer == 'Dell Inc.'
+    assert mother.serial_number == '/FJBQVZ1/CN1296342I009B/'
+    assert mother.model == '0159N7'
+    # todo check USB ports and slots
