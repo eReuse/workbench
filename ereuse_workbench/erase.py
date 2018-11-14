@@ -6,7 +6,7 @@ from typing import TextIO
 
 from click._termui_impl import ProgressBar
 
-from ereuse_workbench.utils import Dumpeable, progressbar
+from ereuse_workbench.utils import Dumpeable, progressbar, Severity
 
 
 class EraseType(Enum):
@@ -35,14 +35,14 @@ class Erase(Measurable):
         self.zeros = zeros
         self._total_steps = self._steps + int(self.zeros)
         self.steps = []
-        self.error = False
+        self.severity = Severity.Info
 
     def run(self, dev: str):
         with self.measure(), progressbar(length=100, title='Erase {}'.format(dev)) as bar:
             try:
                 self._run(dev, bar)
             except CannotErase:
-                self.error = True
+                self.severity = Severity.Error
                 raise
             bar.update(100)  # shred/badblocks do not output 100% when done
 
@@ -70,7 +70,7 @@ class StepType(Enum):
 class Step(Measurable):
     def __init__(self, type: StepType, bar: ProgressBar, total_steps: int) -> None:
         self.type = type
-        self.error = False
+        self.severity = Severity.Info
         self._options = '-vn 1' if type == StepType.StepRandom else '-zvn 0'
         self._bar = bar
         self._total_steps = total_steps
@@ -84,7 +84,7 @@ class Step(Measurable):
                                 stderr=PIPE)
                 self._update(process.stderr, badblocks=False)
             except CalledProcessError:
-                self.error = True
+                self.severity = Severity.Error
                 raise CannotErase(dev)
 
     def erase_sectors(self, dev: str):
@@ -96,7 +96,7 @@ class Step(Measurable):
                                 stderr=PIPE)
                 self._update(process.stderr, badblocks=True)
             except CalledProcessError:
-                self.error = True
+                self.severity = Severity.Error
                 raise CannotErase(dev)
 
     def _update(self, output: TextIO, badblocks: bool):

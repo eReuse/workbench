@@ -5,6 +5,7 @@ import pySMART
 import pytest
 
 from ereuse_workbench.test import TestDataStorage, TestDataStorageLength
+from ereuse_workbench.utils import Severity
 
 
 @pytest.fixture()
@@ -37,7 +38,7 @@ def test_tester_smart(Device: pySMART.Device):
     test.run('/foo/bar', length=TestDataStorageLength.Short)
     assert test.lifetime == 24
     assert test.type == 'TestDataStorage'
-    assert not test.error
+    assert test.severity != Severity.Error
     assert test.status == 'foo-status'
     assert test.lifetime == 24
     assert test.assessment
@@ -55,5 +56,5 @@ def test_tester_no_smart(Device: pySMART.Device):
     Device.__init__ = init
     t = TestDataStorage()
     t.run('/foo/bar', length=TestDataStorageLength.Short)
-    assert t.error
+    assert t.severity == Severity.Error
     assert t.status == 'SMART cannot be enabled on this device.'

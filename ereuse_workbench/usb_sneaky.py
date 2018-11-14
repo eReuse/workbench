@@ -22,6 +22,7 @@ class USBSneaky:
 
     USBSneaky is thought to be executed as a worker in a single process.
     """
+
     def __init__(self, uuid: UUID, workbench_server: str):
         self.uuid = str(uuid)
         self.session = BaseUrlSession(base_url=workbench_server)

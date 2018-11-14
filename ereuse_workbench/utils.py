@@ -3,12 +3,18 @@ import fcntl
 import socket
 import struct
 from contextlib import contextmanager
+from enum import Enum
 
 import click
 from ereuse_utils import Dumpeable
 
 LJUST = 38
 """Left-justify the print output to X characters."""
+
+
+class Severity(Enum):
+    Info = 'Info'
+    Error = 'Error'
 
 
 def convert_base(value, src_unit, dst_unit, distance=1000) -> float:

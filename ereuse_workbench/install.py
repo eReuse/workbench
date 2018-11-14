@@ -11,7 +11,7 @@ from subprocess import CalledProcessError
 
 from ereuse_utils import cmd
 
-from ereuse_workbench.utils import Measurable
+from ereuse_workbench.utils import Measurable, Severity
 
 
 class Install(Measurable):
@@ -32,7 +32,7 @@ class Install(Measurable):
         self._target_disk = target_disk
         self._swap_space = swap_space
         self._path = path_to_os_image
-        self.error = False
+        self.severity = Severity.Info
         self.name = path_to_os_image.name
 
     def run(self):
@@ -40,7 +40,7 @@ class Install(Measurable):
             try:
                 self._run()
             except CalledProcessError as e:
-                self.error = True
+                self.severity = Severity.Error
                 raise CannotInstall(e)
 
     def _run(self):

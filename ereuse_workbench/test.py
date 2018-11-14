@@ -7,7 +7,7 @@ from warnings import catch_warnings, filterwarnings
 
 from pySMART import Device
 
-from ereuse_workbench.utils import Measurable, progressbar
+from ereuse_workbench.utils import Measurable, progressbar, Severity
 
 
 @unique
@@ -23,11 +23,11 @@ class Test(Measurable):
     def __init__(self) -> None:
         super().__init__()
         self.type = self.__class__.__name__
-        self.error = False
+        self.severity = Severity.Info
 
     def _error(self, status):
         self.status = status
-        self.error = True
+        self.severity = Severity.Error
 
 
 class TestDataStorage(Test):
@@ -77,7 +77,8 @@ class TestDataStorage(Test):
             storage.update()
             last_test = storage.tests[0]
 
-            self.error = bool(self._first_error(last_test.LBA))
+            if self._first_error(last_test.LBA):
+                self.severity = Severity.Error
             self.status = last_test.status
             self.lifetime = int(last_test.hours)
             self.assessment = True if storage.assessment == 'PASS' else False
@@ -120,4 +121,5 @@ class StressTest(Test):
                 sleep(1)
         process.communicate()  # wait for process, consume output
         self.elapsed = minutes * 60
-        self.error = bool(process.returncode)
+        if process.returncode:
+            self.severity = Severity.Error

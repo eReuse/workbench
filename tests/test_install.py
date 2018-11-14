@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from ereuse_workbench.install import CannotInstall, Install
+from ereuse_workbench.utils import Severity
 
 """
 Tests the OSInstaller. 
@@ -43,7 +44,7 @@ def test_install(run: MagicMock):
     assert fscall[2] == image_path
 
     assert install.name == str(image_path.name)
-    assert not install.error
+    assert install.severity != Severity.Error
 
 
 def test_installer_with_known_error(run: MagicMock):
