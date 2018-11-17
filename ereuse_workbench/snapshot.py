@@ -13,7 +13,7 @@ from ereuse_workbench.computer import Computer, DataStorage
 from ereuse_workbench.erase import CannotErase, EraseType
 from ereuse_workbench.install import CannotInstall
 from ereuse_workbench.test import TestDataStorageLength
-from ereuse_workbench.utils import Dumpeable, LJUST
+from ereuse_workbench.utils import Dumpeable, LJUST, Severity
 
 
 @unique
@@ -71,7 +71,7 @@ class Snapshot(Dumpeable):
         self._warn_no_storage(t)
         for storage in self._storages:
             test = storage.test_smart(length)
-            if test.error:
+            if test.severity == Severity.Error:
                 self._title('{} {}'.format(t, storage.serial_number))
                 self._error('failed.')
         self._elapsed()
