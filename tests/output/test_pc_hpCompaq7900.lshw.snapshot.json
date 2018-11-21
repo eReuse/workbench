@@ -1,0 +1,87 @@
+{
+  "endTime": "0001-01-01 00:00:00",
+  "version": "11.0a1",
+  "components": [
+    {
+      "model": "82801JD/DO HD Audio Controller",
+      "serialNumber": null,
+      "events": [],
+      "manufacturer": "Intel Corporation",
+      "type": "SoundCard"
+    },
+    {
+      "model": "HYMP125U64CP8-S6",
+      "interface": "DDR2",
+      "format": "DIMM",
+      "events": [],
+      "size": 2048,
+      "serialNumber": null,
+      "speed": 800.0,
+      "manufacturer": null,
+      "type": "RamModule"
+    },
+    {
+      "model": "4 Series Chipset Integrated Graphics Controller",
+      "memory": null,
+      "events": [],
+      "serialNumber": null,
+      "manufacturer": "Intel Corporation",
+      "type": "GraphicCard"
+    },
+    {
+      "model": "Intel Core2 Duo CPU E8400 @ 3.00GHz",
+      "address": 64,
+      "events": [],
+      "cores": 2,
+      "serialNumber": null,
+      "threads": 2,
+      "speed": 1.9980000000000002,
+      "manufacturer": "Intel Corp.",
+      "type": "Processor"
+    },
+    {
+      "model": "ST3160815AS",
+      "interface": null,
+      "size": 152627,
+      "events": [],
+      "serialNumber": "6RX7AWEZ",
+      "manufacturer": "Seagate",
+      "type": "HardDrive"
+    },
+    {
+      "model": "82567LM-3 Gigabit Network Connection",
+      "events": [],
+      "serialNumber": "00:23:7d:49:5e:31",
+      "speed": 1000,
+      "manufacturer": "Intel Corporation",
+      "type": "NetworkAdapter",
+      "wireless": false
+    },
+    {
+      "model": "3031h",
+      "firewire": 0,
+      "events": [],
+      "usb": 8,
+      "serialNumber": "CZC901381R",
+      "serial": 0,
+      "pcmcia": 0,
+      "slots": 1,
+      "type": "Motherboard",
+      "manufacturer": "Hewlett-Packard"
+    }
+  ],
+  "elapsed": 0,
+  "device": {
+    "model": "HP Compaq dc7900 Small Form Factor",
+    "events": [],
+    "serialNumber": "CZC901381R",
+    "manufacturer": "Hewlett-Packard",
+    "type": "Desktop",
+    "chassis": "Tower"
+  },
+  "type": "Snapshot",
+  "closed": true,
+  "expectedEvents": [],
+  "uuid": "00000000-0000-0000-0000-000000000000",
+  "software": "Workbench"
+}

@@ -1,0 +1,102 @@
+{
+  "endTime": "0001-01-01 00:00:00",
+  "version": "11.0a1",
+  "components": [
+    {
+      "model": "HP HD Camera",
+      "serialNumber": null,
+      "events": [],
+      "manufacturer": "SunplusIT Inc",
+      "type": "SoundCard"
+    },
+    {
+      "model": "Intel Corporation",
+      "serialNumber": null,
+      "events": [],
+      "manufacturer": "Intel Corporation",
+      "type": "SoundCard"
+    },
+    {
+      "model": "M471A1K43CB1-CRC",
+      "interface": "DDR4",
+      "format": "SODIMM",
+      "events": [],
+      "size": 8192,
+      "serialNumber": "362E4E84",
+      "speed": 2133.0,
+      "manufacturer": "Samsung",
+      "type": "RamModule"
+    },
+    {
+      "model": "Intel Corporation",
+      "memory": null,
+      "events": [],
+      "serialNumber": null,
+      "manufacturer": "Intel Corporation",
+      "type": "GraphicCard"
+    },
+    {
+      "model": "Intel Core i5-7200U CPU @ 2.50GHz",
+      "address": 64,
+      "events": [],
+      "cores": 2,
+      "serialNumber": null,
+      "threads": 4,
+      "speed": 3.1001220000000003,
+      "manufacturer": "Intel Corp.",
+      "type": "Processor"
+    },
+    {
+      "model": "SAMSUNG MZNTY256",
+      "interface": null,
+      "size": 244198,
+      "events": [],
+      "serialNumber": "S2ZPNB0J121952",
+      "manufacturer": null,
+      "type": "HardDrive"
+    },
+    {
+      "model": "RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller",
+      "events": [],
+      "serialNumber": "f4:30:b9:a8:6d:15",
+      "speed": 1000,
+      "manufacturer": "Realtek Semiconductor Co., Ltd.",
+      "type": "NetworkAdapter",
+      "wireless": false
+    },
+    {
+      "model": "Wireless 7265",
+      "events": [],
+      "serialNumber": "16:7b:5f:33:d2:3d",
+      "manufacturer": "Intel Corporation",
+      "type": "NetworkAdapter",
+      "wireless": true
+    },
+    {
+      "model": "822C",
+      "firewire": 0,
+      "events": [],
+      "usb": 1,
+      "serialNumber": "PGDZN018J887YS",
+      "serial": 1,
+      "pcmcia": 0,
+      "slots": 1,
+      "type": "Motherboard",
+      "manufacturer": "HP"
+    }
+  ],
+  "elapsed": 0,
+  "device": {
+    "model": "ProBook 430 G4",
+    "events": [],
+    "serialNumber": "5CD7314HDY",
+    "manufacturer": "HP",
+    "type": "Laptop",
+    "chassis": "Netbook"
+  },
+  "type": "Snapshot",
+  "closed": true,
+  "expectedEvents": [],
+  "uuid": "00000000-0000-0000-0000-000000000000",
+  "software": "Workbench"
+}
