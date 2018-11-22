@@ -32,8 +32,8 @@ class Erase(Measurable):
     def __init__(self, type: EraseType, steps: int, zeros: bool) -> None:
         self.type = type
         self._steps = steps
-        self.zeros = zeros
-        self._total_steps = self._steps + int(self.zeros)
+        self._zeros = zeros
+        self._total_steps = self._steps + int(self._zeros)
         self.steps = []
         self.severity = Severity.Info
 
@@ -47,7 +47,7 @@ class Erase(Measurable):
             bar.update(100)  # shred/badblocks do not output 100% when done
 
     def _run(self, dev: str, bar: ProgressBar):
-        if self.zeros:
+        if self._zeros:
             # Erase zeros first to follow HMG IS5
             step = Step(StepType.StepZero, bar, self._total_steps)
             step.erase_basic(dev)

@@ -58,7 +58,7 @@ storage units, saving the resulting report as 'out.json'.
 @click.option('--json', '-j',
               type=cli.Path(dir_okay=False, writable=True, resolve_path=True),
               help='Write the resulting report to a JSON file.')
-@click.option('--submit', '-st',
+@click.option('--submit',
               type=cli.URL(scheme=True, username=True, password=True, host=True,
                            path=False, query_params=False, fragment=False),
               help='If set, submits the resulting Snapshot to a passed-in Devicehub.'
