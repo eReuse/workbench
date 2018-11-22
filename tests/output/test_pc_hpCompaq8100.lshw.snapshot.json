@@ -1,0 +1,120 @@
+{
+  "endTime": "0001-01-01 00:00:00",
+  "version": "11.0a1",
+  "components": [
+    {
+      "model": "5 Series/3400 Series Chipset High Definition Audio",
+      "serialNumber": null,
+      "events": [],
+      "manufacturer": "Intel Corporation",
+      "type": "SoundCard"
+    },
+    {
+      "model": "16JTF25664AZ-1G4F",
+      "interface": "DDR3",
+      "format": "DIMM",
+      "events": [],
+      "size": 2048,
+      "serialNumber": "92072F30",
+      "speed": 1333.0,
+      "manufacturer": "JEDEC ID:80 2C",
+      "type": "RamModule"
+    },
+    {
+      "model": "16JTF25664AZ-1G4F",
+      "interface": "DDR3",
+      "format": "DIMM",
+      "events": [],
+      "size": 2048,
+      "serialNumber": "A4482E29",
+      "speed": 1333.0,
+      "manufacturer": "JEDEC ID:80 2C",
+      "type": "RamModule"
+    },
+    {
+      "model": "16JTF25664AZ-1G4F",
+      "interface": "DDR3",
+      "format": "DIMM",
+      "events": [],
+      "size": 2048,
+      "serialNumber": "939E2E29",
+      "speed": 1333.0,
+      "manufacturer": "JEDEC ID:80 2C",
+      "type": "RamModule"
+    },
+    {
+      "model": "16JTF25664AZ-1G4F",
+      "interface": "DDR3",
+      "format": "DIMM",
+      "events": [],
+      "size": 2048,
+      "serialNumber": "48FD2E30",
+      "speed": 1333.0,
+      "manufacturer": "JEDEC ID:80 2C",
+      "type": "RamModule"
+    },
+    {
+      "model": "Core Processor Integrated Graphics Controller",
+      "memory": null,
+      "events": [],
+      "serialNumber": null,
+      "manufacturer": "Intel Corporation",
+      "type": "GraphicCard"
+    },
+    {
+      "model": "Intel Core i3 CPU 530 @ 2.93GHz",
+      "address": 64,
+      "events": [],
+      "cores": 2,
+      "serialNumber": null,
+      "threads": 4,
+      "speed": 1.733,
+      "manufacturer": "Intel Corp.",
+      "type": "Processor"
+    },
+    {
+      "model": "KINGSTON SA400S3",
+      "interface": null,
+      "size": 114473,
+      "events": [],
+      "serialNumber": "50026B7782018EE6",
+      "manufacturer": null,
+      "type": "HardDrive"
+    },
+    {
+      "model": "82578DM Gigabit Network Connection",
+      "events": [],
+      "serialNumber": "6c:62:6d:81:4d:ae",
+      "speed": 1000,
+      "manufacturer": "Intel Corporation",
+      "type": "NetworkAdapter",
+      "wireless": false
+    },
+    {
+      "model": "304Ah",
+      "firewire": 0,
+      "events": [],
+      "usb": 2,
+      "serialNumber": "CZC0408YPV",
+      "serial": 0,
+      "pcmcia": 0,
+      "slots": 1,
+      "type": "Motherboard",
+      "manufacturer": "Hewlett-Packard"
+    }
+  ],
+  "elapsed": 0,
+  "device": {
+    "model": "HP Compaq 8100 Elite SFF",
+    "events": [],
+    "serialNumber": "CZC0408YPV",
+    "manufacturer": "Hewlett-Packard",
+    "type": "Desktop",
+    "chassis": "Tower"
+  },
+  "type": "Snapshot",
+  "closed": true,
+  "expectedEvents": [],
+  "uuid": "00000000-0000-0000-0000-000000000000",
+  "software": "Workbench"
+}

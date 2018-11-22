@@ -542,3 +542,160 @@ def test_david(lshw: MagicMock):
     assert mother.serial_number == '/FJBQVZ1/CN1296342I009B/'
     assert mother.model == '0159N7'
     # todo check USB ports and slots
+
+
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
+def test_isard_probook(lshw: MagicMock):
+    # todo check on hardware the ids, etc
+    pc, components = computer(lshw, 'test_isard_probook.lshw')
+    assert 'ProBook 430 G4'== pc.model #found
+    assert '5CD7314HDY'== pc.serial_number #found
+    assert 'HP' == pc.manufacturer #found
+    assert 'Laptop' ==  pc.type #found
+    cpu = components['Processor'][0]
+    assert len(components['Processor']) == 1
+    assert 'Intel Core i5-7200U CPU @ 2.50GHz' ==  cpu.model #found
+    assert len(components['RamModule']) == 1 #found
+    for ram in components['RamModule']:
+        assert isinstance(ram, RamModule)
+        assert 'SODIMM' == ram.format #found
+        assert 'DDR4' == ram.interface #found
+        assert 'M471A1K43CB1-CRC' == ram.model #found
+        assert ram.serial_number in {'362E4E84'} #found
+        assert 8192 == ram.size
+#    hdd = components['HardDrive'][0]
+#    assert len(components['HardDrive']) == 1
+#    assert isinstance(hdd, DataStorage)
+#    assert hdd.model == 'Crucial_CT525MX3'
+#    assert hdd.serial_number == '164014297BCC'
+#    assert hdd.size == 500786
+    # todo is hdd an ssd?
+    assert len(components['GraphicCard']) == 1 #found
+    gpu = components['GraphicCard'][0]
+    assert isinstance(gpu, GraphicCard)
+    assert 'Intel Corporation'== gpu.manufacturer #found
+    assert 'Intel Corporation'== gpu.model #found
+    assert gpu.serial_number is None
+    assert None == gpu.memory #found (no es none, és 256.0)
+    assert len(components['NetworkAdapter']) == 2  # todo why 3?
+    eth = components['NetworkAdapter'][0]
+    assert isinstance(eth, NetworkAdapter)
+    assert  1000 == eth.speed #found
+    assert 'f4:30:b9:a8:6d:15' == eth.serial_number #found
+    assert not eth.wireless #found
+    wifi = components['NetworkAdapter'][1]
+    assert isinstance(wifi, NetworkAdapter)
+    assert  'Wireless 7265' == wifi.model #found (Centrino Advanced-N 6235)
+    assert  '16:7b:5f:33:d2:3d' == wifi.serial_number #found
+    assert  'Intel Corporation' == wifi.manufacturer #found
+    assert wifi.wireless #found
+    # todo check the third net adapter
+    # todo check sound cards
+    assert len(components['Motherboard']) == 1
+    mother = components['Motherboard'][0]
+    assert 'HP' == mother.manufacturer
+    assert 'PGDZN018J887YS'== mother.serial_number
+    assert  '822C'==  mother.model
+    # todo check USB ports and slots
+
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
+def test_pc_hpCompaq8100(lshw: MagicMock):
+    # todo check on hardware the ids, etc
+    pc, components = computer(lshw, 'test_pc_hpCompaq8100.lshw')
+    assert 'HP Compaq 8100 Elite SFF'== pc.model #found
+    assert 'CZC0408YPV'== pc.serial_number #found
+    #assert '' == pc.manufacturer
+    assert 'Desktop' ==  pc.type #found
+    cpu = components['Processor'][0]
+    assert len(components['Processor']) == 1 #found
+    assert 'Intel Core i3 CPU 530 @ 2.93GHz' ==  cpu.model #found
+    assert len(components['RamModule']) == 4
+    for ram in components['RamModule']: #found
+        assert isinstance(ram, RamModule) 
+        assert 'DIMM' == ram.format #found
+        assert 'DDR3' == ram.interface #found
+        assert '16JTF25664AZ-1G4F' == ram.model #found (principi amb 'MT' i al final hi ha un 1)
+        assert ram.serial_number in {'92072F30','A4482E29','939E2E29', '48FD2E30'} #found
+        assert 2048 == ram.size #found
+#No detecta la SSD
+    #ssd = components['SolidStateDrive'][0]
+    #assert len(components['SolidStateDrive']) == 1 #found
+    #assert isinstance(ssd, DataStorage)
+    #assert 'KINGSTON SA400S3' == ssd.model #found (falta un 7 al final: SA400S37)
+    #assert '50026B7782018EE6' == sdd.serial_number #found
+    #assert 114473 == sdd.size #found
+    assert len(components['GraphicCard']) == 1 #found
+    gpu = components['GraphicCard'][0]
+    assert isinstance(gpu, GraphicCard)
+    assert 'Intel Corporation'== gpu.manufacturer #found
+    assert 'Core Processor Integrated Graphics Controller'== gpu.model #found
+    assert gpu.serial_number is None
+    assert None == gpu.memory #found ( és 256.0)
+    assert len(components['NetworkAdapter']) == 1  #found
+    eth = components['NetworkAdapter'][0]
+    assert isinstance(eth, NetworkAdapter)
+    assert  1000 == eth.speed #found
+    assert '6c:62:6d:81:4d:ae' == eth.serial_number #found
+    assert not eth.wireless #found
+    # todo check the third net adapter
+    # todo check sound cards
+    assert len(components['Motherboard']) == 1 #found
+    mother = components['Motherboard'][0]
+    assert 'Hewlett-Packard' == mother.manufacturer #found
+    assert 'CZC0408YPV'== mother.serial_number #found
+    assert  '304Ah'==  mother.model #found
+    # todo check USB ports and slots
+
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
+def test_pc_hpCompaq7900(lshw: MagicMock):
+    # todo check on hardware the ids, etc
+    pc, components = computer(lshw, 'test_pc_hpCompaq7900.lshw')
+    assert 'HP Compaq dc7900 Small Form Factor'== pc.model #found
+    assert 'CZC901381R'== pc.serial_number #found
+    #assert '' == pc.manufacturer
+    assert 'Desktop' ==  pc.type #found
+    cpu = components['Processor'][0]
+    assert len(components['Processor']) == 1
+    assert 'Intel Core2 Duo CPU E8400 @ 3.00GHz' ==  cpu.model
+    assert len(components['RamModule']) == 1
+    for ram in components['RamModule']: #found
+        assert isinstance(ram, RamModule) 
+        assert 'DIMM' == ram.format #found
+        assert 'DDR2' == ram.interface #found
+        assert 'HYMP125U64CP8-S6' == ram.model #found 
+        assert ram.serial_number in {None} #found (811X6W8)
+        assert 2048 == ram.size #found
+    #ssd = components['SolidStateDrive'][0]
+    #assert len(components['SolidStateDrive']) == 1 #found
+    #assert isinstance(ssd, DataStorage)
+    #assert 'KINGSTON SA400S3' == ssd.model #found (falta un 7 al final: SA400S37)
+    #assert '50026B7782018EE6' == sdd.serial_number #found
+    #assert '114473' == sdd.size #found
+    hdd = components['HardDrive'][0]
+    assert len(components['HardDrive']) == 1
+    assert isinstance(hdd, DataStorage)
+    assert 'ST3160815AS'== hdd.model #found
+    assert '6RX7AWEZ'== hdd.serial_number #found
+    assert  152627 == hdd.size #found
+    # todo is hdd an ssd?
+    assert len(components['GraphicCard']) == 1 #found
+    gpu = components['GraphicCard'][0]
+    assert isinstance(gpu, GraphicCard)
+    assert 'Intel Corporation'== gpu.manufacturer #found
+    assert '4 Series Chipset Integrated Graphics Controller'== gpu.model #found
+    assert gpu.serial_number is None
+    assert None == gpu.memory #found (256.0)
+    assert len(components['NetworkAdapter']) == 1  #found
+    eth = components['NetworkAdapter'][0]
+    assert isinstance(eth, NetworkAdapter)
+    assert  1000 == eth.speed #found
+    assert '00:23:7d:49:5e:31' == eth.serial_number #found
+    assert not eth.wireless #found
+    # todo check the third net adapter
+    # todo check sound cards
+    assert len(components['Motherboard']) == 1 #found
+    mother = components['Motherboard'][0]
+    assert 'Hewlett-Packard' == mother.manufacturer #found
+    assert 'CZC901381R'== mother.serial_number #found
+    assert  '3031h'==  mother.model #found
+    # todo check USB ports and slots
