@@ -35,16 +35,12 @@ class Install(Measurable):
         self.type = self.__class__.__name__
         self.severity = Severity.Info
         self.name = path_to_os_image.name
-
-        # Guess architecture from file name
-        if 'arm' in self.name:
-            self.architecture = 'arm'
-        elif '32' in self.name or 'x86' in self.name:
-            self.architecture = 'x86'
+        if '32' in self.name or 'x86' in self.name:
+            self.address = 32
         elif '64' in self.name:
-            self.architecture = 'x64'
+            self.address = 64
         else:
-            self.architecture = None
+            self.address = None
 
     def run(self):
         with self.measure():

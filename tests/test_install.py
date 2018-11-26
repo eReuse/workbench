@@ -46,14 +46,14 @@ def test_install(run: MagicMock):
 
     assert install.name == str(image_path.name)
     assert install.severity != Severity.Error
-    assert install.architecture == 'x86'
+    assert install.address == 32
     i = json.loads(install.to_json())
     assert {
         'elapsed': 0,
         'type': 'Install',
         'severity': 'Info',
         'name': 'FooBarOS-18.3-English-32.fsa',
-        'architecture': 'x86'
+        'address': 32
     } == i
 
 
