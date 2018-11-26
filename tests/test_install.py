@@ -1,3 +1,4 @@
+import json
 import subprocess
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -21,7 +22,7 @@ fsarchiver savefs mockfs.fsa /dev/loop0
 ezpzlmnsqz
 """
 
-image_path = Path('/media/workbench-images/FooBarOS-18.3-English.fsa')
+image_path = Path('/media/workbench-images/FooBarOS-18.3-English-32.fsa')
 
 
 @pytest.fixture()
@@ -45,6 +46,15 @@ def test_install(run: MagicMock):
 
     assert install.name == str(image_path.name)
     assert install.severity != Severity.Error
+    assert install.architecture == 'x86'
+    i = json.loads(install.to_json())
+    assert {
+        'elapsed': 0,
+        'type': 'Install',
+        'severity': 'Info',
+        'name': 'FooBarOS-18.3-English-32.fsa',
+        'architecture': 'x86'
+    } == i
 
 
 def test_installer_with_known_error(run: MagicMock):
