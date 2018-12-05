@@ -51,7 +51,6 @@ class TestDataStorage(Test):
                     storage = Device(logical)  # type: Device
                 except Warning:
                     return self._error('SMART cannot be enabled on this device.')
-            storage.get_selftest_result()  # run_selftest requires this to be executed before
             code, message, completion_time = storage.run_selftest(length.value)
             if code > 1:
                 return self._error(message)
