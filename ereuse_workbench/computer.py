@@ -436,6 +436,7 @@ class Computer(Device):
         This function uses ``LSHW`` as the main source of hardware information,
         which is obtained once when it is instantiated.
         """
+        # We cannot use cmd.run here due to tests
         stdout = run(('lshw', '-json', '-quiet'),
                      check=True,
                      stdout=PIPE,

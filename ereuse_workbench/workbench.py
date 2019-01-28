@@ -4,13 +4,14 @@ import uuid
 from distutils.version import StrictVersion
 from multiprocessing import Process
 from pathlib import Path
-from subprocess import CalledProcessError, run
-from urllib.parse import urlparse
+from subprocess import CalledProcessError
 
 import pkg_resources
 import urllib3
+from boltons import urlutils
 from colorama import Fore, init
-from ereuse_utils.session import Session
+from ereuse_utils import cmd
+from ereuse_utils.session import DevicehubClient
 
 from ereuse_workbench.erase import EraseType
 from ereuse_workbench.snapshot import Snapshot, SnapshotSoftware
@@ -39,7 +40,7 @@ class Workbench:
                  erase_leading_zeros: bool = False,
                  stress: int = 0,
                  install: str = False,
-                 server: str = None,
+                 server: urlutils.URL = None,
                  json: Path = None):
         """
         Configures this Workbench.
@@ -100,14 +101,13 @@ class Workbench:
 
         if self.server:
             # Override the parameters from the configuration from the server
-            self.session = Session(base_url=self.server)
+            self.session = DevicehubClient(self.server)
             self.session.verify = False
-            self.session.headers.update({'Content-Type': 'application/json'})
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
             self.config_from_server()
             if self.install:
                 # We get the OS to install from the server through a mounted samba
-                self.mount_images(self.server)
+                self.mount_images(self.server.host)
             # By setting daemon=True USB Sneaky will die when we die
             self.usb_sneaky = Process(target=USBSneaky, args=(self.uuid, server), daemon=True)
 
@@ -144,20 +144,19 @@ class Workbench:
     def config_from_server(self):
         """Configures the Workbench from a config endpoint in the server."""
         # todo test this ensuring values from json are well set
-        r = self.session.get('/config')
-        for key, value in r.json().items():
+        config, _ = self.session.get('/config/')
+        for key, value in config.items():
             setattr(self, key, value)
 
-    def mount_images(self, server: str):
+    def mount_images(self, ip: str):
         """Mounts the folder where the OS images are."""
         self.install_path.mkdir(parents=True, exist_ok=True)
-        ip, _ = urlparse(server).netloc.split(':')
         try:
-            run(('mount',
-                 '-t', 'cifs',
-                 '-o', 'guest,uid=root,forceuid,gid=root,forcegid',
-                 '//{}/workbench-images'.format(ip),
-                 str(self.install_path)), universal_newlines=True, check=True)
+            cmd.run('mount',
+                    '-t', 'cifs',
+                    '-o', 'guest,uid=root,forceuid,gid=root,forcegid',
+                    '//{}/workbench-images'.format(ip),
+                    self.install_path)
         except CalledProcessError as e:
             raise CannotMount('Did you umount?') from e
 
@@ -182,7 +181,7 @@ class Workbench:
             if self.server and self.install:
                 # Un-mount images
                 try:
-                    run(('umount', str(self.install_path)), universal_newlines=True, check=True)
+                    cmd.run('umount', self.install_path)
                 except CalledProcessError as e:
                     raise CannotMount() from e
         print('{}Workbench has finished properly \u2665'.format(Fore.GREEN))
@@ -228,12 +227,11 @@ class Workbench:
             with self.json.open('w') as f:
                 f.write(snapshot.to_json())
         if self.server:  # Send to workbench-server
-            url = '/snapshots/{}'.format(snapshot.uuid)
             # todo to json and then back to dict and finally back to json...
             data = snapshot.to_json()
             data = json.loads(data)
             data['_phase'] = actual
-            self.session.patch(url, json=data)
+            self.session.patch('/snapshots/', data, uri=snapshot.uuid, status=204)
 
     @property
     def version(self) -> StrictVersion:

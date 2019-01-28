@@ -5,8 +5,9 @@ from time import sleep
 from uuid import UUID
 
 import urllib3
+from boltons import urlutils
+from ereuse_utils.session import DevicehubClient
 from ereuse_utils.usb_flash_drive import NoUSBFound, plugged_usbs
-from requests_toolbelt.sessions import BaseUrlSession
 
 
 class USBSneaky:
@@ -24,8 +25,7 @@ class USBSneaky:
     """
 
     def __init__(self, uuid: UUID, workbench_server: str):
-        self.uuid = str(uuid)
-        self.session = BaseUrlSession(base_url=workbench_server)
+        self.session = DevicehubClient(urlutils.URL(workbench_server))
         self.session.verify = False
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         while True:
@@ -43,12 +43,12 @@ class USBSneaky:
                     del pen
             else:
                 # We have found an usb
-                pen['_uuid'] = self.uuid
+                pen['uuid'] = uuid
                 self.send_plug(pen)
                 sleep(2.25)  # Don't stress Workbench Server
 
     def send_plug(self, pen: dict):
-        self.session.post('/usbs/{}'.format(pen['hid']), json=pen)
+        self.session.post('/usbs/', pen, uri=pen['hid'], status=204)
 
     def send_unplug(self, hid: str):
-        self.session.delete('/usbs/{}'.format(hid))
+        self.session.delete('/usbs/', uri=hid)

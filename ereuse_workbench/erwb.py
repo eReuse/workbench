@@ -8,7 +8,7 @@ import requests
 from boltons import urlutils
 from colorama import Fore, Style
 from ereuse_utils import cli
-from ereuse_utils.session import Session
+from ereuse_utils.session import DevicehubClient
 
 from ereuse_workbench.erase import EraseType
 from ereuse_workbench.snapshot import Snapshot
@@ -47,6 +47,7 @@ storage units, saving the resulting report as 'out.json'.
               help='The name of the FSA OS to install, without the ".fsa" extension. '
                    'The file has to be in /media/workbench-images')
 @click.option('--server', '-sr',
+              type=cli.URL(scheme=True, host=True, port=True),
               help='Connect to a WorkbenchServer at the specified URI. '
                    'This will activate USBSneaky module, load the '
                    'settings from the server, and keep indefinitely waiting for an USB to'
@@ -101,17 +102,11 @@ def sync_time():
 
 def _submit(url: urlutils.URL, snapshot: Snapshot):
     username, password = url.username, url.password
-    url.username = ''  # sets password too
-    session = Session(base_url=url.to_text())
-    r = session.post('users/login', json={'email': username, 'password': password})
-    t = r.json()['token']
-    r = session.post('snapshots/',
-                     data=snapshot.to_json(),
-                     headers={
-                         'Authorization': 'Basic {}'.format(t),
-                         'Content-Type': 'application/json'
-                     })
-    return r.json()
+    url.username = ''  # resets password too
+    session = DevicehubClient(url)
+    session.login(username, password)
+    data, _ = session.post('/snapshots/', snapshot)
+    return data
 
 
 def submit(url: urlutils.URL, snapshot: Snapshot):
