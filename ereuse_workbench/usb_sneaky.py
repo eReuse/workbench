@@ -6,8 +6,9 @@ from uuid import UUID
 
 import urllib3
 from boltons import urlutils
+from colorama import Fore
 from ereuse_utils.session import DevicehubClient
-from ereuse_utils.usb_flash_drive import NoUSBFound, plugged_usbs
+from ereuse_utils.usb_flash_drive import NoUSBFound, UsbDoesNotHaveHid, plugged_usbs
 
 
 class USBSneaky:
@@ -41,6 +42,10 @@ class USBSneaky:
                     self.send_unplug(pen['hid'])
                     # We remove it so we are not sending it all the time
                     del pen
+            except UsbDoesNotHaveHid:
+                print('{}USB incompatible (No S/N available). Please use another one.'
+                      .format(Fore.YELLOW))
+                sleep(3)
             else:
                 # We have found an usb
                 pen['uuid'] = uuid

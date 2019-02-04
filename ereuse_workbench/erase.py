@@ -30,6 +30,7 @@ class Erase(Measurable):
     """Erase data storage units (HDD / SSD) and saves a report."""
 
     def __init__(self, type: EraseType, steps: int, zeros: bool) -> None:
+        assert steps >= 1, 'Steps must be 1 or more.'
         self.type = type
         self._steps = steps
         self._zeros = zeros

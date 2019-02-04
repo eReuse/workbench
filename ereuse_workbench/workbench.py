@@ -7,7 +7,6 @@ from pathlib import Path
 from subprocess import CalledProcessError
 
 import pkg_resources
-import urllib3
 from boltons import urlutils
 from colorama import Fore, init
 from ereuse_utils import cmd
@@ -102,8 +101,6 @@ class Workbench:
         if self.server:
             # Override the parameters from the configuration from the server
             self.session = DevicehubClient(self.server)
-            self.session.verify = False
-            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
             self.config_from_server()
             if self.install:
                 # We get the OS to install from the server through a mounted samba
