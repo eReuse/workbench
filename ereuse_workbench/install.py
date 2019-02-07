@@ -4,7 +4,7 @@ This module provides functionality to install an OS in the system being tested.
 Important: GPT partition scheme and UEFI-based boot not yet supported. All relevant
 code is just placeholder.
 """
-
+import pathlib
 import textwrap
 from pathlib import Path
 from subprocess import CalledProcessError
@@ -144,7 +144,7 @@ class Install(Measurable):
         :return:
         """
         # Must install grub via 'grub-install', but it will complain if --boot-directory is not used.
-        cmd.run('mkdir', '/tmp/mnt')
+        pathlib.Path('/tmp/mnt').mkdir(exist_ok=True)  # Exist_ok in case of double wb execution
         cmd.run('mount', '{}1'.format(target_disk), '/tmp/mnt')
         cmd.run('grub-install', '--boot-directory=/tmp/mnt/boot/', '/dev/sda')
         cmd.run('umount', '/tmp/mnt')
@@ -155,7 +155,9 @@ class Install(Measurable):
 
 
 class CannotInstall(Exception):
+    def __init__(self, e: Exception) -> None:
+        super().__init__()
+        self.e = e
+
     def __str__(self) -> str:
-        return ('OS installation failed. An "{e.__name__}" exception with '
-                'message "{e!s}" was raised by the installation routines.'
-                .format(e=self.args[0]))
+        return ('OS installation failed: {e}'.format(e=self.e))
