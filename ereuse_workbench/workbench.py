@@ -1,11 +1,13 @@
 import json
 import os
 import uuid
+from contextlib import suppress
 from distutils.version import StrictVersion
 from multiprocessing import Process
 from pathlib import Path
 from subprocess import CalledProcessError
 
+import ereuse_utils
 import pkg_resources
 from boltons import urlutils
 from colorama import Fore, init
@@ -170,9 +172,13 @@ class Workbench:
         try:
             snapshot = self._run()
         except Exception:
-            print('{}Workbench panic - unexpected exception found. Please take '
-                  'a photo of the screen and send it to eReuse Workbench Developers.'
+            print('{}Workbench had an error and stopped. '
+                  'Please take a photo of the screen and send it to the developers.'
                   .format(Fore.RED))
+            if self.server:
+                with suppress(OSError):
+                    print('The local IP of this device is {}'
+                          .format(ereuse_utils.local_ip(self.server.host)))
             raise
         finally:
             if self.server and self.install:

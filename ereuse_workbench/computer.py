@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import warnings
 from enum import Enum, unique
 from itertools import chain
 from math import floor
@@ -159,7 +160,8 @@ class Processor(Component):
             if self.threads == 1:
                 self.cores = 1  # If there is only one thread there is only one core
         self.serial_number = None  # Processors don't have valid SN :-(
-        assert 0.1 <= self.speed <= 9
+        if not (0.1 <= self.speed <= 9):
+            warnings.warn('Speed should be between 0.1 and 9, but is {}'.format(self.speed))
         assert not hasattr(self, 'cores') or 1 <= self.cores <= 16
 
     def benchmarks(self):

@@ -1,13 +1,13 @@
 import json
 
-from ereuse_workbench.utils import Dumpeable
+from ereuse_workbench import utils
 
 
 def test_dumpeable():
-    foo = Dumpeable()
+    foo = utils.Dumpeable()
     foo.foo = 'fooz'
     foo._foo = '_f'
-    foo.bar = Dumpeable()
+    foo.bar = utils.Dumpeable()
     foo.bar.bar = 'barz'
     foo.bar.foo_bar = 1
 
@@ -20,3 +20,10 @@ def test_dumpeable():
     assert foo._foo == '_f'
     assert foo.bar.foo_bar == 1
     assert not hasattr(foo.bar, 'fooBar')
+
+
+# todo make through tests of units
+def test_convert_capacity():
+    assert utils.convert_capacity(1200, 'kB', 'MB')
+    assert utils.convert_capacity(1200, 'KB', 'MB')
+    assert utils.convert_capacity(1200, 'bytes', 'MB')

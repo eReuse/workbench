@@ -37,7 +37,7 @@ def test_install(run: MagicMock):
     install.run()
 
     # Do checks
-    assert run.call_count == 9
+    assert run.call_count == 8
 
     fscall = next(args
                   for args, kwargs in run.call_args_list
@@ -49,12 +49,12 @@ def test_install(run: MagicMock):
     assert install.address == 32
     i = json.loads(install.to_json())
     assert {
-        'elapsed': 0,
-        'type': 'Install',
-        'severity': 'Info',
-        'name': 'FooBarOS-18.3-English-32.fsa',
-        'address': 32
-    } == i
+               'elapsed': 0,
+               'type': 'Install',
+               'severity': 'Info',
+               'name': 'FooBarOS-18.3-English-32.fsa',
+               'address': 32
+           } == i
 
 
 def test_installer_with_known_error(run: MagicMock):

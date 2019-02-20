@@ -1,3 +1,4 @@
+import warnings
 from subprocess import PIPE, run
 
 from ereuse_workbench.utils import Measurable, convert_capacity
@@ -68,5 +69,8 @@ class BenchmarkDataStorage(Benchmark):
         output = output.decode()
         value = float(output.split()[-2].replace(',', '.'))
         speed = convert_capacity(value, output.split()[-1][0:2], 'MB')
-        assert 5 < speed, 'Speed must be above 5 MB/S and is {}'.format(speed)
+        if speed < 5:
+            warnings.warn('Speed should be above 5 MB/S but is {}. '
+                          'This could be a defect on the drive or a measure problem.'.format(
+                speed))
         return speed

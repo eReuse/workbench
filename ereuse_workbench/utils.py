@@ -17,8 +17,10 @@ class Severity(Enum):
     Error = 'Error'
 
 
-def convert_base(value, src_unit, dst_unit, distance=1000) -> float:
-    UNITS = 'unit', 'K', 'M', 'G', 'T'
+def convert_base(value, src_unit: str, dst_unit: str, distance=1000) -> float:
+    src_unit = src_unit.upper()
+    dst_unit = dst_unit.upper()
+    UNITS = 'UNIT', 'K', 'M', 'G', 'T'
     assert src_unit in UNITS, src_unit
     assert dst_unit in UNITS, dst_unit
 
@@ -27,8 +29,10 @@ def convert_base(value, src_unit, dst_unit, distance=1000) -> float:
     return value * pow(distance, diff)
 
 
-def convert_frequency(value, src_unit, dst_unit) -> float:
-    UNITS = 'Hz', 'KHz', 'MHz', 'GHz'
+def convert_frequency(value, src_unit: str, dst_unit: str) -> float:
+    src_unit = src_unit.upper()
+    dst_unit = dst_unit.upper()
+    UNITS = 'HZ', 'KHZ', 'MHZ', 'GHZ'
     assert src_unit in UNITS, src_unit
     assert dst_unit in UNITS, dst_unit
 
@@ -37,10 +41,12 @@ def convert_frequency(value, src_unit, dst_unit) -> float:
     return value * pow(1000, diff)
 
 
-def convert_capacity(value, src_unit, dst_unit) -> float:
+def convert_capacity(value, src_unit: str, dst_unit: str) -> float:
     # FIXME International System vs IEC
     # https://en.wikipedia.org/wiki/Units_of_information#Systematic_multiples
-    UNITS = 'bytes', 'KB', 'MB', 'GB'
+    src_unit = src_unit.upper()
+    dst_unit = dst_unit.upper()
+    UNITS = 'BYTES', 'KB', 'MB', 'GB'
     assert src_unit in UNITS, src_unit
     assert dst_unit in UNITS, dst_unit
 
@@ -49,8 +55,10 @@ def convert_capacity(value, src_unit, dst_unit) -> float:
     return value * pow(1024, diff)
 
 
-def convert_speed(value, src_unit, dst_unit) -> int:
-    UNITS = 'bps', 'Kbps', 'Mbps', 'Gbps'
+def convert_speed(value, src_unit: str, dst_unit: str) -> int:
+    src_unit = src_unit.upper()
+    dst_unit = dst_unit.upper()
+    UNITS = 'BPS', 'KBPS', 'MBPS', 'GBPS'
     assert src_unit in UNITS, src_unit
     assert dst_unit in UNITS, dst_unit
 
