@@ -103,7 +103,7 @@ def sync_time():
 def _submit(url: urlutils.URL, snapshot: Snapshot):
     username, password = url.username, url.password
     url.username = ''  # resets password too
-    session = DevicehubClient(url)
+    session = DevicehubClient(url, inventory=True)
     session.login(username, password)
     data, _ = session.post('/events/', snapshot)
     return data
