@@ -8,7 +8,6 @@ from pathlib import Path
 from subprocess import CalledProcessError
 
 import ereuse_utils
-import pkg_resources
 from boltons import urlutils
 from colorama import Fore, init
 from ereuse_utils import cmd
@@ -227,8 +226,7 @@ class Workbench:
         actual = next(self._expected_events_iter) if not is_info_phase else None
         snapshot.close_if_needed(actual)
         if self.json:
-            with self.json.open('w') as f:
-                f.write(snapshot.to_json())
+            self.json.write_text(snapshot.to_json())
         if self.server:  # Send to workbench-server
             # todo to json and then back to dict and finally back to json...
             data = snapshot.to_json()
@@ -238,14 +236,8 @@ class Workbench:
 
     @property
     def version(self) -> StrictVersion:
-        """
-        The version of Workbench
-        from https://stackoverflow.com/a/2073599
-        This throws an exception if you git clone this package
-        and did not install it with pip
-        Perform ``pip install -e .`` or similar to fix
-        """
-        return StrictVersion(pkg_resources.require('ereuse-workbench')[0].version)
+        """The version of this software."""
+        return ereuse_utils.version('ereuse-workbench')
 
 
 class CannotMount(Exception):
