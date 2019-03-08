@@ -28,7 +28,7 @@ setup(
         'pySMART.smartx',
         'pyudev',
         'requests',
-        'ereuse-utils[usb_flash_drive,session,cli]>=0.4.0b24',
+        'ereuse-utils[usb_flash_drive,session,cli]>=0.4.0b27',
         'colorama',
         'click >= 6.0',
         'click-spinner',

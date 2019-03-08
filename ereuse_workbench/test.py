@@ -5,9 +5,10 @@ from subprocess import DEVNULL, Popen
 from time import sleep
 from warnings import catch_warnings, filterwarnings
 
+from ereuse_utils import cli
 from pySMART import Device
 
-from ereuse_workbench.utils import Measurable, progressbar, Severity
+from ereuse_workbench.utils import Measurable, Severity
 
 
 @unique
@@ -42,6 +43,10 @@ class TestDataStorage(Test):
         231: 'remaining_lifetime_percentage'
     }
 
+    def __init__(self, callback) -> None:
+        super().__init__()
+        self._callback = callback
+
     def run(self, logical: str, length: TestDataStorageLength):
         self.length = length
         with self.measure():
@@ -56,22 +61,20 @@ class TestDataStorage(Test):
                 return self._error(message)
 
             remaining = 100  # test completion pending percentage
-            with progressbar(length=remaining,
-                             title='SMART test {}'.format(storage.model)) as bar:
-                while True:
-                    sleep(2)  # wait a few seconds between smart retrievals
-                    last = remaining
-                    _, summary = storage.get_current_test_status()
-                    try:
-                        i = summary.index('%')
-                        remaining = int(summary[i - 2:i])
-                    except (ValueError, IndexError):
-                        break
-                    else:
-                        completed = last - remaining
-                        if completed > 0:
-                            bar.update(completed)
-                bar.update(100)
+            while True:
+                sleep(2)  # wait a few seconds between smart retrievals
+                last = remaining
+                _, summary = storage.get_current_test_status()
+                try:
+                    i = summary.index('%')
+                    remaining = int(summary[i - 2:i])
+                except (ValueError, IndexError):
+                    break
+                else:
+                    completed = last - remaining
+                    if completed > 0:
+                        self._callback(completed)
+            self._callback(100)
             sleep(1)  # grace time
             storage.update()
             last_test = storage.tests[0]
@@ -115,9 +118,8 @@ class StressTest(Test):
                          '--quiet',
                          '--vm-bytes', '{}K'.format(mem_worker_kib),
                          '-t', '{}m'.format(minutes)), stdout=DEVNULL, stderr=DEVNULL)
-        with progressbar(range(minutes * 60), title='Stress test') as bar:
-            for _ in bar:
-                sleep(1)
+        for _ in cli.Line(range(minutes * 60), desc=cli.title('Stress test')):
+            sleep(1)
         process.communicate()  # wait for process, consume output
         self.elapsed = minutes * 60
         if process.returncode:

@@ -124,6 +124,9 @@ class Device(Dumpeable):
         """
         pass
 
+    def __str__(self) -> str:
+        return '{} {}'.format(self.model, self.serial_number)
+
 
 class Component(Device):
     @classmethod
@@ -257,14 +260,14 @@ class DataStorage(Component):
         b.run(self._logical_name)
         self.events.add(b)
 
-    def test_smart(self, length: TestDataStorageLength):
-        test = TestDataStorage()
+    def test_smart(self, length: TestDataStorageLength, callback):
+        test = TestDataStorage(callback)
         test.run(self._logical_name, length)
         self.events.add(test)
         return test
 
-    def erase(self, erase: EraseType, erase_steps: int, zeros: bool):
-        erasure = Erase(erase, erase_steps, zeros)
+    def erase(self, erase: EraseType, erase_steps: int, zeros: bool, callback):
+        erasure = Erase(erase, erase_steps, zeros, callback)
         erasure.run(self._logical_name)
         self.events.add(erasure)
 

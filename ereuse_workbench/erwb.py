@@ -24,7 +24,7 @@ storage units, saving the resulting report as 'out.json'.
 """
 
 
-@click.command(help=Workbench.__doc__, epilog=EPILOG)
+@click.command(help=Workbench.__doc__, epilog=EPILOG, context_settings=cli.COMMON_CONTEXT_S)
 @click.option('--benchmark/--no-benchmark', '-b',
               default=False,
               help='Benchmark the components using sysbench and other tools.')
