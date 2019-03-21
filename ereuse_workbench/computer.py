@@ -1,7 +1,7 @@
 import json
+import logging
 import os
 import re
-import warnings
 from enum import Enum, unique
 from itertools import chain
 from math import floor
@@ -118,14 +118,16 @@ class Device(Dumpeable):
 
     def benchmarks(self):
         """
-        Execute all available benchmarks, if any.
+        Creates and yields the benchmarks for this device. You can then execute
+        them with ``benchmark.run()``. Executing this always generates
+        new benchmarks.
 
         Each device overrides this method with its available benchmarks.
         """
-        pass
+        yield from ()  # empty
 
     def __str__(self) -> str:
-        return '{} {}'.format(self.model, self.serial_number)
+        return ' '.join(x for x in (self.model, self.serial_number) if x)
 
 
 class Component(Device):
@@ -164,14 +166,14 @@ class Processor(Component):
                 self.cores = 1  # If there is only one thread there is only one core
         self.serial_number = None  # Processors don't have valid SN :-(
         if not (0.1 <= self.speed <= 9):
-            warnings.warn('Speed should be between 0.1 and 9, but is {}'.format(self.speed))
+            logging.warning('Speed should be between 0.1 and 9, but is %s', self.speed)
         assert not hasattr(self, 'cores') or 1 <= self.cores <= 16
 
     def benchmarks(self):
         for Benchmark in BenchmarkProcessor, BenchmarkProcessorSysbench:
             benchmark = Benchmark()
-            benchmark.run()
             self.events.add(benchmark)
+            yield benchmark
 
 
 class RamModule(Component):
@@ -206,6 +208,9 @@ class RamModule(Component):
         assert 128 <= self.size <= 2 ** 15 and (self.size & (self.size - 1) == 0)
         assert not hasattr(self, 'speed') or 100 <= self.speed <= 10000
 
+    def __str__(self) -> str:
+        return '{} {} {}'.format(super().__str__(), self.format, self.size)
+
 
 class DataStorage(Component):
     @classmethod
@@ -230,9 +235,12 @@ class DataStorage(Component):
         USB = 'USB'
         PCI = 'PCI'
 
+        def __str__(self):
+            return self.value
+
     def __init__(self, node: dict, interface: str) -> None:
         super().__init__(node)
-        self.size = floor(utils.convert_capacity(node['size'], node['units'], 'MB'))
+        self.size = floor(utils.convert_capacity(node['size'], node.get('units', 'bytes'), 'MB'))
         self.interface = self.DataStorageInterface(interface.upper()) if interface else None
         self._logical_name = node['logicalname']
 
@@ -249,6 +257,10 @@ class DataStorage(Component):
 
         assert 10000 < self.size < 10 ** 8, 'Invalid HDD size {} MB'.format(self.size)
 
+    def __str__(self) -> str:
+        return '{} {} {} with {} MB'.format(super().__str__(), self.interface, self.type,
+                                            self.size)
+
     def benchmarks(self):
         """
         Computes the reading and writing speed of a hard-drive by
@@ -256,9 +268,9 @@ class DataStorage(Component):
 
         This method does not destroy existing data.
         """
-        b = BenchmarkDataStorage()
-        b.run(self._logical_name)
+        b = BenchmarkDataStorage(self._logical_name)
         self.events.add(b)
+        yield b
 
     def test_smart(self, length: TestDataStorageLength, callback):
         test = TestDataStorage(callback)
@@ -270,11 +282,13 @@ class DataStorage(Component):
         erasure = Erase(erase, erase_steps, zeros, callback)
         erasure.run(self._logical_name)
         self.events.add(erasure)
+        return erasure
 
-    def install(self, path_to_os_image: Path):
+    def install(self, path_to_os_image: Path, callback):
         install = Install(path_to_os_image, self._logical_name)
-        install.run()
+        install.run(callback)
         self.events.add(install)
+        return install
 
     @staticmethod
     def get_interface(node: dict):
@@ -325,6 +339,9 @@ class GraphicCard(Component):
             return size
         return None
 
+    def __str__(self) -> str:
+        return '{} with {} MB'.format(super().__str__(), self.memory)
+
 
 class Motherboard(Component):
     INTERFACES = 'usb', 'firewire', 'serial', 'pcmcia'
@@ -360,6 +377,7 @@ class Motherboard(Component):
 class NetworkAdapter(Component):
     def __init__(self, node: dict) -> None:
         super().__init__(node)
+        self.speed = None
         if 'capacity' in node:
             self.speed = utils.convert_speed(node['capacity'], 'bps', 'Mbps')
         if 'logicalname' in node:  # todo this was taken from 'self'?
@@ -379,6 +397,10 @@ class NetworkAdapter(Component):
     def from_lshw(cls, lshw: dict) -> Iterator['NetworkAdapter']:
         nodes = get_nested_dicts_with_key_value(lshw, 'class', 'network')
         return (cls(node) for node in nodes)
+
+    def __str__(self) -> str:
+        return '{} {} {}'.format(super().__str__(), self.speed,
+                                 'wireless' if self.wireless else 'ethernet')
 
 
 class SoundCard(Component):
@@ -431,6 +453,7 @@ class Computer(Device):
         chassis = node['configuration'].get('chassis', '_virtual')
         self.type = next(t for t, values in self.CHASSIS_TYPE.items() if chassis in values)
         self.chassis = next(t for t, values in self.CHASSIS_DH.items() if chassis in values)
+        self._ram = None
 
     @classmethod
     def run(cls) -> Tuple['Computer', List[Component]]:
@@ -450,16 +473,23 @@ class Computer(Device):
         computer = cls(lshw)
         components = list(chain.from_iterable(D.from_lshw(lshw) for D in cls.COMPONENTS))
         components.append(Motherboard.from_lshw(lshw))
+
+        computer._ram = sum(ram.size for ram in components if isinstance(ram, RamModule))
         return computer, components
 
-    def test_stress(self, minutes: int):
+    def test_stress(self, minutes: int, callback):
         test = StressTest()
-        test.run(minutes)
+        test.run(minutes, callback)
         self.events.add(test)
+        return test
 
     def benchmarks(self):
         # Benchmark runs for all ram modules so we can't set it
         # to a specific RamModule
         b = BenchmarkRamSysbench()
-        b.run()
         self.events.add(b)
+        yield b
+
+    def __str__(self) -> str:
+        specs = super().__str__()
+        return '{} with {} MB of RAM.'.format(specs, self._ram)

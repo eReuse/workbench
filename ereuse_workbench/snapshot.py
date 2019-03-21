@@ -1,22 +1,24 @@
-from concurrent import futures
-from datetime import datetime, timezone
+import logging
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta, timezone
 from distutils.version import StrictVersion
 from enum import Enum, unique
-from itertools import chain
 from pathlib import Path
-from typing import List
+from types import SimpleNamespace
+from typing import List, Optional, Tuple, Type, Union
 from uuid import UUID
 
-import click_spinner
-from colorama import Fore
+import inflection
 from ereuse_utils import cli
 from ereuse_utils.cli import Line
+from ereuse_utils.session import DevicehubClient
 
-from ereuse_workbench.computer import Computer, DataStorage
-from ereuse_workbench.erase import CannotErase, EraseType
-from ereuse_workbench.install import CannotInstall
-from ereuse_workbench.test import TestDataStorageLength
-from ereuse_workbench.utils import Dumpeable, Severity
+from ereuse_workbench.benchmark import Benchmark, BenchmarkProcessorSysbench
+from ereuse_workbench.computer import Component, Computer, DataStorage, SoundCard
+from ereuse_workbench.erase import CannotErase, Erase, EraseType
+from ereuse_workbench.install import CannotInstall, Install
+from ereuse_workbench.test import StressTest, Test, TestDataStorage, TestDataStorageLength
+from ereuse_workbench.utils import Dumpeable
 
 
 @unique
@@ -39,123 +41,222 @@ class Snapshot(Dumpeable):
 
     def __init__(self,
                  uuid: UUID,
-                 expected_events: List[str],
                  software: SnapshotSoftware,
-                 version: StrictVersion) -> None:
+                 version: StrictVersion,
+                 session: Optional[DevicehubClient] = None) -> None:
         self.type = 'Snapshot'
         self._init_time = datetime.now(timezone.utc)
         self.uuid = uuid
         self.software = software
         self.version = version
-        self.expected_events = expected_events
         self.closed = False
         self.endTime = datetime.now(timezone.utc)
+        self.elapsed = None
+        self.device = None  # type: Computer
+        self.components = None  # type: List[Component]
+        self._storages = None
+        self._session = session
 
     def computer(self):
         """Retrieves information about the computer and components."""
-        self._title('Retrieve computer information')
-        with click_spinner.spinner():
+        t = cli.title('Get computer info')
+        with Line() as line, line.spin(t):
             self.device, self.components = Computer.run()
             self._storages = tuple(c for c in self.components if isinstance(c, DataStorage))
-            self._elapsed()
-        self._done()
+            if self._session:
+                self._session.post('/snapshots/', self, uri=self.uuid, status=204)
+            line.close_message(t, self.device)
+        # Submit
+        for component in self.components:
+            if not isinstance(component, SoundCard):  # soundcards are not really important
+                print(cli.title(inflection.titleize(component.__class__.__name__)), component)
+        print()
 
     def benchmarks(self):
         """Perform several benchmarks to the computer and its components."""
-        self._title('Benchmark')
-        with click_spinner.spinner():
-            for device in chain(self.components, [self.device]):
-                device.benchmarks()
-        self._done()
+        # Get all benchmarks
+        benchmarks = []  # type: List[Tuple[Optional[int], Benchmark]]
+        for i, component in enumerate(self.components):
+            for benchmark in component.benchmarks():
+                benchmarks.append((i, benchmark))
+        for benchmark in self.device.benchmarks():
+            benchmarks.append((None, benchmark))
 
-    def test_smart(self, length: TestDataStorageLength):
-        """Performs a SMART test to all the data storage units."""
-        self._process_data_storages('SMART test', self.test_smart_one, length)
+        # Process the benchmarks
+        t = cli.title('Benchmark')
+        with Line(len(benchmarks), desc=t) as line:
+            for i, benchmark in benchmarks:
+                benchmark.run()
+                self._submit_event(benchmark, i)
+                line.update(1)
 
-    def test_smart_one(self, t, pos: int, storage: DataStorage, length: TestDataStorageLength):
-        title = cli.title('{} {}'.format(t, storage))
-        with Line(total=100, desc=title, position=pos) as line:
-            test = storage.test_smart(length, self._update_line_factory(line))
-            if test.severity == Severity.Error:
-                line.write_at_line(title, cli.danger('failed.'))
+            # Print CPU Sysbench Benchmark
+            try:
+                b = next(b[1] for b in benchmarks if isinstance(b[1], BenchmarkProcessorSysbench))
+            except StopIteration:
+                line.close_message(t, cli.done())
+                logging.info('Benchmark done without CPU benchmarking.')
             else:
-                line.write_at_line(title, cli.done())
+                line.close_message(t, 'CPU {}'.format(b))
+                logging.info('Benchmark done with CPU %s.', b)
 
     def test_stress(self, minutes):
         """Performs a stress test."""
-        self.device.test_stress(minutes)
-        self._elapsed()
+        t = cli.title('Stress test')
+        with Line(minutes * 60, desc=t) as line:
+            line.close_message(t, cli.done())
+            progress = Progress(line, self.uuid, StressTest, self._session)
+            test = self.device.test_stress(minutes, progress)
+        self._submit_event(test)
 
-    def erase(self, erase: EraseType, erase_steps: int, zeros: bool):
-        """Erases all the data storage units."""
-        self._process_data_storages('Erase', self.erase_one, erase, erase_steps, zeros)
-
-    def erase_one(self,
-                  t: str,
-                  pos: int,
-                  storage: DataStorage,
-                  erase: EraseType,
-                  erase_steps: int,
-                  zeros: bool):
-        title = cli.title('{} {}'.format(t, storage))
-        with Line(total=(erase_steps + int(zeros)) * 100, desc=title, position=pos) as line:
-            try:
-                storage.erase(erase, erase_steps, zeros, self._update_line_factory(line))
-            except CannotErase as e:
-                line.write_at_line(title, cli.danger(e))
-            else:
-                line.write_at_line(title, cli.done())
-
-    def install(self, path_to_os_image: Path):
-        """Installs an OS to all data storage units.
-
-        Note that, for bandwidth reasons, this process is done
-        iteratively.
+    def storage(self,
+                smart: TestDataStorageLength = None,
+                erase: EraseType = None,
+                erase_steps: int = None,
+                zeros: bool = None,
+                install=None):
+        """SMART tests, erases and installs an OS to all the data storage
+        units in parallel following the passed-in parameters.
         """
-        t = 'Installing OS'
-        self._warn_no_storage(t)
-        for storage in self._storages:
-            self._title('{} to {}'.format(t, storage))
-            try:
-                with click_spinner.spinner():
-                    storage.install(path_to_os_image)
-            except CannotInstall as e:
-                self._error(e)
-            else:
-                self._done()
-        self._elapsed()
-
-    def close_if_needed(self, actual_event):
-        """Closes the Snapshot if it has done all expected events."""
-        if not self.expected_events or actual_event == self.expected_events[-1]:
-            self.closed = True
-
-    def _elapsed(self):
-        self.elapsed = datetime.now(timezone.utc) - self._init_time
-
-    def _process_data_storages(self, t, method, *args):
-        self._warn_no_storage(t)
-        with cli.Line.reserve_lines(len(self._storages)), futures.ThreadPoolExecutor() as executor:
-            for i, storage in enumerate(self._storages):
-                executor.submit(method, t, i, storage, *args)
-        self._elapsed()
-
-    def _done(self):
-        print(cli.done())
-
-    def _error(self, text):
-        print(cli.danger(text))
-
-    def _warn_no_storage(self, text):
         if not self._storages:
-            self._title(text)
-            print('{}no data storage units.'.format(Fore.YELLOW))
+            cli.warning('No data storage units.')
+            return
 
-    def _title(self, text):
-        print(cli.title(text), end='')
+        total = len(self._storages)
+        lines = total * (bool(smart) + bool(erase) + bool(install))
+        with Line.reserve_lines(lines), ThreadPoolExecutor() as executor:
+            # Create a thread for each new data storage
+            # this assumes there are no more data storage units than executors
+            for pos, storage in enumerate(self._storages):
+                executor.submit(self._storage, pos, total, storage, smart, erase, erase_steps,
+                                zeros, install)
 
-    def _update_line_factory(self, line: Line):
-        def _update_line(increment):
-            line.update(increment)
+    def _storage(self,
+                 num: int,
+                 total: int,
+                 storage: DataStorage,
+                 smart: Optional[TestDataStorageLength],
+                 erase: Optional[EraseType],
+                 erase_steps: Optional[int],
+                 zeros: Optional[bool],
+                 install_path: Optional[Path]):
+        """SMART tests, erases and installs an OS to a single data
+        storage unit. """
+        i = self.components.index(storage)
+        logging.info('Process storage %s (%s) with %s %s %s %s %s',
+                     i, storage, smart, erase, erase_steps, zeros, install_path)
+        try:
+            if smart:
+                t = cli.title('{} {}'.format('SMART test', storage.serial_number))
+                with Line(100, desc=t, position=num) as line:
+                    logging.debug('Snapshot: Install storage %s (%s)', i, storage)
+                    progress = Progress(line, self.uuid, TestDataStorage, self._session, i)
+                    test = storage.test_smart(smart, progress)
+                    if test:
+                        line.close_message(t, cli.done('test successful: {}'.format(test)))
+                    else:
+                        line.close_message(t, cli.danger('failed: {}'.format(test)))
+                self._submit_event(test, i)
+            if erase:
+                pos = total * bool(smart) + num
+                t = cli.title('{} {}'.format('Erase', storage.serial_number))
+                with Line(Erase.compute_total_steps(erase, erase_steps, zeros) * 100,
+                          desc=t,
+                          position=pos) as line:
+                    progress = Progress(line, self.uuid, TestDataStorage, self._session, i)
+                    try:
+                        erasure = storage.erase(erase, erase_steps, zeros, progress)
+                    except CannotErase as e:
+                        line.close_message(t, cli.danger(e))
+                    else:
+                        line.close_message(t, cli.done(
+                            'done in {}'.format(erasure.end_time - erasure.start_time)
+                        ))
+                        self._submit_event(erasure, i)
+            if install_path:
+                pos = total * (bool(smart) + bool(erase)) + num
+                t = cli.title('{} {}'.format('Install OS', storage.serial_number))
+                with Line(100, desc=t, position=pos) as line:
+                    progress = Progress(line, self.uuid, Install, self._session, i)
+                    try:
+                        install = storage.install(install_path, callback=progress)
+                    except CannotInstall:
+                        line.close_message(t, cli.danger('error. Check logs.'))
+                    else:
+                        line.close_message(t, cli.done())
+                        self._submit_event(install, i)
+        except Exception as e:
+            logging.error('Storage %s (%s) finished with exception:', i, storage)
+            logging.exception(e)
+            raise
+        else:
+            logging.info('Storage %s (%s) finished successfully.', i, storage)
 
-        return _update_line
+    def _submit_event(self, event: Union[Test, Benchmark, Erase], component: int = None):
+        """Submits the passed-in event to the Workbench Server, if there
+        is a Workbench Server.
+        """
+        if not self._session:
+            return
+        base = '/snapshots/{}/'.format(self.uuid)
+        uri = 'components/{}/event/'.format(component) if component else 'device/event/'
+        self._session.post(base, event, uri=uri, status=204)
+
+    def close(self):
+        """Closes the Snapshot, submitting a final copy to the
+        Workbench Server, if one.
+        """
+        self.closed = True
+        self.elapsed = datetime.now(timezone.utc) - self._init_time
+        if self._session:
+            self._session.patch('/snapshots/', self, self.uuid, status=204)
+
+
+class Progress:
+    """Manages updating progress percentage to a Line and a Workbench
+    Server, if any.
+    """
+
+    def __init__(self,
+                 line: Line,
+                 uuid: UUID,
+                 event: Union[Type[Test], Type[Erase], Type[Install]],
+                 session: DevicehubClient = None,
+                 component: Optional[int] = None):
+        super().__init__()
+        self.line = line
+        self.component = component
+        self.event = event.__name__
+        self.last_submission = datetime.now()
+        self.session = session
+        self.uuid = uuid
+
+    def __call__(self, increment: int, percentage: int):
+        """Perform an update with the new increment and percentage.
+
+        This call is compatible with the callback of ereuse-util's
+        ``cmd.ProgressiveCmd``.
+        """
+        logging.debug(
+            'Incr of %s for comp %s for %s. n is %s, total %s, percentage from source %s',
+            increment, self.component, self.event, self.line.n, self.line.total,
+            percentage
+        )
+        self.line.update(increment)
+        if self.session:
+            self._submit(percentage)
+
+    def _submit(self, percentage: int):
+        if self.last_submission < datetime.now() - timedelta(seconds=4):
+            try:
+                self.session.post('/snapshots/{}/progress/'.format(self.uuid), {
+                    'component': self.component,
+                    'event': self.event,
+                    'percentage': percentage,
+                    'total': self.line.total
+                }, status=204)
+            except Exception as e:
+                logging.error('Error in submit for comp %s for %s:', self.component, self.event)
+                logging.exception(e)
+            finally:
+                self.last_submission = datetime.now()

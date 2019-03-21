@@ -67,9 +67,12 @@ def pysmart_device() -> MagicMock:
 def computer(lshw: MagicMock, json_name: str) -> Tuple[Computer, Dict[str, List[Component]]]:
     """Given a LSHW output and a LSHW mock, runs Computer."""
     lshw.side_effect.json = fixture(json_name + '.json')
-    s = Snapshot(UUID(int=000000), [], SnapshotSoftware.Workbench, StrictVersion('11.0a1'))
+    s = Snapshot(UUID(int=000000),
+                 SnapshotSoftware.Workbench,
+                 StrictVersion('11.0a1'))
     s.computer()
-    s.close_if_needed(None)
+    s.close()
+    s.elapsed = 0  # So cpu time does not impact
     assert s.closed
     pc, components = s.device, s.components
     assert lshw.called

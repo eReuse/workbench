@@ -1,3 +1,4 @@
+import logging
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from enum import Enum
@@ -35,31 +36,44 @@ class Erase(Measurable):
         self._zeros = zeros
         self.steps = []
         self.severity = Severity.Info
-        self.callback = callback
+        self._callback = callback
 
     def run(self, dev: str):
+        logging.info('%s %s with %s steps and zeros %s', self.type, dev, self._steps, self._zeros)
         with self.measure():
             try:
                 self._run(dev)
             except CannotErase:
                 self.severity = Severity.Error
                 raise
-            self.callback(100)  # shred/badblocks do not output 100% when done
+            except Exception as e:
+                logging.error('%s %s finished with exception:', self.type, dev)
+                logging.exception(e)
+                raise
 
     def _run(self, dev: str):
         if self._zeros:
             # Erase zeros first to follow HMG IS5
-            step = Step(StepType.StepZero, self.callback)
+            step = Step(StepType.StepZero, self._callback)
             step.erase_basic(dev)
             self.steps.append(step)
 
         for i in range(self._steps):
-            step = Step(StepType.StepRandom, self.callback)
+            step = Step(StepType.StepRandom, self._callback)
             if self.type == EraseType.EraseBasic:
                 step.erase_basic(dev)
             else:
                 step.erase_sectors(dev)
             self.steps.append(step)
+
+    @staticmethod
+    def compute_total_steps(type: EraseType, erase_steps: int, erase_zeros: bool) -> int:
+        """Gets the number of steps the erasure settings will cause."""
+        steps = erase_steps + int(erase_zeros)
+        if type == EraseType.EraseSectors:
+            #  badblocks does an extra step to check
+            steps += 1
+        return steps
 
 
 class StepType(Enum):
@@ -71,7 +85,7 @@ class Step(Measurable):
     def __init__(self, type: StepType, callback) -> None:
         self.type = type
         self.severity = Severity.Info
-        self._options = '-vn 1' if type == StepType.StepRandom else '-zvn 0'
+        self._zeros = '-vn 1' if type == StepType.StepRandom else '-zvn 0'
         self._callback = callback
 
     @contextmanager
@@ -79,27 +93,47 @@ class Step(Measurable):
         with self.measure():
             try:
                 yield
-            except CalledProcessError:
+            except CalledProcessError as e:
+                logging.error('%s %s finished with exception:', self.type, dev)
+                logging.exception(e)
                 self.severity = Severity.Error
                 raise CannotErase(dev)
+            except Exception as e:
+                logging.error('%s %s finished with exception:', self.type, dev)
+                logging.exception(e)
+                raise
+            else:
+                logging.info('%s %s successfully finished', self.type, dev)
 
     def erase_basic(self, dev: str):
+        logging.info('%s %s with Erase Basic', self.type, dev)
         with self._manage_erasure(dev):
             self._badblocks = False
-            progress = cmd.ProgressiveCmd('shred', *self._options, dev, callback=self._callback)
+            progress = cmd.ProgressiveCmd('shred', self._zeros, dev,
+                                          number_chars={1, 2, 3},
+                                          callback=self._callback)
             progress.run()
 
     def erase_sectors(self, dev: str):
+        logging.info('%s %s with Erase Sectors', self.type, dev)
         with self._manage_erasure(dev):
             self._badblocks = True
             progress = cmd.ProgressiveCmd('badblocks',
                                           '-st', 'random',
                                           '-w', dev,
-                                          '-o', '/tmp/badblocks',
                                           number_chars=cmd.ProgressiveCmd.DECIMALS,
-                                          read=10,
-                                          callback=self._callback)
+                                          decimal_numbers=2,
+                                          read=35,
+                                          callback=self._call)
             progress.run()
+
+    def _call(self, increment, percentage):
+        # Performs a sanity check for badblocks
+        # todo this uglily patches an error of ProgressiveCmd
+        if self._badblocks:
+            if increment > 0.1:
+                return
+        self._callback(increment, percentage)
 
 
 class CannotErase(Exception):

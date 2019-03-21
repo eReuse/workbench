@@ -1,4 +1,4 @@
-import json
+import logging
 import os
 import uuid
 from contextlib import suppress
@@ -11,7 +11,7 @@ import ereuse_utils
 from boltons import urlutils
 from colorama import Fore, init
 from ereuse_utils import cmd
-from ereuse_utils.session import DevicehubClient
+from ereuse_utils.session import DevicehubClient, retry
 
 from ereuse_workbench.erase import EraseType
 from ereuse_workbench.snapshot import Snapshot, SnapshotSoftware
@@ -98,30 +98,17 @@ class Workbench:
         self.install = install
         self.install_path = Path('/media/workbench-images')
         self.json = json
+        self.session = None
 
         if self.server:
             # Override the parameters from the configuration from the server
-            self.session = DevicehubClient(self.server)
+            self.session = retry(DevicehubClient(self.server))
             self.config_from_server()
             if self.install:
                 # We get the OS to install from the server through a mounted samba
                 self.mount_images(self.server.host)
             # By setting daemon=True USB Sneaky will die when we die
             self.usb_sneaky = Process(target=USBSneaky, args=(self.uuid, server), daemon=True)
-
-        # Devicehub and workbench-server will need this
-        self.expected_events = []
-        self._expected_events_iter = iter(self.expected_events)
-        if self.benchmark:
-            self.expected_events.append('Benchmark')
-        if self.smart:
-            self.expected_events.append('TestDataStorage')
-        if self.stress:
-            self.expected_events.append('StressTest')
-        if self.erase:
-            self.expected_events.append('EraseBasic')
-        if self.install:
-            self.expected_events.append('Install')
 
     @property
     def smart(self):
@@ -142,8 +129,12 @@ class Workbench:
     def config_from_server(self):
         """Configures the Workbench from a config endpoint in the server."""
         # todo test this ensuring values from json are well set
-        config, _ = self.session.get('/config/')
+        config, _ = self.session.get('/settings/')
         for key, value in config.items():
+            if key == 'eraseSteps':
+                key = 'erase_steps'
+            elif key == 'eraseLeadingZeros':
+                key = 'erase_leading_zeros'
             setattr(self, key, value)
 
     def mount_images(self, ip: str):
@@ -164,13 +155,32 @@ class Workbench:
         returns a valid JSON for Devicehub.
         """
 
-        print('{}eReuse.org Workbench {!s}.'.format(Fore.CYAN, self.version))
+        print('{}eReuse.org Workbench {}.'.format(Fore.CYAN, self.version))
         if self.server:
             print('{}Connected to Workbench Server.'.format(Fore.CYAN))
-        print('{}Performing {}:'.format(Fore.CYAN, ', '.join(self.expected_events)))
+
+        # Show to the user what we are doing
+        events = []
+        if self.benchmark:
+            events.append('benchmarks')
+        if self.stress:
+            events.append('stress test of {} minutes'.format(self.stress))
+        if self.smart:
+            events.append('{} SMART test'.format(self.smart))
+        if self.erase:
+            zeros = ' and extra erasure with zeros' if self.erase_leading_zeros else ''
+            events.append('{} with {} steps{}'.format(self.erase, self.erase_steps, zeros))
+        if self.install:
+            events.append('installing {}'.format(self.install))
+
+        logging.info('New run with %s', events)
+        print('{}Performing {}:'.format(Fore.CYAN, ', '.join(events)))
+
         try:
             snapshot = self._run()
-        except Exception:
+        except Exception as e:
+            logging.error('Run failed:')
+            logging.exception(e)
             print('{}Workbench had an error and stopped. '
                   'Please take a photo of the screen and send it to the developers.'
                   .format(Fore.RED))
@@ -179,7 +189,11 @@ class Workbench:
                     print('The local IP of this device is {}'
                           .format(ereuse_utils.local_ip(self.server.host)))
             raise
+        else:
+            logging.info('Run finished successfully.')
         finally:
+            if self.session:
+                self.session.close()
             if self.server and self.install:
                 # Un-mount images
                 try:
@@ -194,45 +208,28 @@ class Workbench:
             self.usb_sneaky.start()
 
         snapshot = Snapshot(self.uuid,
-                            self.expected_events,
                             SnapshotSoftware.Workbench,
-                            self.version)
+                            self.version,
+                            self.session)
         snapshot.computer()
-        self.after_phase(snapshot, is_info_phase=True)
 
         if self.benchmark:
             snapshot.benchmarks()
-            self.after_phase(snapshot)
-
-        if self.smart:
-            snapshot.test_smart(self.smart)
-            self.after_phase(snapshot)
 
         if self.stress:
             snapshot.test_stress(self.stress)
-            self.after_phase(snapshot)
 
-        if self.erase:
-            snapshot.erase(self.erase, self.erase_steps, self.erase_leading_zeros)
-            self.after_phase(snapshot)
+        if self.smart or self.erase or self.install:
+            snapshot.storage(self.smart,
+                             self.erase,
+                             self.erase_steps,
+                             self.erase_leading_zeros,
+                             (self.install_path / self.install) if self.install else None)
 
-        if self.install:
-            snapshot.install(self.install_path.joinpath(self.install))
-            self.after_phase(snapshot)
-
-        return snapshot
-
-    def after_phase(self, snapshot: Snapshot, is_info_phase=False):
-        actual = next(self._expected_events_iter) if not is_info_phase else None
-        snapshot.close_if_needed(actual)
+        snapshot.close()
         if self.json:
             self.json.write_text(snapshot.to_json())
-        if self.server:  # Send to workbench-server
-            # todo to json and then back to dict and finally back to json...
-            data = snapshot.to_json()
-            data = json.loads(data)
-            data['_phase'] = actual
-            self.session.patch('/snapshots/', data, uri=snapshot.uuid, status=204)
+        return snapshot
 
     @property
     def version(self) -> StrictVersion:

@@ -10,7 +10,7 @@ test_requires = [
 
 setup(
     name='ereuse-workbench',
-    version='11.0b6',
+    version='11.0b7',
     url='https://github.com/eReuse/workbench',
     license='Affero',
     packages=find_packages(),
@@ -28,7 +28,7 @@ setup(
         'pySMART.smartx',
         'pyudev',
         'requests',
-        'ereuse-utils[usb_flash_drive,session,cli]>=0.4.0b29',
+        'ereuse-utils[usb_flash_drive,session,cli]>=0.4.0b45',
         'colorama',
         'click >= 6.0',
         'click-spinner',

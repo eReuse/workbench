@@ -4,10 +4,10 @@ This module provides functionality to install an OS in the system being tested.
 Important: GPT partition scheme and UEFI-based boot not yet supported. All relevant
 code is just placeholder.
 """
+import logging
 import pathlib
 import textwrap
 from pathlib import Path
-from subprocess import CalledProcessError
 
 from ereuse_utils import cmd
 
@@ -42,15 +42,18 @@ class Install(Measurable):
         else:
             self.address = None
 
-    def run(self):
+    def run(self, callback):
+        logging.info('Install %s to %s', self._path, self._target_disk)
         with self.measure():
             try:
-                self._run()
-            except CalledProcessError as e:
+                self._run(callback)
+            except Exception as e:
                 self.severity = Severity.Error
-                raise CannotInstall(e)
+                logging.error('Failed install on %s:', self._target_disk)
+                logging.exception(e)
+                raise CannotInstall(e) from e
 
-    def _run(self):
+    def _run(self, callback):
         """
         Partitions block device(s) and installs an OS.
 
@@ -85,7 +88,7 @@ class Install(Measurable):
         os_partition = self.partition(self._target_disk, self._swap_space)
 
         # Install OS
-        self.install(self._path, os_partition)
+        self.install(self._path, os_partition, callback)
 
         # Install bootloader
         self.install_bootloader(self._target_disk)
@@ -125,7 +128,7 @@ class Install(Measurable):
         return os_partition
 
     @staticmethod
-    def install(path_to_os_image: Path, target_partition: str):
+    def install(path_to_os_image: Path, target_partition: str, callback):
         """
         Installs an OS image to a target partition.
         :param path_to_os_image:
@@ -133,7 +136,14 @@ class Install(Measurable):
         :return:
         """
         assert path_to_os_image.suffix == '.fsa', 'Set the .fsa extension'
-        cmd.run('fsarchiver', 'restfs', path_to_os_image, 'id=0,dest={}'.format(target_partition))
+        i = cmd.ProgressiveCmd('fsarchiver',
+                               'restfs',
+                               '-v',
+                               path_to_os_image,
+                               'id=0,dest={}'.format(target_partition),
+                               number_chars={1, 2, 3},
+                               callback=callback)
+        i.run()
 
     @staticmethod
     def install_bootloader(target_disk: str):
@@ -146,12 +156,12 @@ class Install(Measurable):
         # Must install grub via 'grub-install', but it will complain if --boot-directory is not used.
         pathlib.Path('/tmp/mnt').mkdir(exist_ok=True)  # Exist_ok in case of double wb execution
         cmd.run('mount', '{}1'.format(target_disk), '/tmp/mnt')
-        cmd.run('grub-install', '--boot-directory=/tmp/mnt/boot/', '/dev/sda')
+        cmd.run('grub-install', '--boot-directory=/tmp/mnt/boot/', target_disk)
         cmd.run('umount', '/tmp/mnt')
 
     @staticmethod
     def sync():
-        cmd.run('sync', timeout=10)
+        cmd.run('sync')
 
 
 class CannotInstall(Exception):

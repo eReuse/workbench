@@ -5,7 +5,6 @@ import struct
 from contextlib import contextmanager
 from enum import Enum
 
-import click
 from ereuse_utils import Dumpeable
 
 LJUST = 38
@@ -88,11 +87,3 @@ class Measurable(Dumpeable):
         yield
         self.elapsed = datetime.datetime.now(datetime.timezone.utc) - init
         assert self.elapsed.total_seconds() > 0
-
-
-def progressbar(iterable=None, length=None, title=''):
-    """Customized :def:`click.progressbar` to keep it DRY."""
-    return click.progressbar(iterable,
-                             length=length,
-                             label='{}'.format(title).ljust(LJUST - 2),
-                             width=20)

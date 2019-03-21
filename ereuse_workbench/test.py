@@ -5,7 +5,6 @@ from subprocess import DEVNULL, Popen
 from time import sleep
 from warnings import catch_warnings, filterwarnings
 
-from ereuse_utils import cli
 from pySMART import Device
 
 from ereuse_workbench.utils import Measurable, Severity
@@ -71,10 +70,9 @@ class TestDataStorage(Test):
                 except (ValueError, IndexError):
                     break
                 else:
-                    completed = last - remaining
-                    if completed > 0:
-                        self._callback(completed)
-            self._callback(100)
+                    increment = last - remaining
+                    if increment > 0:
+                        self._callback(increment, remaining)
             sleep(1)  # grace time
             storage.update()
             last_test = storage.tests[0]
@@ -93,6 +91,12 @@ class TestDataStorage(Test):
         with suppress(ValueError):
             return int(LBA, 0)  # accept hex and decimal value
 
+    def __str__(self) -> str:
+        return self.status
+
+    def __bool__(self):
+        return self.severity == Severity.Info
+
 
 class StressTest(Test):
     """
@@ -104,7 +108,7 @@ class StressTest(Test):
     Return a boolean indicating whether the stress test was successful.
     """
 
-    def run(self, minutes: int):
+    def run(self, minutes: int, callback):
         with open('/proc/cpuinfo') as cpuinfo:
             ncores = len(re.findall(r'^processor\b', cpuinfo.read(), re.M))
         with open('/proc/meminfo') as meminfo:
@@ -118,9 +122,10 @@ class StressTest(Test):
                          '--quiet',
                          '--vm-bytes', '{}K'.format(mem_worker_kib),
                          '-t', '{}m'.format(minutes)), stdout=DEVNULL, stderr=DEVNULL)
-        for _ in cli.Line(range(minutes * 60), desc=cli.title('Stress test')):
-            sleep(1)
-        process.communicate()  # wait for process, consume output
         self.elapsed = minutes * 60
+        for i in range(self.elapsed):
+            sleep(1)
+            callback(1, i)
+        process.communicate()  # wait for process, consume output
         if process.returncode:
             self.severity = Severity.Error

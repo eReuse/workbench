@@ -1,4 +1,4 @@
-import warnings
+import logging
 from subprocess import PIPE, run
 
 from ereuse_workbench.utils import Measurable, convert_capacity
@@ -13,6 +13,9 @@ class Benchmark(Measurable):
     def execute_sysbench(*args):
         res = run(args, universal_newlines=True, stdout=PIPE, check=True).stdout.splitlines()
         return float(next(l.split()[-1][0:-1] for l in res if 'total time:' in l))
+
+    def run(self):
+        raise NotImplementedError()
 
 
 class BenchmarkProcessor(Benchmark):
@@ -34,6 +37,9 @@ class BenchmarkProcessorSysbench(Benchmark):
                                               '--num-threads=16',
                                               'run')
 
+    def __str__(self) -> str:
+        return str(self.rate)
+
 
 class BenchmarkRamSysbench(Benchmark):
     def run(self):
@@ -50,18 +56,22 @@ class BenchmarkRamSysbench(Benchmark):
 class BenchmarkDataStorage(Benchmark):
     BENCHMARK_ARGS = 'bs=1M', 'count=256', 'oflag=dsync'
 
-    def run(self, logical_name: str):
+    def __init__(self, logical_name: str) -> None:
+        super().__init__()
+        self._logical_name = logical_name
+
+    def run(self):
         with self.measure():
             # Read
             cmd_read = ('dd',
-                        'if={}'.format(logical_name),
+                        'if={}'.format(self._logical_name),
                         'of=/dev/null') + self.BENCHMARK_ARGS
             self.read_speed = self._benchmark_hdd_to_mb(run(cmd_read, stderr=PIPE).stderr)
 
             # Write
             cmd_write = ('dd',
-                         'of={}'.format(logical_name),
-                         'if={}'.format(logical_name)) + self.BENCHMARK_ARGS
+                         'of={}'.format(self._logical_name),
+                         'if={}'.format(self._logical_name)) + self.BENCHMARK_ARGS
             self.write_speed = self._benchmark_hdd_to_mb(run(cmd_write, stderr=PIPE).stderr)
 
     @staticmethod
@@ -70,7 +80,6 @@ class BenchmarkDataStorage(Benchmark):
         value = float(output.split()[-2].replace(',', '.'))
         speed = convert_capacity(value, output.split()[-1][0:2], 'MB')
         if speed < 5:
-            warnings.warn('Speed should be above 5 MB/S but is {}. '
-                          'This could be a defect on the drive or a measure problem.'.format(
-                speed))
+            logging.warning('Speed should be above 5 MB/S but is %s.'
+                            'This could be a defect on the drive or a measure problem.', speed)
         return speed

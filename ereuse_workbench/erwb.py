@@ -1,3 +1,4 @@
+import logging.config
 import subprocess
 import time
 from datetime import datetime, timezone
@@ -134,6 +135,27 @@ def submit(url: urlutils.URL, snapshot: Snapshot):
               'Your computer is at {}'.format(device_url.to_text()))
         print('{}Press the power button to turn this PC off.{}'.format(Style.DIM, Style.NORMAL))
 
+
+logging.config.dictConfig({
+    'version': 1,
+    'formatters': {
+        'default': {
+            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+        }
+    },
+    'handlers': {
+        'file': {
+            'class': 'logging.FileHandler',
+            'formatter': 'default',
+            'filename': 'erwb.log'
+        }
+    },
+    'root': {
+        'level': 'DEBUG',
+        'handlers': ['file']
+    }
+})
+logging.captureWarnings(True)  # Log warnings instead of printing them
 
 if __name__ == '__main__':
     erwb()
