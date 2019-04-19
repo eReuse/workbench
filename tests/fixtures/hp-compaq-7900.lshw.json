@@ -91,7 +91,7 @@
           "configuration" : {
             "cores" : "2",
             "enabledcores" : "2",
-            "id" : "0",
+            "id" : "1",
             "threads" : "2"
           },
           "capabilities" : {
@@ -202,9 +202,9 @@
               "id" : "logicalcpu:0",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:0.0",
+              "handle" : "CPU:1.0",
               "description" : "Logical CPU",
-              "physid" : "0.1",
+              "physid" : "1.1",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -214,9 +214,9 @@
               "id" : "logicalcpu:1",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:0.1",
+              "handle" : "CPU:1.1",
               "description" : "Logical CPU",
-              "physid" : "0.2",
+              "physid" : "1.2",
               "width" : 64,
               "capabilities" : {
                 "logical" : "Logical CPU"
@@ -316,7 +316,7 @@
           "size" : 3000000000,
           "capacity" : 3000000000,
           "configuration" : {
-            "id" : "0"
+            "id" : "1"
           },
           "capabilities" : {
             "vmx" : "CPU virtualization (Vanderpool)",
@@ -328,9 +328,9 @@
               "id" : "logicalcpu:0",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:0.0",
+              "handle" : "CPU:1.0",
               "description" : "Logical CPU",
-              "physid" : "0.1",
+              "physid" : "1.1",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -339,9 +339,9 @@
               "id" : "logicalcpu:1",
               "class" : "processor",
               "claimed" : true,
-              "handle" : "CPU:0.1",
+              "handle" : "CPU:1.1",
               "description" : "Logical CPU",
-              "physid" : "0.2",
+              "physid" : "1.2",
               "capabilities" : {
                 "logical" : "Logical CPU"
               }
@@ -508,6 +508,7 @@
               "version" : "02",
               "serial" : "00:23:7d:49:5e:31",
               "units" : "bit/s",
+              "size" : 100000000,
               "capacity" : 1000000000,
               "width" : 32,
               "clock" : 33000000,
@@ -516,11 +517,14 @@
                 "broadcast" : "yes",
                 "driver" : "e1000e",
                 "driverversion" : "3.2.6-k",
+                "duplex" : "full",
                 "firmware" : "0.4-3",
+                "ip" : "192.168.1.39",
                 "latency" : "0",
-                "link" : "no",
+                "link" : "yes",
                 "multicast" : "yes",
-                "port" : "twisted pair"
+                "port" : "twisted pair",
+                "speed" : "100Mbit/s"
               },
               "capabilities" : {
                 "pm" : "Power Management",
@@ -737,49 +741,7 @@
                       },
                       "capabilities" : {
                         "usb-2.00" : "USB 2.0"
-                      },
-                      "children" : [
-                        {
-                          "id" : "usb:0",
-                          "class" : "input",
-                          "claimed" : true,
-                          "handle" : "USB:7:3",
-                          "description" : "Keyboard",
-                          "product" : "Dell KB216 Wired Keyboard",
-                          "vendor" : "Dell Computer Corp.",
-                          "physid" : "1",
-                          "businfo" : "usb@7:2.1",
-                          "version" : "1.08",
-                          "configuration" : {
-                            "driver" : "usbhid",
-                            "maxpower" : "100mA",
-                            "speed" : "2Mbit/s"
-                          },
-                          "capabilities" : {
-                            "usb-1.10" : "USB 1.1"
-                          }
-                        },
-                        {
-                          "id" : "usb:1",
-                          "class" : "input",
-                          "claimed" : true,
-                          "handle" : "USB:7:4",
-                          "description" : "Mouse",
-                          "product" : "Dell MS116 USB Optical Mouse",
-                          "vendor" : "PixArt",
-                          "physid" : "2",
-                          "businfo" : "usb@7:2.2",
-                          "version" : "1.00",
-                          "configuration" : {
-                            "driver" : "usbhid",
-                            "maxpower" : "100mA",
-                            "speed" : "2Mbit/s"
-                          },
-                          "capabilities" : {
-                            "usb-2.00" : "USB 2.0"
-                          }
-                        }
-                      ]
+                      }
                     }
                   ]
                 }
@@ -993,7 +955,29 @@
                   },
                   "capabilities" : {
                     "usb-1.10" : "USB 1.1"
-                  }
+                  },
+                  "children" : [
+                    {
+                      "id" : "usb",
+                      "class" : "input",
+                      "claimed" : true,
+                      "handle" : "USB:6:4",
+                      "description" : "Keyboard",
+                      "product" : "Dell KB216 Wired Keyboard",
+                      "vendor" : "Dell Computer Corp.",
+                      "physid" : "2",
+                      "businfo" : "usb@6:2",
+                      "version" : "1.08",
+                      "configuration" : {
+                        "driver" : "usbhid",
+                        "maxpower" : "100mA",
+                        "speed" : "2Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-1.10" : "USB 1.1"
+                      }
+                    }
+                  ]
                 }
               ]
             },
@@ -1048,20 +1032,20 @@
                       "claimed" : true,
                       "handle" : "USB:8:2",
                       "description" : "Mass storage device",
-                      "product" : "DataTraveler 3.0",
-                      "vendor" : "Kingston",
+                      "product" : "Flash Disk",
+                      "vendor" : "USB",
                       "physid" : "5",
                       "businfo" : "usb@8:5",
                       "logicalname" : "scsi6",
-                      "version" : "1.00",
-                      "serial" : "08606E69C773BE805965D087",
+                      "version" : "11.00",
+                      "serial" : "FB08091700013827",
                       "configuration" : {
                         "driver" : "usb-storage",
-                        "maxpower" : "498mA",
+                        "maxpower" : "100mA",
                         "speed" : "480Mbit/s"
                       },
                       "capabilities" : {
-                        "usb-2.10" : true,
+                        "usb-2.00" : "USB 2.0",
                         "scsi" : "SCSI",
                         "emulated" : "Emulated device"
                       },
@@ -1072,87 +1056,69 @@
                           "claimed" : true,
                           "handle" : "SCSI:06:00:00:00",
                           "description" : "SCSI Disk",
-                          "product" : "DataTraveler 3.0",
-                          "vendor" : "Kingston",
+                          "product" : "Flash Disk",
+                          "vendor" : "USB",
                           "physid" : "0.0.0",
                           "businfo" : "scsi@6:0.0.0",
-                          "logicalname" : ["/dev/sdb", "/lib/live/mount/medium"],
-                          "dev" : "8:16",
-                          "version" : "PMAP",
-                          "serial" : "0B8E680065E9",
+                          "logicalname" : "/dev/sdd",
+                          "dev" : "8:48",
+                          "version" : "1100",
                           "units" : "bytes",
-                          "size" : 7866580992,
+                          "size" : 1002438656,
                           "configuration" : {
-                            "ansiversion" : "6",
                             "logicalsectorsize" : "512",
-                            "mount.fstype" : "iso9660",
-                            "mount.options" : "ro,noatime",
                             "sectorsize" : "512",
-                            "state" : "mounted"
+                            "signature" : "60a84e44"
                           },
                           "capabilities" : {
-                            "removable" : "support is removable"
+                            "partitioned" : "Partitioned disk",
+                            "partitioned:dos" : "MS-DOS partition table"
                           },
                           "children" : [
                             {
-                              "id" : "medium",
-                              "class" : "disk",
+                              "id" : "volume:0",
+                              "class" : "volume",
                               "claimed" : true,
-                              "physid" : "0",
-                              "logicalname" : ["/dev/sdb", "/lib/live/mount/medium"],
-                              "dev" : "8:16",
-                              "units" : "bytes",
-                              "size" : 7866580992,
+                              "description" : "Empty partition",
+                              "physid" : "1",
+                              "businfo" : "scsi@6:0.0.0,1",
+                              "logicalname" : ["/dev/sdd1", "/lib/live/mount/medium"],
+                              "dev" : "8:49",
+                              "capacity" : 425689088,
                               "configuration" : {
                                 "mount.fstype" : "iso9660",
                                 "mount.options" : "ro,noatime",
-                                "signature" : "3e86ff44",
                                 "state" : "mounted"
                               },
                               "capabilities" : {
-                                "partitioned" : "Partitioned disk",
-                                "partitioned:dos" : "MS-DOS partition table"
+                                "primary" : "Primary partition",
+                                "bootable" : "Bootable partition (active)",
+                                "nofs" : "No filesystem"
+                              }
+                            },
+                            {
+                              "id" : "volume:1",
+                              "class" : "volume",
+                              "claimed" : true,
+                              "description" : "Windows FAT volume",
+                              "vendor" : "mkfs.fat",
+                              "physid" : "2",
+                              "businfo" : "scsi@6:0.0.0,2",
+                              "logicalname" : "/dev/sdd2",
+                              "dev" : "8:50",
+                              "version" : "FAT12",
+                              "serial" : "e180-b540",
+                              "size" : 18446744073709551104,
+                              "configuration" : {
+                                "FATs" : "2",
+                                "filesystem" : "fat"
                               },
-                              "children" : [
-                                {
-                                  "id" : "volume:0",
-                                  "class" : "volume",
-                                  "claimed" : true,
-                                  "description" : "Empty partition",
-                                  "physid" : "1",
-                                  "logicalname" : "/dev/sdb1",
-                                  "dev" : "8:17",
-                                  "capacity" : 422543360,
-                                  "capabilities" : {
-                                    "primary" : "Primary partition",
-                                    "bootable" : "Bootable partition (active)",
-                                    "nofs" : "No filesystem"
-                                  }
-                                },
-                                {
-                                  "id" : "volume:1",
-                                  "class" : "volume",
-                                  "claimed" : true,
-                                  "description" : "Windows FAT volume",
-                                  "vendor" : "mkfs.fat",
-                                  "physid" : "2",
-                                  "logicalname" : "/dev/sdb2",
-                                  "dev" : "8:18",
-                                  "version" : "FAT12",
-                                  "serial" : "488a-27f9",
-                                  "size" : 18446744073709551104,
-                                  "configuration" : {
-                                    "FATs" : "2",
-                                    "filesystem" : "fat"
-                                  },
-                                  "capabilities" : {
-                                    "primary" : "Primary partition",
-                                    "boot" : "Contains boot code",
-                                    "fat" : "Windows FAT",
-                                    "initialized" : "initialized volume"
-                                  }
-                                }
-                              ]
+                              "capabilities" : {
+                                "primary" : "Primary partition",
+                                "boot" : "Contains boot code",
+                                "fat" : "Windows FAT",
+                                "initialized" : "initialized volume"
+                              }
                             }
                           ]
                         }
@@ -1268,7 +1234,7 @@
           },
           "children" : [
             {
-              "id" : "disk",
+              "id" : "disk:0",
               "class" : "disk",
               "claimed" : true,
               "handle" : "SCSI:02:00:00:00",
@@ -1286,8 +1252,145 @@
               "configuration" : {
                 "ansiversion" : "5",
                 "logicalsectorsize" : "512",
-                "sectorsize" : "512"
-              }
+                "sectorsize" : "512",
+                "signature" : "d5bcadbf"
+              },
+              "capabilities" : {
+                "partitioned" : "Partitioned disk",
+                "partitioned:dos" : "MS-DOS partition table"
+              },
+              "children" : [
+                {
+                  "id" : "volume:0",
+                  "class" : "volume",
+                  "claimed" : true,
+                  "description" : "EXT4 volume",
+                  "vendor" : "Linux",
+                  "physid" : "1",
+                  "businfo" : "scsi@2:0.0.0,1",
+                  "logicalname" : "/dev/sda1",
+                  "dev" : "8:1",
+                  "version" : "1.0",
+                  "serial" : "3375cfec-dcca-4861-963f-55fc476593b7",
+                  "size" : 158967095296,
+                  "capacity" : 158967095296,
+                  "configuration" : {
+                    "created" : "2019-04-03 10:02:38",
+                    "filesystem" : "ext4",
+                    "lastmountpoint" : "/tmp/mnt",
+                    "modified" : "2019-04-03 10:06:52",
+                    "mounted" : "2019-04-03 10:06:40",
+                    "state" : "clean"
+                  },
+                  "capabilities" : {
+                    "primary" : "Primary partition",
+                    "journaled" : true,
+                    "extended_attributes" : "Extended Attributes",
+                    "large_files" : "4GB+ files",
+                    "huge_files" : "16TB+ files",
+                    "dir_nlink" : "directories with 65000+ subdirs",
+                    "extents" : "extent-based allocation",
+                    "ext4" : true,
+                    "ext2" : "EXT2/EXT3",
+                    "initialized" : "initialized volume"
+                  }
+                },
+                {
+                  "id" : "volume:1",
+                  "class" : "volume",
+                  "claimed" : true,
+                  "description" : "Linux swap / Solaris partition",
+                  "physid" : "2",
+                  "businfo" : "scsi@2:0.0.0,2",
+                  "logicalname" : "/dev/sda2",
+                  "dev" : "8:2",
+                  "capacity" : 1073741824,
+                  "capabilities" : {
+                    "primary" : "Primary partition",
+                    "nofs" : "No filesystem"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "disk:1",
+              "class" : "disk",
+              "claimed" : true,
+              "handle" : "SCSI:02:00:01:00",
+              "description" : "ATA Disk",
+              "product" : "WDC WD3200AAJS-0",
+              "vendor" : "Western Digital",
+              "physid" : "0.1.0",
+              "businfo" : "scsi@2:0.1.0",
+              "logicalname" : "/dev/sdb",
+              "dev" : "8:16",
+              "version" : "1B02",
+              "serial" : "WD-WCARW0244414",
+              "units" : "bytes",
+              "size" : 320072933376,
+              "configuration" : {
+                "ansiversion" : "5",
+                "logicalsectorsize" : "512",
+                "sectorsize" : "512",
+                "signature" : "56f95b32"
+              },
+              "capabilities" : {
+                "partitioned" : "Partitioned disk",
+                "partitioned:dos" : "MS-DOS partition table"
+              },
+              "children" : [
+                {
+                  "id" : "volume:0",
+                  "class" : "volume",
+                  "claimed" : true,
+                  "description" : "EXT4 volume",
+                  "vendor" : "Linux",
+                  "physid" : "1",
+                  "businfo" : "scsi@2:0.1.0,1",
+                  "logicalname" : "/dev/sdb1",
+                  "dev" : "8:17",
+                  "version" : "1.0",
+                  "serial" : "3375cfec-dcca-4861-963f-55fc476593b7",
+                  "size" : 318998142976,
+                  "capacity" : 318998142976,
+                  "configuration" : {
+                    "created" : "2019-03-18 15:58:55",
+                    "filesystem" : "ext4",
+                    "lastmountpoint" : "/",
+                    "modified" : "2019-04-17 15:08:11",
+                    "mounted" : "2019-04-17 15:08:15",
+                    "state" : "clean"
+                  },
+                  "capabilities" : {
+                    "primary" : "Primary partition",
+                    "journaled" : true,
+                    "extended_attributes" : "Extended Attributes",
+                    "large_files" : "4GB+ files",
+                    "huge_files" : "16TB+ files",
+                    "dir_nlink" : "directories with 65000+ subdirs",
+                    "recover" : "needs recovery",
+                    "extents" : "extent-based allocation",
+                    "ext4" : true,
+                    "ext2" : "EXT2/EXT3",
+                    "initialized" : "initialized volume"
+                  }
+                },
+                {
+                  "id" : "volume:1",
+                  "class" : "volume",
+                  "claimed" : true,
+                  "description" : "Linux swap / Solaris partition",
+                  "physid" : "2",
+                  "businfo" : "scsi@2:0.1.0,2",
+                  "logicalname" : "/dev/sdb2",
+                  "dev" : "8:18",
+                  "capacity" : 1073741824,
+                  "capabilities" : {
+                    "primary" : "Primary partition",
+                    "nofs" : "No filesystem"
+                  }
+                }
+              ]
             }
           ]
         },
@@ -1302,31 +1405,62 @@
           },
           "children" : [
             {
-              "id" : "cdrom",
+              "id" : "disk",
               "class" : "disk",
               "claimed" : true,
               "handle" : "SCSI:03:00:00:00",
-              "description" : "DVD-RAM writer",
-              "product" : "DVD A  DH16A6L",
-              "vendor" : "ATAPI",
+              "description" : "ATA Disk",
+              "product" : "WDC WD5000AAKX-6",
+              "vendor" : "Western Digital",
               "physid" : "0.0.0",
               "businfo" : "scsi@3:0.0.0",
-              "logicalname" : ["/dev/cdrom", "/dev/cdrw", "/dev/dvd", "/dev/dvdrw", "/dev/sr0"],
-              "dev" : "11:0",
-              "version" : "ZH37",
+              "logicalname" : "/dev/sdc",
+              "dev" : "8:32",
+              "version" : "1H18",
+              "serial" : "WD-WCC2ETY84203",
+              "units" : "bytes",
+              "size" : 500107862016,
               "configuration" : {
                 "ansiversion" : "5",
-                "status" : "nodisc"
+                "logicalsectorsize" : "512",
+                "sectorsize" : "512",
+                "signature" : "439caa61"
               },
               "capabilities" : {
-                "removable" : "support is removable",
-                "audio" : "Audio CD playback",
-                "cd-r" : "CD-R burning",
-                "cd-rw" : "CD-RW burning",
-                "dvd" : "DVD playback",
-                "dvd-r" : "DVD-R burning",
-                "dvd-ram" : "DVD-RAM burning"
-              }
+                "partitioned" : "Partitioned disk",
+                "partitioned:dos" : "MS-DOS partition table"
+              },
+              "children" : [
+                {
+                  "id" : "volume:0",
+                  "class" : "volume",
+                  "claimed" : true,
+                  "description" : "Linux filesystem partition",
+                  "physid" : "1",
+                  "businfo" : "scsi@3:0.0.0,1",
+                  "logicalname" : "/dev/sdc1",
+                  "dev" : "8:33",
+                  "capacity" : 499033071616,
+                  "capabilities" : {
+                    "primary" : "Primary partition"
+                  }
+                },
+                {
+                  "id" : "volume:1",
+                  "class" : "volume",
+                  "claimed" : true,
+                  "description" : "Linux swap / Solaris partition",
+                  "physid" : "2",
+                  "businfo" : "scsi@3:0.0.0,2",
+                  "logicalname" : "/dev/sdc2",
+                  "dev" : "8:34",
+                  "capacity" : 1073741824,
+                  "capabilities" : {
+                    "primary" : "Primary partition",
+                    "nofs" : "No filesystem"
+                  }
+                }
+              ]
             }
           ]
         }

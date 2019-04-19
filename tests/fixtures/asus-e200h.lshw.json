@@ -1,0 +1,935 @@
+{
+  "id" : "debian",
+  "class" : "system",
+  "claimed" : true,
+  "handle" : "DMI:0001",
+  "description" : "Notebook",
+  "product" : "E200HA (ASUS-NotebookSKU)",
+  "vendor" : "ASUSTeK COMPUTER INC.",
+  "version" : "1.0",
+  "serial" : "G6NLCX01Z49224G",
+  "width" : 32,
+  "configuration" : {
+    "boot" : "normal",
+    "chassis" : "notebook",
+    "family" : "E",
+    "sku" : "ASUS-NotebookSKU",
+    "uuid" : "B11A4036-FEBA-49D3-BF7C-2332942ECD55"
+  },
+  "capabilities" : {
+    "smbios-3.0" : "SMBIOS version 3.0",
+    "dmi-3.0" : "DMI version 3.0"
+  },
+  "children" : [
+    {
+      "id" : "core",
+      "class" : "bus",
+      "claimed" : true,
+      "handle" : "DMI:0002",
+      "description" : "Motherboard",
+      "product" : "E200HA",
+      "vendor" : "ASUSTeK COMPUTER INC.",
+      "physid" : "0",
+      "version" : "1.0",
+      "serial" : "BSN12345678901234567",
+      "slot" : "MIDDLE",
+      "children" : [
+        {
+          "id" : "firmware",
+          "class" : "memory",
+          "claimed" : true,
+          "description" : "BIOS",
+          "vendor" : "American Megatrends Inc.",
+          "physid" : "0",
+          "version" : "E200HA.210",
+          "date" : "04/19/2016",
+          "units" : "bytes",
+          "size" : 65536,
+          "capacity" : 6225920,
+          "capabilities" : {
+            "pci" : "PCI bus",
+            "upgrade" : "BIOS EEPROM can be upgraded",
+            "shadowing" : "BIOS shadowing",
+            "cdboot" : "Booting from CD-ROM/DVD",
+            "bootselect" : "Selectable boot path",
+            "socketedrom" : "BIOS ROM is socketed",
+            "edd" : "Enhanced Disk Drive extensions",
+            "int13floppy1200" : "5.25\" 1.2MB floppy",
+            "int13floppy720" : "3.5\" 720KB floppy",
+            "int13floppy2880" : "3.5\" 2.88MB floppy",
+            "int5printscreen" : "Print Screen key",
+            "int14serial" : "INT14 serial line control",
+            "int17printer" : "INT17 printer control",
+            "acpi" : "ACPI",
+            "usb" : "USB legacy emulation",
+            "smartbattery" : "Smart battery",
+            "biosbootspecification" : "BIOS boot specification",
+            "uefi" : "UEFI specification is supported"
+          }
+        },
+        {
+          "id" : "memory",
+          "class" : "memory",
+          "claimed" : true,
+          "handle" : "DMI:000B",
+          "description" : "System Memory",
+          "physid" : "b",
+          "slot" : "System board or motherboard",
+          "units" : "bytes",
+          "size" : 2147483648,
+          "configuration" : {
+            "errordetection" : "multi-bit-ecc"
+          },
+          "capabilities" : {
+            "ecc" : "Multi-bit error-correcting code (ECC)"
+          },
+          "children" : [
+            {
+              "id" : "bank:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:000D",
+              "description" : "DIMM DDR3 1600 MHz (0.6 ns)",
+              "product" : "Array1_PartNumber0",
+              "vendor" : "A1_Manufacturer0",
+              "physid" : "0",
+              "serial" : "A1_SerNum0",
+              "slot" : "A1_DIMM0",
+              "units" : "bytes",
+              "size" : 2147483648,
+              "width" : 8,
+              "clock" : 1600000000
+            },
+            {
+              "id" : "bank:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:000F",
+              "description" : "DIMM [empty]",
+              "product" : "Array1_PartNumber1",
+              "vendor" : "A1_Manufacturer1",
+              "physid" : "1",
+              "serial" : "A1_SerNum1",
+              "slot" : "A1_DIMM1"
+            }
+          ]
+        },
+        {
+          "id" : "cache:0",
+          "class" : "memory",
+          "claimed" : true,
+          "handle" : "DMI:0012",
+          "description" : "L1 cache",
+          "physid" : "12",
+          "slot" : "CPU Internal L1",
+          "units" : "bytes",
+          "size" : 229376,
+          "capacity" : 229376,
+          "configuration" : {
+            "level" : "1"
+          },
+          "capabilities" : {
+            "internal" : "Internal",
+            "write-back" : "Write-back"
+          }
+        },
+        {
+          "id" : "cache:1",
+          "class" : "memory",
+          "claimed" : true,
+          "handle" : "DMI:0013",
+          "description" : "L2 cache",
+          "physid" : "13",
+          "slot" : "CPU Internal L2",
+          "units" : "bytes",
+          "size" : 2097152,
+          "capacity" : 2097152,
+          "configuration" : {
+            "level" : "2"
+          },
+          "capabilities" : {
+            "internal" : "Internal",
+            "write-back" : "Write-back",
+            "unified" : "Unified cache"
+          }
+        },
+        {
+          "id" : "cpu",
+          "class" : "processor",
+          "claimed" : true,
+          "handle" : "DMI:0014",
+          "description" : "CPU",
+          "product" : "Intel(R) Atom(TM) x5-Z8350  CPU @ 1.44GHz",
+          "vendor" : "Intel Corp.",
+          "physid" : "14",
+          "businfo" : "cpu@0",
+          "version" : "6.12.4",
+          "serial" : "0004-06C4-0000-0000-0000-0000",
+          "slot" : "SOCKET 0",
+          "units" : "Hz",
+          "size" : 1409677000,
+          "capacity" : 2400000000,
+          "width" : 64,
+          "clock" : 80000000,
+          "configuration" : {
+            "cores" : "4",
+            "enabledcores" : "4",
+            "id" : "4",
+            "threads" : "4"
+          },
+          "capabilities" : {
+            "x86-64" : "64bits extensions (x86-64)",
+            "fpu" : "mathematical co-processor",
+            "fpu_exception" : "FPU exceptions reporting",
+            "wp" : true,
+            "vme" : "virtual mode extensions",
+            "de" : "debugging extensions",
+            "pse" : "page size extensions",
+            "tsc" : "time stamp counter",
+            "msr" : "model-specific registers",
+            "pae" : "4GB+ memory addressing (Physical Address Extension)",
+            "mce" : "machine check exceptions",
+            "cx8" : "compare and exchange 8-byte",
+            "apic" : "on-chip advanced programmable interrupt controller (APIC)",
+            "sep" : "fast system calls",
+            "mtrr" : "memory type range registers",
+            "pge" : "page global enable",
+            "mca" : "machine check architecture",
+            "cmov" : "conditional move instruction",
+            "pat" : "page attribute table",
+            "pse36" : "36-bit page size extensions",
+            "clflush" : true,
+            "dts" : "debug trace and EMON store MSRs",
+            "acpi" : "thermal control (ACPI)",
+            "mmx" : "multimedia extensions (MMX)",
+            "fxsr" : "fast floating point save/restore",
+            "sse" : "streaming SIMD extensions (SSE)",
+            "sse2" : "streaming SIMD extensions (SSE2)",
+            "ss" : "self-snoop",
+            "ht" : "HyperThreading",
+            "tm" : "thermal interrupt and status",
+            "pbe" : "pending break event",
+            "nx" : "no-execute bit (NX)",
+            "rdtscp" : true,
+            "constant_tsc" : true,
+            "arch_perfmon" : true,
+            "pebs" : true,
+            "bts" : true,
+            "xtopology" : true,
+            "nonstop_tsc" : true,
+            "aperfmperf" : true,
+            "pni" : true,
+            "pclmulqdq" : true,
+            "dtes64" : true,
+            "monitor" : true,
+            "ds_cpl" : true,
+            "vmx" : "CPU virtualization (Vanderpool)",
+            "est" : true,
+            "tm2" : true,
+            "ssse3" : true,
+            "cx16" : true,
+            "xtpr" : true,
+            "pdcm" : true,
+            "sse4_1" : true,
+            "sse4_2" : true,
+            "movbe" : true,
+            "popcnt" : true,
+            "tsc_deadline_timer" : true,
+            "aes" : true,
+            "rdrand" : true,
+            "lahf_lm" : true,
+            "3dnowprefetch" : true,
+            "epb" : true,
+            "tpr_shadow" : true,
+            "vnmi" : true,
+            "flexpriority" : true,
+            "ept" : true,
+            "vpid" : true,
+            "tsc_adjust" : true,
+            "smep" : true,
+            "erms" : true,
+            "dtherm" : true,
+            "ida" : true,
+            "arat" : true,
+            "cpufreq" : "CPU Frequency scaling"
+          },
+          "children" : [
+            {
+              "id" : "logicalcpu:0",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.0",
+              "description" : "Logical CPU",
+              "physid" : "4.1",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:1",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.1",
+              "description" : "Logical CPU",
+              "physid" : "4.2",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:2",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.2",
+              "description" : "Logical CPU",
+              "physid" : "4.3",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:3",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.3",
+              "description" : "Logical CPU",
+              "physid" : "4.4",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:4",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.4",
+              "description" : "Logical CPU",
+              "physid" : "4.5",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:5",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.5",
+              "description" : "Logical CPU",
+              "physid" : "4.6",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:6",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.6",
+              "description" : "Logical CPU",
+              "physid" : "4.7",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:7",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.7",
+              "description" : "Logical CPU",
+              "physid" : "4.8",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:8",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.8",
+              "description" : "Logical CPU",
+              "physid" : "4.9",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:9",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.9",
+              "description" : "Logical CPU",
+              "physid" : "4.a",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:10",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.10",
+              "description" : "Logical CPU",
+              "physid" : "4.b",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:11",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.11",
+              "description" : "Logical CPU",
+              "physid" : "4.c",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:12",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.12",
+              "description" : "Logical CPU",
+              "physid" : "4.d",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:13",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.13",
+              "description" : "Logical CPU",
+              "physid" : "4.e",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:14",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.14",
+              "description" : "Logical CPU",
+              "physid" : "4.f",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:15",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.15",
+              "description" : "Logical CPU",
+              "physid" : "4.10",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "pci",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "Atom/Celeron/Pentium Processor x5-E8000/J3xxx/N3xxx Series SoC Transaction Register",
+          "vendor" : "Intel Corporation",
+          "physid" : "100",
+          "businfo" : "pci@0000:00:00.0",
+          "version" : "36",
+          "width" : 32,
+          "clock" : 33000000,
+          "configuration" : {
+            "driver" : "iosf_mbi_pci"
+          },
+          "children" : [
+            {
+              "id" : "display",
+              "class" : "display",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:02.0",
+              "description" : "VGA compatible controller",
+              "product" : "Atom/Celeron/Pentium Processor x5-E8000/J3xxx/N3xxx Series PCI Configuration Registers",
+              "vendor" : "Intel Corporation",
+              "physid" : "2",
+              "businfo" : "pci@0000:00:02.0",
+              "version" : "36",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "i915",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "vga_controller" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing",
+                "rom" : "extension ROM"
+              }
+            },
+            {
+              "id" : "generic:0",
+              "class" : "generic",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:0b.0",
+              "description" : "Signal processing controller",
+              "product" : "Atom/Celeron/Pentium Processor x5-E8000/J3xxx/N3xxx Series Power Management Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "b",
+              "businfo" : "pci@0000:00:0b.0",
+              "version" : "36",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "proc_thermal",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "usb",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:14.0",
+              "description" : "USB controller",
+              "product" : "Atom/Celeron/Pentium Processor x5-E8000/J3xxx/N3xxx Series USB xHCI Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "14",
+              "businfo" : "pci@0000:00:14.0",
+              "version" : "36",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "xhci_hcd",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "xhci" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost:0",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:1:1",
+                  "product" : "xHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-8-686 xhci-hcd",
+                  "physid" : "0",
+                  "businfo" : "usb@1",
+                  "logicalname" : "usb1",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "7",
+                    "speed" : "480Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-2.00" : "USB 2.0"
+                  },
+                  "children" : [
+                    {
+                      "id" : "usb:0",
+                      "class" : "multimedia",
+                      "claimed" : true,
+                      "handle" : "USB:1:2",
+                      "description" : "Video",
+                      "product" : "USB2.0 VGA UVC WebCam",
+                      "vendor" : "Chicony Electronics Co.,Ltd.",
+                      "physid" : "1",
+                      "businfo" : "usb@1:1",
+                      "version" : "95.56",
+                      "serial" : "0x0001",
+                      "configuration" : {
+                        "driver" : "uvcvideo",
+                        "maxpower" : "500mA",
+                        "speed" : "480Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-2.00" : "USB 2.0"
+                      }
+                    },
+                    {
+                      "id" : "usb:1",
+                      "class" : "storage",
+                      "claimed" : true,
+                      "handle" : "USB:1:3",
+                      "description" : "Mass storage device",
+                      "product" : "Flash Disk",
+                      "vendor" : "USB",
+                      "physid" : "2",
+                      "businfo" : "usb@1:2",
+                      "logicalname" : "scsi0",
+                      "version" : "11.00",
+                      "serial" : "FB08091700013827",
+                      "configuration" : {
+                        "driver" : "usb-storage",
+                        "maxpower" : "100mA",
+                        "speed" : "480Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-2.00" : "USB 2.0",
+                        "scsi" : "SCSI",
+                        "emulated" : "Emulated device"
+                      },
+                      "children" : [
+                        {
+                          "id" : "disk",
+                          "class" : "disk",
+                          "claimed" : true,
+                          "handle" : "SCSI:00:00:00:00",
+                          "description" : "SCSI Disk",
+                          "product" : "Flash Disk",
+                          "vendor" : "USB",
+                          "physid" : "0.0.0",
+                          "businfo" : "scsi@0:0.0.0",
+                          "logicalname" : "/dev/sda",
+                          "dev" : "8:0",
+                          "version" : "1100",
+                          "units" : "bytes",
+                          "size" : 1002438656,
+                          "configuration" : {
+                            "logicalsectorsize" : "512",
+                            "sectorsize" : "512",
+                            "signature" : "60a84e44"
+                          },
+                          "capabilities" : {
+                            "partitioned" : "Partitioned disk",
+                            "partitioned:dos" : "MS-DOS partition table"
+                          },
+                          "children" : [
+                            {
+                              "id" : "volume:0",
+                              "class" : "volume",
+                              "claimed" : true,
+                              "description" : "Empty partition",
+                              "physid" : "1",
+                              "businfo" : "scsi@0:0.0.0,1",
+                              "logicalname" : ["/dev/sda1", "/lib/live/mount/medium"],
+                              "dev" : "8:1",
+                              "capacity" : 425689088,
+                              "configuration" : {
+                                "mount.fstype" : "iso9660",
+                                "mount.options" : "ro,noatime",
+                                "state" : "mounted"
+                              },
+                              "capabilities" : {
+                                "primary" : "Primary partition",
+                                "bootable" : "Bootable partition (active)",
+                                "nofs" : "No filesystem"
+                              }
+                            },
+                            {
+                              "id" : "volume:1",
+                              "class" : "volume",
+                              "claimed" : true,
+                              "description" : "Windows FAT volume",
+                              "vendor" : "mkfs.fat",
+                              "physid" : "2",
+                              "businfo" : "scsi@0:0.0.0,2",
+                              "logicalname" : "/dev/sda2",
+                              "dev" : "8:2",
+                              "version" : "FAT12",
+                              "serial" : "e180-b540",
+                              "size" : 18446744073709551104,
+                              "configuration" : {
+                                "FATs" : "2",
+                                "filesystem" : "fat"
+                              },
+                              "capabilities" : {
+                                "primary" : "Primary partition",
+                                "boot" : "Contains boot code",
+                                "fat" : "Windows FAT",
+                                "initialized" : "initialized volume"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id" : "usb:2",
+                      "class" : "communication",
+                      "claimed" : true,
+                      "handle" : "USB:1:4",
+                      "description" : "Bluetooth wireless interface",
+                      "vendor" : "IMC Networks",
+                      "physid" : "3",
+                      "businfo" : "usb@1:3",
+                      "version" : "0.01",
+                      "configuration" : {
+                        "driver" : "btusb",
+                        "maxpower" : "100mA",
+                        "speed" : "12Mbit/s"
+                      },
+                      "capabilities" : {
+                        "bluetooth" : "Bluetooth wireless radio",
+                        "usb-1.10" : "USB 1.1"
+                      }
+                    },
+                    {
+                      "id" : "usb:3",
+                      "class" : "storage",
+                      "claimed" : true,
+                      "handle" : "USB:1:5",
+                      "description" : "Mass storage device",
+                      "product" : "DataTraveler 2.0",
+                      "vendor" : "Kingston",
+                      "physid" : "4",
+                      "businfo" : "usb@1:4",
+                      "logicalname" : "scsi1",
+                      "version" : "2.00",
+                      "serial" : "899801162008011514251721",
+                      "configuration" : {
+                        "driver" : "usb-storage",
+                        "maxpower" : "100mA",
+                        "speed" : "480Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-2.00" : "USB 2.0",
+                        "scsi" : "SCSI",
+                        "emulated" : "Emulated device"
+                      },
+                      "children" : [
+                        {
+                          "id" : "disk",
+                          "class" : "disk",
+                          "claimed" : true,
+                          "handle" : "SCSI:01:00:00:00",
+                          "description" : "SCSI Disk",
+                          "product" : "DataTraveler 2.0",
+                          "vendor" : "Kingston",
+                          "physid" : "0.0.0",
+                          "businfo" : "scsi@1:0.0.0",
+                          "logicalname" : "/dev/sdb",
+                          "dev" : "8:16",
+                          "version" : "1.00",
+                          "units" : "bytes",
+                          "size" : 4045930496,
+                          "configuration" : {
+                            "ansiversion" : "2",
+                            "logicalsectorsize" : "512",
+                            "sectorsize" : "512"
+                          },
+                          "capabilities" : {
+                            "removable" : "support is removable"
+                          },
+                          "children" : [
+                            {
+                              "id" : "medium",
+                              "class" : "disk",
+                              "claimed" : true,
+                              "physid" : "0",
+                              "logicalname" : "/dev/sdb",
+                              "dev" : "8:16",
+                              "units" : "bytes",
+                              "size" : 4045930496,
+                              "capabilities" : {
+                                "partitioned" : "Partitioned disk",
+                                "partitioned:dos" : "MS-DOS partition table"
+                              },
+                              "children" : [
+                                {
+                                  "id" : "volume",
+                                  "class" : "volume",
+                                  "claimed" : true,
+                                  "description" : "Windows FAT volume",
+                                  "vendor" : "BSD  4.4",
+                                  "physid" : "1",
+                                  "logicalname" : ["/dev/sdb1", "/media/usb"],
+                                  "dev" : "8:17",
+                                  "version" : "FAT32",
+                                  "serial" : "83a6-0f13",
+                                  "size" : 4043292672,
+                                  "capacity" : 4044357632,
+                                  "configuration" : {
+                                    "FATs" : "2",
+                                    "filesystem" : "fat",
+                                    "label" : "UNTITLED",
+                                    "mount.fstype" : "vfat",
+                                    "mount.options" : "rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro",
+                                    "state" : "mounted"
+                                  },
+                                  "capabilities" : {
+                                    "primary" : "Primary partition",
+                                    "fat" : "Windows FAT",
+                                    "initialized" : "initialized volume"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id" : "usbhost:1",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:2:1",
+                  "product" : "xHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-8-686 xhci-hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@2",
+                  "logicalname" : "usb2",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "6",
+                    "speed" : "5000Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-3.00" : true
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "generic:1",
+              "class" : "generic",
+              "handle" : "PCI:0000:00:1a.0",
+              "description" : "Encryption controller",
+              "product" : "Atom/Celeron/Pentium Processor x5-E8000/J3xxx/N3xxx Series Trusted Execution Engine",
+              "vendor" : "Intel Corporation",
+              "physid" : "1a",
+              "businfo" : "pci@0000:00:1a.0",
+              "version" : "36",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "pci",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:01",
+              "description" : "PCI bridge",
+              "product" : "Atom/Celeron/Pentium Processor x5-E8000/J3xxx/N3xxx Series PCI Express Port #1",
+              "vendor" : "Intel Corporation",
+              "physid" : "1c",
+              "businfo" : "pci@0000:00:1c.0",
+              "version" : "36",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "pcieport"
+              },
+              "capabilities" : {
+                "pci" : true,
+                "pciexpress" : "PCI Express",
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "network",
+                  "class" : "network",
+                  "disabled" : true,
+                  "claimed" : true,
+                  "handle" : "PCI:0000:01:00.0",
+                  "description" : "Wireless interface",
+                  "product" : "QCA9377 802.11ac Wireless Network Adapter",
+                  "vendor" : "Qualcomm Atheros",
+                  "physid" : "0",
+                  "businfo" : "pci@0000:01:00.0",
+                  "logicalname" : "wlp1s0",
+                  "version" : "30",
+                  "serial" : "74:c6:3b:88:08:23",
+                  "width" : 64,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "broadcast" : "yes",
+                    "driver" : "ath10k_pci",
+                    "driverversion" : "4.9.0-8-686",
+                    "firmware" : "WLAN.TF.1.0-00267-1",
+                    "latency" : "0",
+                    "link" : "no",
+                    "multicast" : "yes",
+                    "wireless" : "IEEE 802.11"
+                  },
+                  "capabilities" : {
+                    "pm" : "Power Management",
+                    "msi" : "Message Signalled Interrupts",
+                    "pciexpress" : "PCI Express",
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing",
+                    "ethernet" : true,
+                    "physical" : "Physical interface",
+                    "wireless" : "Wireless-LAN"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "isa",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1f.0",
+              "description" : "ISA bridge",
+              "product" : "Atom/Celeron/Pentium Processor x5-E8000/J3xxx/N3xxx Series PCU",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f",
+              "businfo" : "pci@0000:00:1f.0",
+              "version" : "36",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "lpc_ich",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "isa" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

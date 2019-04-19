@@ -129,3 +129,11 @@ class StressTest(Test):
         process.communicate()  # wait for process, consume output
         if process.returncode:
             self.severity = Severity.Error
+
+
+class BatteryMeasure(Test):
+    def __init__(self, size, voltage, cycle_count) -> None:
+        super().__init__()
+        self.size = size
+        self.voltage = voltage
+        self.cycle_count = cycle_count

@@ -2,15 +2,19 @@ import json
 import logging
 import os
 import re
+from configparser import ConfigParser
+from datetime import datetime
 from enum import Enum, unique
 from itertools import chain
-from math import floor
+from math import floor, hypot
 from pathlib import Path
 from subprocess import PIPE, run
 from typing import Iterator, List, Set, Tuple, Union
 from warnings import catch_warnings, filterwarnings
 
+import dateutil.parser
 import pySMART
+from ereuse_utils import cmd, text
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
     get_nested_dicts_with_key_value
 from pydash import clean
@@ -20,7 +24,8 @@ from ereuse_workbench.benchmark import BenchmarkDataStorage, BenchmarkProcessor,
     BenchmarkProcessorSysbench, BenchmarkRamSysbench
 from ereuse_workbench.erase import Erase, EraseType
 from ereuse_workbench.install import Install
-from ereuse_workbench.test import StressTest, TestDataStorage, TestDataStorageLength
+from ereuse_workbench.test import BatteryMeasure, StressTest, TestDataStorage, \
+    TestDataStorageLength
 from ereuse_workbench.utils import Dumpeable
 
 
@@ -167,6 +172,8 @@ class Processor(Component):
         self.serial_number = None  # Processors don't have valid SN :-(
         if not (0.1 <= self.speed <= 9):
             logging.warning('Speed should be between 0.1 and 9, but is %s', self.speed)
+        self.brand, self.generation = self.processor_brand_generation(self.model)
+
         assert not hasattr(self, 'cores') or 1 <= self.cores <= 16
 
     def benchmarks(self):
@@ -174,6 +181,54 @@ class Processor(Component):
             benchmark = Benchmark()
             self.events.add(benchmark)
             yield benchmark
+
+    @staticmethod
+    def processor_brand_generation(model: str):
+        """Generates the ``brand`` and ``generation`` fields for the given model.
+
+        This returns a tuple with:
+
+        - The brand as a string or None.
+        - The generation as an int or None.
+        """
+        # Intel desktop processor numbers: https://www.intel.com/content/www/us/en/processors/processor-numbers.html
+        # Intel server processor numbers: https://www.intel.com/content/www/us/en/processors/processor-numbers-data-center.html
+
+        if 'Duo' in model:
+            return 'Core2 Duo', None
+        if 'Quad' in model:
+            return 'Core2 Quad', None
+        if 'Atom' in model:
+            return 'Atom', None
+        if 'Celeron' in model:
+            return 'Celeron', None
+        if 'Pentium' in model:
+            return 'Pentium', None
+        if 'Xeon Platinum' in model:
+            generation = int(re.findall(r'\bPlatinum \d{4}\w', model)[0][10])
+            return 'Xeon Platinum', generation
+        if 'Xeon Gold' in model:
+            generation = int(re.findall(r'\bGold \d{4}\w', model)[0][6])
+            return 'Xeon Gold', generation
+        if 'Xeon' in model:  # Xeon E5...
+            generation = 1
+            results = re.findall(r'\bV\d\b', model)  # find V1, V2...
+            if results:
+                generation = int(results[0][1])
+            return 'Xeon', generation
+        results = re.findall(r'\bi\d-\w+', model)  # i3-XXX..., i5-XXX...
+        if results:  # i3, i5...
+            return 'Core i{}'.format(results[0][1]), int(results[0][3])
+        results = re.findall(r'\bi\d CPU \w+', model)
+        if results:  # i3 CPU XXX
+            return 'Core i{}'.format(results[0][1]), 1
+        results = re.findall(r'\bm\d-\w+', model)  # m3-XXXX...
+        if results:
+            return 'Core m{}'.format(results[0][1]), None
+        return None, None
+
+    def __str__(self) -> str:
+        return super().__str__() + (' ({} generation)' if self.generation else '')
 
 
 class RamModule(Component):
@@ -346,7 +401,7 @@ class GraphicCard(Component):
 class Motherboard(Component):
     INTERFACES = 'usb', 'firewire', 'serial', 'pcmcia'
 
-    def __init__(self, node: dict) -> None:
+    def __init__(self, node: dict, bios_node: dict) -> None:
         super().__init__(node)
         self.usb = self.num_interfaces(node, 'usb')
         self.firewire = self.num_interfaces(node, 'firewire')
@@ -359,6 +414,8 @@ class Motherboard(Component):
                              universal_newlines=True,
                              shell=True,
                              stdout=PIPE).stdout)
+        self.bios_date = dateutil.parser.parse(bios_node['date'])
+        self.version = bios_node['version']
 
     @staticmethod
     def num_interfaces(node: dict, interface: str) -> int:
@@ -371,7 +428,8 @@ class Motherboard(Component):
     @classmethod
     def from_lshw(cls, lshw: dict) -> 'Motherboard':
         node = next(get_nested_dicts_with_key_value(lshw, 'description', 'Motherboard'))
-        return cls(node)
+        bios_node = next(get_nested_dicts_with_key_value(lshw, 'id', 'firmware'))
+        return cls(node, bios_node)
 
 
 class NetworkAdapter(Component):
@@ -408,6 +466,69 @@ class SoundCard(Component):
     def from_lshw(cls, lshw: dict) -> Union[Iterator['Device'], 'Device']:
         nodes = get_nested_dicts_with_key_value(lshw, 'class', 'multimedia')
         return (cls(node) for node in nodes)
+
+
+class Display(Component):
+    INCHES = 0.03987
+    """Inches to mm conversion."""
+    TECHS = 'CRT', 'TFT', 'LED', 'PDP', 'LCD', 'OLED', 'AMOLED'
+    """Display technologies"""
+
+    def __init__(self, node: dict) -> None:
+        self.model = node['Model']
+        self.manufacturer = node['Vendor']
+        self.serial_number = None
+        self.resolution_width, self.resolution_height, self.refresh_rate = text.numbers(
+            node['Resolution']
+        )  # Hz
+        x, y = text.numbers(node['Size'])  # mm
+        self.size = round(hypot(x, y) * self.INCHES, 1)  # inch
+        self.technology = next((t for t in self.TECHS if t in node['Title']), None)
+        date = '{} {} 0'.format(node['Year of Manufacture'], node['Week of Manufacture'])
+        # We assume it has been produced the first day of such week
+        self.production_date = datetime.strptime(date, '%Y %W %w')
+        self.events = set()
+        self.type = self.__class__.__name__
+
+    @classmethod
+    def from_lshw(cls, lshw: dict, hwinfo) -> Union[Iterator['Device'], 'Device']:
+        # todo do stuff...
+        return (cls(node) for node in hwinfo['Monitor'])
+
+
+class Battery(Component):
+    PRE = 'POWER_SUPPLY_'
+
+    def __init__(self, node: dict) -> None:
+        self.serial_number = node[self.PRE + 'SERIAL_NUMBER']
+        self.manufacturer = node[self.PRE + 'MANUFACTURER']
+        self.model = node[self.PRE + 'MODEL_NAME']
+        self.size = node[self.PRE + 'CHARGE_FULL_DESIGN']
+        self.technology = node[self.PRE + 'TECHNOLOGY']
+        self.events = {
+            BatteryMeasure(
+                size=node[self.PRE + 'CHARGE_FULL'],
+                voltage=node[self.PRE + 'VOLTAGE_NOW'],
+                cycle_count=node[self.PRE + 'CYCLE_COUNT']
+            )
+        }
+        self.type = self.__class__.__name__
+
+        real_size = next(self.events).size
+        self._wear = 1 - real_size / self.size if self.size and real_size else None
+
+    @classmethod
+    def from_lshw(cls, lshw: dict) -> Union[Iterator['Device'], 'Device']:
+        battery_path = Path('/sys/class/power_supply/BAT0/uevent')
+        if not battery_path.exists():
+            yield from ()
+        node = ConfigParser()
+        # Use a default '_' section
+        node.read_string('[_]\n' + battery_path.read_text())
+        yield cls(node['_'])
+
+    def __str__(self) -> str:
+        return '{0.model} {0.technology}. Size: {0.size} Wear: {0._wear}'.format(self)
 
 
 class Computer(Device):
@@ -465,13 +586,14 @@ class Computer(Device):
         which is obtained once when it is instantiated.
         """
         # We cannot use cmd.run here due to tests
-        stdout = run(('lshw', '-json', '-quiet'),
-                     check=True,
-                     stdout=PIPE,
-                     universal_newlines=True).stdout
-        lshw = json.loads(stdout)
+        _lshw = run(('lshw', '-json', '-quiet'),
+                    check=True,
+                    stdout=PIPE,
+                    universal_newlines=True).stdout
+        lshw = json.loads(_lshw)
+        hwinfo = cmd.run('hwinfo', '--reallyall').stdout
         computer = cls(lshw)
-        components = list(chain.from_iterable(D.from_lshw(lshw) for D in cls.COMPONENTS))
+        components = list(chain.from_iterable(D.from_lshw(lshw, hwinfo) for D in cls.COMPONENTS))
         components.append(Motherboard.from_lshw(lshw))
 
         computer._ram = sum(ram.size for ram in components if isinstance(ram, RamModule))
