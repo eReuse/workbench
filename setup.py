@@ -28,12 +28,13 @@ setup(
         'pySMART.smartx',
         'pyudev',
         'requests',
-        'ereuse-utils[usb_flash_drive,session,cli]>=0.4.0b45',
+        'ereuse-utils[usb_flash_drive,session,cli]>=0.4.0b48',
         'colorama',
         'click >= 6.0',
         'click-spinner',
         'inflection',
-        'ntplib'
+        'ntplib',
+        'PyYAML'
     ],
     setup_requires=[
         'pytest-runner'

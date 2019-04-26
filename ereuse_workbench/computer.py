@@ -2,14 +2,14 @@ import json
 import logging
 import os
 import re
-from configparser import ConfigParser
+from contextlib import suppress
 from datetime import datetime
 from enum import Enum, unique
-from itertools import chain
+from fractions import Fraction
 from math import floor, hypot
 from pathlib import Path
-from subprocess import PIPE, run
-from typing import Iterator, List, Set, Tuple, Union
+from subprocess import CalledProcessError, PIPE, run
+from typing import Iterator, List, Optional, Tuple, Type, TypeVar
 from warnings import catch_warnings, filterwarnings
 
 import dateutil.parser
@@ -17,16 +17,17 @@ import pySMART
 from ereuse_utils import cmd, text
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
     get_nested_dicts_with_key_value
-from pydash import clean
 
 from ereuse_workbench import utils
 from ereuse_workbench.benchmark import BenchmarkDataStorage, BenchmarkProcessor, \
     BenchmarkProcessorSysbench, BenchmarkRamSysbench
 from ereuse_workbench.erase import Erase, EraseType
 from ereuse_workbench.install import Install
-from ereuse_workbench.test import BatteryMeasure, StressTest, TestDataStorage, \
+from ereuse_workbench.test import MeasureBattery, StressTest, TestDataStorage, \
     TestDataStorageLength
 from ereuse_workbench.utils import Dumpeable
+
+g = utils.SanitizedGetter()
 
 
 class Device(Dumpeable):
@@ -37,89 +38,20 @@ class Device(Dumpeable):
     :meth:`.benchmarks`.
     """
 
-    TO_REMOVE = {
-        'none',
-        'prod',
-        'o.e.m',
-        'oem',
-        r'n/a',
-        'atapi',
-        'pc',
-        'unknown'
-    }
-    """Delete those *words* from the value"""
-    assert all(v.lower() == v for v in TO_REMOVE), 'All words need to be lower-case'
-
-    REMOVE_CHARS_BETWEEN = '(){}[]'
-    """
-    Remove those *characters* from the value. 
-    All chars inside those are removed. Ex: foo (bar) => foo
-    """
-    CHARS_TO_REMOVE = '*'
-    """Remove the characters.
-    
-    '*' Needs to be removed or otherwise it is interpreted
-    as a glob expression by regexes.
-    """
-
-    MEANINGLESS = {
-        'to be filled',
-        'system manufacturer',
-        'system product',
-        'sernum',
-        'xxxxx',
-        'system name',
-        'not specified',
-        'modulepartnumber',
-        'system serial',
-        '0001-067a-0000',
-        'partnum',
-        'manufacturer',
-        '0000000',
-        'fffff',
-        'jedec id:ad 00 00 00 00 00 00 00',
-        '012000'
-    }
-    """Discard a value if any of these values are inside it. """
-    assert all(v.lower() == v for v in MEANINGLESS), 'All values need to be lower-case'
-
-    def __init__(self, node: dict) -> None:
+    def __init__(self, *sources) -> None:
         """Gets the device information."""
-        self.manufacturer = self.get(node, 'vendor')
-        self.model = self.get(node, 'product',
-                              remove={self.manufacturer} if self.manufacturer else None)
-        self.serial_number = self.get(node, 'serial')
         self.events = set()
         self.type = self.__class__.__name__
         super().__init__()
 
-    @classmethod
-    def get(cls, dictionary: dict, key: str, remove: Set[str] = None) -> str or None:
-        """
-        Gets a string value from the dictionary and sanitizes it.
-        Returns ``None`` if the value does not exist or it doesn't
-        have meaning.
-
-        Values are patterned and compared against sets
-        of meaningless characters usually found in LSHW's output.
-
-        :param dictionary: A dictionary potentially containing the value.
-        :param key: The key in ``dictionary`` where the value
-                    potentially is.
-        :param remove: Remove these words if found.
-        """
-        remove = (remove or set()) | cls.TO_REMOVE
-        regex = r'({})\W'.format('|'.join(s for s in remove))
-        val = re.sub(regex, '', dictionary.get(key, ''), flags=re.IGNORECASE)
-        val = '' if val.lower() in remove else val  # regex's `\W` != whole string
-        val = re.sub(r'\([^)]*\)', '', val)  # Remove everything between
-        for char_to_remove in chain(cls.REMOVE_CHARS_BETWEEN, cls.CHARS_TO_REMOVE):
-            val = val.replace(char_to_remove, '')
-        val = clean(val)
-        if val and not any(meaningless in val.lower() for meaningless in cls.MEANINGLESS):
-            return val
-        else:
-            return None
+    def from_lshw(self, lshw_node: dict):
+        self.manufacturer = g.dict(lshw_node, 'vendor', default=None, type=str)
+        self.model = g.dict(lshw_node,
+                            'product',
+                            remove={self.manufacturer} if self.manufacturer else set(),
+                            default=None,
+                            type=str)
+        self.serial_number = g.dict(lshw_node, 'serial', default=None, type=str)
 
     def benchmarks(self):
         """
@@ -135,16 +67,18 @@ class Device(Dumpeable):
         return ' '.join(x for x in (self.model, self.serial_number) if x)
 
 
+C = TypeVar('C', bound='Component')
+
+
 class Component(Device):
     @classmethod
-    def from_lshw(cls, lshw: dict) -> Union[Iterator['Device'], 'Device']:
-        """Obtains all the devices of this type from the LSHW output."""
+    def new(cls, lshw, hwinfo, **kwargs) -> Iterator[C]:
         raise NotImplementedError()
 
 
 class Processor(Component):
     @classmethod
-    def from_lshw(cls, lshw: dict) -> Iterator['Processor']:
+    def new(cls, lshw: dict, **kwargs) -> Iterator[C]:
         nodes = get_nested_dicts_with_key_value(lshw, 'class', 'processor')
         # We want only the physical cpu's, not the logic ones
         # In some cases we may get empty cpu nodes, we can detect them because
@@ -160,6 +94,7 @@ class Processor(Component):
 
     def __init__(self, node: dict) -> None:
         super().__init__(node)
+        self.from_lshw(node)
         self.speed = utils.convert_frequency(node['size'], node['units'], 'GHz')
         self.address = node['width']
         try:
@@ -228,12 +163,14 @@ class Processor(Component):
         return None, None
 
     def __str__(self) -> str:
-        return super().__str__() + (' ({} generation)' if self.generation else '')
+        return super().__str__() + (
+            ' ({} generation)'.format(self.generation) if self.generation else ''
+        )
 
 
 class RamModule(Component):
     @classmethod
-    def from_lshw(cls, lshw: dict) -> Iterator['RamModule']:
+    def new(cls, lshw, **kwargs) -> Iterator[C]:
         # We can get flash memory (BIOS?), system memory and unknown types of memory
         memories = get_nested_dicts_with_key_value(lshw, 'class', 'memory')
         TYPES = {'ddr', 'sdram', 'sodimm'}
@@ -246,6 +183,7 @@ class RamModule(Component):
     def __init__(self, node: dict) -> None:
         # Node with no size == empty ram slot
         super().__init__(node)
+        self.from_lshw(node)
         description = node['description'].upper()
         self.format = 'SODIMM' if 'SODIMM' in description else 'DIMM'
         self.size = int(utils.convert_capacity(node['size'], node['units'], 'MB'))
@@ -257,7 +195,7 @@ class RamModule(Component):
                 # Fallback. SDRAM is generic denomination for DDR types.
                 self.interface = w
         if 'clock' in node:
-            self.speed = utils.convert_frequency(node['clock'], 'Hz', 'MHz')
+            self.speed = int(utils.convert_frequency(node['clock'], 'Hz', 'MHz'))
 
         # size is power of 2
         assert 128 <= self.size <= 2 ** 15 and (self.size & (self.size - 1) == 0)
@@ -269,17 +207,21 @@ class RamModule(Component):
 
 class DataStorage(Component):
     @classmethod
-    def from_lshw(cls, lshw: dict) -> Iterator['DataStorage']:
-        nodes = get_nested_dicts_with_key_containing_value(lshw, 'id', 'disk')
-        # We can get nodes that are not truly disks as they don't have
-        # size. Let's just forget about those.
-        for node in nodes:
-            if 'size' in node:
-                interface = DataStorage.get_interface(node)
+    def new(cls, lshw, hwinfo, **kwargs) -> Iterator[C]:
+        disks = get_nested_dicts_with_key_containing_value(lshw, 'id', 'disk')
+
+        usb_disks = list()  # List of disks that are plugged in an USB host
+        for usb in get_nested_dicts_with_key_containing_value(lshw, 'id', 'usbhost'):
+            usb_disks.extend(get_nested_dicts_with_key_containing_value(usb, 'id', 'disk'))
+
+        for disk in (n for n in disks if n not in usb_disks):
+            # We can get nodes that are not truly disks as they don't have size
+            if 'size' in disk:
+                interface = DataStorage.get_interface(disk)
                 removable = interface == 'usb' or \
-                            node.get('capabilities', {}).get('removable', False)
+                            disk.get('capabilities', {}).get('removable', False)
                 if not removable:
-                    yield cls(node, interface)
+                    yield cls(disk, interface)
 
     SSD = 'SolidStateDrive'
     HDD = 'HardDrive'
@@ -295,9 +237,11 @@ class DataStorage(Component):
 
     def __init__(self, node: dict, interface: str) -> None:
         super().__init__(node)
+        self.from_lshw(node)
         self.size = floor(utils.convert_capacity(node['size'], node.get('units', 'bytes'), 'MB'))
         self.interface = self.DataStorageInterface(interface.upper()) if interface else None
         self._logical_name = node['logicalname']
+        self.variant = node['version']
 
         with catch_warnings():
             filterwarnings('error')
@@ -359,14 +303,15 @@ class DataStorage(Component):
 
 
 class GraphicCard(Component):
-    def __init__(self, node: dict) -> None:
-        super().__init__(node)
-        self.memory = self._memory(node['businfo'].split('@')[1])
-
     @classmethod
-    def from_lshw(cls, lshw: dict) -> Iterator['GraphicCard']:
+    def new(cls, lshw, hwinfo, **kwargs) -> Iterator[C]:
         nodes = get_nested_dicts_with_key_value(lshw, 'class', 'display')
         return (cls(n) for n in nodes if n['configuration'].get('driver', None))
+
+    def __init__(self, node: dict) -> None:
+        super().__init__(node)
+        self.from_lshw(node)
+        self.memory = self._memory(node['businfo'].split('@')[1])
 
     @staticmethod
     def _memory(bus_info):
@@ -401,8 +346,16 @@ class GraphicCard(Component):
 class Motherboard(Component):
     INTERFACES = 'usb', 'firewire', 'serial', 'pcmcia'
 
-    def __init__(self, node: dict, bios_node: dict) -> None:
+    @classmethod
+    def new(cls, lshw, hwinfo, **kwargs) -> C:
+        node = next(get_nested_dicts_with_key_value(lshw, 'description', 'Motherboard'))
+        bios_node = next(get_nested_dicts_with_key_value(lshw, 'id', 'firmware'))
+        memory_array = next(g.sections(hwinfo, 'Physical Memory Array', indent='    '), None)
+        return cls(node, bios_node, memory_array)
+
+    def __init__(self, node: dict, bios_node: dict, memory_array: Optional[List[str]]) -> None:
         super().__init__(node)
+        self.from_lshw(node)
         self.usb = self.num_interfaces(node, 'usb')
         self.firewire = self.num_interfaces(node, 'firewire')
         self.serial = self.num_interfaces(node, 'serial')
@@ -416,6 +369,12 @@ class Motherboard(Component):
                              stdout=PIPE).stdout)
         self.bios_date = dateutil.parser.parse(bios_node['date'])
         self.version = bios_node['version']
+        self.ram_slots = self.ram_max_size = None
+        if memory_array:
+            self.ram_slots = g.kv(memory_array, 'Slots', default=None)
+            self.ram_max_size = g.kv(memory_array, 'Max. Size', default=None)
+            if self.ram_max_size:
+                self.ram_max_size = next(text.numbers(self.ram_max_size))
 
     @staticmethod
     def num_interfaces(node: dict, interface: str) -> int:
@@ -425,16 +384,19 @@ class Motherboard(Component):
                           if 'usbhost' not in c['id'] and 'usb' not in c['businfo'])
         return len(tuple(interfaces))
 
-    @classmethod
-    def from_lshw(cls, lshw: dict) -> 'Motherboard':
-        node = next(get_nested_dicts_with_key_value(lshw, 'description', 'Motherboard'))
-        bios_node = next(get_nested_dicts_with_key_value(lshw, 'id', 'firmware'))
-        return cls(node, bios_node)
+    def __str__(self) -> str:
+        return super().__str__()
 
 
 class NetworkAdapter(Component):
+    @classmethod
+    def new(cls, lshw, hwinfo, **kwargs) -> Iterator[C]:
+        nodes = get_nested_dicts_with_key_value(lshw, 'class', 'network')
+        return (cls(node) for node in nodes)
+
     def __init__(self, node: dict) -> None:
         super().__init__(node)
+        self.from_lshw(node)
         self.speed = None
         if 'capacity' in node:
             self.speed = utils.convert_speed(node['capacity'], 'bps', 'Mbps')
@@ -449,12 +411,9 @@ class NetworkAdapter(Component):
             # https://www.redhat.com/archives/redhat-list/2010-October/msg00066.html
             # workbench-live includes proprietary firmwares
             self.serial_number = self.serial_number or utils.get_hw_addr(node['logicalname'])
-        self.wireless = bool(node.get('configuration', {}).get('wireless', False))
 
-    @classmethod
-    def from_lshw(cls, lshw: dict) -> Iterator['NetworkAdapter']:
-        nodes = get_nested_dicts_with_key_value(lshw, 'class', 'network')
-        return (cls(node) for node in nodes)
+        self.variant = node.get('version', None)
+        self.wireless = bool(node.get('configuration', {}).get('wireless', False))
 
     def __str__(self) -> str:
         return '{} {} {}'.format(super().__str__(), self.speed,
@@ -463,9 +422,13 @@ class NetworkAdapter(Component):
 
 class SoundCard(Component):
     @classmethod
-    def from_lshw(cls, lshw: dict) -> Union[Iterator['Device'], 'Device']:
+    def new(cls, lshw, hwinfo, **kwargs) -> Iterator[C]:
         nodes = get_nested_dicts_with_key_value(lshw, 'class', 'multimedia')
         return (cls(node) for node in nodes)
+
+    def __init__(self, node) -> None:
+        super().__init__(node)
+        self.from_lshw(node)
 
 
 class Display(Component):
@@ -474,61 +437,71 @@ class Display(Component):
     TECHS = 'CRT', 'TFT', 'LED', 'PDP', 'LCD', 'OLED', 'AMOLED'
     """Display technologies"""
 
-    def __init__(self, node: dict) -> None:
-        self.model = node['Model']
-        self.manufacturer = node['Vendor']
-        self.serial_number = None
-        self.resolution_width, self.resolution_height, self.refresh_rate = text.numbers(
-            node['Resolution']
-        )  # Hz
-        x, y = text.numbers(node['Size'])  # mm
-        self.size = round(hypot(x, y) * self.INCHES, 1)  # inch
-        self.technology = next((t for t in self.TECHS if t in node['Title']), None)
-        date = '{} {} 0'.format(node['Year of Manufacture'], node['Week of Manufacture'])
-        # We assume it has been produced the first day of such week
-        self.production_date = datetime.strptime(date, '%Y %W %w')
-        self.events = set()
-        self.type = self.__class__.__name__
-
     @classmethod
-    def from_lshw(cls, lshw: dict, hwinfo) -> Union[Iterator['Device'], 'Device']:
-        # todo do stuff...
-        return (cls(node) for node in hwinfo['Monitor'])
+    def new(cls, lshw, hwinfo, **kwargs) -> Iterator[C]:
+        for node in g.sections(hwinfo, 'Monitor'):
+            yield cls(node)
+
+    def __init__(self, node: dict) -> None:
+        super().__init__(node)
+        self.model = g.kv(node, 'Model')
+        self.manufacturer = g.kv(node, 'Vendor')
+        self.serial_number = g.kv(node, 'Serial ID', default=None, type=str)
+        self.resolution_width, self.resolution_height, self.refresh_rate = text.numbers(
+            g.kv(node, 'Resolution')
+        )  # pixel, pixel, Hz
+        with suppress(StopIteration):
+            # some monitors can have several resolutions, and the one
+            # in "Detailed Timings" seems the highest one
+            timings = next(g.sections(node, 'Detailed Timings', indent='     '))
+            self.resolution_width, self.resolution_height = text.numbers(
+                g.kv(timings, 'Resolution')
+            )
+        x, y = text.numbers(g.kv(node, 'Size'))  # mm
+        self.size = round(hypot(x, y) * self.INCHES, 1)  # inch
+        self.technology = next((t for t in self.TECHS if t in node[0]), None)
+        d = '{} {} 0'.format(g.kv(node, 'Year of Manufacture'), g.kv(node, 'Week of Manufacture'))
+        # We assume it has been produced the first day of such week
+        self.production_date = datetime.strptime(d, '%Y %W %w')
+        self._aspect_ratio = Fraction(self.resolution_width, self.resolution_height)
+
+    def __str__(self) -> str:
+        return '{0} {1.resolution_width}x{1.resolution_height} {1.size} inches {2}'.format(
+            super().__str__(), self, self._aspect_ratio)
 
 
 class Battery(Component):
     PRE = 'POWER_SUPPLY_'
 
-    def __init__(self, node: dict) -> None:
-        self.serial_number = node[self.PRE + 'SERIAL_NUMBER']
-        self.manufacturer = node[self.PRE + 'MANUFACTURER']
-        self.model = node[self.PRE + 'MODEL_NAME']
-        self.size = node[self.PRE + 'CHARGE_FULL_DESIGN']
-        self.technology = node[self.PRE + 'TECHNOLOGY']
-        self.events = {
-            BatteryMeasure(
-                size=node[self.PRE + 'CHARGE_FULL'],
-                voltage=node[self.PRE + 'VOLTAGE_NOW'],
-                cycle_count=node[self.PRE + 'CYCLE_COUNT']
-            )
-        }
-        self.type = self.__class__.__name__
-
-        real_size = next(self.events).size
-        self._wear = 1 - real_size / self.size if self.size and real_size else None
-
     @classmethod
-    def from_lshw(cls, lshw: dict) -> Union[Iterator['Device'], 'Device']:
-        battery_path = Path('/sys/class/power_supply/BAT0/uevent')
-        if not battery_path.exists():
-            yield from ()
-        node = ConfigParser()
-        # Use a default '_' section
-        node.read_string('[_]\n' + battery_path.read_text())
-        yield cls(node['_'])
+    def new(cls, lshw, hwinfo, **kwargs) -> Iterator[C]:
+        try:
+            uevent = cmd \
+                .run('cat', '/sys/class/power_supply/BAT*/uevent', shell=True) \
+                .stdout.splitlines()
+        except CalledProcessError:
+            return
+        yield cls(uevent)
+
+    def __init__(self, node: List[str]) -> None:
+        super().__init__(node)
+        self.serial_number = g.kv(node, self.PRE + 'SERIAL_NUMBER', sep='=', type=str)
+        self.manufacturer = g.kv(node, self.PRE + 'MANUFACTURER', sep='=')
+        self.model = g.kv(node, self.PRE + 'MODEL_NAME', sep='=')
+        self.size = g.kv(node, self.PRE + 'CHARGE_FULL_DESIGN', sep='=') // 1000  # mAh
+        self.technology = g.kv(node, self.PRE + 'TECHNOLOGY', sep='=')
+        measure = MeasureBattery(
+            size=g.kv(node, self.PRE + 'CHARGE_FULL', sep='='),
+            voltage=g.kv(node, self.PRE + 'VOLTAGE_NOW', sep='='),
+            cycle_count=g.kv(node, self.PRE + 'CYCLE_COUNT', sep='=')
+        )
+        self.events.add(measure)
+        self._wear = round(1 - measure.size / self.size, 2) if self.size and measure.size else None
+        self._node = node
 
     def __str__(self) -> str:
-        return '{0.model} {0.technology}. Size: {0.size} Wear: {0._wear}'.format(self)
+        return '{0} {1.technology}. Size: {1.size} Wear: {1._wear:%}'.format(super().__str__(),
+                                                                             self)
 
 
 class Computer(Device):
@@ -566,14 +539,17 @@ class Computer(Device):
     chassis value.
     """
 
-    COMPONENTS = list(Component.__subclasses__())
+    COMPONENTS = list(Component.__subclasses__())  # type: List[Type[Component]]
     COMPONENTS.remove(Motherboard)
 
     def __init__(self, node: dict) -> None:
         super().__init__(node)
+        self.from_lshw(node)
         chassis = node['configuration'].get('chassis', '_virtual')
         self.type = next(t for t, values in self.CHASSIS_TYPE.items() if chassis in values)
         self.chassis = next(t for t, values in self.CHASSIS_DH.items() if chassis in values)
+        self.sku = g.dict(node, 'configuration.sku', default=None, type=str)
+        self.version = g.dict(node, 'version', default=None, type=str)
         self._ram = None
 
     @classmethod
@@ -585,18 +561,22 @@ class Computer(Device):
         This function uses ``LSHW`` as the main source of hardware information,
         which is obtained once when it is instantiated.
         """
-        # We cannot use cmd.run here due to tests
-        _lshw = run(('lshw', '-json', '-quiet'),
-                    check=True,
-                    stdout=PIPE,
-                    universal_newlines=True).stdout
-        lshw = json.loads(_lshw)
-        hwinfo = cmd.run('hwinfo', '--reallyall').stdout
+        lshw = json.loads(cmd.run('lshw', '-json', '-quiet').stdout)
+        hwinfo = cmd.run('hwinfo', '--reallyall').stdout.splitlines()
         computer = cls(lshw)
-        components = list(chain.from_iterable(D.from_lshw(lshw, hwinfo) for D in cls.COMPONENTS))
-        components.append(Motherboard.from_lshw(lshw))
+        components = []
+        for Component in cls.COMPONENTS:
+            if Component == Display and computer.type != 'Laptop':
+                continue  # Only get display info when computer is laptop
+            components.extend(Component.new(lshw=lshw, hwinfo=hwinfo))
+        components.append(Motherboard.new(lshw, hwinfo))
 
         computer._ram = sum(ram.size for ram in components if isinstance(ram, RamModule))
+        computer._debug = {
+            'lshw': lshw,
+            'hwinfo': hwinfo,
+            'battery': next((b._node for b in components if isinstance(b, Battery)), None)
+        }
         return computer, components
 
     def test_stress(self, minutes: int, callback):

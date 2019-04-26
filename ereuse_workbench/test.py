@@ -131,9 +131,9 @@ class StressTest(Test):
             self.severity = Severity.Error
 
 
-class BatteryMeasure(Test):
+class MeasureBattery(Test):
     def __init__(self, size, voltage, cycle_count) -> None:
         super().__init__()
-        self.size = size
-        self.voltage = voltage
-        self.cycle_count = cycle_count
+        self.size = size // 1000  # mAh
+        self.voltage = voltage // 1000  # mV
+        self.cycle_count = cycle_count or None

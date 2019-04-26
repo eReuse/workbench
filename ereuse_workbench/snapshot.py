@@ -62,6 +62,7 @@ class Snapshot(Dumpeable):
         t = cli.title('Get computer info')
         with Line() as line, line.spin(t):
             self.device, self.components = Computer.run()
+            self.debug = self.device._debug
             self._storages = tuple(c for c in self.components if isinstance(c, DataStorage))
             if self._session:
                 self._session.post('/snapshots/', self, uri=self.uuid, status=204)
