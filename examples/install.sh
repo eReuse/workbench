@@ -10,7 +10,7 @@ fi
 cd ${1:-'./..'}
 
 echo 'Installing debian required packages...'
-cat debian-requirements.txt | xargs apt install -y
+cat requirements.debian.txt | xargs apt install -y
 
 echo 'Installing python packages...'
 pip3 install -e . -r requirements.txt
