@@ -41,7 +41,8 @@ class Workbench:
                  stress: int = 0,
                  install: str = False,
                  server: urlutils.URL = None,
-                 json: Path = None):
+                 json: Path = None,
+                 debug: bool = False):
         """
         Configures this Workbench.
 
@@ -82,6 +83,8 @@ class Workbench:
                        like USBSneaky module, sending snapshots to
                        server and getting configuration from it.
         :param json: Save a JSON in path.
+        :param debug: Add extra debug information to the resulting
+                      snapshot?
         """
         if os.geteuid() != 0:
             raise EnvironmentError('Execute Workbench as root.')
@@ -99,6 +102,7 @@ class Workbench:
         self.install_path = Path('/media/workbench-images')
         self.json = json
         self.session = None
+        self.debug = debug
 
         if self.server:
             # Override the parameters from the configuration from the server
@@ -210,7 +214,8 @@ class Workbench:
         snapshot = Snapshot(self.uuid,
                             SnapshotSoftware.Workbench,
                             self.version,
-                            self.session)
+                            self.session,
+                            self.debug)
         snapshot.computer()
 
         if self.benchmark:

@@ -1,19 +1,11 @@
 import datetime
 import fcntl
-import re
 import socket
 import struct
 from contextlib import contextmanager
 from enum import Enum
-from itertools import chain
-from typing import Any, Iterable, Set
 
-import yaml
 from ereuse_utils import Dumpeable
-from pydash import clean, get
-
-LJUST = 38
-"""Left-justify the print output to X characters."""
 
 
 class Severity(Enum):
@@ -92,119 +84,3 @@ class Measurable(Dumpeable):
         yield
         self.elapsed = datetime.datetime.now(datetime.timezone.utc) - init
         assert self.elapsed.total_seconds() > 0
-
-
-class SanitizedGetter:
-    TO_REMOVE = {
-        'none',
-        'prod',
-        'o.e.m',
-        'oem',
-        r'n/a',
-        'atapi',
-        'pc',
-        'unknown'
-    }
-    """Delete those *words* from the value"""
-    assert all(v.lower() == v for v in TO_REMOVE), 'All words need to be lower-case'
-
-    REMOVE_CHARS_BETWEEN = '(){}[]'
-    """
-    Remove those *characters* from the value. 
-    All chars inside those are removed. Ex: foo (bar) => foo
-    """
-    CHARS_TO_REMOVE = '*'
-    """Remove the characters.
-
-    '*' Needs to be removed or otherwise it is interpreted
-    as a glob expression by regexes.
-    """
-
-    MEANINGLESS = {
-        'to be filled',
-        'system manufacturer',
-        'system product',
-        'sernum',
-        'xxxxx',
-        'system name',
-        'not specified',
-        'modulepartnumber',
-        'system serial',
-        '0001-067a-0000',
-        'partnum',
-        'manufacturer',
-        '0000000',
-        'fffff',
-        'jedec id:ad 00 00 00 00 00 00 00',
-        '012000',
-        'x.x',
-        'sku'
-    }
-    """Discard a value if any of these values are inside it. """
-    assert all(v.lower() == v for v in MEANINGLESS), 'All values need to be lower-case'
-
-    def dict(self, dictionary: dict, path: str, remove: Set[str] = set(), default: Any = -1,
-             type=None):
-        """Gets a string value from the dictionary and sanitizes it.
-        Returns ``None`` if the value does not exist or it doesn't
-        have meaning.
-
-        Values are patterned and compared against sets
-        of meaningless characters usually found in LSHW's output.
-
-        :param dictionary: A dictionary potentially containing the value.
-        :param path: The key in ``dictionary`` where the value
-                    potentially is.
-        :param remove: Remove these words if found.
-        """
-        try:
-            v = get(dictionary, path)
-        except KeyError:
-            return self._default(path, default)
-        else:
-            return self._sanitize(v, remove, type=type)
-
-    def kv(self, iterable: Iterable, key: str, default: Any = -1, sep=':', type=None) -> Any:
-        for line in iterable:
-            try:
-                k, value, *_ = line.strip().split(sep)
-            except ValueError:
-                continue
-            else:
-                if key == k:
-                    return self._sanitize(value, type=type)
-        return self._default(key, default)
-
-    def sections(self, iterable: Iterable[str], keyword: str, indent='  '):
-        section_pos = None
-        for i, line in enumerate(iterable):
-            if not line.startswith(indent):
-                if keyword in line:
-                    section_pos = i
-                elif section_pos:
-                    yield iterable[section_pos:i]
-                    section_pos = None
-        return
-
-    @staticmethod
-    def _default(key, default):
-        if default == -1:
-            raise IndexError('Value {} not found.'.format(key))
-        else:
-            return default
-
-    def _sanitize(self, value, remove=set(), type=None):
-        if value is None:
-            return None
-        remove = remove | self.TO_REMOVE
-        regex = r'({})\W'.format('|'.join(s for s in remove))
-        val = re.sub(regex, '', value, flags=re.IGNORECASE)
-        val = '' if val.lower() in remove else val  # regex's `\W` != whole string
-        val = re.sub(r'\([^)]*\)', '', val)  # Remove everything between
-        for char_to_remove in chain(self.REMOVE_CHARS_BETWEEN, self.CHARS_TO_REMOVE):
-            val = val.replace(char_to_remove, '')
-        val = clean(val)
-        if val and not any(meaningless in val.lower() for meaningless in self.MEANINGLESS):
-            return type(val) if type else yaml.load(val, Loader=yaml.SafeLoader)
-        else:
-            return None

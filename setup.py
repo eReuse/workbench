@@ -1,7 +1,6 @@
-from setuptools import find_packages, setup
+from pathlib import Path
 
-with open('README.md') as f:
-    long_description = f.read()
+from setuptools import find_packages, setup
 
 test_requires = [
     'pytest',
@@ -10,8 +9,8 @@ test_requires = [
 
 setup(
     name='ereuse-workbench',
-    version='11.0b8',
-    url='https://github.com/eReuse/workbench',
+    version='11.0b9',
+    url='https://github.com/ereuse/workbench',
     license='Affero',
     packages=find_packages(),
     description='Hardware report of the computer including components,'
@@ -19,22 +18,17 @@ setup(
     author='eReuse.org team',
     author_email='x.bustamante@ereuse.org',
     python_requires='>=3.5.3',
-    long_description=long_description,
+    long_description=Path('README.md').read_text(),
     long_description_content_type='text/markdown',
     install_requires=[
-        'python-dateutil',
-        'pydash',
-        'tqdm',
-        'pySMART.smartx',
-        'pyudev',
-        'requests',
-        'ereuse-utils[usb_flash_drive,session,cli]>=0.4.0b48',
         'colorama',
-        'click >= 6.0',
-        'click-spinner',
+        'click >= 7.0',
+        'ereuse-utils[cli,getter,session,usb_flash_drive]>=0.4.0b49',
         'inflection',
         'ntplib',
-        'PyYAML'
+        'python-dateutil',
+        'pySMART.smartx',
+        'requests'
     ],
     setup_requires=[
         'pytest-runner'

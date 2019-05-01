@@ -4,7 +4,6 @@ from warnings import warn
 import pySMART
 import pytest
 
-from ereuse_workbench.test import TestDataStorage, TestDataStorageLength
 from ereuse_workbench.utils import Severity
 
 
@@ -34,7 +33,9 @@ def test_tester_smart(Device: pySMART.Device):
     Device.attributes[12] = MagicMock()
     Device.attributes[12].raw = '11'
     Device.assessment = 'PASS'
+    from ereuse_workbench.test import TestDataStorage
     test = TestDataStorage()
+    from ereuse_workbench.test import TestDataStorageLength
     test.run('/foo/bar', length=TestDataStorageLength.Short)
     assert test.lifetime == 24
     assert test.type == 'TestDataStorage'
@@ -54,7 +55,9 @@ def test_tester_no_smart(Device: pySMART.Device):
         warn('')
 
     Device.__init__ = init
+    from ereuse_workbench.test import TestDataStorage
     t = TestDataStorage()
+    from ereuse_workbench.test import TestDataStorageLength
     t.run('/foo/bar', length=TestDataStorageLength.Short)
     assert t.severity == Severity.Error
     assert t.status == 'SMART cannot be enabled on this device.'

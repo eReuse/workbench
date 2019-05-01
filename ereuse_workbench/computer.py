@@ -14,7 +14,7 @@ from warnings import catch_warnings, filterwarnings
 
 import dateutil.parser
 import pySMART
-from ereuse_utils import cmd, text
+from ereuse_utils import cmd, getter as g, text
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
     get_nested_dicts_with_key_value
 
@@ -26,8 +26,6 @@ from ereuse_workbench.install import Install
 from ereuse_workbench.test import MeasureBattery, StressTest, TestDataStorage, \
     TestDataStorageLength
 from ereuse_workbench.utils import Dumpeable
-
-g = utils.SanitizedGetter()
 
 
 class Device(Dumpeable):
@@ -350,7 +348,7 @@ class Motherboard(Component):
     def new(cls, lshw, hwinfo, **kwargs) -> C:
         node = next(get_nested_dicts_with_key_value(lshw, 'description', 'Motherboard'))
         bios_node = next(get_nested_dicts_with_key_value(lshw, 'id', 'firmware'))
-        memory_array = next(g.sections(hwinfo, 'Physical Memory Array', indent='    '), None)
+        memory_array = next(g.indents(hwinfo, 'Physical Memory Array', indent='    '), None)
         return cls(node, bios_node, memory_array)
 
     def __init__(self, node: dict, bios_node: dict, memory_array: Optional[List[str]]) -> None:
@@ -439,7 +437,7 @@ class Display(Component):
 
     @classmethod
     def new(cls, lshw, hwinfo, **kwargs) -> Iterator[C]:
-        for node in g.sections(hwinfo, 'Monitor'):
+        for node in g.indents(hwinfo, 'Monitor'):
             yield cls(node)
 
     def __init__(self, node: dict) -> None:
@@ -453,7 +451,7 @@ class Display(Component):
         with suppress(StopIteration):
             # some monitors can have several resolutions, and the one
             # in "Detailed Timings" seems the highest one
-            timings = next(g.sections(node, 'Detailed Timings', indent='     '))
+            timings = next(g.indents(node, 'Detailed Timings', indent='     '))
             self.resolution_width, self.resolution_height = text.numbers(
                 g.kv(timings, 'Resolution')
             )
@@ -548,7 +546,7 @@ class Computer(Device):
         chassis = node['configuration'].get('chassis', '_virtual')
         self.type = next(t for t, values in self.CHASSIS_TYPE.items() if chassis in values)
         self.chassis = next(t for t, values in self.CHASSIS_DH.items() if chassis in values)
-        self.sku = g.dict(node, 'configuration.sku', default=None, type=str)
+        self.sku = g.dict(node, ('configuration', 'sku'), default=None, type=str)
         self.version = g.dict(node, 'version', default=None, type=str)
         self._ram = None
 
@@ -562,7 +560,8 @@ class Computer(Device):
         which is obtained once when it is instantiated.
         """
         lshw = json.loads(cmd.run('lshw', '-json', '-quiet').stdout)
-        hwinfo = cmd.run('hwinfo', '--reallyall').stdout.splitlines()
+        hwinfo_raw = cmd.run('hwinfo', '--reallyall').stdout
+        hwinfo = hwinfo_raw.splitlines()
         computer = cls(lshw)
         components = []
         for Component in cls.COMPONENTS:
@@ -574,8 +573,9 @@ class Computer(Device):
         computer._ram = sum(ram.size for ram in components if isinstance(ram, RamModule))
         computer._debug = {
             'lshw': lshw,
-            'hwinfo': hwinfo,
-            'battery': next((b._node for b in components if isinstance(b, Battery)), None)
+            'hwinfo': hwinfo_raw,
+            'battery': next(('\n'.join(b._node) for b in components if isinstance(b, Battery)),
+                            None)
         }
         return computer, components
 

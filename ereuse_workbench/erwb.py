@@ -65,6 +65,9 @@ storage units, saving the resulting report as 'out.json'.
                            path=False, query_params=False, fragment=False),
               help='If set, submits the resulting Snapshot to a passed-in Devicehub.'
                    'Provide a valid URL with scheme, username, password and host.')
+@click.option('--debug/--no-debug',
+              default=False,
+              help='Add extra debug information to the resulting snapshot?')
 def erwb(**kwargs):
     click.clear()
     _sync_time = kwargs.pop('sync_time')

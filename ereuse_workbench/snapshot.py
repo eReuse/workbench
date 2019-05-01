@@ -4,7 +4,6 @@ from datetime import datetime, timedelta, timezone
 from distutils.version import StrictVersion
 from enum import Enum, unique
 from pathlib import Path
-from types import SimpleNamespace
 from typing import List, Optional, Tuple, Type, Union
 from uuid import UUID
 
@@ -43,7 +42,8 @@ class Snapshot(Dumpeable):
                  uuid: UUID,
                  software: SnapshotSoftware,
                  version: StrictVersion,
-                 session: Optional[DevicehubClient] = None) -> None:
+                 session: Optional[DevicehubClient] = None,
+                 debug=False) -> None:
         self.type = 'Snapshot'
         self._init_time = datetime.now(timezone.utc)
         self.uuid = uuid
@@ -56,13 +56,15 @@ class Snapshot(Dumpeable):
         self.components = None  # type: List[Component]
         self._storages = None
         self._session = session
+        self._debug = debug
 
     def computer(self):
         """Retrieves information about the computer and components."""
         t = cli.title('Get computer info')
         with Line() as line, line.spin(t):
             self.device, self.components = Computer.run()
-            self.debug = self.device._debug
+            if self._debug:
+                self.debug = self.device._debug
             self._storages = tuple(c for c in self.components if isinstance(c, DataStorage))
             if self._session:
                 self._session.post('/snapshots/', self, uri=self.uuid, status=204)
