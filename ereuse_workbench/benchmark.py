@@ -32,7 +32,7 @@ class BenchmarkProcessorSysbench(Benchmark):
     def run(self):
         with self.measure():
             self.rate = self.execute_sysbench('sysbench',
-                                              'cpu',
+                                              '--test=cpu',
                                               '--cpu-max-prime=25000',
                                               '--num-threads=16',
                                               'run')
@@ -45,7 +45,7 @@ class BenchmarkRamSysbench(Benchmark):
     def run(self):
         with self.measure():
             self.rate = self.execute_sysbench('sysbench',
-                                              'memory',
+                                              '--test=memory',
                                               '--memory-block-size=1K',
                                               '--memory-scope=global',
                                               '--memory-total-size=50G',
