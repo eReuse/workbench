@@ -31,13 +31,13 @@ class Device(Dumpeable):
     """
     Base class for a computer and each component, containing
     its physical characteristics (like serial number) and Devicehub
-    events. For Devicehub events, this class has an interface to execute
+    actions. For Devicehub actions, this class has an interface to execute
     :meth:`.benchmarks`.
     """
 
     def __init__(self, *sources) -> None:
         """Gets the device information."""
-        self.events = set()
+        self.actions = set()
         self.type = self.__class__.__name__
         super().__init__()
 
@@ -109,7 +109,7 @@ class Processor(Component):
     def benchmarks(self):
         for Benchmark in BenchmarkProcessor, BenchmarkProcessorSysbench:
             benchmark = Benchmark()
-            self.events.add(benchmark)
+            self.actions.add(benchmark)
             yield benchmark
 
     @staticmethod
@@ -262,25 +262,25 @@ class DataStorage(Component):
         This method does not destroy existing data.
         """
         b = BenchmarkDataStorage(self._logical_name)
-        self.events.add(b)
+        self.actions.add(b)
         yield b
 
     def test_smart(self, length: TestDataStorageLength, callback):
         test = TestDataStorage(callback)
         test.run(self._logical_name, length)
-        self.events.add(test)
+        self.actions.add(test)
         return test
 
     def erase(self, erase: EraseType, erase_steps: int, zeros: bool, callback):
         erasure = Erase(erase, erase_steps, zeros, callback)
         erasure.run(self._logical_name)
-        self.events.add(erasure)
+        self.actions.add(erasure)
         return erasure
 
     def install(self, path_to_os_image: Path, callback):
         install = Install(path_to_os_image, self._logical_name)
         install.run(callback)
-        self.events.add(install)
+        self.actions.add(install)
         return install
 
     @staticmethod
@@ -475,7 +475,7 @@ class Battery(Component):
             voltage=g.kv(node, self.PRE + 'VOLTAGE_NOW', sep='='),
             cycle_count=g.kv(node, self.PRE + 'CYCLE_COUNT', sep='=')
         )
-        self.events.add(measure)
+        self.actions.add(measure)
         self._wear = round(1 - measure.size / self.size, 2) if self.size and measure.size else None
         self._node = node
 
@@ -564,14 +564,14 @@ class Computer(Device):
     def test_stress(self, minutes: int, callback):
         test = StressTest()
         test.run(minutes, callback)
-        self.events.add(test)
+        self.actions.add(test)
         return test
 
     def benchmarks(self):
         # Benchmark runs for all ram modules so we can't set it
         # to a specific RamModule
         b = BenchmarkRamSysbench()
-        self.events.add(b)
+        self.actions.add(b)
         yield b
 
     def __str__(self) -> str:

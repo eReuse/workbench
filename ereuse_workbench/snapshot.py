@@ -90,7 +90,7 @@ class Snapshot(Dumpeable):
         with Line(len(benchmarks), desc=t) as line:
             for i, benchmark in benchmarks:
                 benchmark.run()
-                self._submit_event(benchmark, i)
+                self._submit_action(benchmark, i)
                 line.update(1)
 
             # Print CPU Sysbench Benchmark
@@ -110,7 +110,7 @@ class Snapshot(Dumpeable):
             line.close_message(t, cli.done())
             progress = Progress(line, self.uuid, StressTest, self._session)
             test = self.device.test_stress(minutes, progress)
-        self._submit_event(test)
+        self._submit_action(test)
 
     def storage(self,
                 smart: TestDataStorageLength = None,
@@ -159,7 +159,7 @@ class Snapshot(Dumpeable):
                         line.close_message(t, cli.done('test successful: {}'.format(test)))
                     else:
                         line.close_message(t, cli.danger('failed: {}'.format(test)))
-                self._submit_event(test, i)
+                self._submit_action(test, i)
             if erase:
                 pos = total * bool(smart) + num
                 t = cli.title('{} {}'.format('Erase', storage.serial_number))
@@ -175,7 +175,7 @@ class Snapshot(Dumpeable):
                         line.close_message(t, cli.done(
                             'done in {}'.format(erasure.end_time - erasure.start_time)
                         ))
-                        self._submit_event(erasure, i)
+                        self._submit_action(erasure, i)
             if install_path:
                 pos = total * (bool(smart) + bool(erase)) + num
                 t = cli.title('{} {}'.format('Install OS', storage.serial_number))
@@ -187,7 +187,7 @@ class Snapshot(Dumpeable):
                         line.close_message(t, cli.danger('error. Check logs.'))
                     else:
                         line.close_message(t, cli.done())
-                        self._submit_event(install, i)
+                        self._submit_action(install, i)
         except Exception as e:
             logging.error('Storage %s (%s) finished with exception:', i, storage)
             logging.exception(e)
@@ -195,15 +195,15 @@ class Snapshot(Dumpeable):
         else:
             logging.info('Storage %s (%s) finished successfully.', i, storage)
 
-    def _submit_event(self, event: Union[Test, Benchmark, Erase], component: int = None):
-        """Submits the passed-in event to the Workbench Server, if there
+    def _submit_action(self, action: Union[Test, Benchmark, Erase], component: int = None):
+        """Submits the passed-in action to the Workbench Server, if there
         is a Workbench Server.
         """
         if not self._session:
             return
         base = '/snapshots/{}/'.format(self.uuid)
-        uri = 'components/{}/event/'.format(component) if component else 'device/event/'
-        self._session.post(base, event, uri=uri, status=204)
+        uri = 'components/{}/action/'.format(component) if component else 'device/action/'
+        self._session.post(base, action, uri=uri, status=204)
 
     def close(self):
         """Closes the Snapshot, submitting a final copy to the
@@ -223,13 +223,13 @@ class Progress:
     def __init__(self,
                  line: Line,
                  uuid: UUID,
-                 event: Union[Type[Test], Type[Erase], Type[Install]],
+                 action: Union[Type[Test], Type[Erase], Type[Install]],
                  session: DevicehubClient = None,
                  component: Optional[int] = None):
         super().__init__()
         self.line = line
         self.component = component
-        self.event = event.__name__
+        self.action = action.__name__
         self.last_submission = datetime.now()
         self.session = session
         self.uuid = uuid
@@ -242,7 +242,7 @@ class Progress:
         """
         logging.debug(
             'Incr of %s for comp %s for %s. n is %s, total %s, percentage from source %s',
-            increment, self.component, self.event, self.line.n, self.line.total,
+            increment, self.component, self.action, self.line.n, self.line.total,
             percentage
         )
         self.line.update(increment)
@@ -254,12 +254,12 @@ class Progress:
             try:
                 self.session.post('/snapshots/{}/progress/'.format(self.uuid), {
                     'component': self.component,
-                    'event': self.event,
+                    'action': self.action,
                     'percentage': percentage,
                     'total': self.line.total
                 }, status=204)
             except Exception as e:
-                logging.error('Error in submit for comp %s for %s:', self.component, self.event)
+                logging.error('Error in submit for comp %s for %s:', self.component, self.action)
                 logging.exception(e)
             finally:
                 self.last_submission = datetime.now()

@@ -164,21 +164,21 @@ class Workbench:
             print('{}Connected to Workbench Server.'.format(Fore.CYAN))
 
         # Show to the user what we are doing
-        events = []
+        actions = []
         if self.benchmark:
-            events.append('benchmarks')
+            actions.append('benchmarks')
         if self.stress:
-            events.append('stress test of {} minutes'.format(self.stress))
+            actions.append('stress test of {} minutes'.format(self.stress))
         if self.smart:
-            events.append('{} SMART test'.format(self.smart))
+            actions.append('{} SMART test'.format(self.smart))
         if self.erase:
             zeros = ' and extra erasure with zeros' if self.erase_leading_zeros else ''
-            events.append('{} with {} steps{}'.format(self.erase, self.erase_steps, zeros))
+            actions.append('{} with {} steps{}'.format(self.erase, self.erase_steps, zeros))
         if self.install:
-            events.append('installing {}'.format(self.install))
+            actions.append('installing {}'.format(self.install))
 
-        logging.info('New run with %s', events)
-        print('{}Performing {}:'.format(Fore.CYAN, ', '.join(events)))
+        logging.info('New run with %s', actions)
+        print('{}Performing {}:'.format(Fore.CYAN, ', '.join(actions)))
 
         try:
             snapshot = self._run()

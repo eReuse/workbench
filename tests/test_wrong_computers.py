@@ -132,7 +132,7 @@ def test_eee_1001pxd(run):
     assert battery._wear == 0.14
     assert not battery.serial_number
 
-    measure = next(iter(battery.events))
+    measure = next(iter(battery.actions))
     assert isinstance(measure, MeasureBattery)
     assert measure.severity == Severity.Info
     assert measure.voltage.magnitude == 12248
