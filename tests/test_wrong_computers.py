@@ -53,7 +53,7 @@ def test_eee_1001pxd(run):
     assert pc.manufacturer == 'ASUSTeK Computer INC.'
     assert pc.type == 'Laptop'
     assert pc.chassis == 'Netbook'
-    assert pc._ram == 1024
+    assert pc._ram.magnitude == 1024.0
     assert pc.sku == '1001PXD'
     assert not pc.version
 
@@ -63,7 +63,7 @@ def test_eee_1001pxd(run):
     assert cpu.cores == 1
     assert cpu.brand == 'Atom'
     assert cpu.model == 'Intel Atom CPU N455 @ 1.66GHz'
-    assert cpu.speed == 1.667
+    assert cpu.speed.magnitude == 1.667
     assert cpu.threads == 2
     assert not cpu.generation
 
@@ -72,14 +72,14 @@ def test_eee_1001pxd(run):
     assert ram.interface == 'DDR2'
     assert ram.format == 'DIMM'
     assert not ram.manufacturer and not ram.model and not ram.serial_number  # ok as for lshw
-    assert ram.size == 1024
-    assert ram.speed == 667
+    assert ram.size.magnitude == 1024.0
+    assert ram.speed.magnitude == 667
 
     hdd = components[2]
     assert isinstance(hdd, DataStorage)
     assert hdd.model == 'HTS54322'
     assert hdd.serial_number == 'E2024242CV86HJ'
-    assert hdd.size == 238475
+    assert hdd.size.magnitude == 250059
     assert hdd.type == 'HardDrive'
 
     gpu = components[3]
@@ -100,7 +100,7 @@ def test_eee_1001pxd(run):
     assert net.manufacturer == 'Qualcomm Atheros'
     assert net.model == 'AR8152 v2.0 Fast Ethernet'
     assert net.serial_number == '14:da:e9:42:f6:7c'
-    assert net.speed == 100
+    assert net.speed.magnitude == 100
     assert not net.wireless
 
     sound = components[6]
@@ -116,18 +116,18 @@ def test_eee_1001pxd(run):
     assert display.manufacturer == 'IVO "InfoVision"'
     assert display.model == 'InfoVision LCD Monitor'
     assert display.production_date == datetime(year=2010, month=3, day=14)
-    assert display.refresh_rate == 60
+    assert display.refresh_rate.magnitude == 60
     assert display.resolution_height == 600
     assert display.resolution_width == 1024
     assert not display.serial_number  # Not in hwinfo
-    assert display.size == 10.2
+    assert display.size.magnitude == 10.0
     assert display.technology == 'LCD'
 
     battery = components[9]
     assert isinstance(battery, Battery)
     assert battery.manufacturer == 'ASUS'
     assert battery.model == '1001PXD'
-    assert battery.size == 4400
+    assert battery.size.magnitude == 4400
     assert battery.technology == 'Li-ion'
     assert battery._wear == 0.14
     assert not battery.serial_number
@@ -135,7 +135,7 @@ def test_eee_1001pxd(run):
     measure = next(iter(battery.events))
     assert isinstance(measure, MeasureBattery)
     assert measure.severity == Severity.Info
-    assert measure.voltage == 12248
+    assert measure.voltage.magnitude == 12248
     assert measure.cycle_count is None
 
     mother = components[10]
@@ -171,13 +171,13 @@ def test_pc_hpCompaq_7900(run):
     assert ram.interface == 'DDR2'  # found
     assert ram.model == 'HYMP125U64CP8-S6'  # found
     assert not ram.serial_number  # found (811X6W8)
-    assert ram.size == 2048  # found
+    assert ram.size.magnitude == 2048  # found
 
     hdd1 = components[2]
     assert isinstance(hdd1, DataStorage)
     assert hdd1.model == 'ST3160815AS'  # found
     assert hdd1.serial_number == '6RX7AWEZ'  # found
-    assert hdd1.size == 152627  # found
+    assert hdd1.size.magnitude == 160042  # found
 
     hdd2 = components[3]
     assert isinstance(hdd2, DataStorage)
@@ -194,7 +194,7 @@ def test_pc_hpCompaq_7900(run):
 
     eth = components[6]
     assert isinstance(eth, NetworkAdapter)
-    assert eth.speed == 1000  # found
+    assert eth.speed.magnitude == 1000  # found
     assert eth.serial_number == '00:23:7d:49:5e:31'  # found
     assert not eth.wireless  # found
 
@@ -233,7 +233,7 @@ def test_lenovo_415522G_xeon(run):
     assert pc.model == '415522G'
     assert pc.serial_number == 'S4T6208'
     assert pc.version == 'ThinkStation D20'
-    assert pc._ram == 24576
+    assert pc._ram.magnitude == 24576
 
     cpu = components[0]
     assert isinstance(cpu, Processor)
@@ -259,7 +259,7 @@ def test_xiaomi_TM1613(run):
 
     ram = components[1]
     assert isinstance(ram, RamModule)
-    assert ram.size == 8192
+    assert ram.size.magnitude == 8192
 
     gpu1 = components[2]
     assert isinstance(gpu1, GraphicCard)
@@ -285,7 +285,7 @@ def test_xiaomi_TM1613(run):
 @pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_dell_e5530(run):
     pc, components = computer(run, 'e5530')
-    assert pc._ram == 8192
+    assert pc._ram.magnitude == 8192
     assert pc.type == 'Laptop'
     assert pc.serial_number == 'D8FTRY1'
     assert pc.model == 'Latitude E5530 non-vPro'
@@ -352,12 +352,12 @@ def test_nec(run):
     assert hdd.serial_number == 'STA2L7MV39LL6D'
     # todo fails: assert hdd.model == 'HDT721032SLA380'
     assert hdd.manufacturer == 'Hitachi'
-    assert hdd.size == 305245
+    assert hdd.size.magnitude == 305245
     assert len(components['RamModule']) == 2
     # todo the printed model is M378T2863QZS-CE6 or M378T2863QZS (easy to mislead the last part)
     for ram in components['RamModule']:
         assert ram.model == 'M3 78T2863QZS-CE6'
-        assert ram.size == 1024
+        assert ram.size.magnitude == 1024
     assert len(components['GraphicCard']) == 1
 
 
@@ -380,15 +380,15 @@ def test_hp_compaq_8100(run):
     hdd = components['HardDrive'][0]
     # todo in picture serialNumber is exactly ``WCAV2U856544``
     assert hdd.serial_number == 'WD-WCAV2U856544'
-    assert hdd.size == 305245
+    assert hdd.size.magnitude == 305245
     # todo in picture model is exactly ``WD3200AAJS``
     assert hdd.model == 'WDC WD3200AAJS-6'
     assert hdd.manufacturer == 'Western Digital'
     assert len(components['RamModule']) == 4
     for ram in components['RamModule']:
         assert ram.serial_number in {'92072F30', 'A4482E29', '939E2E29', '48FD2E30'}
-        assert ram.speed == 1333.0
-        assert ram.size == 2048
+        assert ram.speed.magnitude == 1333.0
+        assert ram.size.magnitude == 2048
     assert len(components['GraphicCard']) == 1
 
 
@@ -407,8 +407,8 @@ def test_lenovo_7220w3t(run):
         assert ram.serial_number is None
         assert ram.model is None
         assert ram.manufacturer is None
-        assert ram.size == 2048
-        assert ram.speed == 1067.0
+        assert ram.size.magnitude == 2048
+        assert ram.speed.magnitude == 1067.0
     assert len(components['GraphicCard']) == 1
 
 
@@ -454,8 +454,8 @@ def test_custom_pc(run):
     assert ram.manufacturer == 'Kingston'
     assert ram.model == '9905584-017.A00LF'
     assert ram.serial_number == '9D341297'
-    assert ram.size == 4096
-    assert ram.speed == 1600
+    assert ram.size.magnitude == 4096
+    assert ram.speed.magnitude == 1600
     assert len(components['GraphicCard']) == 1
 
 
@@ -497,8 +497,8 @@ def test_ecs_computers(run):
     ram = components['RamModule'][0]
     assert ram.manufacturer == 'Kingston'
     assert ram.serial_number == '8618F309'  # This is not present in the module
-    assert ram.size == 4096
-    assert ram.speed == 1600.0
+    assert ram.size.magnitude == 4096
+    assert ram.speed.magnitude == 1600.0
     assert ram.model == '99U5584-003.A00LF'  # Exactly as printed
     assert len(components['SoundCard']) == 1
     sound_card = components['SoundCard'][0]
@@ -513,13 +513,13 @@ def test_ecs_computers(run):
     assert cpu.model == 'Intel Core i5-4440 CPU @ 3.10GHz'
     assert cpu.cores == 4
     assert cpu.serial_number is None
-    assert cpu.speed == 2.200311
+    assert cpu.speed.magnitude == 2.200311
     assert len(components['NetworkAdapter']) == 1
     net = components['NetworkAdapter'][0]
     assert net.manufacturer == 'Realtek Semiconductor Co., Ltd.'
     assert net.model == 'RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller'
     assert net.serial_number == 'e0:3f:49:1a:d0:44'
-    assert net.speed == 1000
+    assert net.speed.magnitude == 1000
     assert len(components['Motherboard']) == 1
     mother = components['Motherboard'][0]
     assert mother.serial_number == '131219772601195'  # Found in printed barcode but the
@@ -540,8 +540,8 @@ def test_core2(run):
     assert ram.manufacturer is None
     assert ram.serial_number is None
     assert ram.model is None
-    assert ram.size == 1024
-    assert ram.speed == 667.0
+    assert ram.size.magnitude == 1024
+    assert ram.speed.magnitude == 667.0
     assert len(components['GraphicCard']) == 1
 
 
@@ -553,8 +553,8 @@ def test_ecs2(run: MagicMock):
         assert ram.manufacturer is None
         assert ram.serial_number is None
         assert ram.model is None
-        assert ram.speed == 533.0
-        assert ram.size == 1024
+        assert ram.speed.magnitude == 533.0
+        assert ram.size.magnitude == 1024
     assert len(components['GraphicCard']) == 1
 
 
@@ -631,8 +631,8 @@ def test_nox(run):
     ram = components['RamModule'][0]
     assert ram.model == '9905403-038.A00LF'
     assert ram.serial_number == '8F17943'
-    assert ram.size == 4096
-    assert ram.speed == 1333.0  # checked
+    assert ram.size.magnitude == 4096
+    assert ram.speed.magnitude == 1333.0  # checked
     assert ram.manufacturer == 'Kingston'  # checked
     assert ram.interface == 'DDR3'  # checked
     assert ram.format == 'DIMM'  # checked
@@ -640,7 +640,7 @@ def test_nox(run):
     assert hdd.model == 'ST3500413AS'  # checked
     assert hdd.serial_number == 'Z2A3HR7N'  # checked
     assert hdd.manufacturer == 'Seagate'  # checked
-    assert hdd.size == 476940  # print shows 500GB
+    assert hdd.size.magnitude == 476940  # print shows 500GB
     motherboard = components['Motherboard'][0]
     assert motherboard.serial_number == '109192430003459'
     assert motherboard.model == 'P8H61-M LE'  # checked
@@ -653,17 +653,17 @@ def test_lenovo_thinkcentre_edge(run):
     pc, components = computer(run, 'lenovo-thinkcentre-edge')
     motherboard = components['Motherboard'][0]
     ram = components['RamModule'][0]  # type: RamModule
-    assert ram.size == 2048
+    assert ram.size.magnitude == 2048
     assert ram.serial_number == '292E48DA'  # no printed
     assert ram.model == '16JTF25664AZ-1G4F1'  # printed one starts with 'MT'...
     assert ram.manufacturer == 'Micron'  # checked on print ok
     assert ram.interface == 'DDR3'
-    assert ram.speed == 1333.0  # printed pc3-1600 (check [1] at the beginning of file)
+    assert ram.speed.magnitude == 1333.0  # printed pc3-1600 (check [1] at the beginning of file)
     hdd = components['HardDrive'][0]
     assert isinstance(hdd, DataStorage)
     assert hdd.serial_number == 'Z2AYPLNP'  # checked on print ok
     assert hdd.model == 'ST250DM000-1BD14'  # printed one doesn't have the '-1BD14'
-    assert hdd.size == 238475  # disk capacity is 250GB
+    assert hdd.size.magnitude == 238475  # disk capacity is 250GB
     assert components['GraphicCard'][0].model == '2nd Generation Core Processor ' \
                                                  'Family Integrated Graphics Controller'
     assert len(components['GraphicCard']) == 1
@@ -676,7 +676,7 @@ def test_lenovo_thinkcentre_edge(run):
     assert cpu.threads == 2
     assert cpu.manufacturer == 'Intel Corp.'
     assert cpu.serial_number is None
-    assert cpu.speed == 1.674792
+    assert cpu.speed.magnitude == 1.674792
 
 
 @pytest.mark.usefixtures(conftest.pysmart_device.__name__)
@@ -707,13 +707,13 @@ def test_david(run):
         assert ram.interface == 'DDR3'
         assert ram.model == 'M471B5173DB0-YK0'
         assert ram.serial_number in {'152DD498', '732CD498'}
-        assert ram.size == 4096
+        assert ram.size.magnitude == 4096
     hdd = components['HardDrive'][0]
     assert len(components['HardDrive']) == 1
     assert isinstance(hdd, DataStorage)
     assert hdd.model == 'Crucial_CT525MX3'
     assert hdd.serial_number == '164014297BCC'
-    assert hdd.size == 500786
+    assert hdd.size.magnitude == 500786
     # todo is hdd an ssd?
     assert len(components['GraphicCard']) == 1
     gpu = components['GraphicCard'][0]
@@ -762,13 +762,13 @@ def test_isard_probook(run):
         assert 'DDR4' == ram.interface  # found
         assert 'M471A1K43CB1-CRC' == ram.model  # found
         assert ram.serial_number in {'362E4E84'}  # found
-        assert 8192 == ram.size
+        assert 8192 == ram.size.magnitude
     #    hdd = components['HardDrive'][0]
     #    assert len(components['HardDrive']) == 1
     #    assert isinstance(hdd, DataStorage)
     #    assert hdd.model == 'Crucial_CT525MX3'
     #    assert hdd.serial_number == '164014297BCC'
-    #    assert hdd.size == 500786
+    #    assert hdd.size.magnitude == 500786
     # todo is hdd an ssd?
     assert len(components['GraphicCard']) == 1  # found
     gpu = components['GraphicCard'][0]
@@ -817,7 +817,7 @@ def test_pc_hpCompaq8100(run):
         assert 'DDR3' == ram.interface  # found
         assert '16JTF25664AZ-1G4F' == ram.model  # found (principi amb 'MT' i al final hi ha un 1)
         assert ram.serial_number in {'92072F30', 'A4482E29', '939E2E29', '48FD2E30'}  # found
-        assert 2048 == ram.size  # found
+        assert 2048 == ram.size.magnitude  # found
     # No detecta la SSD
     # ssd = components['SolidStateDrive'][0]
     # assert len(components['SolidStateDrive']) == 1 #found

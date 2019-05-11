@@ -1,12 +1,10 @@
 import json
-import logging
 import os
 import re
 from contextlib import suppress
 from datetime import datetime
 from enum import Enum, unique
 from fractions import Fraction
-from math import floor, hypot
 from pathlib import Path
 from subprocess import CalledProcessError, PIPE, run
 from typing import Iterator, List, Optional, Tuple, Type, TypeVar
@@ -17,8 +15,9 @@ import pySMART
 from ereuse_utils import cmd, getter as g, text
 from ereuse_utils.nested_lookup import get_nested_dicts_with_key_containing_value, \
     get_nested_dicts_with_key_value
+from numpy import hypot
 
-from ereuse_workbench import utils
+from ereuse_workbench import base2, unit, utils
 from ereuse_workbench.benchmark import BenchmarkDataStorage, BenchmarkProcessor, \
     BenchmarkProcessorSysbench, BenchmarkRamSysbench
 from ereuse_workbench.erase import Erase, EraseType
@@ -93,7 +92,7 @@ class Processor(Component):
     def __init__(self, node: dict) -> None:
         super().__init__(node)
         self.from_lshw(node)
-        self.speed = utils.convert_frequency(node['size'], node['units'], 'GHz')
+        self.speed = unit.Quantity(node['size'], node['units']).to('gigahertz')
         self.address = node['width']
         try:
             self.cores = int(node['configuration']['cores'])
@@ -103,8 +102,6 @@ class Processor(Component):
             if self.threads == 1:
                 self.cores = 1  # If there is only one thread there is only one core
         self.serial_number = None  # Processors don't have valid SN :-(
-        if not (0.1 <= self.speed <= 9):
-            logging.warning('Speed should be between 0.1 and 9, but is %s', self.speed)
         self.brand, self.generation = self.processor_brand_generation(self.model)
 
         assert not hasattr(self, 'cores') or 1 <= self.cores <= 16
@@ -184,7 +181,7 @@ class RamModule(Component):
         self.from_lshw(node)
         description = node['description'].upper()
         self.format = 'SODIMM' if 'SODIMM' in description else 'DIMM'
-        self.size = int(utils.convert_capacity(node['size'], node['units'], 'MB'))
+        self.size = base2.Quantity(node['size'], node['units']).to('MiB')
         for w in description.split():
             if w.startswith('DDR'):  # We assume all DDR are SDRAM
                 self.interface = w
@@ -193,11 +190,9 @@ class RamModule(Component):
                 # Fallback. SDRAM is generic denomination for DDR types.
                 self.interface = w
         if 'clock' in node:
-            self.speed = int(utils.convert_frequency(node['clock'], 'Hz', 'MHz'))
-
-        # size is power of 2
-        assert 128 <= self.size <= 2 ** 15 and (self.size & (self.size - 1) == 0)
-        assert not hasattr(self, 'speed') or 100 <= self.speed <= 10000
+            self.speed = unit.Quantity(node['clock'], 'Hz').to('MHz')
+        assert not hasattr(self, 'speed') or \
+               unit.Quantity(100, 'MHz') <= self.speed <= unit.Quantity(1, 'THz')
 
     def __str__(self) -> str:
         return '{} {} {}'.format(super().__str__(), self.format, self.size)
@@ -236,7 +231,7 @@ class DataStorage(Component):
     def __init__(self, node: dict, interface: str) -> None:
         super().__init__(node)
         self.from_lshw(node)
-        self.size = floor(utils.convert_capacity(node['size'], node.get('units', 'bytes'), 'MB'))
+        self.size = round(unit.Quantity(node['size'], node.get('units', 'B')).to('MB'))
         self.interface = self.DataStorageInterface(interface.upper()) if interface else None
         self._logical_name = node['logicalname']
         self.variant = node['version']
@@ -252,7 +247,8 @@ class DataStorage(Component):
                 self.serial_number = self.serial_number or smart.serial
                 self.model = self.model or smart.model
 
-        assert 10000 < self.size < 10 ** 8, 'Invalid HDD size {} MB'.format(self.size)
+        assert unit.Quantity(1, 'GB') < self.size < unit.Quantity(1, 'PB'), \
+            'Invalid HDD size {}'.format(self.size)
 
     def __str__(self) -> str:
         return '{} {} {} with {} MB'.format(super().__str__(), self.interface, self.type,
@@ -313,32 +309,17 @@ class GraphicCard(Component):
 
     @staticmethod
     def _memory(bus_info):
-        ret = run('lspci -v -s {bus} |'
-                  'grep \'prefetchable\' | '
-                  'grep -v \'non-prefetchable\' | '
-                  'egrep -o \'[0-9]{{1,3}}[KMGT]+\''.format(bus=bus_info),
-                  stdout=PIPE,
-                  shell=True,
-                  universal_newlines=True)
-        # Get max memory value
-        max_size = 0
-        for value in ret.stdout.splitlines():
-            unit = re.split('\d+', value)[1]
-            size = int(value.rstrip(unit))
-
-            # convert all values to KB before compare
-            size_kb = utils.convert_base(size, unit, 'K', distance=1024)
-            if size_kb > max_size:
-                max_size = size_kb
-
-        if max_size > 0:
-            size = utils.convert_capacity(max_size, 'KB', 'MB')
-            assert 8 < size < 2 ** 14, 'Invalid Graphic Card size {} MB'.format(size)
-            return size
-        return None
+        """The size of the memory of the gpu."""
+        lines = cmd.run('lspci',
+                        '-v -s {bus} | ',
+                        'grep \'prefetchable\' | ',
+                        'grep -v \'non-prefetchable\' | ',
+                        'egrep -o \'[0-9]{{1,3}}[KMGT]+\''.format(bus=bus_info),
+                        shell=True).stdout.splitlines()
+        return max((base2.Quantity(value).to('MiB') for value in lines), default=None)
 
     def __str__(self) -> str:
-        return '{} with {} MB'.format(super().__str__(), self.memory)
+        return '{} with {}'.format(super().__str__(), self.memory)
 
 
 class Motherboard(Component):
@@ -397,7 +378,7 @@ class NetworkAdapter(Component):
         self.from_lshw(node)
         self.speed = None
         if 'capacity' in node:
-            self.speed = utils.convert_speed(node['capacity'], 'bps', 'Mbps')
+            self.speed = unit.Quantity(node['capacity'], 'bit/s').to('Mbit/s')
         if 'logicalname' in node:  # todo this was taken from 'self'?
             # If we don't have logicalname it means we don't have the
             # (proprietary) drivers fot that NetworkAdaptor
@@ -430,8 +411,6 @@ class SoundCard(Component):
 
 
 class Display(Component):
-    INCHES = 0.03987
-    """Inches to mm conversion."""
     TECHS = 'CRT', 'TFT', 'LED', 'PDP', 'LCD', 'OLED', 'AMOLED'
     """Display technologies"""
 
@@ -445,9 +424,10 @@ class Display(Component):
         self.model = g.kv(node, 'Model')
         self.manufacturer = g.kv(node, 'Vendor')
         self.serial_number = g.kv(node, 'Serial ID', default=None, type=str)
-        self.resolution_width, self.resolution_height, self.refresh_rate = text.numbers(
+        self.resolution_width, self.resolution_height, refresh_rate = text.numbers(
             g.kv(node, 'Resolution')
-        )  # pixel, pixel, Hz
+        )
+        self.refresh_rate = unit.Quantity(refresh_rate, 'Hz')
         with suppress(StopIteration):
             # some monitors can have several resolutions, and the one
             # in "Detailed Timings" seems the highest one
@@ -455,8 +435,9 @@ class Display(Component):
             self.resolution_width, self.resolution_height = text.numbers(
                 g.kv(timings, 'Resolution')
             )
-        x, y = text.numbers(g.kv(node, 'Size'))  # mm
-        self.size = round(hypot(x, y) * self.INCHES, 1)  # inch
+        x, y = (unit.Quantity(v, 'millimeter').to('inch') for v in
+                text.numbers(g.kv(node, 'Size')))
+        self.size = round(hypot(x, y))
         self.technology = next((t for t in self.TECHS if t in node[0]), None)
         d = '{} {} 0'.format(g.kv(node, 'Year of Manufacture'), g.kv(node, 'Week of Manufacture'))
         # We assume it has been produced the first day of such week
@@ -486,7 +467,8 @@ class Battery(Component):
         self.serial_number = g.kv(node, self.PRE + 'SERIAL_NUMBER', sep='=', type=str)
         self.manufacturer = g.kv(node, self.PRE + 'MANUFACTURER', sep='=')
         self.model = g.kv(node, self.PRE + 'MODEL_NAME', sep='=')
-        self.size = g.kv(node, self.PRE + 'CHARGE_FULL_DESIGN', sep='=') // 1000  # mAh
+        size = g.kv(node, self.PRE + 'CHARGE_FULL_DESIGN', sep='=', default=None) // 1000
+        self.size = unit.Quantity(size, 'mA hour')
         self.technology = g.kv(node, self.PRE + 'TECHNOLOGY', sep='=')
         measure = MeasureBattery(
             size=g.kv(node, self.PRE + 'CHARGE_FULL', sep='='),

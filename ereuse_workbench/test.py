@@ -7,6 +7,7 @@ from warnings import catch_warnings, filterwarnings
 
 from pySMART import Device
 
+from ereuse_workbench import unit
 from ereuse_workbench.utils import Measurable, Severity
 
 
@@ -134,6 +135,6 @@ class StressTest(Test):
 class MeasureBattery(Test):
     def __init__(self, size, voltage, cycle_count) -> None:
         super().__init__()
-        self.size = size // 1000  # mAh
-        self.voltage = voltage // 1000  # mV
+        self.size = unit.Quantity(size, 'microA hour').to('mA hour')
+        self.voltage = unit.Quantity(voltage, 'microV').to('mV')
         self.cycle_count = cycle_count or None

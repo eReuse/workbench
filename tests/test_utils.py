@@ -1,6 +1,6 @@
 import json
 
-from ereuse_workbench import utils
+from ereuse_workbench import base2, unit, utils
 
 
 def test_dumpeable():
@@ -22,8 +22,9 @@ def test_dumpeable():
     assert not hasattr(foo.bar, 'fooBar')
 
 
-# todo make through tests of units
 def test_convert_capacity():
-    assert utils.convert_capacity(1200, 'kB', 'MB')
-    assert utils.convert_capacity(1200, 'KB', 'MB')
-    assert utils.convert_capacity(1200, 'bytes', 'MB')
+    assert unit.Quantity(1200, 'kb').to('MB').magnitude == 1.2
+    assert unit.Quantity(1200, 'KB').to('MB').magnitude == 1.2
+    assert unit.Quantity(1200, 'bytes').to('MB')
+
+    assert base2.Quantity(1024, 'kb').to('mb').magnitude == 1

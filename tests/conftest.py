@@ -56,6 +56,8 @@ def run():
                     return self._stdout(self.battery)
                 except FileNotFoundError:  # Device without battery
                     raise CalledProcessError(666, '')
+            if 'lspci' in cmds:
+                return MagicMock(stdout='')
             return self.ORIGINAL_RUN(*cmds, **kwargs)
 
         def _stdout(self, file: Path):

@@ -1,7 +1,8 @@
 import logging
 from subprocess import PIPE, run
 
-from ereuse_workbench.utils import Measurable, convert_capacity
+from ereuse_workbench import unit, MBs
+from ereuse_workbench.utils import Measurable
 
 
 class Benchmark(Measurable):
@@ -78,8 +79,8 @@ class BenchmarkDataStorage(Benchmark):
     def _benchmark_hdd_to_mb(output: bytes) -> float:
         output = output.decode()
         value = float(output.split()[-2].replace(',', '.'))
-        speed = convert_capacity(value, output.split()[-1][0:2], 'MB')
-        if speed < 5:
+        speed = unit.Quantity(value, output.split()[-1][0:2] + '/s').to(MBs)
+        if speed < 5 * MBs:
             logging.warning('Speed should be above 5 MB/S but is %s.'
                             'This could be a defect on the drive or a measure problem.', speed)
         return speed

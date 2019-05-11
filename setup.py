@@ -28,7 +28,9 @@ setup(
         'ntplib',
         'python-dateutil',
         'pySMART.smartx',
-        'requests'
+        'requests',
+        'pint',
+        'numpy'
     ],
     setup_requires=[
         'pytest-runner'
