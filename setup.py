@@ -13,13 +13,12 @@ setup(
     url='https://github.com/ereuse/workbench',
     license='Affero',
     packages=find_packages(),
-    description='Hardware report of the computer including components,'
+    description='Hardware report of the computer including components,' +
                 ' testing, benchmarking, erasing, and installing an OS.',
     author='eReuse.org team',
     author_email='x.bustamante@ereuse.org',
     python_requires='>=3.5.3',
-    long_description=Path('README.md').read_text(),
-    long_description_content_type='text/markdown',
+    long_description=Path('README.rst').read_text(),
     install_requires=[
         'colorama',
         'click >= 7.0',
