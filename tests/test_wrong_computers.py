@@ -113,7 +113,7 @@ def test_eee_1001pxd(run):
 
     display = components[8]
     assert isinstance(display, Display)
-    assert display.manufacturer == 'IVO "InfoVision"'
+    assert display.manufacturer == 'IVO InfoVision'
     assert display.model == 'InfoVision LCD Monitor'
     assert display.production_date == datetime(year=2010, month=3, day=14)
     assert display.refresh_rate.magnitude == 60
@@ -128,7 +128,7 @@ def test_eee_1001pxd(run):
     assert battery.manufacturer == 'ASUS'
     assert battery.model == '1001PXD'
     assert battery.size.magnitude == 4400
-    assert battery.technology == 'Li-ion'
+    assert battery.technology == Battery.Technology.LiIon
     assert battery._wear == 0.14
     assert not battery.serial_number
 
@@ -240,14 +240,10 @@ def test_lenovo_415522G_xeon(run):
     assert cpu.brand == 'Xeon'
     assert cpu.generation == 1  # todo check this test
 
-    gpu1 = components[5]
+    gpu1 = components[9]
     assert isinstance(gpu1, GraphicCard)
     assert gpu1.model == 'GT200GL Quadro FX 3800'
     assert gpu1.manufacturer == 'NVIDIA Corporation'
-    gpu2 = components[6]
-    assert isinstance(gpu2, GraphicCard)
-    assert gpu2.model == 'GF100GL Quadro 4000'
-    assert gpu2.manufacturer == 'NVIDIA Corporation'
 
 
 @pytest.mark.usefixtures(conftest.pysmart_device.__name__)

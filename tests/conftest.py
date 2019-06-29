@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from distutils.version import StrictVersion
 from pathlib import Path
 from subprocess import CalledProcessError
@@ -96,7 +96,7 @@ def computer(run, model: str) -> Tuple[Computer, List[Component]]:
     file = Path(__file__).parent / 'output' / (model + '.snapshot.json')
     test_snapshot = json.loads(s.to_json())
     # time is the only changing variable through snapshots: let's normalize it
-    test_snapshot['endTime'] = str(datetime.min)
+    test_snapshot['endTime'] = str(datetime(year=1, month=1, day=1, tzinfo=timezone.utc))
     try:
         with file.open() as f:
             reference_snapshot = json.load(f)

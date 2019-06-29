@@ -450,6 +450,18 @@ class Display(Component):
 
 
 class Battery(Component):
+    class Technology(Enum):
+        """ereuse.org Battery technology with translated values from
+        the Linux Kernel convention, from
+        https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-class-power.
+        """
+        LiIon = 'Li-ion'
+        NiCd = 'NiCd'
+        NiMH = 'NiMH'
+        LiPoly = 'Li-poly'
+        LiFe = 'LiFe'
+        LiMn = 'LiMn'
+
     PRE = 'POWER_SUPPLY_'
 
     @classmethod
@@ -469,7 +481,7 @@ class Battery(Component):
         self.model = g.kv(node, self.PRE + 'MODEL_NAME', sep='=')
         size = g.kv(node, self.PRE + 'CHARGE_FULL_DESIGN', sep='=', default=None) // 1000
         self.size = unit.Quantity(size, 'mA hour')
-        self.technology = g.kv(node, self.PRE + 'TECHNOLOGY', sep='=')
+        self.technology = g.kv(node, self.PRE + 'TECHNOLOGY', sep='=', type=self.Technology)
         measure = MeasureBattery(
             size=g.kv(node, self.PRE + 'CHARGE_FULL', sep='='),
             voltage=g.kv(node, self.PRE + 'VOLTAGE_NOW', sep='='),

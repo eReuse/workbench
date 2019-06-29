@@ -1,9 +1,3 @@
-"""
-This module provides functionality to install an OS in the system being tested.
-
-Important: GPT partition scheme and UEFI-based boot not yet supported. All relevant
-code is just placeholder.
-"""
 import logging
 import pathlib
 import textwrap
@@ -15,26 +9,28 @@ from ereuse_workbench.utils import Measurable, Severity
 
 
 class Install(Measurable):
+    """Install an OS in a data storage unit.
+
+    Important: GPT partition scheme and UEFI-based boot not yet supported. All relevant
+    code is just placeholder.
+    """
     def __init__(self,
-                 path_to_os_image: Path,
-                 target_disk: str = '/dev/sda',
-                 swap_space: bool = True):
-        """
-        Initializes variables to sensible defaults
-        :param target_disk: Target disk's device name (e.g. /dev/sda).
-                            It must exist.
-        :param swap_space: Whether to provision a swap partition.
-        :param path_to_os_image: A filesystem path to the OS .fsa. It must
-                                 be somewhere in the client's filesystem
-                                 hiearchy.
+                 image_path: Path,
+                 logical_name: str = '/dev/sda',
+                 swap: bool = True):
+        """Initializes values.
+        :param logical_name: Target disk's device name (ex. '/dev/sda').
+                             It must exist.
+        :param swap: Whether to create a swap partition of 1GB.
+        :param image_path: A path to the '.fsa' file to install.
         """
         super().__init__()
-        self._target_disk = target_disk
-        self._swap_space = swap_space
-        self._path = path_to_os_image
+        self._data_storage = logical_name
+        self._swap_space = swap
+        self._path = image_path
         self.type = self.__class__.__name__
         self.severity = Severity.Info
-        self.name = path_to_os_image.name
+        self.name = image_path.name
         if '32' in self.name or 'x86' in self.name:
             self.address = 32
         elif '64' in self.name:
@@ -43,22 +39,21 @@ class Install(Measurable):
             self.address = None
 
     def run(self, callback):
-        logging.info('Install %s to %s', self._path, self._target_disk)
+        """Partitions the data storage unit and installs an OS.
+
+        This method softly erases all previous data from the disk.
+        """
+        logging.info('Install %s to %s', self._path, self._data_storage)
         with self.measure():
             try:
                 self._run(callback)
             except Exception as e:
                 self.severity = Severity.Error
-                logging.error('Failed install on %s:', self._target_disk)
+                logging.error('Failed install on %s:', self._data_storage)
                 logging.exception(e)
                 raise CannotInstall(e) from e
 
     def _run(self, callback):
-        """
-        Partitions block device(s) and installs an OS.
-
-        :return: A dictonary with the summary of the operation.
-        """
         assert isinstance(self._path, Path)
         # Steps:
         # Zero out disk label
@@ -82,16 +77,16 @@ class Install(Measurable):
         #   UEFI: GRUB to ESP
 
         # Zero out disk label
-        self.zero_out(self._target_disk)
+        self.zero_out(self._data_storage)
 
         # Partition main disk (must set os_partition appropriately in every possible case)
-        os_partition = self.partition(self._target_disk, self._swap_space)
+        os_partition = self.partition(self._data_storage, self._swap_space)
 
         # Install OS
         self.install(self._path, os_partition, callback)
 
         # Install bootloader
-        self.install_bootloader(self._target_disk)
+        self.install_bootloader(self._data_storage)
 
         # sync at the end to prepare for abrupt poweroff
         self.sync()
@@ -106,34 +101,36 @@ class Install(Measurable):
         cls.sync()
 
     @staticmethod
-    def partition(target_disk: str, swap_space: bool):
+    def partition(data_storage: str, swap: bool):
+        """Partitions the whole data storage unit to keep a booteable
+        OS by a regular BIOS / GPT scheme.
+        :param data_storage: The name of the disk to partition
+                            (ex. "/dev/sda").
+        :param swap: Whether to create an additional partition
+               of 1GB for swap.
+        :return: The name of the partition where the OS has been
+                 installed (ex. "/dev/sda1").
         """
-        :return: A string representing the partition that has been allocated
-                 to the OS
-        """
-        if swap_space:
+        if swap:
             parted_commands = textwrap.dedent("""\
                 mklabel msdos \
                 mkpart primary ext2 1MiB -1GiB \
                 mkpart primary linux-swap -1GiB 100% \
                 """)
-            os_partition = '{}{}'.format(target_disk, 1)  # "/dev/sda1"
         else:
             parted_commands = textwrap.dedent("""\
                 mklabel msdos \
                 mkpart primary ext2 1MiB 100% \
             """)
-            os_partition = '{}{}'.format(target_disk, 1)  # "/dev/sda1"
-        cmd.run('parted', '--script', target_disk, '--', parted_commands)
-        return os_partition
+        cmd.run('parted', '--script', data_storage, '--', parted_commands)
+        return '{}{}'.format(data_storage, 1)  # "/dev/sda1"
 
     @staticmethod
     def install(path_to_os_image: Path, target_partition: str, callback):
-        """
-        Installs an OS image to a target partition.
-        :param path_to_os_image:
-        :param target_partition:
-        :return:
+        """Installs an OS image to a partition.
+        :param path_to_os_image: The path where the fsa file is.
+        :param target_partition: The name of the partition (ex. "dev/sda1")
+                                 where to install it.
         """
         assert path_to_os_image.suffix == '.fsa', 'Set the .fsa extension'
         i = cmd.ProgressiveCmd('fsarchiver',
@@ -146,17 +143,14 @@ class Install(Measurable):
         i.run()
 
     @staticmethod
-    def install_bootloader(target_disk: str):
-        """
-        Installs the grub2 bootloader to the target disk.
-        :param target_disk:
-        :param part_type:
-        :return:
+    def install_bootloader(data_storage: str):
+        """Installs the grub2 bootloader to the target disk.
+        :param data_storage: The name of the disk (ex. "/dev/sda").
         """
         # Must install grub via 'grub-install', but it will complain if --boot-directory is not used.
         pathlib.Path('/tmp/mnt').mkdir(exist_ok=True)  # Exist_ok in case of double wb execution
-        cmd.run('mount', '{}1'.format(target_disk), '/tmp/mnt')
-        cmd.run('grub-install', '--boot-directory=/tmp/mnt/boot/', target_disk)
+        cmd.run('mount', '{}1'.format(data_storage), '/tmp/mnt')
+        cmd.run('grub-install', '--boot-directory=/tmp/mnt/boot/', data_storage)
         cmd.run('umount', '/tmp/mnt')
 
     @staticmethod

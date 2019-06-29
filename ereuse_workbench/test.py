@@ -5,6 +5,7 @@ from subprocess import DEVNULL, Popen
 from time import sleep
 from warnings import catch_warnings, filterwarnings
 
+from ereuse_utils import Dumpeable
 from pySMART import Device
 
 from ereuse_workbench import unit
@@ -20,7 +21,7 @@ class TestDataStorageLength(Enum):
         return self.value
 
 
-class Test(Measurable):
+class Test:
     def __init__(self) -> None:
         super().__init__()
         self.type = self.__class__.__name__
@@ -31,7 +32,7 @@ class Test(Measurable):
         self.severity = Severity.Error
 
 
-class TestDataStorage(Test):
+class TestDataStorage(Test, Measurable):
     SMART_ATTRIBUTES = {
         5: 'reallocated_sector_count',
         12: 'power_cycle_count',
@@ -99,7 +100,7 @@ class TestDataStorage(Test):
         return self.severity == Severity.Info
 
 
-class StressTest(Test):
+class StressTest(Test, Measurable):
     """
     Perform a CPU and memory stress test for the given `minutes`.
 
@@ -132,7 +133,7 @@ class StressTest(Test):
             self.severity = Severity.Error
 
 
-class MeasureBattery(Test):
+class MeasureBattery(Test, Dumpeable):
     def __init__(self, size, voltage, cycle_count) -> None:
         super().__init__()
         self.size = unit.Quantity(size, 'microA hour').to('mA hour')
