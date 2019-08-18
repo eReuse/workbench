@@ -109,7 +109,7 @@ def _submit(url: urlutils.URL, snapshot: Snapshot):
     url.username = ''  # resets password too
     session = DevicehubClient(url, inventory=True)
     session.login(username, password)
-    data, _ = session.post('/events/', snapshot)
+    data, _ = session.post('/actions/', snapshot)
     return data
 
 
