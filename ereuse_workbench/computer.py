@@ -537,6 +537,11 @@ class Computer(Device):
 
     COMPONENTS = list(Component.__subclasses__())  # type: List[Type[Component]]
     COMPONENTS.remove(Motherboard)
+    COMPONENTS.remove(Display)
+    COMPONENTS.remove(Battery)
+    COMPONENTS.remove(SoundCard)
+    COMPONENTS.remove(NetworkAdapter)
+    COMPONENTS.remove(GraphicCard)
 
     def __init__(self, node: dict) -> None:
         super().__init__(node)
@@ -563,12 +568,10 @@ class Computer(Device):
         computer = cls(lshw)
         components = []
         for Component in cls.COMPONENTS:
-            if Component == Display and computer.type != 'Laptop':
-                continue  # Only get display info when computer is laptop
             components.extend(Component.new(lshw=lshw, hwinfo=hwinfo))
-        components.append(Motherboard.new(lshw, hwinfo))
 
         computer._ram = sum(ram.size for ram in components if isinstance(ram, RamModule))
+
         computer._debug = {
             'lshw': lshw,
             'hwinfo': hwinfo_raw,
