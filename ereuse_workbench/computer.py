@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import subprocess
 from contextlib import suppress
 from datetime import datetime
 from enum import Enum, unique
@@ -310,13 +311,16 @@ class GraphicCard(Component):
     @staticmethod
     def _memory(bus_info):
         """The size of the memory of the gpu."""
-        lines = cmd.run('lspci',
-                        '-v -s {bus} | ',
-                        'grep \'prefetchable\' | ',
-                        'grep -v \'non-prefetchable\' | ',
-                        'egrep -o \'[0-9]{{1,3}}[KMGT]+\''.format(bus=bus_info),
-                        shell=True).stdout.splitlines()
-        return max((base2.Quantity(value).to('MiB') for value in lines), default=None)
+        try:
+            lines = cmd.run('lspci',
+                            '-v -s {bus} | ',
+                            'grep \'prefetchable\' | ',
+                            'grep -v \'non-prefetchable\' | ',
+                            'egrep -o \'[0-9]{{1,3}}[KMGT]+\''.format(bus=bus_info),
+                            shell=True).stdout.splitlines()
+            return max((base2.Quantity(value).to('MiB') for value in lines), default=None)
+        except subprocess.CalledProcessError:
+            return None
 
     def __str__(self) -> str:
         return '{} with {}'.format(super().__str__(), self.memory)
