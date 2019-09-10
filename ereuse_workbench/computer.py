@@ -491,8 +491,9 @@ class Battery(Component):
             voltage=g.kv(node, self.PRE + 'VOLTAGE_NOW', sep='='),
             cycle_count=g.kv(node, self.PRE + 'CYCLE_COUNT', sep='=')
         )
-        # self.actions.add(measure)
-        self._wear = round(1 - measure.size / self.size, 2) if self.size and measure.size else None
+        self.actions.add(measure)
+        self._wear = round(1 - measure.size.m / self.size, 2) \
+            if self.size and measure.size.m else None
         self._node = node
 
     def __str__(self) -> str:
