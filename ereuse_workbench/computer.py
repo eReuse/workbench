@@ -494,8 +494,8 @@ class Battery(Component):
         measure.size = measure.size.m
         measure.voltage = measure.voltage.m
         self.actions.add(measure)
-        self._wear = round(1 - measure.size.m / self.size, 2) \
-            if self.size and measure.size.m else None
+        self._wear = round(1 - measure.size / self.size, 2) \
+            if self.size and measure.size else None
         self._node = node
 
     def __str__(self) -> str:

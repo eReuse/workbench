@@ -80,7 +80,7 @@ class BenchmarkDataStorage(Benchmark):
         output = output.decode()
         value = float(output.split()[-2].replace(',', '.'))
         speed = unit.Quantity(value, output.split()[-1][0:2] + '/s').to(MBs).m
-        if speed < 5 * MBs:
+        if speed < 5.0:
             logging.warning('Speed should be above 5 MB/S but is %s.'
                             'This could be a defect on the drive or a measure problem.', speed)
         return speed
