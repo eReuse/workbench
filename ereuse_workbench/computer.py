@@ -382,7 +382,7 @@ class NetworkAdapter(Component):
         self.from_lshw(node)
         self.speed = None
         if 'capacity' in node:
-            self.speed = unit.Quantity(node['capacity'], 'bit/s').to('Mbit/s')
+            self.speed = unit.Quantity(node['capacity'], 'bit/s').to('Mbit/s').m
         if 'logicalname' in node:  # todo this was taken from 'self'?
             # If we don't have logicalname it means we don't have the
             # (proprietary) drivers fot that NetworkAdaptor
@@ -491,6 +491,8 @@ class Battery(Component):
             voltage=g.kv(node, self.PRE + 'VOLTAGE_NOW', sep='='),
             cycle_count=g.kv(node, self.PRE + 'CYCLE_COUNT', sep='=')
         )
+        measure.size = measure.size.m
+        measure.voltage = measure.voltage.m
         self.actions.add(measure)
         self._wear = round(1 - measure.size.m / self.size, 2) \
             if self.size and measure.size.m else None

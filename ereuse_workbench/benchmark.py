@@ -79,7 +79,7 @@ class BenchmarkDataStorage(Benchmark):
     def _benchmark_hdd_to_mb(output: bytes) -> float:
         output = output.decode()
         value = float(output.split()[-2].replace(',', '.'))
-        speed = unit.Quantity(value, output.split()[-1][0:2] + '/s').to(MBs)
+        speed = unit.Quantity(value, output.split()[-1][0:2] + '/s').to(MBs).m
         if speed < 5 * MBs:
             logging.warning('Speed should be above 5 MB/S but is %s.'
                             'This could be a defect on the drive or a measure problem.', speed)
