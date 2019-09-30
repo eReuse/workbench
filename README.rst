@@ -78,8 +78,8 @@ Installation
 Workbench should work in any Linux as long as it has the packages below.
 It is guaranteed to work in Debian 9.
 
-1. Install the `debian packages <debian-requirements.txt>`_, like
-   the following way ``cat debian-requirements.txt | sudo xargs apt install -y``.
+1. Install the `debian packages <requirements.debian.txt>`_, like
+   the following way ``cat requirements.debian.txt | sudo xargs apt install -y``.
 2. ``sudo pip3 install ereuse-workbench --pre -U``
 
 Note that you need to install this as sudo, as the software can only

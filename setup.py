@@ -22,14 +22,15 @@ setup(
     install_requires=[
         'colorama',
         'click >= 7.0',
-        'ereuse-utils[cli,getter,session,usb_flash_drive]>=0.4.0b49',
+        'ereuse-utils[cli,getter,session,usb_flash_drive] >= 0.4.0b49',
         'inflection',
         'ntplib',
         'python-dateutil',
         'pySMART.smartx',
         'requests',
         'pint',
-        'numpy'
+        'numpy',
+        'tqdm == 4.32.2'
     ],
     setup_requires=[
         'pytest-runner'

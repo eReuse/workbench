@@ -215,6 +215,11 @@ def test_intel_boxnuc6cayh(run):
 
 
 @pytest.mark.usefixtures(conftest.pysmart_device.__name__)
+def test_acer_happy(run):
+    pc, components = computer(run, 'acer-happy')
+
+
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
 def test_virtualbox_client(run):
     """
     Tests a virtualized computer.
@@ -233,7 +238,7 @@ def test_lenovo_415522G_xeon(run):
     assert pc.model == '415522G'
     assert pc.serial_number == 'S4T6208'
     assert pc.version == 'ThinkStation D20'
-    assert pc._ram.magnitude == 24576
+    assert pc._ram == 24576.0
 
     cpu = components[0]
     assert isinstance(cpu, Processor)
