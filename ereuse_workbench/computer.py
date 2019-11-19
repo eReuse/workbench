@@ -483,7 +483,9 @@ class Battery(Component):
         self.serial_number = g.kv(node, self.PRE + 'SERIAL_NUMBER', sep='=', type=str)
         self.manufacturer = g.kv(node, self.PRE + 'MANUFACTURER', sep='=')
         self.model = g.kv(node, self.PRE + 'MODEL_NAME', sep='=')
-        size = g.kv(node, self.PRE + 'CHARGE_FULL_DESIGN', sep='=', default=None) // 1000
+        size = g.kv(node, self.PRE + 'CHARGE_FULL_DESIGN', sep='=', default=None)
+        if size is not None:
+            size = size // 1000
         self.size = unit.Quantity(size, 'mA hour').m
         self.technology = g.kv(node, self.PRE + 'TECHNOLOGY', sep='=', type=self.Technology)
         measure = MeasureBattery(
