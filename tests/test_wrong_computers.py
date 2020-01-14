@@ -808,7 +808,7 @@ def test_pc_hpCompaq8100(run):
     assert 'CZC0408YPV' == pc.serial_number  # found
     # assert '' == pc.manufacturer
     assert 'Desktop' == pc.type  # found
-    cpu = components['Processor'][0]
+    cpu = components[0]
     assert len(components['Processor']) == 1  # found
     assert 'Intel Core i3 CPU 530 @ 2.93GHz' == cpu.model  # found
     assert len(components['RamModule']) == 4
@@ -847,3 +847,108 @@ def test_pc_hpCompaq8100(run):
     assert 'CZC0408YPV' == mother.serial_number  # found
     assert '304Ah' == mother.model  # found
     # todo check USB ports and slots
+
+
+@pytest.mark.usefixtures(conftest.pysmart_device.__name__)
+def test_laptop_battery_empty(run):
+    pc, components = computer(run, 'battery-empty')
+    assert isinstance(pc, Computer)
+    assert pc.serial_number == 'B8OAAS048286'  # Verified, on tag
+    assert pc.model == '1001PXD'
+    assert pc.manufacturer == 'ASUSTeK Computer INC.'
+    assert pc.type == 'Laptop'
+    assert pc.chassis == 'Netbook'
+    assert pc._ram == 1024.0
+    assert pc.sku == '1001PXD'
+    assert not pc.version
+
+    cpu = components[0]
+    assert isinstance(cpu, Processor)
+    # CPU checked on ark intel
+    assert cpu.cores == 1
+    assert cpu.brand == 'Atom'
+    assert cpu.model == 'Intel Atom CPU N455 @ 1.66GHz'
+    assert cpu.speed == 1.667
+    assert cpu.threads == 2
+    assert not cpu.generation
+
+    ram = components[1]
+    assert isinstance(ram, RamModule)
+    assert ram.interface == 'DDR2'
+    assert ram.format == 'DIMM'
+    assert not ram.manufacturer and not ram.model and not ram.serial_number  # ok as for lshw
+    assert ram.size == 1024.0
+    assert ram.speed == 667
+
+    hdd = components[2]
+    assert isinstance(hdd, DataStorage)
+    assert hdd.model == 'HTS54322'
+    assert hdd.serial_number == 'E2024242CV86HJ'
+    assert int(hdd.size) == 250059
+    assert hdd.type == 'HardDrive'
+
+    gpu = components[3]
+    assert isinstance(gpu, GraphicCard)
+    assert gpu.model == 'Atom Processor D4xx/D5xx/N4xx/N5xx Integrated Graphics Controller'
+    assert gpu.manufacturer == 'Intel Corporation'
+
+    net = components[4]
+    assert isinstance(net, NetworkAdapter)
+    assert net.manufacturer == 'Qualcomm Atheros'
+    assert net.model == 'AR9285 Wireless Network Adapter'
+    assert net.serial_number == '74:2f:68:8b:fd:c8'
+    assert net.speed is None  # todo this should be recognized
+    assert net.wireless
+
+    net = components[5]
+    assert isinstance(net, NetworkAdapter)
+    assert net.manufacturer == 'Qualcomm Atheros'
+    assert net.model == 'AR8152 v2.0 Fast Ethernet'
+    assert net.serial_number == '14:da:e9:42:f6:7c'
+    assert net.speed == 100
+    assert not net.wireless
+
+    sound = components[6]
+    assert isinstance(sound, SoundCard)
+    assert sound.manufacturer == 'Intel Corporation'
+    assert sound.model == 'NM10/ICH7 Family High Definition Audio Controller'
+
+    # todo webcam is detected as soundcard. Change this to Webcam type
+    webcam = components[7]
+
+    display = components[8]
+    assert isinstance(display, Display)
+    assert display.manufacturer == 'SAM "SAMSUNG"'
+    assert display.model == 'SAMSUNG SyncMaster'
+    assert display.production_date == datetime(year=2001, month=10, day=28)
+    assert display.refresh_rate == 70
+    assert display.resolution_height == 768
+    assert display.resolution_width == 1024
+    assert display.serial_number == '"H1CRA03915"'
+    assert int(display.size) == 14
+    assert display.technology is None
+
+    battery = components[9]
+    assert isinstance(battery, Battery)
+    assert battery.manufacturer is None
+    assert battery.model is None
+    assert battery.size is None
+    assert battery.technology is None
+    assert battery._wear is None
+    assert not battery.serial_number
+
+    measure = next(iter(battery.actions))
+    assert isinstance(measure, MeasureBattery)
+    assert measure.severity == Severity.Info
+    assert measure.voltage == 0
+    assert measure.cycle_count is None
+    assert measure.size == 0
+
+    mother = components[10]
+    assert isinstance(mother, Motherboard)
+    assert mother.manufacturer == 'ASUSTeK Computer INC.'
+    assert mother.model == '1001PXD'
+    assert mother.serial_number == 'Eee0123456789'
+    assert mother.version == '0703'
+    assert mother.bios_date == datetime(year=2011, month=4, day=12)
+    assert mother.ram_slots is None

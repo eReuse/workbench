@@ -480,29 +480,37 @@ class Battery(Component):
 
     def __init__(self, node: List[str]) -> None:
         super().__init__(node)
-        self.serial_number = g.kv(node, self.PRE + 'SERIAL_NUMBER', sep='=', type=str)
-        self.manufacturer = g.kv(node, self.PRE + 'MANUFACTURER', sep='=')
-        self.model = g.kv(node, self.PRE + 'MODEL_NAME', sep='=')
-        size = g.kv(node, self.PRE + 'CHARGE_FULL_DESIGN', sep='=', default=None)
-        if size is not None:
-            size = size // 1000
-        self.size = unit.Quantity(size, 'mA hour').m
-        self.technology = g.kv(node, self.PRE + 'TECHNOLOGY', sep='=', type=self.Technology)
-        measure = MeasureBattery(
-            size=g.kv(node, self.PRE + 'CHARGE_FULL', sep='='),
-            voltage=g.kv(node, self.PRE + 'VOLTAGE_NOW', sep='='),
-            cycle_count=g.kv(node, self.PRE + 'CYCLE_COUNT', sep='=')
-        )
-        measure.size = measure.size.m
-        measure.voltage = measure.voltage.m
-        self.actions.add(measure)
-        self._wear = round(1 - measure.size / self.size, 2) \
-            if self.size and measure.size else None
-        self._node = node
+        try:
+            self.serial_number = g.kv(node, self.PRE + 'SERIAL_NUMBER', sep='=', type=str)
+            self.manufacturer = g.kv(node, self.PRE + 'MANUFACTURER', sep='=')
+            self.model = g.kv(node, self.PRE + 'MODEL_NAME', sep='=')
+            self.size = g.kv(node, self.PRE + 'CHARGE_FULL_DESIGN', sep='=', default=0)
+            if self.size is not None:
+                self.size = self.size // 1000
+            self.technology = g.kv(node, self.PRE + 'TECHNOLOGY', sep='=', type=self.Technology)
+            measure = MeasureBattery(
+                size=g.kv(node, self.PRE + 'CHARGE_FULL', sep='='),
+                voltage=g.kv(node, self.PRE + 'VOLTAGE_NOW', sep='='),
+                cycle_count=g.kv(node, self.PRE + 'CYCLE_COUNT', sep='=')
+            )
+            try:
+                measure.size = measure.size.m
+                measure.voltage = measure.voltage.m
+            except AttributeError:
+                pass
+            self.actions.add(measure)
+            self._wear = round(1 - measure.size / self.size, 2) \
+                if self.size and measure.size else None
+            self._node = node
+        except NoBatteryInfo:
+            self._node = None
 
     def __str__(self) -> str:
-        return '{0} {1.technology}. Size: {1.size} Wear: {1._wear:%}'.format(super().__str__(),
-                                                                             self)
+        try:
+            return '{0} {1.technology}. Size: {1.size} Wear: {1._wear:%}'.format(super().__str__(),
+                                                                                 self)
+        except TypeError:
+            return 'There is not currently battery information'
 
 
 class Computer(Device):
@@ -598,3 +606,7 @@ class Computer(Device):
     def __str__(self) -> str:
         specs = super().__str__()
         return '{} with {} MB of RAM.'.format(specs, self._ram)
+
+
+class NoBatteryInfo(Exception):
+    print('Cannot get battery information')

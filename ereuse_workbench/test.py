@@ -136,6 +136,11 @@ class StressTest(Test, Measurable):
 class MeasureBattery(Test, Dumpeable):
     def __init__(self, size, voltage, cycle_count) -> None:
         super().__init__()
-        self.size = unit.Quantity(size, 'microA hour').to('mA hour')
-        self.voltage = unit.Quantity(voltage, 'microV').to('mV')
-        self.cycle_count = cycle_count or None
+        try:
+            self.size = unit.Quantity(size, 'microA hour').to('mA hour')
+            self.voltage = unit.Quantity(voltage, 'microV').to('mV')
+            self.cycle_count = cycle_count or None
+        except TypeError:
+            self.size = 0
+            self.voltage = 0
+            self.cycle_count = None
