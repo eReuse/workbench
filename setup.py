@@ -1,18 +1,44 @@
+from pathlib import Path
+
 from setuptools import find_packages, setup
 
+test_requires = [
+    'pytest',
+    'requests_mock'
+]
+
 setup(
-    name="ereuse-workbench",
-    version='10.0b9',
+    name='ereuse-workbench',
+    version='11.0b9',
+    url='https://github.com/ereuse/workbench',
+    license='Affero',
     packages=find_packages(),
-    license='AGPLv3 License',
-    description='The eReuse Workbench is '
-                'a toolset to help with the diagnostic, benchmarking, '
-                'inventory and installation of computers, '
-                'with the optional assistance of a local server.',
-    scripts=['scripts/erwb'],
-    url='https://github.com/eReuse/workbench',
+    description='Hardware report of the computer including components,' +
+                ' testing, benchmarking, erasing, and installing an OS.',
     author='eReuse.org team',
-    include_package_data=True,
+    author_email='x.bustamante@ereuse.org',
+    python_requires='>=3.5.3',
+    long_description=Path('README.rst').read_text(),
+    install_requires=[
+        'colorama',
+        'click >= 7.0',
+        'ereuse-utils[cli,getter,session,usb_flash_drive] >= 0.4.0b49',
+        'inflection',
+        'ntplib',
+        'python-dateutil',
+        'pySMART.smartx',
+        'requests',
+        'pint',
+        'numpy',
+        'tqdm == 4.32.2'
+    ],
+    setup_requires=[
+        'pytest-runner'
+    ],
+    extras_require={
+        'test': test_requires,
+    },
+    tests_require=test_requires,
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
@@ -25,21 +51,10 @@ setup(
         'Topic :: System :: Logging',
         'Topic :: Utilities',
     ],
-    install_requires=[
-        'python-dateutil',
-        'pydash',
-        'tqdm',
-        'pySMART.smartx',
-        'pyudev',
-        'requests',
-        'ereuse-utils [usb_flash_drive]',
-        'colorama'
-    ],
-    setup_requires=[
-        'pytest-runner'
-    ],
-    tests_require=[
-        'pytest',
-        'pytest-mock'
-    ],
+    py_modules=['ereuse_workbench'],
+    entry_points={
+        'console_scripts': [
+            'erwb = ereuse_workbench.erwb:erwb',
+        ],
+    },
 )

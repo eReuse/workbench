@@ -1,0 +1,1087 @@
+{
+  "id" : "debian",
+  "class" : "system",
+  "claimed" : true,
+  "handle" : "DMI:0001",
+  "description" : "Notebook",
+  "product" : "Pavilion dv4000 (EF188EA#ABE)",
+  "vendor" : "Hewlett-Packard",
+  "serial" : "2CE5270ZWC",
+  "width" : 32,
+  "configuration" : {
+    "boot" : "normal",
+    "chassis" : "notebook",
+    "uuid" : "115D4C20-F27F-11D9-8E99-9B7CDDA186CA"
+  },
+  "capabilities" : {
+    "smbios-2.31" : "SMBIOS version 2.31",
+    "dmi-2.31" : "DMI version 2.31"
+  },
+  "children" : [
+    {
+      "id" : "core",
+      "class" : "bus",
+      "claimed" : true,
+      "handle" : "DMI:0002",
+      "description" : "Motherboard",
+      "product" : "09BC",
+      "vendor" : "Hewlett-Packard",
+      "physid" : "0",
+      "version" : "35.2D",
+      "children" : [
+        {
+          "id" : "firmware",
+          "class" : "memory",
+          "claimed" : true,
+          "description" : "BIOS",
+          "vendor" : "Phoenix",
+          "physid" : "0",
+          "version" : "F.13",
+          "date" : "06/02/2005",
+          "units" : "bytes",
+          "size" : 107136,
+          "capacity" : 458752,
+          "capabilities" : {
+            "isa" : "ISA bus",
+            "pci" : "PCI bus",
+            "pcmcia" : "PCMCIA/PCCard",
+            "pnp" : "Plug-and-Play",
+            "apm" : "Advanced Power Management",
+            "upgrade" : "BIOS EEPROM can be upgraded",
+            "shadowing" : "BIOS shadowing",
+            "escd" : "ESCD",
+            "cdboot" : "Booting from CD-ROM/DVD",
+            "acpi" : "ACPI",
+            "usb" : "USB legacy emulation",
+            "agp" : "AGP",
+            "biosbootspecification" : "BIOS boot specification"
+          }
+        },
+        {
+          "id" : "cpu",
+          "class" : "processor",
+          "claimed" : true,
+          "handle" : "DMI:0004",
+          "description" : "CPU",
+          "product" : "Intel(R) Pentium(R) M processor 1.60GHz",
+          "vendor" : "Intel Corp.",
+          "physid" : "4",
+          "businfo" : "cpu@0",
+          "version" : "6.13.8",
+          "slot" : "U1",
+          "units" : "Hz",
+          "size" : 1600000000,
+          "capacity" : 2133000000,
+          "width" : 32,
+          "clock" : 533000000,
+          "capabilities" : {
+            "fpu" : "mathematical co-processor",
+            "fpu_exception" : "FPU exceptions reporting",
+            "wp" : true,
+            "vme" : "virtual mode extensions",
+            "de" : "debugging extensions",
+            "pse" : "page size extensions",
+            "tsc" : "time stamp counter",
+            "msr" : "model-specific registers",
+            "pae" : "4GB+ memory addressing (Physical Address Extension)",
+            "mce" : "machine check exceptions",
+            "cx8" : "compare and exchange 8-byte",
+            "apic" : "on-chip advanced programmable interrupt controller (APIC)",
+            "sep" : "fast system calls",
+            "mtrr" : "memory type range registers",
+            "pge" : "page global enable",
+            "mca" : "machine check architecture",
+            "cmov" : "conditional move instruction",
+            "clflush" : true,
+            "dts" : "debug trace and EMON store MSRs",
+            "acpi" : "thermal control (ACPI)",
+            "mmx" : "multimedia extensions (MMX)",
+            "fxsr" : "fast floating point save/restore",
+            "sse" : "streaming SIMD extensions (SSE)",
+            "sse2" : "streaming SIMD extensions (SSE2)",
+            "ss" : "self-snoop",
+            "tm" : "thermal interrupt and status",
+            "pbe" : "pending break event",
+            "nx" : "no-execute bit (NX)",
+            "bts" : true,
+            "eagerfpu" : true,
+            "est" : true,
+            "tm2" : true,
+            "cpufreq" : "CPU Frequency scaling"
+          },
+          "children" : [
+            {
+              "id" : "cache:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0005",
+              "description" : "L1 cache",
+              "physid" : "5",
+              "slot" : "L1 Cache",
+              "units" : "bytes",
+              "size" : 32768,
+              "capacity" : 32768,
+              "configuration" : {
+                "level" : "1"
+              },
+              "capabilities" : {
+                "asynchronous" : "Asynchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back"
+              }
+            },
+            {
+              "id" : "cache:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0006",
+              "description" : "L2 cache",
+              "physid" : "6",
+              "slot" : "L2 Cache",
+              "units" : "bytes",
+              "size" : 2097152,
+              "capacity" : 2097152,
+              "configuration" : {
+                "level" : "2"
+              },
+              "capabilities" : {
+                "burst" : "Burst",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "unified" : "Unified cache"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "memory",
+          "class" : "memory",
+          "claimed" : true,
+          "handle" : "DMI:000F",
+          "description" : "System Memory",
+          "physid" : "f",
+          "slot" : "System board or motherboard",
+          "units" : "bytes",
+          "size" : 1073741824,
+          "capacity" : 3221225472,
+          "children" : [
+            {
+              "id" : "bank:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0010",
+              "description" : "DIMM DDR Synchronous",
+              "physid" : "0",
+              "slot" : "M1",
+              "units" : "bytes",
+              "size" : 536870912,
+              "width" : 64
+            },
+            {
+              "id" : "bank:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0011",
+              "description" : "DIMM DDR Synchronous",
+              "physid" : "1",
+              "slot" : "M2",
+              "units" : "bytes",
+              "size" : 536870912,
+              "width" : 64
+            }
+          ]
+        },
+        {
+          "id" : "pci",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "Mobile 915GM/PM/GMS/910GML Express Processor to DRAM Controller",
+          "vendor" : "Intel Corporation",
+          "physid" : "100",
+          "businfo" : "pci@0000:00:00.0",
+          "version" : "04",
+          "width" : 32,
+          "clock" : 33000000,
+          "children" : [
+            {
+              "id" : "display:0",
+              "class" : "display",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:02.0",
+              "description" : "VGA compatible controller",
+              "product" : "Mobile 915GM/GMS/910GML Express Graphics Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "2",
+              "businfo" : "pci@0000:00:02.0",
+              "version" : "04",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "i915",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "vga_controller" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing",
+                "rom" : "extension ROM"
+              }
+            },
+            {
+              "id" : "display:1",
+              "class" : "display",
+              "handle" : "PCI:0000:00:02.1",
+              "description" : "Display controller",
+              "product" : "Mobile 915GM/GMS/910GML Express Graphics Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "2.1",
+              "businfo" : "pci@0000:00:02.1",
+              "version" : "04",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "pci:0",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:02",
+              "description" : "PCI bridge",
+              "product" : "82801FB/FBM/FR/FW/FRW (ICH6 Family) PCI Express Port 1",
+              "vendor" : "Intel Corporation",
+              "physid" : "1c",
+              "businfo" : "pci@0000:00:1c.0",
+              "version" : "04",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "pcieport"
+              },
+              "capabilities" : {
+                "pci" : true,
+                "pciexpress" : "PCI Express",
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "usb:0",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1d.0",
+              "description" : "USB controller",
+              "product" : "82801FB/FBM/FR/FW/FRW (ICH6 Family) USB UHCI #1",
+              "vendor" : "Intel Corporation",
+              "physid" : "1d",
+              "businfo" : "pci@0000:00:1d.0",
+              "version" : "04",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "uhci_hcd",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "uhci" : "Universal Host Controller Interface (USB1)",
+                "bus_master" : "bus mastering"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:1:1",
+                  "product" : "UHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-6-686 uhci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@1",
+                  "logicalname" : "usb1",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "2",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:1",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1d.1",
+              "description" : "USB controller",
+              "product" : "82801FB/FBM/FR/FW/FRW (ICH6 Family) USB UHCI #2",
+              "vendor" : "Intel Corporation",
+              "physid" : "1d.1",
+              "businfo" : "pci@0000:00:1d.1",
+              "version" : "04",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "uhci_hcd",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "uhci" : "Universal Host Controller Interface (USB1)",
+                "bus_master" : "bus mastering"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:2:1",
+                  "product" : "UHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-6-686 uhci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@2",
+                  "logicalname" : "usb2",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "2",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:2",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1d.2",
+              "description" : "USB controller",
+              "product" : "82801FB/FBM/FR/FW/FRW (ICH6 Family) USB UHCI #3",
+              "vendor" : "Intel Corporation",
+              "physid" : "1d.2",
+              "businfo" : "pci@0000:00:1d.2",
+              "version" : "04",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "uhci_hcd",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "uhci" : "Universal Host Controller Interface (USB1)",
+                "bus_master" : "bus mastering"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:4:1",
+                  "product" : "UHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-6-686 uhci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@4",
+                  "logicalname" : "usb4",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "2",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:3",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1d.3",
+              "description" : "USB controller",
+              "product" : "82801FB/FBM/FR/FW/FRW (ICH6 Family) USB UHCI #4",
+              "vendor" : "Intel Corporation",
+              "physid" : "1d.3",
+              "businfo" : "pci@0000:00:1d.3",
+              "version" : "04",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "uhci_hcd",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "uhci" : "Universal Host Controller Interface (USB1)",
+                "bus_master" : "bus mastering"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:5:1",
+                  "product" : "UHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-6-686 uhci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@5",
+                  "logicalname" : "usb5",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "2",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:4",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1d.7",
+              "description" : "USB controller",
+              "product" : "82801FB/FBM/FR/FW/FRW (ICH6 Family) USB2 EHCI Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "1d.7",
+              "businfo" : "pci@0000:00:1d.7",
+              "version" : "04",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "ehci-pci",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "debug" : "Debug port",
+                "ehci" : "Enhanced Host Controller Interface (USB2)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:3:1",
+                  "product" : "EHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-6-686 ehci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@3",
+                  "logicalname" : "usb3",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "8",
+                    "speed" : "480Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-2.00" : "USB 2.0"
+                  },
+                  "children" : [
+                    {
+                      "id" : "usb",
+                      "class" : "storage",
+                      "claimed" : true,
+                      "handle" : "USB:3:2",
+                      "description" : "Mass storage device",
+                      "product" : "DT 101 G2",
+                      "vendor" : "Kingston",
+                      "physid" : "1",
+                      "businfo" : "usb@3:1",
+                      "logicalname" : "scsi2",
+                      "version" : "1.00",
+                      "serial" : "001CC0EC2F24F090B5F9138F",
+                      "configuration" : {
+                        "driver" : "usb-storage",
+                        "maxpower" : "100mA",
+                        "speed" : "480Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-2.00" : "USB 2.0",
+                        "scsi" : "SCSI",
+                        "emulated" : "Emulated device"
+                      },
+                      "children" : [
+                        {
+                          "id" : "disk",
+                          "class" : "disk",
+                          "claimed" : true,
+                          "handle" : "SCSI:02:00:00:00",
+                          "description" : "SCSI Disk",
+                          "product" : "DT 101 G2",
+                          "vendor" : "Kingston",
+                          "physid" : "0.0.0",
+                          "businfo" : "scsi@2:0.0.0",
+                          "logicalname" : "/dev/sdb",
+                          "dev" : "8:16",
+                          "version" : "1.00",
+                          "units" : "bytes",
+                          "size" : 4002910208,
+                          "configuration" : {
+                            "ansiversion" : "2",
+                            "logicalsectorsize" : "512",
+                            "sectorsize" : "512"
+                          },
+                          "capabilities" : {
+                            "removable" : "support is removable"
+                          },
+                          "children" : [
+                            {
+                              "id" : "medium",
+                              "class" : "disk",
+                              "claimed" : true,
+                              "physid" : "0",
+                              "logicalname" : "/dev/sdb",
+                              "dev" : "8:16",
+                              "units" : "bytes",
+                              "size" : 4002910208,
+                              "configuration" : {
+                                "signature" : "058cd87f"
+                              },
+                              "capabilities" : {
+                                "partitioned" : "Partitioned disk",
+                                "partitioned:dos" : "MS-DOS partition table"
+                              },
+                              "children" : [
+                                {
+                                  "id" : "volume:0",
+                                  "class" : "volume",
+                                  "claimed" : true,
+                                  "description" : "Empty partition",
+                                  "physid" : "1",
+                                  "logicalname" : ["/dev/sdb1", "/lib/live/mount/medium"],
+                                  "dev" : "8:17",
+                                  "capacity" : 423591936,
+                                  "configuration" : {
+                                    "mount.fstype" : "iso9660",
+                                    "mount.options" : "ro,noatime",
+                                    "state" : "mounted"
+                                  },
+                                  "capabilities" : {
+                                    "primary" : "Primary partition",
+                                    "bootable" : "Bootable partition (active)",
+                                    "nofs" : "No filesystem"
+                                  }
+                                },
+                                {
+                                  "id" : "volume:1",
+                                  "class" : "volume",
+                                  "claimed" : true,
+                                  "description" : "Windows FAT volume",
+                                  "vendor" : "mkfs.fat",
+                                  "physid" : "2",
+                                  "logicalname" : "/dev/sdb2",
+                                  "dev" : "8:18",
+                                  "version" : "FAT12",
+                                  "serial" : "c19b-36ca",
+                                  "size" : 18446744073709551104,
+                                  "configuration" : {
+                                    "FATs" : "2",
+                                    "filesystem" : "fat"
+                                  },
+                                  "capabilities" : {
+                                    "primary" : "Primary partition",
+                                    "boot" : "Contains boot code",
+                                    "fat" : "Windows FAT",
+                                    "initialized" : "initialized volume"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id" : "pci:1",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:06",
+              "description" : "PCI bridge",
+              "product" : "82801 Mobile PCI Bridge",
+              "vendor" : "Intel Corporation",
+              "physid" : "1e",
+              "businfo" : "pci@0000:00:1e.0",
+              "version" : "d4",
+              "width" : 32,
+              "clock" : 33000000,
+              "capabilities" : {
+                "pci" : true,
+                "subtractive_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "network:0",
+                  "class" : "network",
+                  "disabled" : true,
+                  "claimed" : true,
+                  "handle" : "PCI:0000:06:05.0",
+                  "description" : "Wireless interface",
+                  "product" : "PRO/Wireless 2200BG [Calexico2] Network Connection",
+                  "vendor" : "Intel Corporation",
+                  "physid" : "5",
+                  "businfo" : "pci@0000:06:05.0",
+                  "logicalname" : "wlp6s5",
+                  "version" : "05",
+                  "serial" : "00:12:f0:c7:68:51",
+                  "width" : 32,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "broadcast" : "yes",
+                    "driver" : "ipw2200",
+                    "driverversion" : "1.2.2kmprq",
+                    "firmware" : "ABG:9.0.5.27 (Dec 12 2007)",
+                    "latency" : "128",
+                    "link" : "no",
+                    "maxlatency" : "24",
+                    "mingnt" : "3",
+                    "multicast" : "yes",
+                    "wireless" : "IEEE 802.11"
+                  },
+                  "capabilities" : {
+                    "pm" : "Power Management",
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing",
+                    "ethernet" : true,
+                    "physical" : "Physical interface",
+                    "wireless" : "Wireless-LAN"
+                  }
+                },
+                {
+                  "id" : "pcmcia",
+                  "class" : "bridge",
+                  "claimed" : true,
+                  "handle" : "PCI:0000:06:06.0",
+                  "description" : "CardBus bridge",
+                  "product" : "PCIxx21/PCIxx11/PCIx515 PC Card Controller",
+                  "vendor" : "Texas Instruments",
+                  "physid" : "6",
+                  "businfo" : "pci@0000:06:06.0",
+                  "version" : "00",
+                  "width" : 32,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "driver" : "yenta_cardbus",
+                    "latency" : "176",
+                    "maxlatency" : "5",
+                    "mingnt" : "192"
+                  },
+                  "capabilities" : {
+                    "pcmcia" : "PC-Card (PCMCIA)",
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing"
+                  }
+                },
+                {
+                  "id" : "firewire",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "PCI:0000:06:06.2",
+                  "description" : "FireWire (IEEE 1394)",
+                  "product" : "OHCI Compliant IEEE 1394 Host Controller",
+                  "vendor" : "Texas Instruments",
+                  "physid" : "6.2",
+                  "businfo" : "pci@0000:06:06.2",
+                  "version" : "00",
+                  "width" : 32,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "driver" : "firewire_ohci",
+                    "latency" : "128",
+                    "maxlatency" : "4",
+                    "mingnt" : "2"
+                  },
+                  "capabilities" : {
+                    "pm" : "Power Management",
+                    "ohci" : "Open Host Controller Interface",
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing"
+                  }
+                },
+                {
+                  "id" : "storage",
+                  "class" : "storage",
+                  "claimed" : true,
+                  "handle" : "PCI:0000:06:06.3",
+                  "description" : "Mass storage controller",
+                  "product" : "PCIxx21/PCIxx11 Flash Media Controller",
+                  "vendor" : "Texas Instruments",
+                  "physid" : "6.3",
+                  "businfo" : "pci@0000:06:06.3",
+                  "version" : "00",
+                  "width" : 32,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "driver" : "tifm_7xx1",
+                    "latency" : "128",
+                    "maxlatency" : "4",
+                    "mingnt" : "7"
+                  },
+                  "capabilities" : {
+                    "storage" : true,
+                    "pm" : "Power Management",
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing"
+                  }
+                },
+                {
+                  "id" : "generic",
+                  "class" : "generic",
+                  "claimed" : true,
+                  "handle" : "PCI:0000:06:06.4",
+                  "description" : "SD Host controller",
+                  "product" : "PCIxx21/PCIxx11 SD Host Controller",
+                  "vendor" : "Texas Instruments",
+                  "physid" : "6.4",
+                  "businfo" : "pci@0000:06:06.4",
+                  "version" : "00",
+                  "width" : 32,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "driver" : "sdhci-pci",
+                    "latency" : "128",
+                    "maxlatency" : "4",
+                    "mingnt" : "7"
+                  },
+                  "capabilities" : {
+                    "pm" : "Power Management",
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing"
+                  }
+                },
+                {
+                  "id" : "network:1",
+                  "class" : "network",
+                  "claimed" : true,
+                  "handle" : "PCI:0000:06:07.0",
+                  "description" : "Ethernet interface",
+                  "product" : "RTL-8100/8101L/8139 PCI Fast Ethernet Adapter",
+                  "vendor" : "Realtek Semiconductor Co., Ltd.",
+                  "physid" : "7",
+                  "businfo" : "pci@0000:06:07.0",
+                  "logicalname" : "enp6s7",
+                  "version" : "10",
+                  "serial" : "00:0a:e4:d4:71:82",
+                  "units" : "bit/s",
+                  "size" : 100000000,
+                  "capacity" : 100000000,
+                  "width" : 32,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "autonegotiation" : "on",
+                    "broadcast" : "yes",
+                    "driver" : "8139too",
+                    "driverversion" : "0.9.28",
+                    "duplex" : "full",
+                    "ip" : "192.168.1.101",
+                    "latency" : "128",
+                    "link" : "yes",
+                    "maxlatency" : "64",
+                    "mingnt" : "32",
+                    "multicast" : "yes",
+                    "port" : "MII",
+                    "speed" : "100Mbit/s"
+                  },
+                  "capabilities" : {
+                    "pm" : "Power Management",
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing",
+                    "ethernet" : true,
+                    "physical" : "Physical interface",
+                    "tp" : "twisted pair",
+                    "mii" : "Media Independent Interface",
+                    "10bt" : "10Mbit/s",
+                    "10bt-fd" : "10Mbit/s (full duplex)",
+                    "100bt" : "100Mbit/s",
+                    "100bt-fd" : "100Mbit/s (full duplex)",
+                    "autonegotiation" : "Auto-negotiation"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "multimedia",
+              "class" : "multimedia",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1e.2",
+              "description" : "Multimedia audio controller",
+              "product" : "82801FB/FBM/FR/FW/FRW (ICH6 Family) AC'97 Audio Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "1e.2",
+              "businfo" : "pci@0000:00:1e.2",
+              "version" : "04",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "snd_intel8x0",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "communication",
+              "class" : "communication",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1e.3",
+              "description" : "Modem",
+              "product" : "82801FB/FBM/FR/FW/FRW (ICH6 Family) AC'97 Modem Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "1e.3",
+              "businfo" : "pci@0000:00:1e.3",
+              "version" : "04",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "snd_intel8x0m",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "generic" : "Generic interface",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "isa",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1f.0",
+              "description" : "ISA bridge",
+              "product" : "82801FBM (ICH6M) LPC Interface Bridge",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f",
+              "businfo" : "pci@0000:00:1f.0",
+              "version" : "04",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "lpc_ich",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "isa" : true,
+                "bus_master" : "bus mastering"
+              }
+            },
+            {
+              "id" : "ide",
+              "class" : "storage",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1f.1",
+              "description" : "IDE interface",
+              "product" : "82801FB/FBM/FR/FW/FRW (ICH6 Family) IDE Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f.1",
+              "businfo" : "pci@0000:00:1f.1",
+              "version" : "04",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "ata_piix",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "ide" : true,
+                "isa_compatibility_mode_controller__supports_both_channels_switched_to_pci_native_mode__supports_bus_mastering" : true,
+                "bus_master" : "bus mastering"
+              }
+            },
+            {
+              "id" : "serial",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1f.3",
+              "description" : "SMBus",
+              "product" : "82801FB/FBM/FR/FW/FRW (ICH6 Family) SMBus Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f.3",
+              "businfo" : "pci@0000:00:1f.3",
+              "version" : "04",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "i801_smbus",
+                "latency" : "0"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "scsi",
+          "class" : "storage",
+          "claimed" : true,
+          "physid" : "1",
+          "logicalname" : "scsi0",
+          "capabilities" : {
+            "emulated" : "Emulated device"
+          },
+          "children" : [
+            {
+              "id" : "disk",
+              "class" : "disk",
+              "claimed" : true,
+              "handle" : "SCSI:00:00:00:00",
+              "description" : "ATA Disk",
+              "product" : "FUJITSU MHT2080A",
+              "vendor" : "Fujitsu",
+              "physid" : "0.0.0",
+              "businfo" : "scsi@0:0.0.0",
+              "logicalname" : "/dev/sda",
+              "dev" : "8:0",
+              "version" : "0022",
+              "serial" : "NN4FT561BDC2",
+              "units" : "bytes",
+              "size" : 80026361856,
+              "configuration" : {
+                "ansiversion" : "5",
+                "logicalsectorsize" : "512",
+                "sectorsize" : "512",
+                "signature" : "41f9c32e"
+              },
+              "capabilities" : {
+                "partitioned" : "Partitioned disk",
+                "partitioned:dos" : "MS-DOS partition table"
+              },
+              "children" : [
+                {
+                  "id" : "volume:0",
+                  "class" : "volume",
+                  "claimed" : true,
+                  "description" : "EXT4 volume",
+                  "vendor" : "Linux",
+                  "physid" : "1",
+                  "businfo" : "scsi@0:0.0.0,1",
+                  "logicalname" : "/dev/sda1",
+                  "dev" : "8:1",
+                  "version" : "1.0",
+                  "serial" : "78e49815-be9b-45a4-955a-cd5bfdc0a10e",
+                  "size" : 78961967104,
+                  "capacity" : 78961967104,
+                  "configuration" : {
+                    "created" : "2016-02-11 16:34:14",
+                    "filesystem" : "ext4",
+                    "lastmountpoint" : "/",
+                    "modified" : "2018-07-11 10:02:45",
+                    "mounted" : "2018-07-11 10:02:51",
+                    "state" : "clean"
+                  },
+                  "capabilities" : {
+                    "primary" : "Primary partition",
+                    "bootable" : "Bootable partition (active)",
+                    "journaled" : true,
+                    "extended_attributes" : "Extended Attributes",
+                    "large_files" : "4GB+ files",
+                    "huge_files" : "16TB+ files",
+                    "dir_nlink" : "directories with 65000+ subdirs",
+                    "extents" : "extent-based allocation",
+                    "ext4" : true,
+                    "ext2" : "EXT2/EXT3",
+                    "initialized" : "initialized volume"
+                  }
+                },
+                {
+                  "id" : "volume:1",
+                  "class" : "volume",
+                  "claimed" : true,
+                  "description" : "Extended partition",
+                  "physid" : "2",
+                  "businfo" : "scsi@0:0.0.0,2",
+                  "logicalname" : "/dev/sda2",
+                  "dev" : "8:2",
+                  "size" : 1062208512,
+                  "capacity" : 1062208512,
+                  "capabilities" : {
+                    "primary" : "Primary partition",
+                    "extended" : "Extended partition",
+                    "partitioned" : "Partitioned disk",
+                    "partitioned:extended" : "Extended partition"
+                  },
+                  "children" : [
+                    {
+                      "id" : "logicalvolume",
+                      "class" : "volume",
+                      "claimed" : true,
+                      "description" : "Linux swap volume",
+                      "physid" : "5",
+                      "logicalname" : "/dev/sda5",
+                      "dev" : "8:5",
+                      "version" : "1",
+                      "serial" : "48e7c4a2-837c-432f-a9b5-f8dc998d72d0",
+                      "size" : 1062207488,
+                      "capacity" : 1062207488,
+                      "configuration" : {
+                        "filesystem" : "swap",
+                        "pagesize" : "4096"
+                      },
+                      "capabilities" : {
+                        "nofs" : "No filesystem",
+                        "swap" : "Linux swap",
+                        "initialized" : "initialized volume"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id" : "cdrom",
+              "class" : "disk",
+              "claimed" : true,
+              "handle" : "SCSI:00:00:01:00",
+              "description" : "DVD writer",
+              "product" : "UJ-840D",
+              "vendor" : "MATSHITA",
+              "physid" : "0.1.0",
+              "businfo" : "scsi@0:0.1.0",
+              "logicalname" : ["/dev/cdrom", "/dev/cdrw", "/dev/dvd", "/dev/dvdrw", "/dev/sr0"],
+              "dev" : "11:0",
+              "version" : "1.02",
+              "configuration" : {
+                "ansiversion" : "5",
+                "status" : "nodisc"
+              },
+              "capabilities" : {
+                "removable" : "support is removable",
+                "audio" : "Audio CD playback",
+                "cd-r" : "CD-R burning",
+                "cd-rw" : "CD-RW burning",
+                "dvd" : "DVD playback",
+                "dvd-r" : "DVD-R burning"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2207 @@
+{
+  "id" : "debian",
+  "class" : "system",
+  "claimed" : true,
+  "handle" : "DMI:0001",
+  "description" : "Notebook",
+  "product" : "PORTEGE R700 (0000000000)",
+  "vendor" : "TOSHIBA",
+  "version" : "PT311E-02W004CE",
+  "serial" : "YA059622H",
+  "width" : 32,
+  "configuration" : {
+    "administrator_password" : "disabled",
+    "boot" : "normal",
+    "chassis" : "notebook",
+    "family" : "0000000000",
+    "frontpanel_password" : "disabled",
+    "keyboard_password" : "disabled",
+    "power-on_password" : "disabled",
+    "sku" : "0000000000",
+    "uuid" : "247CC400-EB7D-11DF-8011-B05991059622"
+  },
+  "capabilities" : {
+    "smbios-2.4" : "SMBIOS version 2.4",
+    "dmi-2.4" : "DMI version 2.4"
+  },
+  "children" : [
+    {
+      "id" : "core",
+      "class" : "bus",
+      "claimed" : true,
+      "handle" : "DMI:0002",
+      "description" : "Motherboard",
+      "product" : "Portable PC",
+      "vendor" : "TOSHIBA",
+      "physid" : "0",
+      "version" : "Version A0",
+      "serial" : "0000000000",
+      "slot" : "Center",
+      "children" : [
+        {
+          "id" : "firmware",
+          "class" : "memory",
+          "claimed" : true,
+          "description" : "BIOS",
+          "vendor" : "TOSHIBA",
+          "physid" : "0",
+          "version" : "Version 1.60",
+          "date" : "09/15/2010",
+          "units" : "bytes",
+          "size" : 1048576,
+          "capacity" : 2031616,
+          "capabilities" : {
+            "isa" : "ISA bus",
+            "pci" : "PCI bus",
+            "pnp" : "Plug-and-Play",
+            "upgrade" : "BIOS EEPROM can be upgraded",
+            "shadowing" : "BIOS shadowing",
+            "vesa" : "VESA video extensions",
+            "cdboot" : "Booting from CD-ROM/DVD",
+            "bootselect" : "Selectable boot path",
+            "edd" : "Enhanced Disk Drive extensions",
+            "int13floppytoshiba" : "Toshiba floppy",
+            "int13floppy720" : "3.5\" 720KB floppy",
+            "int5printscreen" : "Print Screen key",
+            "int9keyboard" : "i8042 keyboard controller",
+            "int14serial" : "INT14 serial line control",
+            "int17printer" : "INT17 printer control",
+            "acpi" : "ACPI",
+            "usb" : "USB legacy emulation",
+            "biosbootspecification" : "BIOS boot specification",
+            "netboot" : "Function-key initiated network service boot"
+          }
+        },
+        {
+          "id" : "cpu:0",
+          "class" : "processor",
+          "claimed" : true,
+          "handle" : "DMI:0021",
+          "description" : "CPU",
+          "product" : "Intel(R) Core(TM) i5 CPU       M 560  @ 2.67GHz",
+          "vendor" : "Intel Corp.",
+          "physid" : "21",
+          "businfo" : "cpu@0",
+          "version" : "6.5.5",
+          "serial" : "0002-0655-0000-0000-0000-0000",
+          "slot" : "rBGA1288 Socket",
+          "units" : "Hz",
+          "size" : 1199000000,
+          "capacity" : 3200000000,
+          "width" : 64,
+          "clock" : 133000000,
+          "configuration" : {
+            "id" : "4"
+          },
+          "capabilities" : {
+            "fpu" : "mathematical co-processor",
+            "fpu_exception" : "FPU exceptions reporting",
+            "wp" : true,
+            "vme" : "virtual mode extensions",
+            "de" : "debugging extensions",
+            "pse" : "page size extensions",
+            "tsc" : "time stamp counter",
+            "msr" : "model-specific registers",
+            "pae" : "4GB+ memory addressing (Physical Address Extension)",
+            "mce" : "machine check exceptions",
+            "cx8" : "compare and exchange 8-byte",
+            "apic" : "on-chip advanced programmable interrupt controller (APIC)",
+            "sep" : "fast system calls",
+            "mtrr" : "memory type range registers",
+            "pge" : "page global enable",
+            "mca" : "machine check architecture",
+            "cmov" : "conditional move instruction",
+            "pat" : "page attribute table",
+            "pse36" : "36-bit page size extensions",
+            "clflush" : true,
+            "dts" : "debug trace and EMON store MSRs",
+            "acpi" : "thermal control (ACPI)",
+            "mmx" : "multimedia extensions (MMX)",
+            "fxsr" : "fast floating point save/restore",
+            "sse" : "streaming SIMD extensions (SSE)",
+            "sse2" : "streaming SIMD extensions (SSE2)",
+            "ss" : "self-snoop",
+            "ht" : "HyperThreading",
+            "tm" : "thermal interrupt and status",
+            "pbe" : "pending break event",
+            "nx" : "no-execute bit (NX)",
+            "rdtscp" : true,
+            "x86-64" : "64bits extensions (x86-64)",
+            "constant_tsc" : true,
+            "arch_perfmon" : true,
+            "pebs" : true,
+            "bts" : true,
+            "xtopology" : true,
+            "nonstop_tsc" : true,
+            "aperfmperf" : true,
+            "eagerfpu" : true,
+            "pni" : true,
+            "pclmulqdq" : true,
+            "dtes64" : true,
+            "monitor" : true,
+            "ds_cpl" : true,
+            "vmx" : "CPU virtualization (Vanderpool)",
+            "smx" : true,
+            "est" : true,
+            "tm2" : true,
+            "ssse3" : true,
+            "cx16" : true,
+            "xtpr" : true,
+            "pdcm" : true,
+            "sse4_1" : true,
+            "sse4_2" : true,
+            "popcnt" : true,
+            "aes" : true,
+            "lahf_lm" : true,
+            "tpr_shadow" : true,
+            "vnmi" : true,
+            "flexpriority" : true,
+            "ept" : true,
+            "vpid" : true,
+            "dtherm" : true,
+            "ida" : true,
+            "arat" : true,
+            "cpufreq" : "CPU Frequency scaling"
+          },
+          "children" : [
+            {
+              "id" : "cache:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0022",
+              "description" : "L3 cache",
+              "physid" : "22",
+              "slot" : "CPU Internal",
+              "units" : "bytes",
+              "size" : 3145728,
+              "capacity" : 3145728,
+              "configuration" : {
+                "level" : "3"
+              },
+              "capabilities" : {
+                "asynchronous" : "Asynchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "unified" : "Unified cache"
+              }
+            },
+            {
+              "id" : "cache:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0024",
+              "description" : "L2 cache",
+              "physid" : "24",
+              "slot" : "CPU Internal",
+              "units" : "bytes",
+              "size" : 262144,
+              "capacity" : 262144,
+              "configuration" : {
+                "level" : "2"
+              },
+              "capabilities" : {
+                "asynchronous" : "Asynchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "unified" : "Unified cache"
+              }
+            },
+            {
+              "id" : "cache:2",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0025",
+              "description" : "L1 cache",
+              "physid" : "25",
+              "slot" : "CPU Internal",
+              "units" : "bytes",
+              "size" : 32768,
+              "capacity" : 32768,
+              "configuration" : {
+                "level" : "1"
+              },
+              "capabilities" : {
+                "asynchronous" : "Asynchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "instruction" : "Instruction cache"
+              }
+            },
+            {
+              "id" : "logicalcpu:0",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.0",
+              "description" : "Logical CPU",
+              "physid" : "4.1",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:1",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.1",
+              "description" : "Logical CPU",
+              "physid" : "4.2",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:2",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.2",
+              "description" : "Logical CPU",
+              "physid" : "4.3",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:3",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.3",
+              "description" : "Logical CPU",
+              "physid" : "4.4",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:4",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.4",
+              "description" : "Logical CPU",
+              "physid" : "4.5",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:5",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.5",
+              "description" : "Logical CPU",
+              "physid" : "4.6",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:6",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.6",
+              "description" : "Logical CPU",
+              "physid" : "4.7",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:7",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.7",
+              "description" : "Logical CPU",
+              "physid" : "4.8",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:8",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.8",
+              "description" : "Logical CPU",
+              "physid" : "4.9",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:9",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.9",
+              "description" : "Logical CPU",
+              "physid" : "4.a",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:10",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.10",
+              "description" : "Logical CPU",
+              "physid" : "4.b",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:11",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.11",
+              "description" : "Logical CPU",
+              "physid" : "4.c",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:12",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.12",
+              "description" : "Logical CPU",
+              "physid" : "4.d",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:13",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.13",
+              "description" : "Logical CPU",
+              "physid" : "4.e",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:14",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.14",
+              "description" : "Logical CPU",
+              "physid" : "4.f",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:15",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.15",
+              "description" : "Logical CPU",
+              "physid" : "4.10",
+              "width" : 64,
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "cache:0",
+          "class" : "memory",
+          "claimed" : true,
+          "handle" : "DMI:0023",
+          "description" : "L1 cache",
+          "physid" : "23",
+          "slot" : "CPU Internal",
+          "units" : "bytes",
+          "size" : 32768,
+          "capacity" : 32768,
+          "configuration" : {
+            "level" : "1"
+          },
+          "capabilities" : {
+            "asynchronous" : "Asynchronous",
+            "internal" : "Internal",
+            "write-back" : "Write-back",
+            "data" : "Data cache"
+          }
+        },
+        {
+          "id" : "cpu:1",
+          "class" : "processor",
+          "claimed" : true,
+          "handle" : "DMI:0026",
+          "description" : "CPU",
+          "product" : "Core i5",
+          "vendor" : "Intel Corporation",
+          "physid" : "26",
+          "businfo" : "cpu@1",
+          "version" : "6.5.5",
+          "serial" : "0002-0655-0000-0000-0000-0000",
+          "slot" : "rBGA1288 Socket",
+          "units" : "Hz",
+          "size" : 1199000000,
+          "capacity" : 3200000000,
+          "clock" : 133000000,
+          "configuration" : {
+            "id" : "4"
+          },
+          "capabilities" : {
+            "vmx" : "CPU virtualization (Vanderpool)",
+            "ht" : "HyperThreading",
+            "cpufreq" : "CPU Frequency scaling"
+          },
+          "children" : [
+            {
+              "id" : "cache:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0027",
+              "description" : "L3 cache",
+              "physid" : "27",
+              "slot" : "CPU Internal",
+              "units" : "bytes",
+              "size" : 3145728,
+              "capacity" : 3145728,
+              "configuration" : {
+                "level" : "3"
+              },
+              "capabilities" : {
+                "asynchronous" : "Asynchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "unified" : "Unified cache"
+              }
+            },
+            {
+              "id" : "cache:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0029",
+              "description" : "L2 cache",
+              "physid" : "29",
+              "slot" : "CPU Internal",
+              "units" : "bytes",
+              "size" : 262144,
+              "capacity" : 262144,
+              "configuration" : {
+                "level" : "2"
+              },
+              "capabilities" : {
+                "asynchronous" : "Asynchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "unified" : "Unified cache"
+              }
+            },
+            {
+              "id" : "cache:2",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:002A",
+              "description" : "L1 cache",
+              "physid" : "2a",
+              "slot" : "CPU Internal",
+              "units" : "bytes",
+              "size" : 32768,
+              "capacity" : 32768,
+              "configuration" : {
+                "level" : "1"
+              },
+              "capabilities" : {
+                "asynchronous" : "Asynchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "instruction" : "Instruction cache"
+              }
+            },
+            {
+              "id" : "logicalcpu:0",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.0",
+              "description" : "Logical CPU",
+              "physid" : "4.1",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:1",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.1",
+              "description" : "Logical CPU",
+              "physid" : "4.2",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:2",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.2",
+              "description" : "Logical CPU",
+              "physid" : "4.3",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:3",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.3",
+              "description" : "Logical CPU",
+              "physid" : "4.4",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:4",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.4",
+              "description" : "Logical CPU",
+              "physid" : "4.5",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:5",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.5",
+              "description" : "Logical CPU",
+              "physid" : "4.6",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:6",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.6",
+              "description" : "Logical CPU",
+              "physid" : "4.7",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:7",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.7",
+              "description" : "Logical CPU",
+              "physid" : "4.8",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:8",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.8",
+              "description" : "Logical CPU",
+              "physid" : "4.9",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:9",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.9",
+              "description" : "Logical CPU",
+              "physid" : "4.a",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:10",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.10",
+              "description" : "Logical CPU",
+              "physid" : "4.b",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:11",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.11",
+              "description" : "Logical CPU",
+              "physid" : "4.c",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:12",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.12",
+              "description" : "Logical CPU",
+              "physid" : "4.d",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:13",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.13",
+              "description" : "Logical CPU",
+              "physid" : "4.e",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:14",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.14",
+              "description" : "Logical CPU",
+              "physid" : "4.f",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:15",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.15",
+              "description" : "Logical CPU",
+              "physid" : "4.10",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "cache:1",
+          "class" : "memory",
+          "claimed" : true,
+          "handle" : "DMI:0028",
+          "description" : "L1 cache",
+          "physid" : "28",
+          "slot" : "CPU Internal",
+          "units" : "bytes",
+          "size" : 32768,
+          "capacity" : 32768,
+          "configuration" : {
+            "level" : "1"
+          },
+          "capabilities" : {
+            "asynchronous" : "Asynchronous",
+            "internal" : "Internal",
+            "write-back" : "Write-back",
+            "data" : "Data cache"
+          }
+        },
+        {
+          "id" : "cpu:2",
+          "class" : "processor",
+          "claimed" : true,
+          "handle" : "DMI:002B",
+          "description" : "CPU",
+          "product" : "Core i5",
+          "vendor" : "Intel Corporation",
+          "physid" : "2b",
+          "businfo" : "cpu@2",
+          "version" : "6.5.5",
+          "serial" : "0002-0655-0000-0000-0000-0000",
+          "slot" : "rBGA1288 Socket",
+          "units" : "Hz",
+          "size" : 2667000000,
+          "capacity" : 3200000000,
+          "clock" : 133000000,
+          "configuration" : {
+            "id" : "4"
+          },
+          "capabilities" : {
+            "vmx" : "CPU virtualization (Vanderpool)",
+            "ht" : "HyperThreading",
+            "cpufreq" : "CPU Frequency scaling"
+          },
+          "children" : [
+            {
+              "id" : "cache:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:002C",
+              "description" : "L3 cache",
+              "physid" : "2c",
+              "slot" : "CPU Internal",
+              "units" : "bytes",
+              "size" : 3145728,
+              "capacity" : 3145728,
+              "configuration" : {
+                "level" : "3"
+              },
+              "capabilities" : {
+                "asynchronous" : "Asynchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "unified" : "Unified cache"
+              }
+            },
+            {
+              "id" : "cache:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:002E",
+              "description" : "L2 cache",
+              "physid" : "2e",
+              "slot" : "CPU Internal",
+              "units" : "bytes",
+              "size" : 262144,
+              "capacity" : 262144,
+              "configuration" : {
+                "level" : "2"
+              },
+              "capabilities" : {
+                "asynchronous" : "Asynchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "unified" : "Unified cache"
+              }
+            },
+            {
+              "id" : "cache:2",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:002F",
+              "description" : "L1 cache",
+              "physid" : "2f",
+              "slot" : "CPU Internal",
+              "units" : "bytes",
+              "size" : 32768,
+              "capacity" : 32768,
+              "configuration" : {
+                "level" : "1"
+              },
+              "capabilities" : {
+                "asynchronous" : "Asynchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "instruction" : "Instruction cache"
+              }
+            },
+            {
+              "id" : "logicalcpu:0",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.0",
+              "description" : "Logical CPU",
+              "physid" : "4.1",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:1",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.1",
+              "description" : "Logical CPU",
+              "physid" : "4.2",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:2",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.2",
+              "description" : "Logical CPU",
+              "physid" : "4.3",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:3",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.3",
+              "description" : "Logical CPU",
+              "physid" : "4.4",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:4",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.4",
+              "description" : "Logical CPU",
+              "physid" : "4.5",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:5",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.5",
+              "description" : "Logical CPU",
+              "physid" : "4.6",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:6",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.6",
+              "description" : "Logical CPU",
+              "physid" : "4.7",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:7",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.7",
+              "description" : "Logical CPU",
+              "physid" : "4.8",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:8",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.8",
+              "description" : "Logical CPU",
+              "physid" : "4.9",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:9",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.9",
+              "description" : "Logical CPU",
+              "physid" : "4.a",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:10",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.10",
+              "description" : "Logical CPU",
+              "physid" : "4.b",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:11",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.11",
+              "description" : "Logical CPU",
+              "physid" : "4.c",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:12",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.12",
+              "description" : "Logical CPU",
+              "physid" : "4.d",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:13",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.13",
+              "description" : "Logical CPU",
+              "physid" : "4.e",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:14",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.14",
+              "description" : "Logical CPU",
+              "physid" : "4.f",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:15",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.15",
+              "description" : "Logical CPU",
+              "physid" : "4.10",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "cache:2",
+          "class" : "memory",
+          "claimed" : true,
+          "handle" : "DMI:002D",
+          "description" : "L1 cache",
+          "physid" : "2d",
+          "slot" : "CPU Internal",
+          "units" : "bytes",
+          "size" : 32768,
+          "capacity" : 32768,
+          "configuration" : {
+            "level" : "1"
+          },
+          "capabilities" : {
+            "asynchronous" : "Asynchronous",
+            "internal" : "Internal",
+            "write-back" : "Write-back",
+            "data" : "Data cache"
+          }
+        },
+        {
+          "id" : "cpu:3",
+          "class" : "processor",
+          "claimed" : true,
+          "handle" : "DMI:0030",
+          "description" : "CPU",
+          "product" : "Core i5",
+          "vendor" : "Intel Corporation",
+          "physid" : "30",
+          "businfo" : "cpu@3",
+          "version" : "6.5.5",
+          "serial" : "0002-0655-0000-0000-0000-0000",
+          "slot" : "rBGA1288 Socket",
+          "units" : "Hz",
+          "size" : 1199000000,
+          "capacity" : 3200000000,
+          "clock" : 133000000,
+          "configuration" : {
+            "id" : "4"
+          },
+          "capabilities" : {
+            "vmx" : "CPU virtualization (Vanderpool)",
+            "ht" : "HyperThreading",
+            "cpufreq" : "CPU Frequency scaling"
+          },
+          "children" : [
+            {
+              "id" : "cache:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0031",
+              "description" : "L3 cache",
+              "physid" : "31",
+              "slot" : "CPU Internal",
+              "units" : "bytes",
+              "size" : 3145728,
+              "capacity" : 3145728,
+              "configuration" : {
+                "level" : "3"
+              },
+              "capabilities" : {
+                "asynchronous" : "Asynchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "unified" : "Unified cache"
+              }
+            },
+            {
+              "id" : "cache:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0033",
+              "description" : "L2 cache",
+              "physid" : "33",
+              "slot" : "CPU Internal",
+              "units" : "bytes",
+              "size" : 262144,
+              "capacity" : 262144,
+              "configuration" : {
+                "level" : "2"
+              },
+              "capabilities" : {
+                "asynchronous" : "Asynchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "unified" : "Unified cache"
+              }
+            },
+            {
+              "id" : "cache:2",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0034",
+              "description" : "L1 cache",
+              "physid" : "34",
+              "slot" : "CPU Internal",
+              "units" : "bytes",
+              "size" : 32768,
+              "capacity" : 32768,
+              "configuration" : {
+                "level" : "1"
+              },
+              "capabilities" : {
+                "asynchronous" : "Asynchronous",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "instruction" : "Instruction cache"
+              }
+            },
+            {
+              "id" : "logicalcpu:0",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.0",
+              "description" : "Logical CPU",
+              "physid" : "4.1",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:1",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.1",
+              "description" : "Logical CPU",
+              "physid" : "4.2",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:2",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.2",
+              "description" : "Logical CPU",
+              "physid" : "4.3",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:3",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.3",
+              "description" : "Logical CPU",
+              "physid" : "4.4",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:4",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.4",
+              "description" : "Logical CPU",
+              "physid" : "4.5",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:5",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.5",
+              "description" : "Logical CPU",
+              "physid" : "4.6",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:6",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.6",
+              "description" : "Logical CPU",
+              "physid" : "4.7",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:7",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.7",
+              "description" : "Logical CPU",
+              "physid" : "4.8",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:8",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.8",
+              "description" : "Logical CPU",
+              "physid" : "4.9",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:9",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.9",
+              "description" : "Logical CPU",
+              "physid" : "4.a",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:10",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.10",
+              "description" : "Logical CPU",
+              "physid" : "4.b",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:11",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.11",
+              "description" : "Logical CPU",
+              "physid" : "4.c",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:12",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.12",
+              "description" : "Logical CPU",
+              "physid" : "4.d",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:13",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.13",
+              "description" : "Logical CPU",
+              "physid" : "4.e",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:14",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.14",
+              "description" : "Logical CPU",
+              "physid" : "4.f",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            },
+            {
+              "id" : "logicalcpu:15",
+              "class" : "processor",
+              "claimed" : true,
+              "handle" : "CPU:4.15",
+              "description" : "Logical CPU",
+              "physid" : "4.10",
+              "capabilities" : {
+                "logical" : "Logical CPU"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "cache:3",
+          "class" : "memory",
+          "claimed" : true,
+          "handle" : "DMI:0032",
+          "description" : "L1 cache",
+          "physid" : "32",
+          "slot" : "CPU Internal",
+          "units" : "bytes",
+          "size" : 32768,
+          "capacity" : 32768,
+          "configuration" : {
+            "level" : "1"
+          },
+          "capabilities" : {
+            "asynchronous" : "Asynchronous",
+            "internal" : "Internal",
+            "write-back" : "Write-back",
+            "data" : "Data cache"
+          }
+        },
+        {
+          "id" : "memory",
+          "class" : "memory",
+          "claimed" : true,
+          "handle" : "DMI:0035",
+          "description" : "System Memory",
+          "physid" : "35",
+          "slot" : "System board or motherboard",
+          "units" : "bytes",
+          "size" : 2147483648,
+          "children" : [
+            {
+              "id" : "bank:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0036",
+              "description" : "SODIMM DDR3 Synchronous 1067 MHz (0.9 ns)",
+              "product" : "M471B5773CHS-CH9",
+              "vendor" : "Samsung",
+              "physid" : "0",
+              "serial" : "67900CDD",
+              "slot" : "DIMM0",
+              "units" : "bytes",
+              "size" : 2147483648,
+              "width" : 64,
+              "clock" : 1067000000
+            },
+            {
+              "id" : "bank:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0038",
+              "description" : "DIMM [empty]",
+              "physid" : "1",
+              "slot" : "DIMM2"
+            }
+          ]
+        },
+        {
+          "id" : "pci:0",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "Core Processor DRAM Controller",
+          "vendor" : "Intel Corporation",
+          "physid" : "100",
+          "businfo" : "pci@0000:00:00.0",
+          "version" : "02",
+          "width" : 32,
+          "clock" : 33000000,
+          "children" : [
+            {
+              "id" : "display",
+              "class" : "display",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:02.0",
+              "description" : "VGA compatible controller",
+              "product" : "Core Processor Integrated Graphics Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "2",
+              "businfo" : "pci@0000:00:02.0",
+              "version" : "02",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "i915",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "vga_controller" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing",
+                "rom" : "extension ROM"
+              }
+            },
+            {
+              "id" : "communication",
+              "class" : "communication",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:16.0",
+              "description" : "Communication controller",
+              "product" : "5 Series/3400 Series Chipset HECI Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "16",
+              "businfo" : "pci@0000:00:16.0",
+              "version" : "06",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "mei_me",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "network",
+              "class" : "network",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:19.0",
+              "description" : "Ethernet interface",
+              "product" : "82577LM Gigabit Network Connection",
+              "vendor" : "Intel Corporation",
+              "physid" : "19",
+              "businfo" : "pci@0000:00:19.0",
+              "logicalname" : "enp0s25",
+              "version" : "06",
+              "serial" : "00:23:18:02:0d:94",
+              "units" : "bit/s",
+              "size" : 100000000,
+              "capacity" : 1000000000,
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "autonegotiation" : "on",
+                "broadcast" : "yes",
+                "driver" : "e1000e",
+                "driverversion" : "3.2.6-k",
+                "duplex" : "full",
+                "firmware" : "0.12-3",
+                "ip" : "192.168.2.11",
+                "latency" : "0",
+                "link" : "yes",
+                "multicast" : "yes",
+                "port" : "twisted pair",
+                "speed" : "100Mbit/s"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing",
+                "ethernet" : true,
+                "physical" : "Physical interface",
+                "tp" : "twisted pair",
+                "10bt" : "10Mbit/s",
+                "10bt-fd" : "10Mbit/s (full duplex)",
+                "100bt" : "100Mbit/s",
+                "100bt-fd" : "100Mbit/s (full duplex)",
+                "1000bt-fd" : "1Gbit/s (full duplex)",
+                "autonegotiation" : "Auto-negotiation"
+              }
+            },
+            {
+              "id" : "usb:0",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1a.0",
+              "description" : "USB controller",
+              "product" : "5 Series/3400 Series Chipset USB2 Enhanced Host Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "1a",
+              "businfo" : "pci@0000:00:1a.0",
+              "version" : "06",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "ehci-pci",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "debug" : "Debug port",
+                "ehci" : "Enhanced Host Controller Interface (USB2)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:1:1",
+                  "product" : "EHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-6-686 ehci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@1",
+                  "logicalname" : "usb1",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "3",
+                    "speed" : "480Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-2.00" : "USB 2.0"
+                  },
+                  "children" : [
+                    {
+                      "id" : "usb",
+                      "class" : "bus",
+                      "claimed" : true,
+                      "handle" : "USB:1:2",
+                      "description" : "USB hub",
+                      "product" : "Integrated Rate Matching Hub",
+                      "vendor" : "Intel Corp.",
+                      "physid" : "1",
+                      "businfo" : "usb@1:1",
+                      "version" : "0.00",
+                      "configuration" : {
+                        "driver" : "hub",
+                        "slots" : "6",
+                        "speed" : "480Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-2.00" : "USB 2.0"
+                      },
+                      "children" : [
+                        {
+                          "id" : "usb:0",
+                          "class" : "generic",
+                          "handle" : "USB:1:3",
+                          "description" : "Generic USB device",
+                          "product" : "Fingerprint Sensor",
+                          "vendor" : "AuthenTec, Inc.",
+                          "physid" : "2",
+                          "businfo" : "usb@1:1.2",
+                          "version" : "25.01",
+                          "configuration" : {
+                            "maxpower" : "100mA",
+                            "speed" : "12Mbit/s"
+                          },
+                          "capabilities" : {
+                            "usb-2.00" : "USB 2.0"
+                          }
+                        },
+                        {
+                          "id" : "usb:1",
+                          "class" : "multimedia",
+                          "claimed" : true,
+                          "handle" : "USB:1:4",
+                          "description" : "Video",
+                          "product" : "2SF001",
+                          "vendor" : "Realtek",
+                          "physid" : "4",
+                          "businfo" : "usb@1:1.4",
+                          "version" : "12.13",
+                          "serial" : "0x0001",
+                          "configuration" : {
+                            "driver" : "uvcvideo",
+                            "maxpower" : "500mA",
+                            "speed" : "480Mbit/s"
+                          },
+                          "capabilities" : {
+                            "usb-2.00" : "USB 2.0"
+                          }
+                        },
+                        {
+                          "id" : "usb:2",
+                          "class" : "communication",
+                          "claimed" : true,
+                          "handle" : "USB:1:5",
+                          "description" : "Communication device",
+                          "product" : "F3607gw",
+                          "vendor" : "0F3607gw",
+                          "physid" : "5",
+                          "businfo" : "usb@1:1.5",
+                          "version" : "0.00",
+                          "serial" : "3564000303571820",
+                          "configuration" : {
+                            "driver" : "cdc_acm",
+                            "maxpower" : "20mA",
+                            "speed" : "480Mbit/s"
+                          },
+                          "capabilities" : {
+                            "usb-2.00" : "USB 2.0"
+                          }
+                        },
+                        {
+                          "id" : "usb:3",
+                          "class" : "communication",
+                          "claimed" : true,
+                          "handle" : "USB:1:6",
+                          "description" : "Bluetooth wireless interface",
+                          "product" : "BRCM Bluetooth Controller BCM2070",
+                          "vendor" : "Broadcom Corp",
+                          "physid" : "6",
+                          "businfo" : "usb@1:1.6",
+                          "version" : "4.73",
+                          "serial" : "4CEDDE03DD2C",
+                          "configuration" : {
+                            "driver" : "btusb",
+                            "speed" : "12Mbit/s"
+                          },
+                          "capabilities" : {
+                            "bluetooth" : "Bluetooth wireless radio",
+                            "usb-2.00" : "USB 2.0"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id" : "multimedia",
+              "class" : "multimedia",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1b.0",
+              "description" : "Audio device",
+              "product" : "5 Series/3400 Series Chipset High Definition Audio",
+              "vendor" : "Intel Corporation",
+              "physid" : "1b",
+              "businfo" : "pci@0000:00:1b.0",
+              "version" : "06",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "snd_hda_intel",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "pciexpress" : "PCI Express",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "pci:0",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:01",
+              "description" : "PCI bridge",
+              "product" : "5 Series/3400 Series Chipset PCI Express Root Port 1",
+              "vendor" : "Intel Corporation",
+              "physid" : "1c",
+              "businfo" : "pci@0000:00:1c.0",
+              "version" : "06",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "pcieport"
+              },
+              "capabilities" : {
+                "pci" : true,
+                "pciexpress" : "PCI Express",
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "generic",
+                  "class" : "generic",
+                  "claimed" : true,
+                  "handle" : "PCI:0000:01:00.0",
+                  "description" : "SD Host controller",
+                  "product" : "MMC/SD Host Controller",
+                  "vendor" : "Ricoh Co Ltd",
+                  "physid" : "0",
+                  "businfo" : "pci@0000:01:00.0",
+                  "version" : "01",
+                  "width" : 32,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "driver" : "sdhci-pci",
+                    "latency" : "0"
+                  },
+                  "capabilities" : {
+                    "msi" : "Message Signalled Interrupts",
+                    "pm" : "Power Management",
+                    "pciexpress" : "PCI Express",
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "pci:1",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:02",
+              "description" : "PCI bridge",
+              "product" : "5 Series/3400 Series Chipset PCI Express Root Port 2",
+              "vendor" : "Intel Corporation",
+              "physid" : "1c.1",
+              "businfo" : "pci@0000:00:1c.1",
+              "version" : "06",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "pcieport"
+              },
+              "capabilities" : {
+                "pci" : true,
+                "pciexpress" : "PCI Express",
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "network",
+                  "class" : "network",
+                  "disabled" : true,
+                  "claimed" : true,
+                  "handle" : "PCI:0000:02:00.0",
+                  "description" : "Wireless interface",
+                  "product" : "Centrino Advanced-N 6200",
+                  "vendor" : "Intel Corporation",
+                  "physid" : "0",
+                  "businfo" : "pci@0000:02:00.0",
+                  "logicalname" : "wlp2s0",
+                  "version" : "35",
+                  "serial" : "00:27:10:cd:5e:44",
+                  "width" : 64,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "broadcast" : "yes",
+                    "driver" : "iwlwifi",
+                    "driverversion" : "4.9.0-6-686",
+                    "firmware" : "9.221.4.1 build 25532",
+                    "latency" : "0",
+                    "link" : "no",
+                    "multicast" : "yes",
+                    "wireless" : "IEEE 802.11"
+                  },
+                  "capabilities" : {
+                    "pm" : "Power Management",
+                    "msi" : "Message Signalled Interrupts",
+                    "pciexpress" : "PCI Express",
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing",
+                    "ethernet" : true,
+                    "physical" : "Physical interface",
+                    "wireless" : "Wireless-LAN"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "pci:2",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:03",
+              "description" : "PCI bridge",
+              "product" : "5 Series/3400 Series Chipset PCI Express Root Port 3",
+              "vendor" : "Intel Corporation",
+              "physid" : "1c.2",
+              "businfo" : "pci@0000:00:1c.2",
+              "version" : "06",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "pcieport"
+              },
+              "capabilities" : {
+                "pci" : true,
+                "pciexpress" : "PCI Express",
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "pci:3",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:05",
+              "description" : "PCI bridge",
+              "product" : "5 Series/3400 Series Chipset PCI Express Root Port 4",
+              "vendor" : "Intel Corporation",
+              "physid" : "1c.3",
+              "businfo" : "pci@0000:00:1c.3",
+              "version" : "06",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "pcieport"
+              },
+              "capabilities" : {
+                "pci" : true,
+                "pciexpress" : "PCI Express",
+                "msi" : "Message Signalled Interrupts",
+                "pm" : "Power Management",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "usb:1",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1d.0",
+              "description" : "USB controller",
+              "product" : "5 Series/3400 Series Chipset USB2 Enhanced Host Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "1d",
+              "businfo" : "pci@0000:00:1d.0",
+              "version" : "06",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "ehci-pci",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "debug" : "Debug port",
+                "ehci" : "Enhanced Host Controller Interface (USB2)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:2:1",
+                  "product" : "EHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-6-686 ehci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@2",
+                  "logicalname" : "usb2",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "3",
+                    "speed" : "480Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-2.00" : "USB 2.0"
+                  },
+                  "children" : [
+                    {
+                      "id" : "usb",
+                      "class" : "bus",
+                      "claimed" : true,
+                      "handle" : "USB:2:2",
+                      "description" : "USB hub",
+                      "product" : "Integrated Rate Matching Hub",
+                      "vendor" : "Intel Corp.",
+                      "physid" : "1",
+                      "businfo" : "usb@2:1",
+                      "version" : "0.00",
+                      "configuration" : {
+                        "driver" : "hub",
+                        "slots" : "8",
+                        "speed" : "480Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-2.00" : "USB 2.0"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id" : "pci:4",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:06",
+              "description" : "PCI bridge",
+              "product" : "82801 Mobile PCI Bridge",
+              "vendor" : "Intel Corporation",
+              "physid" : "1e",
+              "businfo" : "pci@0000:00:1e.0",
+              "version" : "a6",
+              "width" : 32,
+              "clock" : 33000000,
+              "capabilities" : {
+                "pci" : true,
+                "subtractive_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "isa",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1f.0",
+              "description" : "ISA bridge",
+              "product" : "QM57 Chipset LPC Interface Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f",
+              "businfo" : "pci@0000:00:1f.0",
+              "version" : "06",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "lpc_ich",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "isa" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "ide:0",
+              "class" : "storage",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1f.2",
+              "description" : "IDE interface",
+              "product" : "5 Series/3400 Series Chipset 4 port SATA IDE Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f.2",
+              "businfo" : "pci@0000:00:1f.2",
+              "version" : "06",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ata_piix",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "ide" : true,
+                "pm" : "Power Management",
+                "pci_native_mode_controller__supports_both_channels_switched_to_isa_compatibility_mode__supports_bus_mastering" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "ide:1",
+              "class" : "storage",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1f.5",
+              "description" : "IDE interface",
+              "product" : "5 Series/3400 Series Chipset 2 port SATA IDE Controller",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f.5",
+              "businfo" : "pci@0000:00:1f.5",
+              "version" : "06",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ata_piix",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "ide" : true,
+                "pm" : "Power Management",
+                "pci_native_mode-only_controller__supports_bus_mastering" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "generic",
+              "class" : "generic",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:1f.6",
+              "description" : "Signal processing controller",
+              "product" : "5 Series/3400 Series Chipset Thermal Subsystem",
+              "vendor" : "Intel Corporation",
+              "physid" : "1f.6",
+              "businfo" : "pci@0000:00:1f.6",
+              "version" : "06",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "intel ips",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "msi" : "Message Signalled Interrupts",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "pci:1",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:ff",
+          "description" : "Host bridge",
+          "product" : "Core Processor QuickPath Architecture Generic Non-core Registers",
+          "vendor" : "Intel Corporation",
+          "physid" : "101",
+          "businfo" : "pci@0000:ff:00.0",
+          "version" : "02",
+          "width" : 32,
+          "clock" : 33000000
+        },
+        {
+          "id" : "pci:2",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:ff",
+          "description" : "Host bridge",
+          "product" : "Core Processor QuickPath Architecture System Address Decoder",
+          "vendor" : "Intel Corporation",
+          "physid" : "102",
+          "businfo" : "pci@0000:ff:00.1",
+          "version" : "02",
+          "width" : 32,
+          "clock" : 33000000
+        },
+        {
+          "id" : "pci:3",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:ff",
+          "description" : "Host bridge",
+          "product" : "Core Processor QPI Link 0",
+          "vendor" : "Intel Corporation",
+          "physid" : "103",
+          "businfo" : "pci@0000:ff:02.0",
+          "version" : "02",
+          "width" : 32,
+          "clock" : 33000000
+        },
+        {
+          "id" : "pci:4",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:ff",
+          "description" : "Host bridge",
+          "product" : "1st Generation Core i3/5/7 Processor QPI Physical 0",
+          "vendor" : "Intel Corporation",
+          "physid" : "104",
+          "businfo" : "pci@0000:ff:02.1",
+          "version" : "02",
+          "width" : 32,
+          "clock" : 33000000
+        },
+        {
+          "id" : "pci:5",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:ff",
+          "description" : "Host bridge",
+          "product" : "1st Generation Core i3/5/7 Processor Reserved",
+          "vendor" : "Intel Corporation",
+          "physid" : "105",
+          "businfo" : "pci@0000:ff:02.2",
+          "version" : "02",
+          "width" : 32,
+          "clock" : 33000000
+        },
+        {
+          "id" : "pci:6",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:ff",
+          "description" : "Host bridge",
+          "product" : "1st Generation Core i3/5/7 Processor Reserved",
+          "vendor" : "Intel Corporation",
+          "physid" : "106",
+          "businfo" : "pci@0000:ff:02.3",
+          "version" : "02",
+          "width" : 32,
+          "clock" : 33000000
+        },
+        {
+          "id" : "scsi:0",
+          "class" : "storage",
+          "claimed" : true,
+          "physid" : "1",
+          "logicalname" : "scsi0",
+          "capabilities" : {
+            "emulated" : "Emulated device"
+          },
+          "children" : [
+            {
+              "id" : "disk",
+              "class" : "disk",
+              "claimed" : true,
+              "handle" : "SCSI:00:00:00:00",
+              "description" : "ATA Disk",
+              "product" : "Hitachi HTS54505",
+              "vendor" : "Hitachi",
+              "physid" : "0.0.0",
+              "businfo" : "scsi@0:0.0.0",
+              "logicalname" : "/dev/sda",
+              "dev" : "8:0",
+              "version" : "C64G",
+              "serial" : "101022PBN40317KS46YE",
+              "units" : "bytes",
+              "size" : 500107862016,
+              "configuration" : {
+                "ansiversion" : "5",
+                "logicalsectorsize" : "512",
+                "sectorsize" : "512"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "scsi:1",
+          "class" : "storage",
+          "claimed" : true,
+          "physid" : "2",
+          "logicalname" : "scsi1",
+          "capabilities" : {
+            "emulated" : "Emulated device"
+          },
+          "children" : [
+            {
+              "id" : "cdrom",
+              "class" : "disk",
+              "claimed" : true,
+              "handle" : "SCSI:01:00:00:00",
+              "description" : "DVD-RAM writer",
+              "product" : "DVD-RAM UJ892ES",
+              "vendor" : "MATSHITA",
+              "physid" : "0.0.0",
+              "businfo" : "scsi@1:0.0.0",
+              "logicalname" : ["/dev/cdrom", "/dev/cdrw", "/dev/dvd", "/dev/dvdrw", "/dev/sr0"],
+              "dev" : "11:0",
+              "version" : "1.20",
+              "configuration" : {
+                "ansiversion" : "5",
+                "status" : "nodisc"
+              },
+              "capabilities" : {
+                "removable" : "support is removable",
+                "audio" : "Audio CD playback",
+                "cd-r" : "CD-R burning",
+                "cd-rw" : "CD-RW burning",
+                "dvd" : "DVD playback",
+                "dvd-r" : "DVD-R burning",
+                "dvd-ram" : "DVD-RAM burning"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id" : "battery:0",
+      "class" : "power",
+      "claimed" : true,
+      "handle" : "DMI:0016",
+      "description" : "Lithium Ion Battery",
+      "vendor" : "TOSHIBA",
+      "physid" : "1",
+      "version" : "**/**/****",
+      "serial" : "0000000000",
+      "slot" : "1st Battery"
+    },
+    {
+      "id" : "battery:1",
+      "class" : "power",
+      "claimed" : true,
+      "handle" : "DMI:0017",
+      "description" : "Lithium Ion Battery",
+      "vendor" : "TOSHIBA",
+      "physid" : "2",
+      "version" : "**/**/****",
+      "serial" : "0000000000",
+      "slot" : "2nd Battery"
+    },
+    {
+      "id" : "power",
+      "class" : "power",
+      "physid" : "3",
+      "units" : "mWh",
+      "capacity" : 32768
+    },
+    {
+      "id" : "network",
+      "class" : "network",
+      "disabled" : true,
+      "claimed" : true,
+      "description" : "Ethernet interface",
+      "physid" : "4",
+      "logicalname" : "wwp0s26u1u5i6",
+      "serial" : "02:80:37:ec:02:00",
+      "configuration" : {
+        "broadcast" : "yes",
+        "driver" : "cdc_ether",
+        "driverversion" : "22-Aug-2005",
+        "firmware" : "Mobile Broadband Network Device",
+        "link" : "no",
+        "multicast" : "yes"
+      },
+      "capabilities" : {
+        "ethernet" : true,
+        "physical" : "Physical interface"
+      }
+    }
+  ]
+}

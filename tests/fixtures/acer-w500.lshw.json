@@ -1,0 +1,1337 @@
+{
+  "id" : "debian",
+  "class" : "system",
+  "claimed" : true,
+  "handle" : "DMI:0001",
+  "description" : "Notebook",
+  "product" : "ICONIA Tab W500 (123456789)",
+  "vendor" : "acer",
+  "version" : "V1.14",
+  "serial" : "LERK60202411502C346500",
+  "width" : 32,
+  "configuration" : {
+    "chassis" : "notebook",
+    "cpus" : "1",
+    "family" : "Type1Family",
+    "sku" : "123456789",
+    "uuid" : "E05AFAA1-F366-E081-2697-EC55F99B812B"
+  },
+  "capabilities" : {
+    "smbios-2.7" : "SMBIOS version 2.7",
+    "dmi-2.7" : "DMI version 2.7",
+    "smp-1.4" : "SMP specification v1.4",
+    "smp" : "Symmetric Multi-Processing"
+  },
+  "children" : [
+    {
+      "id" : "core",
+      "class" : "bus",
+      "claimed" : true,
+      "handle" : "DMI:0002",
+      "description" : "Motherboard",
+      "product" : "WT1",
+      "vendor" : "acer",
+      "physid" : "0",
+      "version" : "Base Board Version",
+      "serial" : "Base Board Serial Number",
+      "slot" : "Base Board Chassis Location",
+      "children" : [
+        {
+          "id" : "firmware",
+          "class" : "memory",
+          "claimed" : true,
+          "description" : "BIOS",
+          "vendor" : "Insyde Corp.",
+          "physid" : "0",
+          "version" : "V1.14",
+          "date" : "08/12/2011",
+          "units" : "bytes",
+          "size" : 1048576,
+          "capacity" : 2031616,
+          "capabilities" : {
+            "pci" : "PCI bus",
+            "upgrade" : "BIOS EEPROM can be upgraded",
+            "shadowing" : "BIOS shadowing",
+            "cdboot" : "Booting from CD-ROM/DVD",
+            "bootselect" : "Selectable boot path",
+            "socketedrom" : "BIOS ROM is socketed",
+            "edd" : "Enhanced Disk Drive extensions",
+            "int13floppynec" : "NEC 9800 floppy",
+            "int13floppytoshiba" : "Toshiba floppy",
+            "int13floppy360" : "5.25\" 360KB floppy",
+            "int13floppy1200" : "5.25\" 1.2MB floppy",
+            "int13floppy720" : "3.5\" 720KB floppy",
+            "int13floppy2880" : "3.5\" 2.88MB floppy",
+            "int9keyboard" : "i8042 keyboard controller",
+            "int10video" : "INT10 CGA/Mono video",
+            "acpi" : "ACPI",
+            "usb" : "USB legacy emulation"
+          }
+        },
+        {
+          "id" : "memory",
+          "class" : "memory",
+          "claimed" : true,
+          "handle" : "DMI:000D",
+          "description" : "System Memory",
+          "physid" : "d",
+          "slot" : "System board or motherboard",
+          "units" : "bytes",
+          "size" : 2147483648,
+          "capacity" : 2214592512,
+          "children" : [
+            {
+              "id" : "bank:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:000E",
+              "description" : "SODIMM DDR3 Synchronous 1066 MHz (0.9 ns)",
+              "product" : "8JSF25664HZ-1G4D1",
+              "vendor" : "Micron Technology",
+              "physid" : "0",
+              "serial" : "D8718C57",
+              "slot" : "DIMM0",
+              "units" : "bytes",
+              "size" : 2147483648,
+              "width" : 8,
+              "clock" : 1066000000
+            },
+            {
+              "id" : "bank:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0011",
+              "description" : "DIMM Synchronous [empty]",
+              "physid" : "1",
+              "slot" : "DIMM1",
+              "width" : 8
+            }
+          ]
+        },
+        {
+          "id" : "cpu",
+          "class" : "processor",
+          "claimed" : true,
+          "handle" : "DMI:0015",
+          "description" : "CPU",
+          "product" : "AMD C-50 Processor",
+          "vendor" : "Advanced Micro Devices [AMD]",
+          "physid" : "15",
+          "businfo" : "cpu@0",
+          "version" : "15.1.0",
+          "serial" : "NotSupport",
+          "slot" : "Socket FT1",
+          "units" : "Hz",
+          "size" : 1000000000,
+          "capacity" : 1000000000,
+          "width" : 64,
+          "clock" : 100000000,
+          "configuration" : {
+            "cores" : "2",
+            "enabledcores" : "2",
+            "threads" : "2"
+          },
+          "capabilities" : {
+            "x86-64" : "64bits extensions (x86-64)",
+            "boot" : "boot processor",
+            "fpu" : "mathematical co-processor",
+            "fpu_exception" : "FPU exceptions reporting",
+            "wp" : true,
+            "vme" : "virtual mode extensions",
+            "de" : "debugging extensions",
+            "pse" : "page size extensions",
+            "tsc" : "time stamp counter",
+            "msr" : "model-specific registers",
+            "pae" : "4GB+ memory addressing (Physical Address Extension)",
+            "mce" : "machine check exceptions",
+            "cx8" : "compare and exchange 8-byte",
+            "apic" : "on-chip advanced programmable interrupt controller (APIC)",
+            "sep" : "fast system calls",
+            "mtrr" : "memory type range registers",
+            "pge" : "page global enable",
+            "mca" : "machine check architecture",
+            "cmov" : "conditional move instruction",
+            "pat" : "page attribute table",
+            "pse36" : "36-bit page size extensions",
+            "clflush" : true,
+            "mmx" : "multimedia extensions (MMX)",
+            "fxsr" : "fast floating point save/restore",
+            "sse" : "streaming SIMD extensions (SSE)",
+            "sse2" : "streaming SIMD extensions (SSE2)",
+            "ht" : "HyperThreading",
+            "syscall" : "fast system calls",
+            "nx" : "no-execute bit (NX)",
+            "mmxext" : "multimedia extensions (MMXExt)",
+            "fxsr_opt" : true,
+            "pdpe1gb" : true,
+            "rdtscp" : true,
+            "constant_tsc" : true,
+            "rep_good" : true,
+            "nonstop_tsc" : true,
+            "extd_apicid" : true,
+            "aperfmperf" : true,
+            "pni" : true,
+            "monitor" : true,
+            "ssse3" : true,
+            "cx16" : true,
+            "popcnt" : true,
+            "lahf_lm" : true,
+            "cmp_legacy" : true,
+            "svm" : true,
+            "extapic" : true,
+            "cr8_legacy" : true,
+            "abm" : true,
+            "sse4a" : true,
+            "misalignsse" : true,
+            "3dnowprefetch" : true,
+            "ibs" : true,
+            "skinit" : true,
+            "wdt" : true,
+            "hw_pstate" : true,
+            "vmmcall" : true,
+            "arat" : true,
+            "npt" : true,
+            "lbrv" : true,
+            "svm_lock" : true,
+            "nrip_save" : true,
+            "pausefilter" : true,
+            "cpufreq" : "CPU Frequency scaling"
+          },
+          "children" : [
+            {
+              "id" : "cache:0",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0016",
+              "description" : "L1 cache",
+              "physid" : "16",
+              "slot" : "L1 Cache",
+              "units" : "bytes",
+              "size" : 65536,
+              "capacity" : 131072,
+              "clock" : 1000000000,
+              "configuration" : {
+                "level" : "1"
+              },
+              "capabilities" : {
+                "pipeline-burst" : "Pipeline burst",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "unified" : "Unified cache"
+              }
+            },
+            {
+              "id" : "cache:1",
+              "class" : "memory",
+              "claimed" : true,
+              "handle" : "DMI:0017",
+              "description" : "L2 cache",
+              "physid" : "17",
+              "slot" : "L2 Cache",
+              "units" : "bytes",
+              "size" : 524288,
+              "capacity" : 1048576,
+              "clock" : 1000000000,
+              "configuration" : {
+                "level" : "2"
+              },
+              "capabilities" : {
+                "pipeline-burst" : "Pipeline burst",
+                "internal" : "Internal",
+                "write-back" : "Write-back",
+                "unified" : "Unified cache"
+              }
+            }
+          ]
+        },
+        {
+          "id" : "pci:0",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "Family 14h Processor Root Complex",
+          "vendor" : "Advanced Micro Devices, Inc. [AMD]",
+          "physid" : "100",
+          "businfo" : "pci@0000:00:00.0",
+          "version" : "00",
+          "width" : 32,
+          "clock" : 66000000,
+          "children" : [
+            {
+              "id" : "display",
+              "class" : "display",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:01.0",
+              "description" : "VGA compatible controller",
+              "product" : "Wrestler [Radeon HD 6250]",
+              "vendor" : "Advanced Micro Devices, Inc. [AMD/ATI]",
+              "physid" : "1",
+              "businfo" : "pci@0000:00:01.0",
+              "version" : "00",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "radeon",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "pciexpress" : "PCI Express",
+                "msi" : "Message Signalled Interrupts",
+                "vga_controller" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing",
+                "rom" : "extension ROM"
+              }
+            },
+            {
+              "id" : "multimedia:0",
+              "class" : "multimedia",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:01.1",
+              "description" : "Audio device",
+              "product" : "Wrestler HDMI Audio",
+              "vendor" : "Advanced Micro Devices, Inc. [AMD/ATI]",
+              "physid" : "1.1",
+              "businfo" : "pci@0000:00:01.1",
+              "version" : "00",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "snd_hda_intel",
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "pciexpress" : "PCI Express",
+                "msi" : "Message Signalled Interrupts",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "pci:0",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:01",
+              "description" : "PCI bridge",
+              "product" : "Family 14h Processor Root Port",
+              "vendor" : "Advanced Micro Devices, Inc. [AMD]",
+              "physid" : "5",
+              "businfo" : "pci@0000:00:05.0",
+              "version" : "00",
+              "width" : 32,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "pcieport"
+              },
+              "capabilities" : {
+                "pci" : true,
+                "pm" : "Power Management",
+                "pciexpress" : "PCI Express",
+                "msi" : "Message Signalled Interrupts",
+                "ht" : "HyperTransport",
+                "normal_decode" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "network",
+                  "class" : "network",
+                  "disabled" : true,
+                  "claimed" : true,
+                  "handle" : "PCI:0000:01:00.0",
+                  "description" : "Wireless interface",
+                  "product" : "AR9285 Wireless Network Adapter (PCI-Express)",
+                  "vendor" : "Qualcomm Atheros",
+                  "physid" : "0",
+                  "businfo" : "pci@0000:01:00.0",
+                  "logicalname" : "wlp1s0",
+                  "version" : "01",
+                  "serial" : "ec:55:f9:9b:81:2b",
+                  "width" : 64,
+                  "clock" : 33000000,
+                  "configuration" : {
+                    "broadcast" : "yes",
+                    "driver" : "ath9k",
+                    "driverversion" : "4.9.0-8-686",
+                    "firmware" : "N/A",
+                    "latency" : "0",
+                    "link" : "no",
+                    "multicast" : "yes",
+                    "wireless" : "IEEE 802.11"
+                  },
+                  "capabilities" : {
+                    "pm" : "Power Management",
+                    "msi" : "Message Signalled Interrupts",
+                    "pciexpress" : "PCI Express",
+                    "bus_master" : "bus mastering",
+                    "cap_list" : "PCI capabilities listing",
+                    "ethernet" : true,
+                    "physical" : "Physical interface",
+                    "wireless" : "Wireless-LAN"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "storage",
+              "class" : "storage",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:11.0",
+              "description" : "SATA controller",
+              "product" : "SB7x0/SB8x0/SB9x0 SATA Controller [AHCI mode]",
+              "vendor" : "Advanced Micro Devices, Inc. [AMD/ATI]",
+              "physid" : "11",
+              "businfo" : "pci@0000:00:11.0",
+              "version" : "00",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ahci",
+                "latency" : "64"
+              },
+              "capabilities" : {
+                "storage" : true,
+                "ahci_1.0" : true,
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "usb:0",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:12.0",
+              "description" : "USB controller",
+              "product" : "SB7x0/SB8x0/SB9x0 USB OHCI0 Controller",
+              "vendor" : "Advanced Micro Devices, Inc. [AMD/ATI]",
+              "physid" : "12",
+              "businfo" : "pci@0000:00:12.0",
+              "version" : "00",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ohci-pci",
+                "latency" : "64"
+              },
+              "capabilities" : {
+                "ohci" : "Open Host Controller Interface",
+                "bus_master" : "bus mastering"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:4:1",
+                  "product" : "OHCI PCI host controller",
+                  "vendor" : "Linux 4.9.0-8-686 ohci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@4",
+                  "logicalname" : "usb4",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "5",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:1",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:12.2",
+              "description" : "USB controller",
+              "product" : "SB7x0/SB8x0/SB9x0 USB EHCI Controller",
+              "vendor" : "Advanced Micro Devices, Inc. [AMD/ATI]",
+              "physid" : "12.2",
+              "businfo" : "pci@0000:00:12.2",
+              "version" : "00",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ehci-pci",
+                "latency" : "64"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "debug" : "Debug port",
+                "ehci" : "Enhanced Host Controller Interface (USB2)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:1:1",
+                  "product" : "EHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-8-686 ehci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@1",
+                  "logicalname" : "usb1",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "5",
+                    "speed" : "480Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-2.00" : "USB 2.0"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:2",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:13.0",
+              "description" : "USB controller",
+              "product" : "SB7x0/SB8x0/SB9x0 USB OHCI0 Controller",
+              "vendor" : "Advanced Micro Devices, Inc. [AMD/ATI]",
+              "physid" : "13",
+              "businfo" : "pci@0000:00:13.0",
+              "version" : "00",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ohci-pci",
+                "latency" : "64"
+              },
+              "capabilities" : {
+                "ohci" : "Open Host Controller Interface",
+                "bus_master" : "bus mastering"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:5:1",
+                  "product" : "OHCI PCI host controller",
+                  "vendor" : "Linux 4.9.0-8-686 ohci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@5",
+                  "logicalname" : "usb5",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "5",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  },
+                  "children" : [
+                    {
+                      "id" : "usb:0",
+                      "class" : "input",
+                      "claimed" : true,
+                      "handle" : "USB:5:2",
+                      "description" : "Mouse",
+                      "product" : "eGalaxTouch EXC7200-7302",
+                      "vendor" : "eGalax Inc.",
+                      "physid" : "1",
+                      "businfo" : "usb@5:1",
+                      "version" : "20.05",
+                      "configuration" : {
+                        "driver" : "usbhid",
+                        "maxpower" : "100mA",
+                        "speed" : "12Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-1.10" : "USB 1.1"
+                      }
+                    },
+                    {
+                      "id" : "usb:1",
+                      "class" : "communication",
+                      "claimed" : true,
+                      "handle" : "USB:5:4",
+                      "description" : "Bluetooth wireless interface",
+                      "product" : "AR3011 Bluetooth",
+                      "vendor" : "Atheros Communications, Inc.",
+                      "physid" : "5",
+                      "businfo" : "usb@5:5",
+                      "version" : "0.01",
+                      "configuration" : {
+                        "driver" : "btusb",
+                        "maxpower" : "100mA",
+                        "speed" : "12Mbit/s"
+                      },
+                      "capabilities" : {
+                        "bluetooth" : "Bluetooth wireless radio",
+                        "usb-1.10" : "USB 1.1"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id" : "usb:3",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:13.2",
+              "description" : "USB controller",
+              "product" : "SB7x0/SB8x0/SB9x0 USB EHCI Controller",
+              "vendor" : "Advanced Micro Devices, Inc. [AMD/ATI]",
+              "physid" : "13.2",
+              "businfo" : "pci@0000:00:13.2",
+              "version" : "00",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ehci-pci",
+                "latency" : "64"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "debug" : "Debug port",
+                "ehci" : "Enhanced Host Controller Interface (USB2)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:2:1",
+                  "product" : "EHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-8-686 ehci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@2",
+                  "logicalname" : "usb2",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "5",
+                    "speed" : "480Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-2.00" : "USB 2.0"
+                  },
+                  "children" : [
+                    {
+                      "id" : "usb:0",
+                      "class" : "multimedia",
+                      "claimed" : true,
+                      "handle" : "USB:2:3",
+                      "description" : "Video",
+                      "product" : "1.3M Rear",
+                      "vendor" : "SuYin",
+                      "physid" : "3",
+                      "businfo" : "usb@2:3",
+                      "version" : "1.11",
+                      "serial" : "HF2015-A821-OV01-VA-R01.01.01",
+                      "configuration" : {
+                        "driver" : "uvcvideo",
+                        "maxpower" : "500mA",
+                        "speed" : "480Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-2.00" : "USB 2.0"
+                      }
+                    },
+                    {
+                      "id" : "usb:1",
+                      "class" : "multimedia",
+                      "claimed" : true,
+                      "handle" : "USB:2:4",
+                      "description" : "Video",
+                      "product" : "1.3M Front",
+                      "vendor" : "SuYin",
+                      "physid" : "4",
+                      "businfo" : "usb@2:4",
+                      "version" : "1.11",
+                      "serial" : "HF2015-A821-OV01-VA-R01.01.01",
+                      "configuration" : {
+                        "driver" : "uvcvideo",
+                        "maxpower" : "500mA",
+                        "speed" : "480Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-2.00" : "USB 2.0"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id" : "serial",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:14.0",
+              "description" : "SMBus",
+              "product" : "SBx00 SMBus Controller",
+              "vendor" : "Advanced Micro Devices, Inc. [AMD/ATI]",
+              "physid" : "14",
+              "businfo" : "pci@0000:00:14.0",
+              "version" : "42",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "piix4_smbus",
+                "latency" : "0"
+              }
+            },
+            {
+              "id" : "multimedia:1",
+              "class" : "multimedia",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:14.2",
+              "description" : "Audio device",
+              "product" : "SBx00 Azalia (Intel HDA)",
+              "vendor" : "Advanced Micro Devices, Inc. [AMD/ATI]",
+              "physid" : "14.2",
+              "businfo" : "pci@0000:00:14.2",
+              "version" : "40",
+              "width" : 64,
+              "clock" : 33000000,
+              "configuration" : {
+                "driver" : "snd_hda_intel",
+                "latency" : "64"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              }
+            },
+            {
+              "id" : "isa",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:14.3",
+              "description" : "ISA bridge",
+              "product" : "SB7x0/SB8x0/SB9x0 LPC host controller",
+              "vendor" : "Advanced Micro Devices, Inc. [AMD/ATI]",
+              "physid" : "14.3",
+              "businfo" : "pci@0000:00:14.3",
+              "version" : "40",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "latency" : "0"
+              },
+              "capabilities" : {
+                "isa" : true,
+                "bus_master" : "bus mastering"
+              }
+            },
+            {
+              "id" : "pci:1",
+              "class" : "bridge",
+              "claimed" : true,
+              "handle" : "PCIBUS:0000:02",
+              "description" : "PCI bridge",
+              "product" : "SBx00 PCI to PCI Bridge",
+              "vendor" : "Advanced Micro Devices, Inc. [AMD/ATI]",
+              "physid" : "14.4",
+              "businfo" : "pci@0000:00:14.4",
+              "version" : "40",
+              "width" : 32,
+              "clock" : 66000000,
+              "capabilities" : {
+                "pci" : true,
+                "subtractive_decode" : true,
+                "bus_master" : "bus mastering"
+              }
+            },
+            {
+              "id" : "usb:4",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:16.0",
+              "description" : "USB controller",
+              "product" : "SB7x0/SB8x0/SB9x0 USB OHCI0 Controller",
+              "vendor" : "Advanced Micro Devices, Inc. [AMD/ATI]",
+              "physid" : "16",
+              "businfo" : "pci@0000:00:16.0",
+              "version" : "00",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ohci-pci",
+                "latency" : "64"
+              },
+              "capabilities" : {
+                "ohci" : "Open Host Controller Interface",
+                "bus_master" : "bus mastering"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:6:1",
+                  "product" : "OHCI PCI host controller",
+                  "vendor" : "Linux 4.9.0-8-686 ohci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@6",
+                  "logicalname" : "usb6",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "4",
+                    "speed" : "12Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-1.10" : "USB 1.1"
+                  }
+                }
+              ]
+            },
+            {
+              "id" : "usb:5",
+              "class" : "bus",
+              "claimed" : true,
+              "handle" : "PCI:0000:00:16.2",
+              "description" : "USB controller",
+              "product" : "SB7x0/SB8x0/SB9x0 USB EHCI Controller",
+              "vendor" : "Advanced Micro Devices, Inc. [AMD/ATI]",
+              "physid" : "16.2",
+              "businfo" : "pci@0000:00:16.2",
+              "version" : "00",
+              "width" : 32,
+              "clock" : 66000000,
+              "configuration" : {
+                "driver" : "ehci-pci",
+                "latency" : "64"
+              },
+              "capabilities" : {
+                "pm" : "Power Management",
+                "debug" : "Debug port",
+                "ehci" : "Enhanced Host Controller Interface (USB2)",
+                "bus_master" : "bus mastering",
+                "cap_list" : "PCI capabilities listing"
+              },
+              "children" : [
+                {
+                  "id" : "usbhost",
+                  "class" : "bus",
+                  "claimed" : true,
+                  "handle" : "USB:3:1",
+                  "product" : "EHCI Host Controller",
+                  "vendor" : "Linux 4.9.0-8-686 ehci_hcd",
+                  "physid" : "1",
+                  "businfo" : "usb@3",
+                  "logicalname" : "usb3",
+                  "version" : "4.09",
+                  "configuration" : {
+                    "driver" : "hub",
+                    "slots" : "4",
+                    "speed" : "480Mbit/s"
+                  },
+                  "capabilities" : {
+                    "usb-2.00" : "USB 2.0"
+                  },
+                  "children" : [
+                    {
+                      "id" : "usb",
+                      "class" : "bus",
+                      "claimed" : true,
+                      "handle" : "USB:3:2",
+                      "description" : "USB hub",
+                      "product" : "USB Hub",
+                      "vendor" : "Alcor Micro Corp.",
+                      "physid" : "1",
+                      "businfo" : "usb@3:1",
+                      "version" : "1.00",
+                      "configuration" : {
+                        "driver" : "hub",
+                        "maxpower" : "100mA",
+                        "slots" : "4",
+                        "speed" : "480Mbit/s"
+                      },
+                      "capabilities" : {
+                        "usb-2.00" : "USB 2.0"
+                      },
+                      "children" : [
+                        {
+                          "id" : "usb:0",
+                          "class" : "storage",
+                          "claimed" : true,
+                          "handle" : "USB:3:3",
+                          "description" : "Mass storage device",
+                          "product" : "Flash Disk",
+                          "vendor" : "USB",
+                          "physid" : "1",
+                          "businfo" : "usb@3:1.1",
+                          "logicalname" : "scsi1",
+                          "version" : "11.00",
+                          "serial" : "FB08091700013827",
+                          "configuration" : {
+                            "driver" : "usb-storage",
+                            "maxpower" : "100mA",
+                            "speed" : "480Mbit/s"
+                          },
+                          "capabilities" : {
+                            "usb-2.00" : "USB 2.0",
+                            "scsi" : "SCSI",
+                            "emulated" : "Emulated device"
+                          },
+                          "children" : [
+                            {
+                              "id" : "disk",
+                              "class" : "disk",
+                              "claimed" : true,
+                              "handle" : "SCSI:01:00:00:00",
+                              "description" : "SCSI Disk",
+                              "product" : "Flash Disk",
+                              "vendor" : "USB",
+                              "physid" : "0.0.0",
+                              "businfo" : "scsi@1:0.0.0",
+                              "logicalname" : "/dev/sdb",
+                              "dev" : "8:16",
+                              "version" : "1100",
+                              "units" : "bytes",
+                              "size" : 1002438656,
+                              "configuration" : {
+                                "logicalsectorsize" : "512",
+                                "sectorsize" : "512",
+                                "signature" : "60a84e44"
+                              },
+                              "capabilities" : {
+                                "partitioned" : "Partitioned disk",
+                                "partitioned:dos" : "MS-DOS partition table"
+                              },
+                              "children" : [
+                                {
+                                  "id" : "volume:0",
+                                  "class" : "volume",
+                                  "claimed" : true,
+                                  "description" : "Empty partition",
+                                  "physid" : "1",
+                                  "businfo" : "scsi@1:0.0.0,1",
+                                  "logicalname" : ["/dev/sdb1", "/lib/live/mount/medium"],
+                                  "dev" : "8:17",
+                                  "capacity" : 425689088,
+                                  "configuration" : {
+                                    "mount.fstype" : "iso9660",
+                                    "mount.options" : "ro,noatime",
+                                    "state" : "mounted"
+                                  },
+                                  "capabilities" : {
+                                    "primary" : "Primary partition",
+                                    "bootable" : "Bootable partition (active)",
+                                    "nofs" : "No filesystem"
+                                  }
+                                },
+                                {
+                                  "id" : "volume:1",
+                                  "class" : "volume",
+                                  "claimed" : true,
+                                  "description" : "Windows FAT volume",
+                                  "vendor" : "mkfs.fat",
+                                  "physid" : "2",
+                                  "businfo" : "scsi@1:0.0.0,2",
+                                  "logicalname" : "/dev/sdb2",
+                                  "dev" : "8:18",
+                                  "version" : "FAT12",
+                                  "serial" : "e180-b540",
+                                  "size" : 18446744073709551104,
+                                  "configuration" : {
+                                    "FATs" : "2",
+                                    "filesystem" : "fat"
+                                  },
+                                  "capabilities" : {
+                                    "primary" : "Primary partition",
+                                    "boot" : "Contains boot code",
+                                    "fat" : "Windows FAT",
+                                    "initialized" : "initialized volume"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "id" : "usb:1",
+                          "class" : "input",
+                          "claimed" : true,
+                          "handle" : "USB:3:4",
+                          "description" : "Keyboard",
+                          "product" : "USB Keyboard",
+                          "vendor" : "SONiX",
+                          "physid" : "2",
+                          "businfo" : "usb@3:1.2",
+                          "version" : "1.00",
+                          "serial" : "0131",
+                          "configuration" : {
+                            "driver" : "usbhid",
+                            "maxpower" : "100mA",
+                            "speed" : "2Mbit/s"
+                          },
+                          "capabilities" : {
+                            "usb-1.10" : "USB 1.1"
+                          }
+                        },
+                        {
+                          "id" : "usb:2",
+                          "class" : "storage",
+                          "claimed" : true,
+                          "handle" : "USB:3:7",
+                          "description" : "Mass storage device",
+                          "product" : "DataTraveler 2.0",
+                          "vendor" : "Kingston",
+                          "physid" : "3",
+                          "businfo" : "usb@3:1.3",
+                          "logicalname" : "scsi2",
+                          "version" : "2.00",
+                          "serial" : "899801162008011514251721",
+                          "configuration" : {
+                            "driver" : "usb-storage",
+                            "maxpower" : "100mA",
+                            "speed" : "480Mbit/s"
+                          },
+                          "capabilities" : {
+                            "usb-2.00" : "USB 2.0",
+                            "scsi" : "SCSI",
+                            "emulated" : "Emulated device"
+                          },
+                          "children" : [
+                            {
+                              "id" : "disk",
+                              "class" : "disk",
+                              "claimed" : true,
+                              "handle" : "SCSI:02:00:00:00",
+                              "description" : "SCSI Disk",
+                              "product" : "DataTraveler 2.0",
+                              "vendor" : "Kingston",
+                              "physid" : "0.0.0",
+                              "businfo" : "scsi@2:0.0.0",
+                              "logicalname" : "/dev/sdc",
+                              "dev" : "8:32",
+                              "version" : "1.00",
+                              "units" : "bytes",
+                              "size" : 4045930496,
+                              "configuration" : {
+                                "ansiversion" : "2",
+                                "logicalsectorsize" : "512",
+                                "sectorsize" : "512"
+                              },
+                              "capabilities" : {
+                                "removable" : "support is removable"
+                              },
+                              "children" : [
+                                {
+                                  "id" : "medium",
+                                  "class" : "disk",
+                                  "claimed" : true,
+                                  "physid" : "0",
+                                  "logicalname" : "/dev/sdc",
+                                  "dev" : "8:32",
+                                  "units" : "bytes",
+                                  "size" : 4045930496,
+                                  "capabilities" : {
+                                    "partitioned" : "Partitioned disk",
+                                    "partitioned:dos" : "MS-DOS partition table"
+                                  },
+                                  "children" : [
+                                    {
+                                      "id" : "volume",
+                                      "class" : "volume",
+                                      "claimed" : true,
+                                      "description" : "Windows FAT volume",
+                                      "vendor" : "BSD  4.4",
+                                      "physid" : "1",
+                                      "logicalname" : ["/dev/sdc1", "/media/usb"],
+                                      "dev" : "8:33",
+                                      "version" : "FAT32",
+                                      "serial" : "83a6-0f13",
+                                      "size" : 4043292672,
+                                      "capacity" : 4044357632,
+                                      "configuration" : {
+                                        "FATs" : "2",
+                                        "filesystem" : "fat",
+                                        "label" : "UNTITLED",
+                                        "mount.fstype" : "vfat",
+                                        "mount.options" : "rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro",
+                                        "state" : "mounted"
+                                      },
+                                      "capabilities" : {
+                                        "primary" : "Primary partition",
+                                        "fat" : "Windows FAT",
+                                        "initialized" : "initialized volume"
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "id" : "usb:3",
+                          "class" : "generic",
+                          "claimed" : true,
+                          "handle" : "USB:3:5",
+                          "description" : "Generic USB device",
+                          "product" : "AX88772B",
+                          "vendor" : "ASIX Elec. Corp.",
+                          "physid" : "4",
+                          "businfo" : "usb@3:1.4",
+                          "version" : "0.01",
+                          "serial" : "000066",
+                          "configuration" : {
+                            "driver" : "asix",
+                            "maxpower" : "200mA",
+                            "speed" : "480Mbit/s"
+                          },
+                          "capabilities" : {
+                            "usb-2.00" : "USB 2.0"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id" : "pci:1",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "Family 12h/14h Processor Function 0",
+          "vendor" : "Advanced Micro Devices, Inc. [AMD]",
+          "physid" : "101",
+          "businfo" : "pci@0000:00:18.0",
+          "version" : "43",
+          "width" : 32,
+          "clock" : 33000000
+        },
+        {
+          "id" : "pci:2",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "Family 12h/14h Processor Function 1",
+          "vendor" : "Advanced Micro Devices, Inc. [AMD]",
+          "physid" : "102",
+          "businfo" : "pci@0000:00:18.1",
+          "version" : "00",
+          "width" : 32,
+          "clock" : 33000000
+        },
+        {
+          "id" : "pci:3",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "Family 12h/14h Processor Function 2",
+          "vendor" : "Advanced Micro Devices, Inc. [AMD]",
+          "physid" : "103",
+          "businfo" : "pci@0000:00:18.2",
+          "version" : "00",
+          "width" : 32,
+          "clock" : 33000000
+        },
+        {
+          "id" : "pci:4",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "Family 12h/14h Processor Function 3",
+          "vendor" : "Advanced Micro Devices, Inc. [AMD]",
+          "physid" : "104",
+          "businfo" : "pci@0000:00:18.3",
+          "version" : "00",
+          "width" : 32,
+          "clock" : 33000000,
+          "configuration" : {
+            "driver" : "k10temp"
+          }
+        },
+        {
+          "id" : "pci:5",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "Family 12h/14h Processor Function 4",
+          "vendor" : "Advanced Micro Devices, Inc. [AMD]",
+          "physid" : "105",
+          "businfo" : "pci@0000:00:18.4",
+          "version" : "00",
+          "width" : 32,
+          "clock" : 33000000
+        },
+        {
+          "id" : "pci:6",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "Family 12h/14h Processor Function 6",
+          "vendor" : "Advanced Micro Devices, Inc. [AMD]",
+          "physid" : "106",
+          "businfo" : "pci@0000:00:18.5",
+          "version" : "00",
+          "width" : 32,
+          "clock" : 33000000
+        },
+        {
+          "id" : "pci:7",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "Family 12h/14h Processor Function 5",
+          "vendor" : "Advanced Micro Devices, Inc. [AMD]",
+          "physid" : "107",
+          "businfo" : "pci@0000:00:18.6",
+          "version" : "00",
+          "width" : 32,
+          "clock" : 33000000
+        },
+        {
+          "id" : "pci:8",
+          "class" : "bridge",
+          "claimed" : true,
+          "handle" : "PCIBUS:0000:00",
+          "description" : "Host bridge",
+          "product" : "Family 12h/14h Processor Function 7",
+          "vendor" : "Advanced Micro Devices, Inc. [AMD]",
+          "physid" : "108",
+          "businfo" : "pci@0000:00:18.7",
+          "version" : "00",
+          "width" : 32,
+          "clock" : 33000000
+        },
+        {
+          "id" : "scsi",
+          "class" : "storage",
+          "claimed" : true,
+          "physid" : "1",
+          "logicalname" : "scsi0",
+          "capabilities" : {
+            "emulated" : "Emulated device"
+          },
+          "children" : [
+            {
+              "id" : "disk",
+              "class" : "disk",
+              "claimed" : true,
+              "handle" : "SCSI:00:00:00:00",
+              "description" : "ATA Disk",
+              "product" : "SanDisk SSD P4 3",
+              "physid" : "0.0.0",
+              "businfo" : "scsi@0:0.0.0",
+              "logicalname" : "/dev/sda",
+              "dev" : "8:0",
+              "version" : "8.10",
+              "serial" : "110938317894",
+              "units" : "bytes",
+              "size" : 32017047552,
+              "configuration" : {
+                "ansiversion" : "5",
+                "logicalsectorsize" : "512",
+                "sectorsize" : "512",
+                "signature" : "21551359"
+              },
+              "capabilities" : {
+                "partitioned" : "Partitioned disk",
+                "partitioned:dos" : "MS-DOS partition table"
+              },
+              "children" : [
+                {
+                  "id" : "volume",
+                  "class" : "volume",
+                  "claimed" : true,
+                  "description" : "EXT4 volume",
+                  "vendor" : "Linux",
+                  "physid" : "1",
+                  "businfo" : "scsi@0:0.0.0,1",
+                  "logicalname" : "/dev/sda1",
+                  "dev" : "8:1",
+                  "version" : "1.0",
+                  "serial" : "827c7fd4-3dd1-4671-bc9b-c519c2761b2e",
+                  "size" : 32015122432,
+                  "capacity" : 32015122432,
+                  "configuration" : {
+                    "created" : "2018-12-31 18:13:51",
+                    "filesystem" : "ext4",
+                    "lastmountpoint" : "/",
+                    "modified" : "2018-12-31 18:39:43",
+                    "mounted" : "2018-12-31 18:39:45",
+                    "state" : "clean"
+                  },
+                  "capabilities" : {
+                    "primary" : "Primary partition",
+                    "bootable" : "Bootable partition (active)",
+                    "journaled" : true,
+                    "extended_attributes" : "Extended Attributes",
+                    "large_files" : "4GB+ files",
+                    "huge_files" : "16TB+ files",
+                    "dir_nlink" : "directories with 65000+ subdirs",
+                    "64bit" : "64bit filesystem",
+                    "extents" : "extent-based allocation",
+                    "ext4" : true,
+                    "ext2" : "EXT2/EXT3",
+                    "initialized" : "initialized volume"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id" : "network",
+      "class" : "network",
+      "disabled" : true,
+      "claimed" : true,
+      "description" : "Ethernet interface",
+      "physid" : "1",
+      "logicalname" : "enxe0699556bd2f",
+      "serial" : "e0:69:95:56:bd:2f",
+      "units" : "bit/s",
+      "size" : 10000000,
+      "capacity" : 100000000,
+      "configuration" : {
+        "autonegotiation" : "on",
+        "broadcast" : "yes",
+        "driver" : "asix",
+        "driverversion" : "22-Dec-2011",
+        "duplex" : "half",
+        "firmware" : "ASIX AX88772B USB 2.0 Ethernet",
+        "link" : "no",
+        "multicast" : "yes",
+        "port" : "MII",
+        "speed" : "10Mbit/s"
+      },
+      "capabilities" : {
+        "ethernet" : true,
+        "physical" : "Physical interface",
+        "tp" : "twisted pair",
+        "mii" : "Media Independent Interface",
+        "10bt" : "10Mbit/s",
+        "10bt-fd" : "10Mbit/s (full duplex)",
+        "100bt" : "100Mbit/s",
+        "100bt-fd" : "100Mbit/s (full duplex)",
+        "autonegotiation" : "Auto-negotiation"
+      }
+    }
+  ]
+}
