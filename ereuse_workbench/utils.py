@@ -32,4 +32,7 @@ class Measurable(Dumpeable):
         init = datetime.datetime.now(datetime.timezone.utc)
         yield
         self.elapsed = datetime.datetime.now(datetime.timezone.utc) - init
-        assert self.elapsed.total_seconds() > 0
+        try:
+            assert self.elapsed.total_seconds() > 0
+        except AssertionError:
+            self.elapsed = datetime.timedelta(seconds=0)
