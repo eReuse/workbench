@@ -550,6 +550,7 @@ class Computer(Device):
 
     COMPONENTS = list(Component.__subclasses__())  # type: List[Type[Component]]
     COMPONENTS.remove(Motherboard)
+    COMPONENTS.remove(Battery)
 
     def __init__(self, node: dict) -> None:
         super().__init__(node)
