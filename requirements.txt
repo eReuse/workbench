@@ -2,7 +2,7 @@ colorama==0.4.1
 click==7.0
 ereuse-utils[cli,getter,session,usb_flash_drive]==0.4.0b49
 inflection==0.3.1
-ntplib==0.3.3
+ntplib==0.3.4
 numpy==1.16.3
 pint==0.9
 python-dateutil==2.8.0
