@@ -106,7 +106,7 @@ class Workbench:
         self.session = None
         self.debug = debug
         self.env = env
-        self.snapshots_path = Path('/home/user/snapshots')
+        self.snapshots_path = Path('/home/nad/snapshots')
 
         if self.server:
             # Override the parameters from the configuration from the server
@@ -140,6 +140,8 @@ class Workbench:
         """Configures env file and snapshots folder"""
         self.snapshots_path.mkdir(parents=True, exist_ok=True)
         if self.json is None:
+            self.json = Path('{snapshots_path}/{date}_{uuid}_computer.json'.format(snapshots_path=self.snapshots_path, date=date.today().strftime("%Y-%m-%d"), uuid=self.uuid))
+        else:
             self.json = Path('{date}_{uuid}_computer.json'.format(date=date.today().strftime("%Y-%m-%d"), uuid=self.uuid))
 
     def config_from_server(self):
@@ -244,9 +246,7 @@ class Workbench:
                              (self.install_path / self.install) if self.install else None)
 
         snapshot.close()
-        if self.json:
-            self.json = os.path.join(self.snapshots_path, self.json)
-            self.json.write_text(snapshot.to_json())
+        self.json.write_text(snapshot.to_json())
         return snapshot
 
     @property
