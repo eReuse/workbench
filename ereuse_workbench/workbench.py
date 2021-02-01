@@ -118,6 +118,8 @@ class Workbench:
             # By setting daemon=True USB Sneaky will die when we die
             self.usb_sneaky = Process(target=USBSneaky, args=(self.uuid, server), daemon=True)
 
+        self.config_environment()
+
     @property
     def smart(self):
         return self._smart
@@ -134,10 +136,10 @@ class Workbench:
     def erase(self, value):
         self._erase = EraseType(value) if value else None
 
-    def config_enviroment(self):
+    def config_environment(self):
         """Configures env file and snapshots folder"""
         self.snapshots_path.mkdir(parents=True, exist_ok=True)
-        if not self.json:
+        if self.json is None:
             self.json = Path('{date}_{uuid}_computer.json'.format(date=date.today().strftime("%Y-%m-%d"), uuid=self.uuid))
 
     def config_from_server(self):
