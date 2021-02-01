@@ -2,6 +2,7 @@ import logging
 import os
 import uuid
 from contextlib import suppress
+from datetime import date
 from distutils.version import StrictVersion
 from multiprocessing import Process
 from pathlib import Path
@@ -42,7 +43,8 @@ class Workbench:
                  install: str = False,
                  server: urlutils.URL = None,
                  json: Path = None,
-                 debug: bool = False):
+                 debug: bool = False,
+                 env: Path = None):
         """
         Configures this Workbench.
 
@@ -103,6 +105,8 @@ class Workbench:
         self.json = json
         self.session = None
         self.debug = debug
+        self.env = env
+        self.snapshots_path = Path('/home/user/snapshots')
 
         if self.server:
             # Override the parameters from the configuration from the server
@@ -129,6 +133,12 @@ class Workbench:
     @erase.setter
     def erase(self, value):
         self._erase = EraseType(value) if value else None
+
+    def config_enviroment(self):
+        """Configures env file and snapshots folder"""
+        self.snapshots_path.mkdir(parents=True, exist_ok=True)
+        if not self.json:
+            self.json = Path('{date}_{uuid}_computer.json'.format(date=date.today().strftime("%Y-%m-%d"), uuid=self.uuid))
 
     def config_from_server(self):
         """Configures the Workbench from a config endpoint in the server."""
@@ -233,6 +243,7 @@ class Workbench:
 
         snapshot.close()
         if self.json:
+            self.json = os.path.join(self.snapshots_path, self.json)
             self.json.write_text(snapshot.to_json())
         return snapshot
 
