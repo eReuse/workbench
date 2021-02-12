@@ -1,3 +1,4 @@
+import json
 import logging.config
 import subprocess
 import time
@@ -15,6 +16,7 @@ from ereuse_workbench.erase import EraseType
 from ereuse_workbench.snapshot import Snapshot
 from ereuse_workbench.test import TestDataStorageLength
 from ereuse_workbench.workbench import Workbench
+from ereuse_workbench.config import WorkbenchConfig
 
 EPILOG = """\b
 Ex. sudo erwb --benchmark --smart Short --erase EraseSectors --json out.json
@@ -68,6 +70,9 @@ storage units, saving the resulting report as 'out.json'.
 @click.option('--debug/--no-debug',
               default=False,
               help='Add extra debug information to the resulting snapshot?')
+@click.option('--env',
+              type=cli.Path(dir_okay=False, readable=True, resolve_path=True),
+              help='Add env file to get user and config data')
 def erwb(**kwargs):
     click.clear()
     _sync_time = kwargs.pop('sync_time')
@@ -85,8 +90,9 @@ def erwb(**kwargs):
         # Note that the child is a daemon so it will be terminated
         # once this main process terminates too
         workbench.usb_sneaky.join()
-    if _submit:
-        submit(_submit, snapshot)
+    if not _submit:
+        _submit = urlutils.URL(WorkbenchConfig.DEVICEHUB_TEAL_URL)
+    submit(_submit, snapshot)
 
 
 def sync_time():
@@ -106,9 +112,10 @@ def sync_time():
 
 def _submit(url: urlutils.URL, snapshot: Snapshot):
     username, password = url.username, url.password
-    url.username = ''  # resets password too
+    # url.username = ''  # resets password too
     session = DevicehubClient(url, inventory=True)
     session.login(username, password)
+    url.path = ''
     data, _ = session.post('/actions/', snapshot)
     return data
 
