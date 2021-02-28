@@ -1,3 +1,4 @@
+import json
 import logging.config
 import subprocess
 import time
@@ -9,8 +10,9 @@ import requests
 from boltons import urlutils
 from colorama import Fore, Style
 from ereuse_utils import cli
-from ereuse_utils.session import DevicehubClient
+from ereuse_utils.session import Session
 
+from ereuse_workbench.config import WorkbenchConfig
 from ereuse_workbench.erase import EraseType
 from ereuse_workbench.snapshot import Snapshot
 from ereuse_workbench.test import TestDataStorageLength
@@ -85,8 +87,9 @@ def erwb(**kwargs):
         # Note that the child is a daemon so it will be terminated
         # once this main process terminates too
         workbench.usb_sneaky.join()
-    if _submit:
-        submit(_submit, snapshot)
+    if not _submit:
+        _submit = urlutils.URL(WorkbenchConfig.DEVICEHUB_URL)
+    submit(_submit, snapshot)
 
 
 def sync_time():
@@ -106,11 +109,19 @@ def sync_time():
 
 def _submit(url: urlutils.URL, snapshot: Snapshot):
     username, password = url.username, url.password
-    url.username = ''  # resets password too
-    session = DevicehubClient(url, inventory=True)
-    session.login(username, password)
-    data, _ = session.post('/actions/', snapshot)
-    return data
+    session = Session(base_url=url.to_text())
+    token = None
+    if (url.username and url.password) != '':
+        r = session.post('/users/login/', json={'email': username, 'password': password})
+        token = r.json()['token']
+    t = token or WorkbenchConfig.DH_TOKEN
+    r = session.post('{}actions/'.format(url.to_text()),
+                     data=snapshot.to_json(),
+                     headers={
+                         'Authorization': 'Basic {}'.format(t),
+                         'Content-Type': 'application/json'
+                     })
+    return r.json()
 
 
 def submit(url: urlutils.URL, snapshot: Snapshot):

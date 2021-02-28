@@ -58,3 +58,4 @@ ereuse-workbench.log
 /run_workbench.py
 venv
 .vscode
+.env
