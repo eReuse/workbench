@@ -17,13 +17,13 @@ class WorkbenchConfig:
     )  # type: str
 
     ## Env variables for WB parameters
-    WB_BENCHMARK = config('WB_BENCHMARK', True)
-    WB_STRESS_TEST = config('WB_STRESS_TEST', 0)
-    WB_SMART_TEST = config('WB_SMART_TEST', TestDataStorageLength.Short)
+    WB_BENCHMARK = config('WB_BENCHMARK', default=True)
+    WB_STRESS_TEST = config('WB_STRESS_TEST', default=0, cast=int)
+    WB_SMART_TEST = config('WB_SMART_TEST', default='short', cast=TestDataStorageLength.Short)
 
     ## Erase parameters
     WB_ERASE = config('WB_ERASE')
-    WB_ERASE_STEPS = config('WB_ERASE_STEPS', 1)
-    WB_ERASE_LEADING_ZEROS = config('WB_ERASE_LEADING_ZERO', False)
+    WB_ERASE_STEPS = config('WB_ERASE_STEPS', default=1, cast=int)
+    WB_ERASE_LEADING_ZEROS = config('WB_ERASE_LEADING_ZERO', default=False)
 
-    WB_DEBUG = config('WB_DEBUG', True)
+    WB_DEBUG = config('WB_DEBUG', default=True)
