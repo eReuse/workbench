@@ -18,6 +18,7 @@ from ereuse_workbench.erase import EraseType
 from ereuse_workbench.snapshot import Snapshot, SnapshotSoftware
 from ereuse_workbench.test import TestDataStorageLength
 from ereuse_workbench.usb_sneaky import USBSneaky
+from ereuse_workbench.config import WorkbenchConfig
 
 
 class Workbench:
@@ -43,8 +44,7 @@ class Workbench:
                  install: str = False,
                  server: urlutils.URL = None,
                  json: Path = None,
-                 debug: bool = False,
-                 env: Path = None):
+                 debug: bool = False):
         """
         Configures this Workbench.
 
@@ -92,12 +92,12 @@ class Workbench:
             raise EnvironmentError('Execute Workbench as root.')
 
         init(autoreset=True)
-        self.benchmark = benchmark
-        self.smart = smart
-        self.erase = erase
-        self.erase_steps = erase_steps
-        self.erase_leading_zeros = erase_leading_zeros
-        self.stress = stress
+        self.benchmark = benchmark or WorkbenchConfig.WB_BENCHMARK
+        self.smart = smart or WorkbenchConfig.WB_SMART_TEST
+        self.erase = erase or WorkbenchConfig.WB_ERASE
+        self.erase_steps = erase_steps or WorkbenchConfig.WB_ERASE_STEPS
+        self.erase_leading_zeros = erase_leading_zeros or WorkbenchConfig.WB_ERASE_LEADING_ZEROS
+        self.stress = stress or WorkbenchConfig.WB_STRESS_TEST
         self.server = server
         self.uuid = uuid.uuid4()
         self.install = install
@@ -105,7 +105,6 @@ class Workbench:
         self.json = json
         self.session = None
         self.debug = debug
-        self.env = env
         self.snapshots_path = Path('/home/user/snapshots')
 
         if self.server:
@@ -137,12 +136,9 @@ class Workbench:
         self._erase = EraseType(value) if value else None
 
     def config_environment(self):
-        """Configures env file and snapshots folder"""
+        """Configures snapshots folder and and save json name"""
         self.snapshots_path.mkdir(parents=True, exist_ok=True)
-        if self.json is None:
-            self.json = Path('{snapshots_path}/{date}_{uuid}_computer.json'.format(snapshots_path=self.snapshots_path, date=date.today().strftime("%Y-%m-%d"), uuid=self.uuid))
-        else:
-            self.json = Path('{date}_{uuid}_computer.json'.format(date=date.today().strftime("%Y-%m-%d"), uuid=self.uuid))
+        self.json = Path('{snapshots_path}/{date}_{uuid}_computer.json'.format(snapshots_path=self.snapshots_path, date=date.today().strftime("%Y-%m-%d"), uuid=self.uuid))
 
     def config_from_server(self):
         """Configures the Workbench from a config endpoint in the server."""
