@@ -19,7 +19,7 @@ class WorkbenchConfig:
     ## Env variables for WB parameters
     WB_BENCHMARK = config('WB_BENCHMARK', default=True, cast=bool)
     WB_STRESS_TEST = config('WB_STRESS_TEST', default=0, cast=int)
-    WB_SMART_TEST = config('WB_SMART_TEST', default='short')
+    WB_SMART_TEST = config('WB_SMART_TEST', default='')
 
     ## Erase parameters
     WB_ERASE = config('WB_ERASE')
