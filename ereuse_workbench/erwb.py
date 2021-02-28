@@ -70,9 +70,6 @@ storage units, saving the resulting report as 'out.json'.
 @click.option('--debug/--no-debug',
               default=False,
               help='Add extra debug information to the resulting snapshot?')
-@click.option('--env',
-              type=cli.Path(dir_okay=False, readable=True, resolve_path=True),
-              help='Add env file to get user and config data')
 def erwb(**kwargs):
     click.clear()
     _sync_time = kwargs.pop('sync_time')

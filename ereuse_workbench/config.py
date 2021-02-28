@@ -25,3 +25,5 @@ class WorkbenchConfig:
     WB_ERASE = config('WB_ERASE')
     WB_ERASE_STEPS = config('WB_ERASE_STEPS', 1)
     WB_ERASE_LEADING_ZEROS = config('WB_ERASE_LEADING_ZERO', False)
+
+    WB_DEBUG = config('WB_DEBUG', True)
