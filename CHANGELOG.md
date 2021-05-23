@@ -14,5 +14,5 @@ ml).
 ## [11.1.0-beta]
 
 ## [11.1.0-beta]
-- [addend] adding new .env file
+- [addend] adding new settings.ini file
 - [addend] adding config.py file with python-decouple
