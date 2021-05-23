@@ -1,15 +1,18 @@
-DH_TOKEN='token'
-DH_HOST='host'
-DH_DATABASE='devicehub'
+[settings]
+
+DH_TOKEN="token"
+
+DH_HOST="host"
+DH_DATABASE="database"
 DEVICEHUB_URL=https://${DB_HOST}/${DB_DATABASE}/
+
 
 WB_BENCHMARK = True
 WB_STRESS_TEST = 0
-WB_SMART_TEST = 'short'
+WB_SMART_TEST = ""
 
-WB_ERASE = False
+WB_ERASE =
 WB_ERASE_STEPS = 1
 WB_ERASE_LEADING_ZEROS = False
 
-WB_DEBUG = True
-
+WB_DEBUG = False
