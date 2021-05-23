@@ -17,7 +17,7 @@ class WorkbenchConfig:
     )  # type: str
 
     ## Env variables for WB parameters
-    WB_BENCHMARK = config('WB_BENCHMARK', default=False, cast=bool)
+    WB_BENCHMARK = config('WB_BENCHMARK', default=True, cast=bool)
     WB_STRESS_TEST = config('WB_STRESS_TEST', default=0, cast=int)
     WB_SMART_TEST = config('WB_SMART_TEST', default='')
 
