@@ -22,7 +22,7 @@ class WorkbenchConfig:
     WB_SMART_TEST = config('WB_SMART_TEST', default='')
 
     ## Erase parameters
-    WB_ERASE = config('WB_ERASE')
+    WB_ERASE = config('WB_ERASE', default='')
     WB_ERASE_STEPS = config('WB_ERASE_STEPS', default=1, cast=int)
     WB_ERASE_LEADING_ZEROS = config('WB_ERASE_LEADING_ZERO', default=False, cast=bool)
 
