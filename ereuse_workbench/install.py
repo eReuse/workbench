@@ -14,6 +14,7 @@ class Install(Measurable):
     Important: GPT partition scheme and UEFI-based boot not yet supported. All relevant
     code is just placeholder.
     """
+
     def __init__(self,
                  image_path: Path,
                  logical_name: str = '/dev/sda',

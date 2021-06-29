@@ -1,7 +1,5 @@
 from decouple import AutoConfig
 
-from ereuse_workbench.test import TestDataStorageLength
-
 
 class WorkbenchConfig:
     # Path where find settings.ini file

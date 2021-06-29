@@ -9,16 +9,17 @@ from pathlib import Path
 from subprocess import CalledProcessError
 
 import ereuse_utils
+import jwt
 from boltons import urlutils
 from colorama import Fore, init
 from ereuse_utils import cmd
 from ereuse_utils.session import DevicehubClient, retry
 
+from ereuse_workbench.config import WorkbenchConfig
 from ereuse_workbench.erase import EraseType
 from ereuse_workbench.snapshot import Snapshot, SnapshotSoftware
 from ereuse_workbench.test import TestDataStorageLength
 from ereuse_workbench.usb_sneaky import USBSneaky
-from ereuse_workbench.config import WorkbenchConfig
 
 
 class Workbench:
@@ -136,9 +137,11 @@ class Workbench:
         self._erase = EraseType(value) if value else None
 
     def config_environment(self):
-        """Configures snapshots folder and and save json name"""
+        """Configures snapshots folder and save json name"""
         self.snapshots_path.mkdir(parents=True, exist_ok=True)
-        self.json = Path('{snapshots_path}/{date}_{uuid}_computer.json'.format(snapshots_path=self.snapshots_path, date=date.today().strftime("%Y-%m-%d"), uuid=self.uuid))
+        self.json = Path('{snapshots_path}/{date}_{uuid}_computer.json'.format(snapshots_path=self.snapshots_path,
+                                                                               date=date.today().strftime("%Y-%m-%d"),
+                                                                               uuid=self.uuid))
 
     def config_from_server(self):
         """Configures the Workbench from a config endpoint in the server."""
@@ -242,7 +245,9 @@ class Workbench:
                              (self.install_path / self.install) if self.install else None)
 
         snapshot.close()
-        self.json.write_text(snapshot.to_json())
+        ## Convert snapshot to dict object and encoded using PyJWT
+        snapshot_encoded = jwt.encode(snapshot.dump(), '', algorithm="HS256", json_encoder=ereuse_utils.JSONEncoder)
+        self.json.write_text(snapshot_encoded)
         return snapshot
 
     @property
