@@ -6,9 +6,9 @@ class WorkbenchConfig:
     config = AutoConfig(search_path='/home/user/')
 
     # Env variables for DH parameters
-    DH_TOKEN = config('DH_TOKEN')
-    DH_HOST = config('DH_HOST')
-    DH_DATABASE = config('DH_DATABASE')
+    DH_TOKEN = config('DH_TOKEN', default='')
+    DH_HOST = config('DH_HOST', default='')
+    DH_DATABASE = config('DH_DATABASE', default='')
     DEVICEHUB_URL = 'https://{host}/{db}/'.format(
         host=DH_HOST,
         db=DH_DATABASE
