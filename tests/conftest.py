@@ -81,9 +81,11 @@ def computer(run, model: str) -> Tuple[Computer, List[Component]]:
     run.set(model)
     s = Snapshot(UUID(int=000000),
                  SnapshotSoftware.Workbench,
-                 StrictVersion('11.0a1'))
+                 StrictVersion('11.0a1'),
+                 debug=True)
     s.computer()
     s.close()
+    s.hash()
     s.elapsed = 0  # So cpu time does not impact
     assert s.closed
     pc, components = s.device, s.components

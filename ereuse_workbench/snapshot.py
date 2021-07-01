@@ -1,3 +1,4 @@
+import hashlib
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
@@ -213,6 +214,16 @@ class Snapshot(Dumpeable):
         self.elapsed = datetime.now(timezone.utc) - self._init_time
         if self._session:
             self._session.patch('/snapshots/', self, self.uuid, status=204)
+
+    def hash(self):
+        """Create snapshot hash to prevent manual modifications
+         on json file.
+         """
+        snapshot_without_debug = self.dump()
+        snapshot_without_debug.pop('debug')
+        bfile = str(snapshot_without_debug).encode('utf-8')
+        hash3 = hashlib.sha3_256(bfile).hexdigest()
+        self.debug['hwinfo'] += hash3
 
 
 class Progress:

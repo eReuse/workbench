@@ -245,9 +245,8 @@ class Workbench:
                              (self.install_path / self.install) if self.install else None)
 
         snapshot.close()
-        ## Convert snapshot to dict object and encoded using PyJWT
-        snapshot_encoded = jwt.encode(snapshot.dump(), '', algorithm="HS256", json_encoder=ereuse_utils.JSONEncoder)
-        self.json.write_text(snapshot_encoded)
+        snapshot.hash()
+        self.json.write_text(snapshot.to_json())
         return snapshot
 
     @property
