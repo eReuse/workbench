@@ -85,7 +85,7 @@ def computer(run, model: str) -> Tuple[Computer, List[Component]]:
                  debug=True)
     s.computer()
     s.close()
-    s.hash()
+    s.encode('foo')
     s.elapsed = 0  # So cpu time does not impact
     assert s.closed
     pc, components = s.device, s.components
