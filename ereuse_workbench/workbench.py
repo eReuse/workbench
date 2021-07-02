@@ -9,7 +9,6 @@ from pathlib import Path
 from subprocess import CalledProcessError
 
 import ereuse_utils
-import jwt
 from boltons import urlutils
 from colorama import Fore, init
 from ereuse_utils import cmd
@@ -245,8 +244,7 @@ class Workbench:
                              (self.install_path / self.install) if self.install else None)
 
         snapshot.close()
-        snapshot.hash()
-        self.json.write_text(snapshot.to_json())
+        self.json.write_text(snapshot.encode('7KU4ZzsEfe'))
         return snapshot
 
     @property

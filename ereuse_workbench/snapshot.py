@@ -1,4 +1,3 @@
-import hashlib
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
@@ -9,6 +8,7 @@ from typing import List, Optional, Tuple, Type, Union
 from uuid import UUID
 
 import inflection
+import jwt
 from ereuse_utils import cli
 from ereuse_utils.cli import Line
 from ereuse_utils.session import DevicehubClient
@@ -215,15 +215,9 @@ class Snapshot(Dumpeable):
         if self._session:
             self._session.patch('/snapshots/', self, self.uuid, status=204)
 
-    def hash(self):
-        """Create snapshot hash to prevent manual modifications
-         on json file.
-         """
-        snapshot_without_debug = self.dump()
-        snapshot_without_debug.pop('debug')
-        bfile = str(snapshot_without_debug).encode('utf-8')
-        hash3 = hashlib.sha3_256(bfile).hexdigest()
-        self.debug['hwinfo'] += hash3
+    def encode(self, s):
+        """Convert snapshot to dict object and encoded using PyJWT"""
+        return jwt.encode(self.dump(), s, algorithm="HS256", json_encoder=self.ENCODER)
 
 
 class Progress:
