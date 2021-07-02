@@ -1,10 +1,11 @@
-import json
 import logging.config
 import subprocess
 import time
 from datetime import datetime, timezone
 
 import click
+import ereuse_utils
+import jwt
 import ntplib
 import requests
 from boltons import urlutils
@@ -115,8 +116,10 @@ def _submit(url: urlutils.URL, snapshot: Snapshot):
         r = session.post('/users/login/', json={'email': username, 'password': password})
         token = r.json()['token']
     t = token or WorkbenchConfig.DH_TOKEN
+    # TODO Get the user's key on the server
+    s = '7KU4ZzsEfe'
     r = session.post('{}actions/'.format(url.to_text()),
-                     data=snapshot.to_json(),
+                     data=jwt.encode(snapshot.dump(), s, algorithm="HS256", json_encoder=ereuse_utils.JSONEncoder),
                      headers={
                          'Authorization': 'Basic {}'.format(t),
                          'Content-Type': 'application/json'

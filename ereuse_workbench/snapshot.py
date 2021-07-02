@@ -8,6 +8,7 @@ from typing import List, Optional, Tuple, Type, Union
 from uuid import UUID
 
 import inflection
+import jwt
 from ereuse_utils import cli
 from ereuse_utils.cli import Line
 from ereuse_utils.session import DevicehubClient
@@ -213,6 +214,10 @@ class Snapshot(Dumpeable):
         self.elapsed = datetime.now(timezone.utc) - self._init_time
         if self._session:
             self._session.patch('/snapshots/', self, self.uuid, status=204)
+
+    def encode(self, s):
+        """Convert snapshot to dict object and encoded using PyJWT"""
+        return jwt.encode(self.dump(), s, algorithm="HS256", json_encoder=self.ENCODER)
 
 
 class Progress:
