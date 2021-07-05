@@ -1,3 +1,4 @@
+import json
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
@@ -217,7 +218,9 @@ class Snapshot(Dumpeable):
 
     def encode(self, s):
         """Convert snapshot to dict object and encoded using PyJWT"""
-        return jwt.encode(self.dump(), s, algorithm="HS256", json_encoder=self.ENCODER)
+        snapshot = {"type": "Snapshot",
+                    "data": jwt.encode(self.dump(), s, algorithm="HS256", json_encoder=self.ENCODER)}
+        return json.dumps(snapshot)
 
 
 class Progress:
