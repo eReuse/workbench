@@ -2,7 +2,7 @@ import logging
 import os
 import uuid
 from contextlib import suppress
-from datetime import date
+from datetime import datetime
 from distutils.version import StrictVersion
 from multiprocessing import Process
 from pathlib import Path
@@ -139,7 +139,8 @@ class Workbench:
         """Configures snapshots folder and save json name"""
         self.snapshots_path.mkdir(parents=True, exist_ok=True)
         self.json = Path('{snapshots_path}/{date}_{uuid}_computer.json'.format(snapshots_path=self.snapshots_path,
-                                                                               date=date.today().strftime("%Y-%m-%d"),
+                                                                               date=datetime.now().strftime(
+                                                                                   "%Y-%m-%d-%H:%M:%S"),
                                                                                uuid=self.uuid))
 
     def config_from_server(self):
