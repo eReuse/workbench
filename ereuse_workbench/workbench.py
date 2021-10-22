@@ -105,7 +105,7 @@ class Workbench:
         self.json = json
         self.session = None
         self.debug = debug
-        self.snapshots_path = Path('/home/user/snapshots')
+        self.snapshots_path = Path('/home/wb/Snapshots')
 
         if self.server:
             # Override the parameters from the configuration from the server
