@@ -1,3 +1,4 @@
+import json
 import logging.config
 import subprocess
 import time
@@ -118,8 +119,10 @@ def _submit(url: urlutils.URL, snapshot: Snapshot):
     t = token or WorkbenchConfig.DH_TOKEN
     # TODO Get the user's key on the server
     s = '7KU4ZzsEfe'
+    snapshot_data = {"type": "Snapshot",
+                     "data": jwt.encode(snapshot.dump(), s, algorithm="HS256", json_encoder=ereuse_utils.JSONEncoder)}
     r = session.post('{}actions/'.format(url.to_text()),
-                     data=jwt.encode(snapshot.dump(), s, algorithm="HS256", json_encoder=ereuse_utils.JSONEncoder),
+                     data=json.dumps(snapshot_data),
                      headers={
                          'Authorization': 'Basic {}'.format(t),
                          'Content-Type': 'application/json'

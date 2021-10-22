@@ -11,6 +11,9 @@ ml).
 ## testing
   [12.0.0-beta]
 
+## [12.1.0-beta] - 2021/07/01
+- [added] JWT on snapshot data
+
 ## [12.0.0-beta] - 2021/05/25
 - [added] first version with decoupled configuration
 
