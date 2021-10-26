@@ -11,4 +11,4 @@ requests==2.21.0
 requests-toolbelt==0.9.1
 tqdm==4.32.2
 python-decouple==3.3
-pyjwt>=2.0.0
+pyjwt>=2.0.0a1
