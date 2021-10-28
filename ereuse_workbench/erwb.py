@@ -4,8 +4,6 @@ import time
 from datetime import datetime, timezone
 
 import click
-import ereuse_utils
-import jwt
 import ntplib
 import requests
 from boltons import urlutils
@@ -115,7 +113,7 @@ def _submit(url: urlutils.URL, snapshot: Snapshot):
     if (url.username and url.password) != '':
         r = session.post('/users/login/', json={'email': username, 'password': password})
         token = r.json()['token']
-    t = token or WorkbenchConfig.DH_TOKEN
+    t = WorkbenchConfig.DH_TOKEN or token
     # TODO Get the user's key on the server
     # s = '7KU4ZzsEfe'
     r = session.post('{}actions/'.format(url.to_text()),
