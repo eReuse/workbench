@@ -23,6 +23,6 @@ class WorkbenchConfig:
     ## Erase parameters
     WB_ERASE = config('WB_ERASE', default='')
     WB_ERASE_STEPS = config('WB_ERASE_STEPS', default=1, cast=int)
-    WB_ERASE_LEADING_ZEROS = config('WB_ERASE_LEADING_ZERO', default=False, cast=bool)
+    WB_ERASE_LEADING_ZEROS = config('WB_ERASE_LEADING_ZEROS', default=False, cast=bool)
 
     WB_DEBUG = config('WB_DEBUG', default=True, cast=bool)
