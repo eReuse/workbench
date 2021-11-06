@@ -114,10 +114,7 @@ def _submit(url: urlutils.URL, snapshot: Snapshot):
         r = session.post('/users/login/', json={'email': username, 'password': password})
         token = r.json()['token']
     t = WorkbenchConfig.DH_TOKEN or token
-    # TODO Get the user's key on the server
-    # s = '7KU4ZzsEfe'
     r = session.post('{}actions/'.format(url.to_text()),
-                     # data=jwt.encode(snapshot.dump(), s, algorithm="HS256", json_encoder=ereuse_utils.JSONEncoder),
                      data=snapshot.to_json(),
                      headers={
                          'Authorization': 'Basic {}'.format(t),
