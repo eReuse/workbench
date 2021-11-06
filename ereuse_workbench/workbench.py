@@ -95,7 +95,7 @@ class Workbench:
         self.benchmark = benchmark or WorkbenchConfig.WB_BENCHMARK
         self.smart = smart or WorkbenchConfig.WB_SMART_TEST
         self.erase = erase or WorkbenchConfig.WB_ERASE
-        self.erase_steps = erase_steps or WorkbenchConfig.WB_ERASE_STEPS
+        self.erase_steps = WorkbenchConfig.WB_ERASE_STEPS or erase_steps
         self.erase_leading_zeros = erase_leading_zeros or WorkbenchConfig.WB_ERASE_LEADING_ZEROS
         self.stress = stress or WorkbenchConfig.WB_STRESS_TEST
         self.server = server
