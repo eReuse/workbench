@@ -245,7 +245,7 @@ class Workbench:
                              (self.install_path / self.install) if self.install else None)
 
         snapshot.close()
-        self.json.write_text(snapshot.encode('7KU4ZzsEfe'))
+        self.json.write_text(snapshot.to_json())
         return snapshot
 
     @property
