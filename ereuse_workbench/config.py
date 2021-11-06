@@ -3,7 +3,7 @@ from decouple import AutoConfig
 
 class WorkbenchConfig:
     # Path where find settings.ini file
-    config = AutoConfig(search_path='/home/user/settings')
+    config = AutoConfig(search_path='/home/user/wb/settings')
 
     # Env variables for DH parameters
     DH_TOKEN = config('DH_TOKEN', default='')
