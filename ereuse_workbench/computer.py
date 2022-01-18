@@ -574,6 +574,11 @@ class Computer(Device):
         lshw = json.loads(cmd.run('lshw', '-json', '-quiet').stdout)
         hwinfo_raw = cmd.run('hwinfo', '--reallyall').stdout
         hwinfo = hwinfo_raw.splitlines()
+        dmi = subprocess.Popen('dmidecode', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        dmi_output, dmi_errors = dmi.communicate()
+        dmi.wait()
+        dmidecode_raw = cmd.run('dmidecode').stdout
+        dmidecode = dmidecode_raw.splitlines()
         computer = cls(lshw)
         components = []
         for Component in cls.COMPONENTS:
@@ -584,6 +589,7 @@ class Computer(Device):
 
         computer._ram = sum(ram.size for ram in components if isinstance(ram, RamModule))
         computer._debug = {
+            'dmidecode': dmi_output,
             'lshw': lshw,
             'hwinfo': hwinfo_raw,
             'battery': next(('\n'.join(b._node) for b in components if isinstance(b, Battery)),
