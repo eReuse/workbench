@@ -6,7 +6,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
-build/
+build/wbiso/
 develop-eggs/
 dist/
 downloads/
