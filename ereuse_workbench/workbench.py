@@ -105,7 +105,7 @@ class Workbench:
         self.json = json
         self.session = None
         self.debug = debug
-        self.snapshots_path = Path('/mnt/wb_snapshots/')
+        self.snapshots_path = Path('/mnt/wb_snapshots')
 
         if self.server:
             # Override the parameters from the configuration from the server
@@ -138,9 +138,8 @@ class Workbench:
     def config_environment(self):
         """Configures snapshots folder and save json name"""
         self.snapshots_path.mkdir(parents=True, exist_ok=True)
-        self.json = Path('{snapshots_path}/{date}_{uuid}_computer.json'.format(snapshots_path=self.snapshots_path,
-                                                                               date=datetime.now().strftime(
-                                                                                   "%Y-%m-%d-%H:%M:%S"),
+        self.json = Path('{snapshots_path}/{date}_{uuid}_snapshot.json'.format(snapshots_path=self.snapshots_path,
+                                                                               date=datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss"),
                                                                                uuid=self.uuid))
 
     def config_from_server(self):
