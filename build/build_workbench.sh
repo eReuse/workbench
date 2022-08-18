@@ -244,7 +244,7 @@ create_persistence_partition() {
     ${SUDO} mkfs.vfat "${rw_img_path}"
 
     # generate structure on persistent partition
-    tmp_rw_mount="/tmp/${rw_img_name}"
+    tmp_rw_mount="/mnt/${rw_img_name}"
     ${SUDO} umount -f -l "${tmp_rw_mount}" >/dev/null 2>&1 || true
     mkdir -p "${tmp_rw_mount}"
     ${SUDO} mount "$(pwd)/${rw_img_path}" "${tmp_rw_mount}"
