@@ -4,11 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0.html)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## master
-  [11.0b11]
+## prod
+  [12.1.1-beta]
 
 ## testing
-  [12.0.0-beta]
+  [12.1.1-beta]
 
 ## [14.0.0-beta] - 2022/08/04
 - [added] upgrade base system to Debian 11
