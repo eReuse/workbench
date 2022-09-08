@@ -249,7 +249,8 @@ create_persistence_partition() {
     mkdir -p "${tmp_rw_mount}"
     ${SUDO} mount "$(pwd)/${rw_img_path}" "${tmp_rw_mount}"
     ${SUDO} mkdir -p "${tmp_rw_mount}/wb_settings"
-    ${SUDO} touch "${tmp_rw_mount}/wb_settings/settings.ini"
+  # ${SUDO} touch "${tmp_rw_mount}/wb_settings/settings.ini"
+  # ${SUDO} cp ../examples/settings.ini "${tmp_rw_mount}/wb_settings/"
     ${SUDO} mkdir -p "${tmp_rw_mount}/wb_snapshots"
     ${SUDO} umount "${tmp_rw_mount}"
 
@@ -262,6 +263,7 @@ create_persistence_partition() {
 overlay / overlay rw 0 0
 tmpfs /tmp tmpfs nosuid,nodev 0 0
 ${uuid} /mnt vfat defaults,nofail 0 0
+10.0.4.4:/home/user/wb/ /home/user/wb/ nfs tcp,nolock 0 0
 END
   fi
   # src https://manpages.debian.org/testing/open-infrastructure-system-boot/persistence.conf.5.en.html
@@ -279,12 +281,16 @@ iface lo inet loopback
 
 auto eth0
 iface eth0 inet dhcp
+
+auto eth1
+iface eth1 inet dhcp
 END2
 
 ###################
 # configure dns
 cat > /etc/resolv.conf <<END2
 nameserver 1.1.1.1
+nameserver 8.8.8.8
 END2
 
 ###################
@@ -368,7 +374,7 @@ systemctl enable getty@tty1.service
 apt-get install -y --no-install-recommends \
   iproute2 iputils-ping ifupdown isc-dhcp-client \
   fdisk parted \
-  curl openssh-client \
+  curl openssh-client nfs-common \
   less \
   jq \
   nano vim-tiny \
@@ -484,7 +490,7 @@ main() {
   if [ "${DEBUG:-}" ]; then
     WB_VERSION='debug'
   else
-    WB_VERSION='14.0.0-beta'
+    WB_VERSION='14.0.1-beta'
   fi
   wbiso_name="USODY_${WB_VERSION}"
   hostname='workbench-live'
