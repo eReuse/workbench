@@ -118,8 +118,8 @@ class Step(Measurable):
         logging.info('%s %s with Erase Sectors', self.type, dev)
         with self._manage_erasure(dev):
             self._badblocks = True
-            progress = cmd.ProgressiveCmd('badblocks',
-                                          '-st', 'random',
+            progress = cmd.ProgressiveCmd('badblocks', '-st',
+                                          '0x00' if self.type == StepType.StepZero else 'random',
                                           '-w', dev,
                                           number_chars=cmd.ProgressiveCmd.DECIMALS,
                                           decimal_numbers=2,
