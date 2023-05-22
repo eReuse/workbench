@@ -7,7 +7,7 @@ numpy==1.16.3
 pint==0.9
 python-dateutil==2.8.0
 pySMART.smartx==0.3.9
-requests==2.21.0
+requests==2.31.0
 requests-toolbelt==0.9.1
 tqdm==4.32.2
 python-decouple==3.3
